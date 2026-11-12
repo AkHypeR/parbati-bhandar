@@ -91,13 +91,9 @@ export default function App() {
   // Mode Switcher: 'customer' | 'admin'
   const [activeMode, setActiveMode] = useState<'customer' | 'admin'>('customer');
   const [isOwnerUnlocked, setIsOwnerUnlocked] = useState(false);
-  const [ownerEmail, setOwnerEmail] = useState('7001.akashroy@gmail.com');
   const [ownerPassword, setOwnerPassword] = useState('');
   const [pinError, setPinError] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
-  const [passwordRecovery, setPasswordRecovery] = useState(false);
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [cloudReady, setCloudReady] = useState(false);
   const previousProductIds = useRef<string[]>([]);
 
@@ -136,27 +132,7 @@ export default function App() {
     }, 3200);
   };
 
-  useEffect(() => {
-    if (!supabase) return;
-    // Supabase may return either a hash token or a PKCE ?code= callback.
-    const isRecoveryUrl = () => {
-      const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
-      const query = new URLSearchParams(window.location.search);
-      return hash.get('type') === 'recovery' || query.get('type') === 'recovery';
-    };
-    if (isRecoveryUrl()) setPasswordRecovery(true);
-    const { data } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true);
-    });
-    // Also check for an already-established recovery session after client startup.
-    void supabase.auth.getSession().then(({ data: sessionData }) => {
-      if (sessionData.session && isRecoveryUrl()) setPasswordRecovery(true);
-    });
-    return () => data.subscription.unsubscribe();
-  }, []);
 
-  const handleForgotPassword = async () => { if (!supabase) return; setAuthLoading(true); setPinError(''); try { const { error } = await supabase.auth.resetPasswordForEmail(ownerEmail.trim(), { redirectTo: window.location.origin }); if (error) throw error; showToast('Password reset email sent. Check inbox and spam.'); } catch (e) { setPinError((e as Error).message); } finally { setAuthLoading(false); } };
-  const handleSetNewPassword = async (e: React.FormEvent) => { e.preventDefault(); if (!supabase) return; if (newPassword.length < 8 || newPassword !== confirmNewPassword) { setPinError(newPassword.length < 8 ? 'Use at least 8 characters.' : 'Passwords do not match.'); return; } setAuthLoading(true); setPinError(''); try { const { error } = await supabase.auth.updateUser({ password: newPassword }); if (error) throw error; await supabase.auth.signOut(); setPasswordRecovery(false); setNewPassword(''); setConfirmNewPassword(''); setActiveMode('admin'); showToast('Password updated. Sign in with your new password.'); } catch (e) { setPinError((e as Error).message); } finally { setAuthLoading(false); } };
 
   // Keep the cart local to this device; the live catalogue and settings are cloud-backed.
   useEffect(() => {
@@ -491,7 +467,7 @@ export default function App() {
     setPinError('');
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: ownerEmail.trim(), password: ownerPassword,
+        email: '7001.akashroy@gmail.com', password: ownerPassword,
       });
       if (error) throw error;
       if (data.user?.email?.toLowerCase() !== '7001.akashroy@gmail.com') {
@@ -618,7 +594,7 @@ export default function App() {
       {/* ========================================== */}
       {/* VIEW 1: CUSTOMER STOREFRONT WEBSITE        */}
       {/* ========================================== */}
-      {passwordRecovery ? (<div className="flex-1 flex items-center justify-center p-4 bg-slate-100"><form onSubmit={handleSetNewPassword} className="bg-white rounded-3xl shadow-lg p-8 max-w-md w-full space-y-4"><h2 className="text-xl font-bold">Set a new owner password</h2><input type="password" required minLength={8} value={newPassword} onChange={e=>setNewPassword(e.target.value)} placeholder="New password" className="w-full p-3 border rounded-xl"/><input type="password" required minLength={8} value={confirmNewPassword} onChange={e=>setConfirmNewPassword(e.target.value)} placeholder="Confirm new password" className="w-full p-3 border rounded-xl"/>{pinError && <p className="text-red-600">{pinError}</p>}<button disabled={authLoading} className="w-full p-3 rounded-xl bg-emerald-600 text-white">{authLoading ? 'Saving…' : 'Update password'}</button></form></div>) : activeMode === 'customer' ? (
+      {activeMode === 'customer' ? (
         <>
           <CustomerStorefront
             storeSettings={storeSettings}
@@ -672,15 +648,12 @@ export default function App() {
         /* OWNER PIN PROTECTION SCREEN                */
         /* ========================================== */
         <OwnerPinGate
-          email={ownerEmail}
-          setEmail={setOwnerEmail}
           password={ownerPassword}
           setPassword={setOwnerPassword}
           pinError={pinError}
           loading={authLoading}
           onSubmit={handleOwnerPinLogin}
           onBackToCustomer={() => setActiveMode('customer')}
-          onForgotPassword={handleForgotPassword}
         />
       ) : (
         /* ========================================== */
