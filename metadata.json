@@ -1,0 +1,6 @@
+{
+  "name": "Parbati Bhandar Store & Owner App",
+  "description": "Live grocery store product catalog, WhatsApp shopping list builder, and owner inventory & daily price upload app for Parbati Bhandar (পার্বতী ভান্ডার) in Swasti Pally, Gangpur, Purba Bardhaman.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
