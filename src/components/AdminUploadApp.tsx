@@ -983,11 +983,11 @@ export function AdminUploadApp({
                     />
                     <button
                       type="button"
-                      onClick={() => fileInputRef.current?.click()}
+                      onClick={() => showToast('Direct uploads are disabled. Paste a public image URL below.', 'error')}
                       className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-2xs cursor-pointer"
                     >
                       <Camera className="w-4 h-4 text-emerald-600" />
-                      <span>Take Photo / Upload from Phone</span>
+                      <span>Upload unavailable — use image URL below</span>
                     </button>
 
                     <input
@@ -1978,11 +1978,11 @@ export function AdminUploadApp({
                       <div className="flex flex-wrap gap-2">
                         <button
                           type="button"
-                          onClick={() => occasionFileInputRef.current?.click()}
+                          onClick={() => showToast('Direct uploads are disabled. Paste a public image URL below.', 'error')}
                           className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-xs font-bold text-slate-800 flex items-center gap-1.5 cursor-pointer shadow-2xs"
                         >
                           <Camera className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>Upload Occasion Photo</span>
+                          <span>Upload unavailable — use image URL below</span>
                         </button>
                         <button
                           type="button"
@@ -2203,11 +2203,11 @@ export function AdminUploadApp({
                         <div className="flex flex-wrap gap-2">
                           <button
                             type="button"
-                            onClick={() => scannerFileInputRef.current?.click()}
+                            onClick={() => showToast('Direct uploads are disabled. Paste a public image URL below.', 'error')}
                             className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-2xs"
                           >
                             <Camera className="w-3.5 h-3.5" />
-                            <span>Upload Scanner Picture</span>
+                            <span>Upload unavailable — use image URL below</span>
                           </button>
                           {settingsForm.scannerImageUrl && (
                             <button
