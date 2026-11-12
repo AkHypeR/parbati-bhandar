@@ -94,6 +94,10 @@ export default function App() {
   const [ownerPassword, setOwnerPassword] = useState('');
   const [pinError, setPinError] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
+  const [isPasswordRecovery, setIsPasswordRecovery] = useState(false);
+  const [recoveryPassword, setRecoveryPassword] = useState('');
+  const [recoveryConfirm, setRecoveryConfirm] = useState('');
+  const [recoveryMessage, setRecoveryMessage] = useState('');
   const [cloudReady, setCloudReady] = useState(false);
   const previousProductIds = useRef<string[]>([]);
 
@@ -133,6 +137,48 @@ export default function App() {
   };
 
 
+
+  useEffect(() => {
+    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    const query = new URLSearchParams(window.location.search);
+    if (hash.get('type') === 'recovery' || query.get('type') === 'recovery') {
+      setIsPasswordRecovery(true);
+      setActiveMode('admin');
+    }
+    const authError = hash.get('error_description');
+    if (authError) setRecoveryMessage(decodeURIComponent(authError.replace(/\\+/g, ' ')));
+  }, []);
+
+  const handlePasswordRecovery = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setRecoveryMessage('');
+    if (recoveryPassword.length < 12) {
+      setRecoveryMessage('Use at least 12 characters for your new password.');
+      return;
+    }
+    if (recoveryPassword !== recoveryConfirm) {
+      setRecoveryMessage('The passwords do not match.');
+      return;
+    }
+    if (!supabase) {
+      setRecoveryMessage('Supabase is not configured.');
+      return;
+    }
+    setAuthLoading(true);
+    const { error } = await supabase.auth.updateUser({ password: recoveryPassword });
+    setAuthLoading(false);
+    if (error) {
+      setRecoveryMessage(error.message);
+      return;
+    }
+    await supabase.auth.signOut();
+    window.history.replaceState({}, document.title, window.location.pathname);
+    setIsPasswordRecovery(false);
+    setRecoveryPassword('');
+    setRecoveryConfirm('');
+    setOwnerPassword('');
+    setRecoveryMessage('Password updated successfully. Return to Owner Access and sign in with your new password.');
+  };
 
   // Keep the cart local to this device; the live catalogue and settings are cloud-backed.
   useEffect(() => {
@@ -643,6 +689,18 @@ export default function App() {
             orderText={orderText}
           />
         </>
+      ) : isPasswordRecovery ? (
+        <div className="flex-1 flex items-center justify-center p-4 bg-slate-100">
+          <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-6 sm:p-8 max-w-md w-full space-y-5">
+            <div className="text-center"><h2 className="text-xl font-extrabold text-slate-900">Set a new owner password</h2><p className="text-sm text-slate-500 mt-2">Choose a new password with at least 12 characters.</p></div>
+            <form onSubmit={handlePasswordRecovery} className="space-y-3">
+              <input type="password" autoComplete="new-password" required minLength={12} value={recoveryPassword} onChange={e=>setRecoveryPassword(e.target.value)} placeholder="New password" className="w-full px-4 py-3 rounded-2xl border-2 border-slate-300" />
+              <input type="password" autoComplete="new-password" required minLength={12} value={recoveryConfirm} onChange={e=>setRecoveryConfirm(e.target.value)} placeholder="Confirm new password" className="w-full px-4 py-3 rounded-2xl border-2 border-slate-300" />
+              {recoveryMessage && <p role="alert" className="text-sm text-red-700 bg-red-50 rounded-xl p-3">{recoveryMessage}</p>}
+              <button disabled={authLoading} type="submit" className="w-full py-3 rounded-2xl bg-emerald-600 text-white font-bold disabled:opacity-60">{authLoading ? 'Updating…' : 'Save new password'}</button>
+            </form>
+          </div>
+        </div>
       ) : !isOwnerUnlocked ? (
         /* ========================================== */
         /* OWNER PIN PROTECTION SCREEN                */
