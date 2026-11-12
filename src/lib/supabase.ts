@@ -14,7 +14,7 @@ export const supabase = {
       const response = await fetch("/api/auth/login", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ password }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) return { data: { user: null }, error: new Error(result.error || "Owner login failed.") };
-      return { data: { user: { email: "owner@parbati-bhandar.local" } }, error: null };
+      return { data: { user: { email: "7001.akashroy@gmail.com" } }, error: null };
     },
   },
 };
