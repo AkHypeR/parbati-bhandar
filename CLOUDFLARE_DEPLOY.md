@@ -1,27 +1,23 @@
-# Cloudflare Pages migration
+# Parbati Bhandar — Cloudflare migration
 
-## Frontend deployment
-
-This is a Vite + React application. Cloudflare Pages can build it directly from the GitHub repository.
-
-- Production branch: `cloudflare-migration` (review and merge when ready)
+## Cloudflare Pages settings
+- Repository: `AkHypeR/parbati-bhandar`
+- Branch: `cloudflare-migration` (preview/test before production)
 - Build command: `npm run build`
-- Build output directory: `dist`
-- Node version: 22 or newer
+- Output directory: `dist`
 
-The repository includes `wrangler.toml` and `public/_redirects` for the Pages build and single-page-app routing.
+## Required Cloudflare resources
+1. Create a D1 database named `parbati-bhandar`; copy its database ID into `wrangler.toml`.
+2. Create an R2 bucket named `parbati-bhandar-images`.
+3. Apply `migrations/0001_initial.sql` to D1.
+4. Bind D1 as `DB` and R2 as `IMAGES` in the Pages project.
+5. Add encrypted Pages secrets `OWNER_PASSWORD` and `SESSION_SECRET`. Use a unique password of at least 16 characters and a separate random secret of at least 32 characters. Never commit secrets.
+6. Deploy preview, test all flows, then connect the production domain.
 
-## Important backend migration status
+## Migration scope
+Owner authentication is verified in a Pages Function and uses a signed HttpOnly/Secure/SameSite cookie with a 12-hour expiry. Catalogue and settings are stored in D1. Product, banner and scanner images are stored in R2 and served through a cached Pages Function. Static assets use the Cloudflare CDN.
 
-The storefront currently contains integrations for Supabase Auth, database tables, and the `product-images` Storage bucket. Cloudflare Pages hosting does not replace those services. The previous Supabase project was deleted, so the existing owner login, product/inventory persistence, settings, and image uploads will not work until they are migrated and the app code is updated.
+The existing Google Maps destination link is retained; verify it in the preview. Static requests and dynamic API requests have different plan limits. The app is designed to reduce backend calls, but no unlimited dynamic traffic is promised.
 
-Do not put an owner password, database secret, or service credential in frontend code. A password-only owner page must verify credentials on a server-side Worker and use a secure session; hiding an admin page with a client-side password is not secure.
-
-## Recommended Cloudflare backend
-
-- Workers: authenticated API endpoints and server-side owner session handling.
-- D1: products, inventory, store settings, and orders metadata.
-- R2: product and store image objects.
-- Turnstile/rate limiting: abuse protection where appropriate.
-
-Before switching the live domain, complete the backend migration and test storefront, owner access, CRUD, image uploads, and map behavior.
+## Security
+Never put owner credentials in frontend code or GitHub. D1 and R2 writes are available only to authenticated owner sessions. Configure rate limiting on the login endpoint before public launch.
