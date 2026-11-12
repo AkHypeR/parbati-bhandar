@@ -1,13 +1,3 @@
 name = "parbati-bhandar"
 pages_build_output_dir = "./dist"
 compatibility_date = "2026-11-12"
-
-[[d1_databases]]
-binding = "DB"
-database_name = "parbati-bhandar"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
-migrations_dir = "migrations"
-
-[[r2_buckets]]
-binding = "IMAGES"
-bucket_name = "parbati-bhandar-images"
