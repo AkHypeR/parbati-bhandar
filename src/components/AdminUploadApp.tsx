@@ -2284,7 +2284,7 @@ export function AdminUploadApp({
                   <span>Owner-Only Hidden Login Active (Customers Cannot See Admin Login)</span>
                 </div>
                 <p className="text-emerald-800 leading-relaxed">
-                  Owner changes require your authorised Supabase account. Open this portal by tapping the top <strong>Shop Name (Parbati Bhandar)</strong> 5 times, then sign in.
+                  Owner changes are protected by your Cloudflare owner password. Open this portal by tapping the top <strong>Shop Name (Parbati Bhandar)</strong> 5 times, then sign in.
                 </p>
               </div>
 
