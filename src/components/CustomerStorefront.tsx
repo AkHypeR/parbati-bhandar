@@ -284,13 +284,8 @@ export function CustomerStorefront({
             </div>
           </div>
 
-          {/* Row 2: "10 mins" Teal Badge + Customer / Burdwan Location Line */}
+          {/* Customer / Burdwan Location Line */}
           <div className="mt-3 flex items-center gap-2.5">
-            <div className="w-12 h-11 rounded-xl bg-[#0d647d] text-white flex flex-col items-center justify-center leading-none shrink-0 shadow-2xs tabular-nums">
-              <span className="text-sm sm:text-base font-black">{deliveryEtaMins}</span>
-              <span className="text-[10px] font-semibold opacity-95">mins</span>
-            </div>
-
             <button
               type="button"
               onClick={() => setIsAddressExpanded(!isAddressExpanded)}
