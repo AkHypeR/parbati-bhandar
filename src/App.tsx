@@ -136,7 +136,24 @@ export default function App() {
     }, 3200);
   };
 
-  useEffect(() => { if (!supabase) return; const { data } = supabase.auth.onAuthStateChange(event => { if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true); }); return () => data.subscription.unsubscribe(); }, []);
+  useEffect(() => {
+    if (!supabase) return;
+    // Supabase may return either a hash token or a PKCE ?code= callback.
+    const isRecoveryUrl = () => {
+      const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+      const query = new URLSearchParams(window.location.search);
+      return hash.get('type') === 'recovery' || query.get('type') === 'recovery';
+    };
+    if (isRecoveryUrl()) setPasswordRecovery(true);
+    const { data } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true);
+    });
+    // Also check for an already-established recovery session after client startup.
+    void supabase.auth.getSession().then(({ data: sessionData }) => {
+      if (sessionData.session && isRecoveryUrl()) setPasswordRecovery(true);
+    });
+    return () => data.subscription.unsubscribe();
+  }, []);
 
   const handleForgotPassword = async () => { if (!supabase) return; setAuthLoading(true); setPinError(''); try { const { error } = await supabase.auth.resetPasswordForEmail(ownerEmail.trim(), { redirectTo: window.location.origin }); if (error) throw error; showToast('Password reset email sent. Check inbox and spam.'); } catch (e) { setPinError((e as Error).message); } finally { setAuthLoading(false); } };
   const handleSetNewPassword = async (e: React.FormEvent) => { e.preventDefault(); if (!supabase) return; if (newPassword.length < 8 || newPassword !== confirmNewPassword) { setPinError(newPassword.length < 8 ? 'Use at least 8 characters.' : 'Passwords do not match.'); return; } setAuthLoading(true); setPinError(''); try { const { error } = await supabase.auth.updateUser({ password: newPassword }); if (error) throw error; await supabase.auth.signOut(); setPasswordRecovery(false); setNewPassword(''); setConfirmNewPassword(''); setActiveMode('admin'); showToast('Password updated. Sign in with your new password.'); } catch (e) { setPinError((e as Error).message); } finally { setAuthLoading(false); } };
