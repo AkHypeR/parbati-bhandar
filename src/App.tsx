@@ -139,14 +139,50 @@ export default function App() {
 
 
   useEffect(() => {
+    if (!supabase) return;
+
+    let active = true;
+    const showRecoveryScreen = () => {
+      if (!active) return;
+      setIsPasswordRecovery(true);
+      setActiveMode('admin');
+      setRecoveryMessage('');
+    };
+
+    // Supabase emits PASSWORD_RECOVERY after it has exchanged the email link
+    // for a valid recovery session. This is more reliable than checking the URL
+    // alone, because the verification redirect can change the URL fragment.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY' && session) {
+        showRecoveryScreen();
+      }
+    });
+
     const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
     const query = new URLSearchParams(window.location.search);
     if (hash.get('type') === 'recovery' || query.get('type') === 'recovery') {
+      showRecoveryScreen();
+      // Fallback for cases where Supabase processed the link before this
+      // component subscribed to the auth event.
+      void supabase.auth.getSession().then(({ data, error }) => {
+        if (active && error) setRecoveryMessage(error.message);
+        if (active && !data.session) {
+          setRecoveryMessage('The password-reset link could not be verified. Request a fresh reset email and open its link only once.');
+        }
+      });
+    }
+
+    const authError = hash.get('error_description') || query.get('error_description');
+    if (authError) {
       setIsPasswordRecovery(true);
       setActiveMode('admin');
+      setRecoveryMessage(authError.replace(/\\+/g, ' '));
     }
-    const authError = hash.get('error_description');
-    if (authError) setRecoveryMessage(decodeURIComponent(authError.replace(/\\+/g, ' ')));
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handlePasswordRecovery = async (e: React.FormEvent) => {
