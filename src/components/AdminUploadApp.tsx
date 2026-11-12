@@ -29,7 +29,6 @@ import {
   Product,
   ProductVariety,
   StoreSettings,
-  compressImageToBase64,
   calculateDiscountDetails,
   isProductLowStock,
   generateQrMatrix,
@@ -268,47 +267,20 @@ export function AdminUploadApp({
     setVarietyRows((prev) => prev.filter((row) => row.id !== rowId));
   };
 
-  // Handle Photo Upload from Mobile Camera or Gallery
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      const compressed = await compressImageToBase64(file);
-      setImageUrl(compressed);
-      showToast('Product photo compressed & ready!');
-    } catch {
-      showToast('Could not process image file', 'error');
-    }
+  // Direct uploads are disabled because this deployment does not use paid object storage.
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.target.value = '';
+    showToast('Direct photo uploads are disabled. Paste a public image URL instead.', 'error');
   };
 
-  // Handle Special Occasion Banner Image Upload
-  const handleOccasionFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      const compressed = await compressImageToBase64(file, 720, 0.8);
-      setSettingsForm((prev) => ({ ...prev, occasionImageUrl: compressed }));
-      showToast('Special Occasion banner photo uploaded! Click Save Settings to publish.');
-    } catch {
-      showToast('Could not process occasion image file', 'error');
-    }
+  const handleOccasionFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.target.value = '';
+    showToast('Direct uploads are disabled. Paste a public image URL instead.', 'error');
   };
 
-  // Handle Store Scanner (QR Code) Image Upload
-  const handleScannerFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      const compressed = await compressImageToBase64(file, 600, 0.85);
-      setSettingsForm((prev) => ({
-        ...prev,
-        scannerImageUrl: compressed,
-        scannerMode: 'upload',
-      }));
-      showToast('Scanner picture uploaded! Click Save Settings to apply.');
-    } catch {
-      showToast('Could not process scanner image file', 'error');
-    }
+  const handleScannerFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.target.value = '';
+    showToast('Direct uploads are disabled. Paste a public image URL instead.', 'error');
   };
 
   const handleProductSubmit = (e: React.FormEvent) => {
