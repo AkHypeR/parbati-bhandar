@@ -348,7 +348,7 @@ export function CustomerStorefront({
                   {storeSettings.timings}
                 </span>
                 <a
-                  href={'https://maps.app.goo.gl/yrXRW4uuwWjaEzQi6?g_st=ac'}
+                  href={storeSettings.mapsUrl?.trim() || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(storeSettings.address || 'Parbati Bhandar, Gangpur, West Bengal')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-emerald-700 font-bold hover:underline"
@@ -1434,7 +1434,7 @@ export function CustomerStorefront({
 
           <div className="flex flex-wrap items-center justify-center gap-2.5">
             <a
-              href={'https://maps.app.goo.gl/yrXRW4uuwWjaEzQi6?g_st=ac'}
+              href={storeSettings.mapsUrl?.trim() || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(storeSettings.address || 'Parbati Bhandar, Gangpur, West Bengal')}`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-200 font-semibold flex items-center gap-1.5 whitespace-nowrap shrink-0"
