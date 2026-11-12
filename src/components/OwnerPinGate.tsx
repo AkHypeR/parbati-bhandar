@@ -10,8 +10,9 @@ interface OwnerPinGateProps {
   loading?: boolean;
   onSubmit: (e: React.FormEvent) => void;
   onBackToCustomer: () => void;
+  onForgotPassword: () => void;
 }
-export function OwnerPinGate({ email, setEmail, password, setPassword, pinError, loading, onSubmit, onBackToCustomer }: OwnerPinGateProps) {
+export function OwnerPinGate({ email, setEmail, password, setPassword, pinError, loading, onSubmit, onBackToCustomer, onForgotPassword }: OwnerPinGateProps) {
   return <div className="flex-1 flex items-center justify-center p-4 bg-slate-100">
     <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-6 sm:p-8 max-w-md w-full text-center space-y-5">
       <div className="w-16 h-16 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto"><Lock className="w-8 h-8" /></div>
@@ -24,6 +25,7 @@ export function OwnerPinGate({ email, setEmail, password, setPassword, pinError,
         {pinError && <p role="alert" className="text-xs font-bold text-red-600 bg-red-50 py-2 px-3 rounded-xl">{pinError}</p>}
         <button disabled={loading} type="submit" className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white font-extrabold text-sm shadow-md">{loading ? 'Signing in…' : 'Sign in to Owner Portal'}</button>
       </form>
+      <button type="button" onClick={onForgotPassword} disabled={loading} className="text-sm font-semibold text-emerald-700 underline">Forgot password? Send reset email</button>
       <p className="text-xs text-slate-500">Your account must be registered as a store administrator. The old default PIN login has been disabled.</p>
       <button type="button" onClick={onBackToCustomer} className="text-xs font-semibold text-slate-500 hover:text-slate-800 underline">← Back to Customer Storefront</button>
     </div>
