@@ -197,7 +197,7 @@ export default function App() {
       return;
     }
     if (!supabase) {
-      setRecoveryMessage('Supabase is not configured.');
+      setRecoveryMessage('Cloudflare owner authentication is not configured.');
       return;
     }
     setAuthLoading(true);
@@ -226,7 +226,7 @@ export default function App() {
     async function loadCloud() {
       if (!isSupabaseConfigured || !supabase) {
         setCloudReady(true);
-        showToast('Supabase keys are missing. Add the VITE_SUPABASE values to enable cloud sync.', 'error');
+        showToast('Cloudflare backend is not configured. Check the D1 and R2 bindings.', 'error');
         return;
       }
       try {
@@ -542,7 +542,7 @@ export default function App() {
   const handleOwnerPinLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!supabase || !isSupabaseConfigured) {
-      setPinError('Cloud login is not configured. Check the Supabase environment values.');
+      setPinError('Cloud login is not configured. Check the Cloudflare Pages secrets.');
       return;
     }
     setAuthLoading(true);
@@ -602,7 +602,7 @@ export default function App() {
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-400 hidden sm:block">
-                  Owner access is protected by Supabase authentication
+                  Owner access is protected by Cloudflare owner authentication
                 </p>
               </div>
             </div>
