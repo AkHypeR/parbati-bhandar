@@ -267,15 +267,60 @@ export function AdminUploadApp({
     setVarietyRows((prev) => prev.filter((row) => row.id !== rowId));
   };
 
-  // Direct uploads are disabled because this deployment does not use paid object storage.
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     e.target.value = '';
-    showToast('Direct photo uploads are disabled. Paste a public image URL instead.', 'error');
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      showToast('Please choose an image file.', 'error');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Please choose an image smaller than 5 MB.', 'error');
+      return;
+    }
+
+    setIsUploadingImage(true);
+    try {
+      const signatureResponse = await fetch('/api/images/signature', {
+        method: 'POST',
+        credentials: 'same-origin',
+      });
+      const signatureData = await signatureResponse.json();
+      if (!signatureResponse.ok) {
+        throw new Error(signatureData.error || 'Could not prepare image upload.');
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('api_key', signatureData.apiKey);
+      formData.append('timestamp', String(signatureData.timestamp));
+      formData.append('signature', signatureData.signature);
+      formData.append('folder', signatureData.folder);
+
+      const uploadResponse = await fetch(
+        `https://api.cloudinary.com/v1_1/${signatureData.cloudName}/image/upload`,
+        { method: 'POST', body: formData }
+      );
+      const uploadData = await uploadResponse.json();
+      if (!uploadResponse.ok || !uploadData.secure_url) {
+        throw new Error(uploadData.error?.message || 'Image upload failed.');
+      }
+
+      setImageUrl(uploadData.secure_url);
+      showToast('Product photo uploaded successfully!');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Image upload failed.', 'error');
+    } finally {
+      setIsUploadingImage(false);
+    }
   };
 
   const handleOccasionFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.target.value = '';
-    showToast('Direct uploads are disabled. Paste a public image URL instead.', 'error');
+    showToast('Use a public image URL for the occasion banner for now.', 'error');
   };
 
   const handleScannerFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -983,11 +1028,12 @@ export function AdminUploadApp({
                     />
                     <button
                       type="button"
-                      onClick={() => showToast('Direct uploads are disabled. Paste a public image URL below.', 'error')}
-                      className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-2xs cursor-pointer"
+                      disabled={isUploadingImage}
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-2xs cursor-pointer disabled:opacity-60"
                     >
                       <Camera className="w-4 h-4 text-emerald-600" />
-                      <span>Upload unavailable — use image URL below</span>
+                      <span>{isUploadingImage ? 'Uploading photo…' : 'Choose photo from device'}</span>
                     </button>
 
                     <input
