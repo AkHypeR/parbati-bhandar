@@ -32,9 +32,12 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     if (!owner) {
       const held = heldByProduct.get(String(product.id)) || 0;
       const remaining = typeof product.stockQuantity === "number" ? product.stockQuantity - held : null;
+      const configuredThreshold = Number(product.lowStockThreshold);
+      const publicLowStockThreshold = Number.isFinite(configuredThreshold) && configuredThreshold > 0
+        ? configuredThreshold
+        : 5;
       product.lowStock = remaining !== null && product.inStock !== false &&
-        Number.isFinite(Number(product.lowStockThreshold)) && Number(product.lowStockThreshold) > 0 &&
-        remaining > 0 && remaining <= Number(product.lowStockThreshold);
+        remaining > 0 && remaining <= publicLowStockThreshold;
       if (typeof product.stockQuantity === "number" && product.inStock !== false && remaining <= 0) product.inStock = false;
       delete product.stockQuantity;
       delete product.lowStockThreshold;
