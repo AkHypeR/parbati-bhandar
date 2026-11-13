@@ -519,7 +519,7 @@ export function AdminUploadApp({
                 <div className="text-lg font-extrabold text-emerald-600">{inStockCount}</div>
                 <div className="text-[11px] font-semibold text-emerald-700 whitespace-nowrap">In Stock</div>
               </div>
-              <div className="px-2.5 sm:px-3 py-1.5 text-center border-l border-slate-200">
+              <div className="px-2.5 sm:px-3 py-2 text-center rounded-xl bg-white border border-slate-100">
                 <div className="text-lg font-extrabold text-amber-600 flex items-center justify-center gap-1">
                   {lowStockCount > 0 && <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />}
                   <span>{lowStockCount}</span>
@@ -556,7 +556,7 @@ export function AdminUploadApp({
             <button
               type="button"
               onClick={() => setAdminTab('inventory')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer whitespace-nowrap shrink-0 tabular-nums ${
+              className={`flex w-full sm:w-auto justify-center items-center gap-2 px-3 sm:px-4 py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-150 cursor-pointer whitespace-normal sm:whitespace-nowrap min-h-11 tabular-nums ${
                 adminTab === 'inventory'
                   ? 'bg-emerald-600 text-white shadow-sm'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -575,7 +575,7 @@ export function AdminUploadApp({
             <button
               type="button"
               onClick={() => setAdminTab('settings')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+              className={`flex w-full sm:w-auto justify-center items-center gap-2 px-3 sm:px-4 py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-150 cursor-pointer whitespace-normal sm:whitespace-nowrap min-h-11 ${
                 adminTab === 'settings'
                   ? 'bg-emerald-600 text-white shadow-sm'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -588,7 +588,7 @@ export function AdminUploadApp({
             <button
               type="button"
               onClick={() => setAdminTab('orders')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer whitespace-nowrap shrink-0 ${adminTab === 'orders' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+              className={`flex w-full sm:w-auto justify-center items-center gap-2 px-3 sm:px-4 py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-150 cursor-pointer whitespace-normal sm:whitespace-nowrap min-h-11 ${adminTab === 'orders' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
             >
               <ClipboardList className="w-4 h-4" />
               <span>Orders</span>
@@ -597,7 +597,7 @@ export function AdminUploadApp({
             <button
               type="button"
               onClick={() => setAdminTab('quickReplies')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer whitespace-nowrap shrink-0 ${adminTab === 'quickReplies' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+              className={`flex w-full sm:w-auto justify-center items-center gap-2 px-3 sm:px-4 py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-150 cursor-pointer whitespace-normal sm:whitespace-nowrap min-h-11 ${adminTab === 'quickReplies' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
             >
               <MessageCircle className="w-4 h-4" />
               <span>Customer WhatsApp Replies</span>
