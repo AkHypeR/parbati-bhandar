@@ -340,9 +340,11 @@ export function CartDrawer({
 
               {/* Order review list — Step 1 */}
               <div className="py-2">
-                <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-semibold text-amber-900">
-                  ⚠️ Order soon to avoid losing low-stock items. Their 5-minute cart timer is shown below the item name.
-                </div>
+                {cartItemsList.some(item => getLowStockCountdown(item.product) !== null) && (
+                  <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-semibold text-amber-900">
+                    ⚠️ Order soon: {cartItemsList.filter(item => getLowStockCountdown(item.product) !== null).map(item => item.product.name).join(', ')} {cartItemsList.filter(item => getLowStockCountdown(item.product) !== null).length === 1 ? 'is' : 'are'} low in stock. Check the countdown beside {cartItemsList.filter(item => getLowStockCountdown(item.product) !== null).length === 1 ? 'this item' : 'these items'}.
+                  </div>
+                )}
                 <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-slate-400 pb-1.5">
                   <span>Item Name</span>
                   <span>Quantity ({cartTotalItems} total)</span>
