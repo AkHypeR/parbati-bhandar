@@ -749,163 +749,87 @@ export function CustomerStorefront({
                         }));
 
                   return (
-                    <div className="relative w-full max-w-md mx-auto rounded-[28px] overflow-hidden shadow-md border-2 border-amber-300/90 bg-gradient-to-br from-[#fffbeb] via-white to-[#ecfdf5] p-4 sm:p-5 select-none">
-                      {/* Top Row: Rank Badge (#1 - #5) + Automatic Discount Pill */}
-                      <div className="flex items-center justify-between gap-1.5 mb-3">
-                        <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-900 text-amber-300 font-black text-[11px] shadow-2xs tabular-nums whitespace-nowrap shrink-0">
-                          <Sparkles className="w-3 h-3 fill-amber-300 shrink-0" />
-                          <span>#{rankNum} Best Pick</span>
-                          <span className="hidden xs:inline text-amber-200/80 font-semibold text-[10px]">
-                            • সেরা #{rankNum}
-                          </span>
-                        </div>
+                    <div className="group relative w-full max-w-md mx-auto h-[520px] sm:h-[560px] rounded-[28px] overflow-hidden shadow-md border-2 border-amber-300/90 bg-gradient-to-br from-[#fffbeb] via-white to-[#ecfdf5] select-none">
+                      {/* Large product artwork, styled like a storefront campaign banner */}
+                      <div className="absolute inset-0 flex items-center justify-center p-5 pb-28 sm:pb-32">
+                        {item.imageUrl ? (
+                          <img
+                            src={item.imageUrl}
+                            alt={item.name}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-[1.04]"
+                          />
+                        ) : (
+                          <span className="text-8xl sm:text-9xl drop-shadow-xs">{item.emoji || '🛍️'}</span>
+                        )}
+                      </div>
 
-                        <div className="flex items-center gap-1 shrink-0">
-                          {item.badge && (
-                            <span className="px-2 py-0.5 rounded-full bg-emerald-700 text-white font-extrabold text-[10px] shadow-2xs whitespace-nowrap">
-                              {item.badge}
-                            </span>
-                          )}
-                          {hasDiscount && (
-                            <span className="px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black text-[10px] uppercase tracking-wider shadow-2xs tabular-nums whitespace-nowrap">
-                              {discountPercent}% OFF
-                            </span>
-                          )}
+                      {/* Campaign badges */}
+                      <div className="absolute top-3 left-3 right-3 z-10 flex items-center justify-between gap-2">
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-950/90 text-amber-300 font-black text-xs shadow-md tabular-nums">
+                          <Sparkles className="w-3.5 h-3.5 fill-amber-300" />
+                          <span>#{rankNum} Best Pick</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          {item.badge && <span className="px-3 py-1.5 rounded-full bg-emerald-700 text-white font-extrabold text-xs shadow-md">{item.badge}</span>}
+                          {hasDiscount && <span className="px-3 py-1.5 rounded-full bg-amber-400 text-slate-950 font-black text-xs shadow-md">{discountPercent}% OFF</span>}
                         </div>
                       </div>
 
-                      {/* Middle Content: Product Artwork + Title + Pack Selector */}
-                      <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 my-1 px-7 sm:px-2">
-                        <div className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-3xl bg-white border border-amber-200/80 shadow-md flex items-center justify-center shrink-0 overflow-hidden">
-                          {item.imageUrl ? (
-                            <img
-                              src={item.imageUrl}
-                              alt={item.name}
-                              referrerPolicy="no-referrer"
-                              className="w-full h-full object-contain p-1"
-                            />
-                          ) : (
-                            <span className="text-5xl sm:text-6xl drop-shadow-xs">
-                              {item.emoji || '🛍️'}
-                            </span>
-                          )}
-                        </div>
+                      {/* Product details slide over the image on hover; remain visible on touch screens */}
+                      <div className="absolute inset-x-0 bottom-0 z-10 p-4 sm:p-5 bg-gradient-to-t from-slate-950 via-slate-950/90 to-slate-950/0 text-white sm:translate-y-2 sm:opacity-95 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 transition-all duration-300">
+                        <div className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-300">{item.category}</div>
+                        <h3 className="text-xl sm:text-2xl font-black leading-tight mt-1 line-clamp-2">{item.name}</h3>
 
-                        <div className="flex-1 min-w-0 text-center sm:text-left">
-                          <div className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700">
-                            {item.category}
+                        {quickOptions.length > 0 && (
+                          <div className="mt-3">
+                            <div className="text-xs font-bold text-white/80 mb-1.5">Select Pack / Weight</div>
+                            <div className="flex flex-wrap items-center gap-2 tabular-nums">
+                              {quickOptions.map((opt) => {
+                                const isSelected = activeOpt.label === opt.label;
+                                return (
+                                  <button
+                                    key={opt.label}
+                                    type="button"
+                                    onClick={() => setSelectedOptions((prev) => ({ ...prev, [item.id]: opt }))}
+                                    className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${isSelected ? 'bg-amber-400 text-slate-950 border-amber-300' : 'bg-white/15 hover:bg-white/25 text-white border-white/40'}`}
+                                  >
+                                    {opt.label}
+                                  </button>
+                                );
+                              })}
+                            </div>
                           </div>
-                          <h3 className="text-sm sm:text-base font-black text-slate-950 leading-snug mt-0.5 line-clamp-2">
-                            {item.name}
-                          </h3>
+                        )}
 
-                          {/* Quick Pack / Weight Pills inside the Slide */}
-                          {quickOptions.length > 0 && (
-                            <div className="mt-2.5">
-                              <div className="text-[10px] font-bold text-slate-500 mb-1">
-                                Select Pack / Weight:
-                              </div>
-                              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 tabular-nums">
-                                {quickOptions.map((opt) => {
-                                  const isSelected = activeOpt.label === opt.label;
-                                  return (
-                                    <button
-                                      key={opt.label}
-                                      type="button"
-                                      onClick={() =>
-                                        setSelectedOptions((prev) => ({
-                                          ...prev,
-                                          [item.id]: opt,
-                                        }))
-                                      }
-                                      className={`px-2 py-1 rounded-lg text-[11px] font-bold border transition-all cursor-pointer ${
-                                        isSelected
-                                          ? 'bg-[#0d647d] text-white border-[#0d647d] shadow-2xs'
-                                          : 'bg-white hover:bg-amber-50 text-slate-700 border-slate-200'
-                                      }`}
-                                    >
-                                      {opt.label}
-                                    </button>
-                                  );
-                                })}
-                              </div>
+                        <div className="mt-3 pt-3 border-t border-white/25 flex items-end justify-between gap-3 tabular-nums">
+                          <div className="min-w-0">
+                            <div className="text-xs font-semibold text-white/75">Pack: <strong className="text-white">{activeOpt.label}</strong></div>
+                            <div className="flex flex-wrap items-baseline gap-2">
+                              <span className="text-2xl sm:text-3xl font-black text-white">₹{activeOpt.price}</span>
+                              {hasDiscount && activeOpt.mrp && <span className="text-sm text-white/60 line-through font-semibold">₹{activeOpt.mrp}</span>}
+                              {hasDiscount && savedAmount > 0 && <span className="text-xs font-extrabold text-emerald-300">Save ₹{savedAmount}</span>}
+                            </div>
+                          </div>
+
+                          {inCartQty === 0 ? (
+                            <button
+                              type="button"
+                              aria-label={`Add best item ${item.name}`}
+                              onClick={() => updateCartQty(item, 1, { selectedUnit: activeOpt.label, unitPrice: activeOpt.price, unitMrp: activeOpt.mrp })}
+                              className="px-4 py-3 rounded-2xl bg-[#ffd814] hover:bg-[#f7ca00] active:scale-95 text-slate-950 font-black text-sm flex items-center gap-1.5 shadow-lg cursor-pointer shrink-0"
+                            >
+                              <Plus className="w-4 h-4 stroke-[2.5]" />
+                              <span>Add to Order</span>
+                            </button>
+                          ) : (
+                            <div className="flex items-center bg-emerald-600 text-white rounded-2xl overflow-hidden text-sm font-black shadow-lg shrink-0">
+                              <button type="button" aria-label={`Decrease quantity of ${item.name}`} onClick={() => updateCartQty(item, -1, { selectedUnit: activeOpt.label, unitPrice: activeOpt.price, unitMrp: activeOpt.mrp })} className="px-3 py-2.5 hover:bg-emerald-700 cursor-pointer">-</button>
+                              <span className="px-2.5">{inCartQty}</span>
+                              <button type="button" aria-label={`Increase quantity of ${item.name}`} onClick={() => updateCartQty(item, 1, { selectedUnit: activeOpt.label, unitPrice: activeOpt.price, unitMrp: activeOpt.mrp })} className="px-3 py-2.5 hover:bg-emerald-700 cursor-pointer">+</button>
                             </div>
                           )}
                         </div>
-                      </div>
-
-                      {/* Bottom Price & Instant 1-Tap Add to Order Bar */}
-                      <div className="mt-4 pt-3 border-t border-amber-200/70 flex items-center justify-between gap-3 tabular-nums">
-                        <div>
-                          <div className="text-[11px] font-semibold text-slate-500">
-                            Pack: <strong className="text-slate-800">{activeOpt.label}</strong>
-                          </div>
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-xl sm:text-2xl font-black text-slate-950">
-                              ₹{activeOpt.price}
-                            </span>
-                            {hasDiscount && activeOpt.mrp && (
-                              <span className="text-xs text-slate-400 line-through font-semibold">
-                                ₹{activeOpt.mrp}
-                              </span>
-                            )}
-                            {hasDiscount && savedAmount > 0 && (
-                              <span className="text-xs font-extrabold text-emerald-700">
-                                Save ₹{savedAmount}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        {inCartQty === 0 ? (
-                          <button
-                            type="button"
-                            aria-label={`Add best item ${item.name}`}
-                            onClick={() =>
-                              updateCartQty(item, 1, {
-                                selectedUnit: activeOpt.label,
-                                unitPrice: activeOpt.price,
-                                unitMrp: activeOpt.mrp,
-                              })
-                            }
-                            className="px-5 py-2.5 rounded-2xl bg-[#ffd814] hover:bg-[#f7ca00] active:scale-95 text-slate-950 font-black text-xs sm:text-sm flex items-center gap-1.5 shadow-sm cursor-pointer shrink-0"
-                          >
-                            <Plus className="w-4 h-4 stroke-[2.5]" />
-                            <span>Add to Order</span>
-                          </button>
-                        ) : (
-                          <div className="flex items-center bg-emerald-600 text-white rounded-2xl overflow-hidden text-sm font-black shadow-sm shrink-0">
-                            <button
-                              type="button"
-                              aria-label={`Decrease quantity of ${item.name}`}
-                              onClick={() =>
-                                updateCartQty(item, -1, {
-                                  selectedUnit: activeOpt.label,
-                                  unitPrice: activeOpt.price,
-                                  unitMrp: activeOpt.mrp,
-                                })
-                              }
-                              className="px-3 py-2 hover:bg-emerald-700 cursor-pointer"
-                            >
-                              -
-                            </button>
-                            <span className="px-2.5">{inCartQty}</span>
-                            <button
-                              type="button"
-                              aria-label={`Increase quantity of ${item.name}`}
-                              onClick={() =>
-                                updateCartQty(item, 1, {
-                                  selectedUnit: activeOpt.label,
-                                  unitPrice: activeOpt.price,
-                                  unitMrp: activeOpt.mrp,
-                                })
-                              }
-                              className="px-3 py-2 hover:bg-emerald-700 cursor-pointer"
-                            >
-                              +
-                            </button>
-                          </div>
-                        )}
                       </div>
                     </div>
                   );
