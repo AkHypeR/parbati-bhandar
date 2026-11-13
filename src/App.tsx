@@ -407,6 +407,7 @@ export default function App() {
   );
 
   const handleSaveCustomerOrder = async (turnstileToken: string, pushSubscription?: PushSubscriptionJSON | null): Promise<number | null> => {
+    if (!checkIsStoreOpenIST(storeSettings)) { showToast('The store is closed. Orders cannot be placed right now.', 'error'); return null; }
     try {
       const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerName, customerPhone, turnstileToken, pushSubscription, note: customerNote, items: cartItemsList.map(item => ({ productId: item.product.id, name: item.product.name, quantity: item.qty, unit: item.selectedUnit, price: item.unitPrice })) }) });
       const result = await response.json().catch(() => ({}));
@@ -852,6 +853,7 @@ export default function App() {
           />
           <CartDrawer
             isOpen={isCartOpen}
+            liveIsOpen={liveIsOpen}
             products={products}
             onClose={() => setIsCartOpen(false)}
             cartItemsList={cartItemsList}
