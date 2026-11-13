@@ -133,9 +133,11 @@ export function CustomerStorefront({
     }, 2200);
   };
 
-  const handleSearchInputChange = (val: string) => {
-    setSearchQuery(val);
-  };
+  const handleSearchInputChange = (val: string) => { setSearchQuery(val); };
+  const searchSuggestions = searchQuery.trim().length > 0
+    ? products.filter(product => product.name.toLocaleLowerCase().includes(searchQuery.trim().toLocaleLowerCase()))
+      .sort((a, b) => { const q = searchQuery.trim().toLocaleLowerCase(); return Number(!a.name.toLocaleLowerCase().startsWith(q)) - Number(!b.name.toLocaleLowerCase().startsWith(q)) || a.name.localeCompare(b.name); }).slice(0, 6)
+    : [];
 
   const getActiveOptionForProduct = (product: Product) => {
     if (selectedOptions[product.id]) {
@@ -373,7 +375,9 @@ export function CustomerStorefront({
                 onChange={(e) => handleSearchInputChange(e.target.value)}
                 placeholder='Search for "Miniket Rice", "Atta", "Mustard Oil", "Ghee"...'
                 className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white text-slate-900 placeholder-slate-400 text-xs sm:text-sm font-medium border border-slate-300 shadow-2xs focus:outline-none focus:border-[#0d647d] focus:ring-2 focus:ring-sky-200"
+                autoComplete="off"
               />
+              {searchSuggestions.length > 0 && <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl"><p className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Suggested products</p>{searchSuggestions.map(product => <button key={product.id} type="button" onClick={() => setSearchQuery(product.name)} className="flex w-full items-center justify-between gap-3 border-t border-slate-100 px-4 py-3 text-left text-sm font-semibold text-slate-800 hover:bg-emerald-50 active:bg-emerald-100"><span className="min-w-0 truncate">{product.name}</span><span className="shrink-0 text-xs text-slate-400">{product.category}</span></button>)}</div>}
               {searchQuery && (
                 <button
                   type="button"
