@@ -86,6 +86,7 @@ function loadInitialCart(): CartMap {
 export default function App() {
   const [products, setProducts] = useState<Product[]>(loadInitialProducts);
   const [storeSettings, setStoreSettings] = useState<StoreSettings>(loadInitialSettings);
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [cart, setCart] = useState<CartMap>(loadInitialCart);
 
   // Mode Switcher: 'customer' | 'admin'
@@ -216,6 +217,22 @@ export default function App() {
     setRecoveryMessage('Password updated successfully. Return to Owner Access and sign in with your new password.');
   };
 
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/settings', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : Promise.reject()).then(data => { if (!cancelled) setMaintenanceMode(data?.settings?.maintenanceMode === true); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  const handleToggleMaintenance = async () => {
+    const next = !maintenanceMode;
+    try {
+      const response = await fetch('/api/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ maintenanceMode: next }) });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || 'Could not update maintenance mode');
+      setMaintenanceMode(next);
+      showToast(next ? 'Maintenance mode is ON. Storefront paused.' : 'Maintenance mode is OFF. Storefront live.');
+    } catch (error) { showToast((error as Error).message, 'error'); }
+  };
   // Keep the cart local to this device; the live catalogue and settings are cloud-backed.
   useEffect(() => {
     try { localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(cart)); } catch { /* ignore */ }
@@ -678,6 +695,19 @@ export default function App() {
       {/* VIEW 1: CUSTOMER STOREFRONT WEBSITE        */}
       {/* ========================================== */}
       {activeMode === 'customer' ? (
+        maintenanceMode ? (
+          <div className="fixed inset-0 z-[100] min-h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-[#063b35] to-slate-900 text-white flex items-center justify-center px-5">
+            <div className="absolute inset-0 opacity-20" aria-hidden="true"><div className="absolute -top-20 -left-16 h-72 w-72 rounded-full bg-emerald-400 blur-3xl animate-pulse" /><div className="absolute -bottom-24 -right-16 h-80 w-80 rounded-full bg-amber-300 blur-3xl animate-pulse" /></div>
+            <div className="relative w-full max-w-xl rounded-[2rem] border border-white/15 bg-white/10 p-8 sm:p-12 text-center shadow-2xl backdrop-blur-xl">
+              <div className="mx-auto mb-6 grid h-24 w-24 place-items-center rounded-3xl bg-amber-400 text-slate-950 shadow-lg animate-bounce"><span className="text-5xl" aria-hidden="true">🛠️</span></div>
+              <p className="text-xs font-black uppercase tracking-[0.28em] text-amber-300">Parbati Bhandar</p>
+              <h1 className="mt-3 text-3xl sm:text-4xl font-black tracking-tight">We’ll be back soon!</h1>
+              <p className="mx-auto mt-4 max-w-md text-sm sm:text-base leading-7 text-slate-200">We’re making a few improvements to serve you better. Online shopping is temporarily paused while we work behind the scenes.</p>
+              <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-300/10 px-5 py-2.5 text-sm font-bold text-amber-200"><span className="h-2.5 w-2.5 rounded-full bg-amber-300 animate-pulse" /> Store maintenance in progress</div>
+              <p className="mt-8 text-xs text-slate-400">Thank you for your patience • ধন্যবাদ</p>
+            </div>
+          </div>
+        ) : (
         <>
           <CustomerStorefront
             storeSettings={storeSettings}
@@ -726,6 +756,7 @@ export default function App() {
             orderText={orderText}
           />
         </>
+        )
       ) : isPasswordRecovery ? (
         <div className="flex-1 flex items-center justify-center p-4 bg-slate-100">
           <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-6 sm:p-8 max-w-md w-full space-y-5">
@@ -758,6 +789,8 @@ export default function App() {
           products={products}
           filteredAdminProducts={filteredAdminProducts}
           storeSettings={storeSettings}
+          maintenanceMode={maintenanceMode}
+          onToggleMaintenance={handleToggleMaintenance}
           adminTab={adminTab}
           setAdminTab={setAdminTab}
           adminSearch={adminSearch}
