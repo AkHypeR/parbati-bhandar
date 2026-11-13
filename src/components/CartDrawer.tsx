@@ -78,7 +78,7 @@ export function CartDrawer({
     if (savingOrder) return;
     const popup = window.open('about:blank', '_blank');
     setSavingOrder(true);
-    try { const saved = await onSaveOrder(turnstileToken); if (saved && popup) { popup.location.href = whatsAppUrl; setTurnstileToken(''); onClose(); } else if (popup) popup.close(); }
+    try { const saved = await onSaveOrder(turnstileToken); if (saved && popup) { clearCart(); popup.location.href = whatsAppUrl; setTurnstileToken(''); onClose(); } else if (popup) popup.close(); }
     finally { setSavingOrder(false); }
   };
 
@@ -276,11 +276,6 @@ export function CartDrawer({
                 </div>
               </div>
 
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-                <p className="mb-2 text-xs font-bold text-slate-700">Security check</p>
-                <TurnstileWidget onVerify={setTurnstileToken} />
-              </div>
-
               {/* Text-Format WhatsApp Bill Preview (Name & Quantity Only) */}
               <div className="pt-3">
                 <div className="p-3 rounded-2xl bg-slate-900 text-slate-100 space-y-1.5">
@@ -298,6 +293,10 @@ export function CartDrawer({
               </div>
             </>
           )}
+          <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+            <p className="mb-2 text-xs font-bold text-slate-700">Security check</p>
+            <TurnstileWidget onVerify={setTurnstileToken} />
+          </div>
         </div>
 
         {cartItemsList.length > 0 && (
