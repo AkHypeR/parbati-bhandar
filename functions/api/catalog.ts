@@ -8,6 +8,11 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   ]);
   const visibleProducts = (products.results || []).map(row => {
     const product = JSON.parse(row.data);
+    // Treat zero inventory as unavailable even for older rows that predate the
+    // server-side stock normalization.
+    if (typeof product.stockQuantity === "number" && product.stockQuantity <= 0) {
+      product.inStock = false;
+    }
     // Inventory counts and reorder thresholds are owner-only. Customers receive
     // only the public availability flag used by the storefront.
     if (!owner) {
