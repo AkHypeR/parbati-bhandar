@@ -727,16 +727,47 @@ export default function App() {
             </div>
             <div className="relative w-full max-w-xl overflow-hidden rounded-[2rem] border border-white/15 bg-white/[0.09] p-8 text-center shadow-2xl backdrop-blur-xl sm:p-12">
               <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-emerald-200/80 to-transparent" />
-              <div className="relative mx-auto mb-7 grid h-28 w-28 place-items-center">
-                <div className="absolute inset-0 rounded-full border border-dashed border-amber-200/50 animate-[spin_18s_linear_infinite]" />
-                <div className="absolute inset-2 rounded-full border border-emerald-200/30 animate-[spin_12s_linear_infinite_reverse]" />
-                <div className="absolute -right-1 top-3 h-3 w-3 rounded-full bg-amber-300 shadow-[0_0_18px_rgba(252,211,77,0.9)] animate-pulse" />
-                <div className="relative grid h-20 w-20 place-items-center rounded-[1.7rem] border border-amber-200/50 bg-gradient-to-br from-amber-300 via-amber-400 to-orange-500 text-slate-950 shadow-[0_12px_45px_rgba(245,158,11,0.3)] animate-[float_3.5s_ease-in-out_infinite]">
-                  <span className="text-5xl drop-shadow-sm" aria-hidden="true">🧺</span>
-                  <span className="absolute -right-4 -top-3 rounded-xl border border-white/60 bg-white px-2 py-1 text-2xl shadow-lg animate-[float_2.8s_ease-in-out_infinite]" aria-hidden="true">🛢️</span>
-                  <span className="absolute -bottom-3 -left-4 rounded-xl border border-white/60 bg-white px-2 py-1 text-2xl shadow-lg animate-[float_3.2s_ease-in-out_infinite]" aria-hidden="true">🌾</span>
-                  <span className="absolute -right-4 -bottom-3 rounded-xl border border-white/60 bg-white px-2 py-1 text-xl shadow-lg animate-[float_3.5s_ease-in-out_infinite]" aria-hidden="true">🧂</span>
-                </div>
+              <div className="relative mx-auto mb-7 grid h-44 w-48 place-items-center" aria-hidden="true">
+                <div className="absolute inset-1 rounded-full border border-dashed border-amber-200/45 animate-[spin_24s_linear_infinite]" />
+                <div className="absolute inset-4 rounded-full border border-emerald-200/25 animate-[spin_18s_linear_infinite_reverse]" />
+                <div className="absolute right-2 top-5 h-3 w-3 rounded-full bg-amber-300 shadow-[0_0_18px_rgba(252,211,77,0.9)] animate-pulse" />
+                <svg viewBox="0 0 220 190" className="relative z-10 h-40 w-44 drop-shadow-[0_14px_18px_rgba(0,0,0,0.22)] animate-[float_3.8s_ease-in-out_infinite]" role="img" aria-label="Illustration of a Bengali woman carrying a basket of groceries">
+                  <ellipse cx="110" cy="176" rx="68" ry="8" fill="#071f1b" opacity=".25" />
+                  {/* Traditional white sari with red border */}
+                  <path d="M79 72 Q54 91 59 145 L83 164 L145 164 Q155 126 137 82 L119 67Z" fill="#fff8e9" stroke="#e8d9c4" strokeWidth="2"/>
+                  <path d="M76 91 Q103 107 133 87 L145 164 L128 164 Q122 126 106 111 Q91 137 83 164 L65 151Z" fill="#c83d43"/>
+                  <path d="M75 92 Q101 111 133 88" fill="none" stroke="#f6d6c5" strokeWidth="5"/>
+                  <path d="M77 75 Q55 101 65 143" fill="none" stroke="#b8323b" strokeWidth="5"/>
+                  {/* Hair and face */}
+                  <path d="M78 49 Q76 16 109 17 Q144 18 141 57 L134 82 L82 78Z" fill="#211a19"/>
+                  <ellipse cx="110" cy="51" rx="27" ry="32" fill="#b97850"/>
+                  <path d="M84 45 Q87 18 111 19 Q137 20 138 48 Q124 35 109 36 Q96 39 84 45" fill="#211a19"/>
+                  <circle cx="110" cy="54" r="2.3" fill="#38221d"/>
+                  <path d="M107 67 Q111 70 115 67" fill="none" stroke="#7c3430" strokeWidth="2" strokeLinecap="round"/>
+                  <circle cx="110" cy="79" r="3" fill="#b8323b"/>
+                  {/* Arms carrying basket */}
+                  <path d="M73 99 Q55 113 77 132 L92 137" fill="none" stroke="#b97850" strokeWidth="10" strokeLinecap="round"/>
+                  <path d="M135 99 Q157 113 143 132 L128 137" fill="none" stroke="#b97850" strokeWidth="10" strokeLinecap="round"/>
+                  {/* Woven bamboo basket */}
+                  <path d="M70 118 Q110 105 150 118 L140 165 Q110 178 80 165Z" fill="#b87936" stroke="#70421f" strokeWidth="3"/>
+                  <path d="M72 123 Q110 135 148 123 M75 137 Q110 149 145 137 M78 151 Q110 163 142 151" fill="none" stroke="#f0c27b" strokeWidth="3"/>
+                  <path d="M87 116 Q91 93 110 93 Q130 93 134 116" fill="none" stroke="#e8b66d" strokeWidth="5"/>
+                  {/* Groceries peeking out */}
+                  <g className="animate-[float_2.8s_ease-in-out_infinite]">
+                    <path d="M84 116 L83 79 Q96 72 108 80 L105 117Z" fill="#f2e5c6" stroke="#c8ad78" strokeWidth="2"/>
+                    <path d="M88 86 L103 86 M87 94 L104 94" stroke="#c8ad78" strokeWidth="2"/>
+                    <text x="95" y="108" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#80623a">RICE</text>
+                  </g>
+                  <g className="animate-[float_3.2s_ease-in-out_infinite]">
+                    <rect x="112" y="77" width="17" height="39" rx="5" fill="#e9b83f" stroke="#9a6a17" strokeWidth="2"/>
+                    <rect x="116" y="70" width="9" height="9" rx="2" fill="#b87926"/>
+                    <rect x="115" y="91" width="11" height="12" rx="2" fill="#fff4d8"/>
+                  </g>
+                  <g className="animate-[float_3.5s_ease-in-out_infinite]">
+                    <path d="M132 105 Q145 91 153 104 L151 118 L134 119Z" fill="#e8d9b2" stroke="#a18b5e" strokeWidth="2"/>
+                    <path d="M137 108 L149 108" stroke="#a18b5e" strokeWidth="2"/>
+                  </g>
+                </svg>
               </div>
               <button type="button" aria-label="Parbati Bhandar" onClick={() => setMaintenanceLogoTaps(count => { if (count + 1 >= 5) { setActiveMode('admin'); showToast('Owner portal access'); return 0; } return count + 1; })} className="text-xs font-black uppercase tracking-[0.32em] text-amber-300 cursor-default select-none focus:outline-none">{'Parbati Bhandar'}</button>
               <h1 className="mt-4 bg-gradient-to-r from-white via-emerald-100 to-amber-200 bg-clip-text text-3xl font-black tracking-tight text-transparent sm:text-4xl">We’ll be back soon!</h1>
