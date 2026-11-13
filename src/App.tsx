@@ -110,7 +110,8 @@ export default function App() {
   const [maintenanceUntil, setMaintenanceUntil] = useState<number | null>(null);
   const [maintenanceNow, setMaintenanceNow] = useState(Date.now());
   const [maintenanceLogoTaps, setMaintenanceLogoTaps] = useState(0);
-  const [cart, setCart] = useState<CartMap>(loadInitialCart);\n  const cartReservationId = useRef<string>(() => {
+  const [cart, setCart] = useState<CartMap>(loadInitialCart);
+  const cartReservationId = useRef<string>((() => {
     try {
       const existing = localStorage.getItem('parbati_bhandar_cart_reservation_v1');
       if (existing && /^[a-zA-Z0-9-]{16,80}$/.test(existing)) return existing;
@@ -118,7 +119,7 @@ export default function App() {
       localStorage.setItem('parbati_bhandar_cart_reservation_v1', created);
       return created;
     } catch { return crypto.randomUUID(); }
-  } as any);
+  })());
   const reservationQueueRef = useRef<Promise<any>>(Promise.resolve());
 
 
