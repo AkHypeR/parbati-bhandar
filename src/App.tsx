@@ -815,6 +815,7 @@ export default function App() {
             setSortBy={setSortBy}
             cart={cart}
             cartItemsList={cartItemsList}
+            products={products}
             cartTotalItems={cartTotalItems}
             cartTotalPrice={cartTotalPrice}
             cartTotalSaved={cartTotalSaved}
