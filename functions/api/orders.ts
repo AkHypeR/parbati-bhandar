@@ -1,7 +1,7 @@
 import { json, ownerRequired, type Env } from "../_lib/env";
 import { sendPushNotification } from "@mmmike/web-push/send";
 
-type OrderItem = { name: string; quantity: number; unit: string; price: number };
+type OrderItem = { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean };
 const ensureTable = async (env: Env) => {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS push_subscriptions (order_id TEXT PRIMARY KEY, subscription_json TEXT NOT NULL, created_at INTEGER NOT NULL)`).run();
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS customer_orders (
@@ -13,6 +13,7 @@ const ensureTable = async (env: Env) => {
   if (!(columns.results || []).some((column: any) => column.name === "order_number")) {
     await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN order_number INTEGER").run();
   }
+  if (!(columns.results || []).some((column: any) => column.name === "stock_deducted")) await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN stock_deducted INTEGER NOT NULL DEFAULT 0").run();
   const unnumbered = await env.DB.prepare("SELECT id FROM customer_orders WHERE order_number IS NULL ORDER BY created_at ASC, id ASC").all<any>();
   let nextNumber = 1;
   for (const row of unnumbered.results || []) {
@@ -39,7 +40,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const phone = String(body?.customerPhone || "").replace(/\D/g, "").slice(0, 15);
   const note = String(body?.note || "").trim().slice(0, 500);
   const items = Array.isArray(body?.items) ? body.items.slice(0, 100).map((x: any) => ({
-    name: String(x.name || "").slice(0, 120), quantity: Math.max(1, Math.min(999, Number(x.quantity) || 1)),
+    productId: x.productId ? String(x.productId).slice(0, 100) : undefined, name: String(x.name || "").slice(0, 120), quantity: Math.max(1, Math.min(999, Number(x.quantity) || 1)),
     unit: String(x.unit || "").slice(0, 30), price: Math.max(0, Number(x.price) || 0)
   })) : [];
   if (!name || phone.length < 10 || phone.length > 15 || !items.length || items.some((x: OrderItem) => !x.name)) return json({ error: "Please enter your name, valid phone number and at least one item." }, 400);
@@ -71,12 +72,31 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   await ensureTable(env);
   let body: any; try { body = await request.json(); } catch { return json({error:"Invalid update."},400); }
   const status = String(body?.status || "");
-  if (!["new","ready","unavailable","completed","cancelled"].includes(status) || !body?.id) return json({error:"Invalid order status."},400);
+  if (!["new","review","ready","unavailable","completed","cancelled"].includes(status) || !body?.id) return json({error:"Invalid order status."},400);
   const id = String(body.id);
-  const order = await env.DB.prepare("SELECT status,customer_name,order_number FROM customer_orders WHERE id=?").bind(id).first<any>();
+  const order = await env.DB.prepare("SELECT status,customer_name,order_number,items_json,stock_deducted FROM customer_orders WHERE id=?").bind(id).first<any>();
   if (!order) return json({error:"Order not found."},404);
-  if (order.status === status) return json({ok:true,changes:0,notification:"No status change."});
-  const result = await env.DB.prepare("UPDATE customer_orders SET status=?, updated_at=? WHERE id=?").bind(status,Date.now(),id).run();
+  const items: OrderItem[] = Array.isArray(body.items) ? body.items.map((x: any) => ({...x, unavailable: !!x.unavailable})) : JSON.parse(order.items_json || "[]");
+  if (status === "ready" && !Number(order.stock_deducted || 0)) {
+    const updates: Array<{id:string; data:string; updatedAt:number}> = [];
+    for (const item of items) {
+      if (item.unavailable || !item.productId) continue;
+      const row = await env.DB.prepare("SELECT data FROM products WHERE id=?").bind(item.productId).first<any>();
+      if (!row) continue;
+      const product = JSON.parse(row.data);
+      if (typeof product.stockQuantity !== "number") continue;
+      if (String(item.unit).trim().toLowerCase() !== String(product.unit || "").trim().toLowerCase()) return json({error:"Stock unit mismatch for " + item.name + ". Review the product unit before confirming."},409);
+      if (product.stockQuantity < item.quantity) return json({error:"Not enough stock for " + item.name + ". Mark it unavailable or update stock."},409);
+      product.stockQuantity = Math.max(0, product.stockQuantity - item.quantity);
+      if (product.stockQuantity === 0) product.inStock = false;
+      product.updatedAt = Date.now();
+      updates.push({id:item.productId,data:JSON.stringify(product),updatedAt:product.updatedAt});
+    }
+    const claimed = await env.DB.prepare("UPDATE customer_orders SET stock_deducted=1 WHERE id=? AND stock_deducted=0").bind(id).run();
+    if (!claimed.meta.changes) return json({error:"Stock was already deducted for this order."},409);
+    for (const u of updates) await env.DB.prepare("UPDATE products SET data=?,updated_at=? WHERE id=?").bind(u.data,u.updatedAt,u.id).run();
+  }
+  const result = await env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,updated_at=? WHERE id=?").bind(status,JSON.stringify(items),Date.now(),id).run();
   let notification = "not-configured";
   if (["ready","unavailable","completed","cancelled"].includes(status) && env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.VAPID_SUBJECT) {
     const saved = await env.DB.prepare("SELECT subscription_json FROM push_subscriptions WHERE order_id=?").bind(id).first<any>();
