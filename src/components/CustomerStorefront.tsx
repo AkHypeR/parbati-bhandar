@@ -1142,6 +1142,7 @@ export function CustomerStorefront({
               const inCartQty =
                 cart[activeCartKey]?.qty ||
                 (activeOpt.label === product.unit ? cart[product.id]?.qty || 0 : 0);
+              const canAddMore = activeOpt.inStock && product.inStock;
 
               const { hasDiscount, discountPercent, savedAmount } = calculateDiscountDetails(
                 activeOpt.price,
@@ -1194,14 +1195,14 @@ export function CustomerStorefront({
 
                       {/* Top-Right Availability Badge — reserved space keeps it clear of offer labels */}
                       <div className="absolute top-2.5 right-2.5 max-w-[4.5rem]">
-                        {activeOpt.inStock ? (
+                        {canAddMore ? (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
                             Available
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-700 border border-red-200">
-                            Unavailable
+                            {inCartQty > 0 ? 'In your cart' : 'Unavailable'}
                           </span>
                         )}
                       </div>
@@ -1385,7 +1386,7 @@ export function CustomerStorefront({
                     </div>
 
                     {/* Add to Customer Order List */}
-                    {activeOpt.inStock ? (
+                    {(canAddMore || inCartQty > 0) ? (
                       inCartQty === 0 ? (
                         <button
                           type="button"
@@ -1424,7 +1425,7 @@ export function CustomerStorefront({
                           <button
                             type="button"
                             aria-label={`Increase quantity of ${product.name}`}
-                            disabled={getRemainingStock(product) <= 0}
+                            disabled={!canAddMore || getRemainingStock(product) <= 0}
                             onClick={() =>
                               updateCartQty(product, 1, {
                                 selectedUnit: activeOpt.label,
