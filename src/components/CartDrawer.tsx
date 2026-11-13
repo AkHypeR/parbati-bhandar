@@ -93,11 +93,14 @@ export function CartDrawer({
     const currentProduct = products.find(item => item.id === product.id) || product;
     const stock = Number(currentProduct.stockQuantity);
     const configuredThreshold = Number(currentProduct.lowStockThreshold);
-    // Match the cart-expiry rule: default to 5 units if no threshold is configured.
+    // Customer catalog hides exact inventory counts and sends only a safe lowStock flag.
+    // Owner catalog can continue calculating the flag from its private stock quantity.
     const threshold = Number.isFinite(configuredThreshold) && configuredThreshold > 0
       ? configuredThreshold
       : 5;
-    if (!currentProduct.inStock || !Number.isFinite(stock) || stock <= 0 || stock > threshold) return null;
+    const isLowStock = currentProduct.lowStock === true ||
+      (Number.isFinite(stock) && stock > 0 && stock <= threshold);
+    if (!currentProduct.inStock || !isLowStock) return null;
     try {
       const saved = JSON.parse(localStorage.getItem('parbati_bhandar_low_stock_cart_timers_v1') || '{}');
       const startedAt = saved?.[currentProduct.id];
