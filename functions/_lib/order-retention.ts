@@ -19,8 +19,9 @@ async function ensureOrderRetentionTables(env: Env): Promise<void> {
   if (!names.includes("order_number")) await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN order_number INTEGER").run();
   if (!names.includes("stock_deducted")) await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN stock_deducted INTEGER NOT NULL DEFAULT 0").run();
   // Assign tracking numbers to legacy orders before customers request history.
+  const currentMaximum = await env.DB.prepare("SELECT COALESCE(MAX(order_number),0) AS value FROM customer_orders").first<any>();
   const unnumbered = await env.DB.prepare("SELECT id FROM customer_orders WHERE order_number IS NULL ORDER BY created_at ASC, id ASC").all<any>();
-  let nextNumber = 1;
+  let nextNumber = Number(currentMaximum?.value || 0) + 1;
   for (const row of unnumbered.results || []) {
     await env.DB.prepare("UPDATE customer_orders SET order_number=? WHERE id=?").bind(nextNumber++, row.id).run();
   }
