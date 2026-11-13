@@ -1225,7 +1225,7 @@ export function CustomerStorefront({
               return (
                 <div
                   key={product.id}
-                  className={`group bg-white rounded-xl sm:rounded-2xl border transition-all flex flex-col justify-between overflow-hidden min-w-0 ${
+                  className={`group bg-white rounded-xl sm:rounded-2xl border border-emerald-100 shadow-[0_2px_10px_rgba(16,80,45,0.05)] transition-all flex flex-col justify-between overflow-hidden min-w-0 hover:shadow-lg hover:-translate-y-0.5 ${
                     product.inStock
                       ? 'border-emerald-100 hover:border-emerald-400 hover:shadow-md'
                       : 'border-slate-200 opacity-70 bg-slate-50'
