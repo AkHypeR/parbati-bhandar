@@ -24,6 +24,8 @@ interface CartDrawerProps {
   customerName: string;
   customerPhone: string;
   setCustomerPhone: (v: string) => void;
+  rememberCustomerDetails: boolean;
+  setRememberCustomerDetails: (v: boolean) => void;
   onSaveOrder: (turnstileToken: string, pushSubscription?: PushSubscriptionJSON | null) => Promise<boolean>;
   setCustomerName: (v: string) => void;
   customerNote: string;
@@ -48,6 +50,8 @@ export function CartDrawer({
   customerName,
   customerPhone,
   setCustomerPhone,
+  rememberCustomerDetails,
+  setRememberCustomerDetails,
   onSaveOrder,
   setCustomerName,
   customerNote,
@@ -224,6 +228,15 @@ export function CartDrawer({
                   <input id="cart-customer-phone" type="tel" inputMode="tel" value={customerPhone} onChange={e => { setCustomerPhone(e.target.value); setPhoneError(false); }} placeholder="Enter 10-digit mobile number" className={"w-full px-3.5 py-2.5 rounded-xl border bg-white text-xs sm:text-sm font-bold " + (phoneError ? "border-red-400" : "border-slate-300")} />
                   {phoneError && <p className="text-xs font-bold text-red-600">Enter a valid phone number (at least 10 digits).</p>}
                 </div>
+                <label className="flex items-start gap-2 text-[11px] text-slate-600">
+                  <input
+                    type="checkbox"
+                    checked={rememberCustomerDetails}
+                    onChange={(e) => setRememberCustomerDetails(e.target.checked)}
+                    className="mt-0.5 accent-emerald-700"
+                  />
+                  <span><strong>Remember my name and phone on this device</strong><br />Optional. Saved only in this browser to make your next checkout faster. You can untick this anytime.</span>
+                </label>
                 <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 space-y-2">
                   <div className="text-xs font-bold text-emerald-900">Order status notifications (optional)</div>
                   <p className="text-[11px] text-emerald-800">Get an alert when your order is ready, unavailable, cancelled or completed. Allow notifications on this device.</p>
