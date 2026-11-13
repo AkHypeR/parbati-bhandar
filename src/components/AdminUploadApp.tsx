@@ -464,11 +464,11 @@ export function AdminUploadApp({
   });
 
   return (
-    <div className="flex-1 bg-slate-100 pb-16">
+    <div className="flex-1 bg-gradient-to-b from-slate-100 to-slate-50 pb-16">
       {/* Owner Admin Header */}
-      <div className="bg-white border-b border-slate-200 shadow-2xs">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-5">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="bg-white border-b border-slate-200 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
             <div>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mb-2">
                 <span className="basis-full sm:basis-auto text-xs font-bold uppercase tracking-wider text-amber-800">
@@ -501,7 +501,7 @@ export function AdminUploadApp({
                   <span>Lock Admin</span>
                 </button>
               </div>
-              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900">
+              <h1 className="text-xl sm:text-2xl lg:text-[1.7rem] font-extrabold tracking-tight text-slate-950 leading-tight">
                 Upload Products &amp; Manage Daily Prices (পণ্য ও দাম আপডেট)
               </h1>
               <p className="text-xs sm:text-sm text-slate-500">
@@ -510,12 +510,12 @@ export function AdminUploadApp({
             </div>
 
             {/* Quick Stats (including Low Stock Alerts) */}
-            <div className="grid grid-cols-4 gap-1.5 sm:gap-2 bg-slate-50 p-2 rounded-2xl border border-slate-200 tabular-nums shrink-0">
-              <div className="px-2.5 sm:px-3 py-1.5 text-center">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200 tabular-nums shrink-0 lg:min-w-[390px]">
+              <div className="px-2.5 sm:px-3 py-2 text-center rounded-xl bg-white border border-slate-100">
                 <div className="text-lg font-extrabold text-slate-900">{totalProductsCount}</div>
                 <div className="text-[11px] font-semibold text-slate-500 whitespace-nowrap">Total Items</div>
               </div>
-              <div className="px-2.5 sm:px-3 py-1.5 text-center border-l border-slate-200">
+              <div className="px-2.5 sm:px-3 py-2 text-center rounded-xl bg-white border border-slate-100">
                 <div className="text-lg font-extrabold text-emerald-600">{inStockCount}</div>
                 <div className="text-[11px] font-semibold text-emerald-700 whitespace-nowrap">In Stock</div>
               </div>
@@ -534,14 +534,14 @@ export function AdminUploadApp({
           </div>
 
           {/* Admin Navigation Tabs */}
-          <div className="flex flex-wrap items-center gap-2 mt-5 border-t border-slate-100 pt-4">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-stretch sm:items-center gap-2 mt-5 border-t border-slate-100 pt-4">
             <button
               type="button"
               onClick={() => {
                 setEditingProduct(null);
                 setAdminTab('add');
               }}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+              className={`flex w-full sm:w-auto justify-center items-center gap-2 px-3 sm:px-4 py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-150 cursor-pointer whitespace-normal sm:whitespace-nowrap min-h-11 ${
                 adminTab === 'add'
                   ? 'bg-emerald-600 text-white shadow-sm'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -606,7 +606,7 @@ export function AdminUploadApp({
             <button
               type="button"
               onClick={() => setIsQrModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-amber-100 text-amber-900 hover:bg-amber-200 transition-all cursor-pointer whitespace-nowrap shrink-0"
+              className="flex w-full sm:w-auto justify-center items-center gap-2 px-3 sm:px-4 py-3 rounded-xl font-semibold text-xs sm:text-sm bg-amber-50 border border-amber-200 text-amber-900 hover:bg-amber-100 transition-all cursor-pointer whitespace-normal sm:whitespace-nowrap min-h-11"
             >
               <QrCode className="w-4 h-4" />
               <span>Print Shop QR Poster</span>
@@ -616,7 +616,7 @@ export function AdminUploadApp({
       </div>
 
       {/* Main Admin Workspace */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 pt-6 sm:pt-8">
 
         {adminTab === 'orders' && (
           <section className="space-y-4">
