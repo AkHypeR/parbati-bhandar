@@ -8,9 +8,17 @@ const ensureTable = (env: Env) => env.DB.prepare(`CREATE TABLE IF NOT EXISTS cus
 )`).run();
 
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
-  await ensureTable(env);
+  if (!env.TURNSTILE_SECRET_KEY) return json({ error: "Order security is not configured yet." }, 503);
   let body: any;
   try { body = await request.json(); } catch { return json({ error: "Invalid order." }, 400); }
+  const turnstileToken = String(body?.turnstileToken || "").slice(0, 2048);
+  if (!turnstileToken) return json({ error: "Please complete the security check." }, 400);
+  try {
+    const verifyResponse = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ secret: env.TURNSTILE_SECRET_KEY, response: turnstileToken }) });
+    const verification: any = await verifyResponse.json();
+    if (!verification.success || verification.action !== "order") return json({ error: "Security check failed. Please try again." }, 403);
+  } catch { return json({ error: "Security verification is temporarily unavailable. Please try again." }, 503); }
+  await ensureTable(env);
   const name = String(body?.customerName || "").trim().slice(0, 100);
   const phone = String(body?.customerPhone || "").replace(/\D/g, "").slice(0, 15);
   const note = String(body?.note || "").trim().slice(0, 500);
