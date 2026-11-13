@@ -163,6 +163,9 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
       if (!row) return json({error:"The product " + item.name + " no longer exists in inventory. Mark it unavailable before confirming."},409);
       const product = JSON.parse(row.data);
       if (typeof product.stockQuantity !== "number") continue;
+      if (product.inStock === false) {
+        return json({error:item.name + " is currently marked unavailable in inventory. Mark this order item unavailable or restore the product's availability first."},409);
+      }
       const units = stockUnitsForOrder(item, product);
       if (units === null || !Number.isFinite(units) || units <= 0) {
         return json({error:"Could not match the ordered unit for " + item.name + " with its stock unit (" + String(product.unit || "not set") + "). Update the product unit before confirming."},409);
@@ -198,6 +201,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
           ), updated_at=?
           WHERE id=? AND json_type(data,'$.stockQuantity') IN ('integer','real')
             AND ROUND(json_extract(data,'$.stockQuantity'), 4) >= ROUND(?, 4)
+            AND COALESCE(json_extract(data,'$.inStock'),1)=1
             AND EXISTS (SELECT 1 FROM customer_orders WHERE id=? AND stock_deducted=2)`)
           .bind(qty, qty, now, now, productId, qty, id),
         env.DB.prepare(`INSERT INTO order_stock_deductions (order_id,product_id,quantity)
