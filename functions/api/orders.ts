@@ -173,7 +173,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
     }
 
     for (const [productId, entry] of deductions) {
-      if (entry.product.stockQuantity < entry.quantity) {
+      if (Number(entry.product.stockQuantity) + 1e-9 < entry.quantity) {
         return json({error:"Not enough stock for " + entry.product.name + ". Mark it unavailable or update stock."},409);
       }
     }
@@ -192,12 +192,12 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
         env.DB.prepare(`UPDATE products
           SET data = json_set(
             data,
-            '$.stockQuantity', json_extract(data,'$.stockQuantity') - ?,
-            '$.inStock', CASE WHEN json_extract(data,'$.stockQuantity') - ? <= 0 THEN json('false') ELSE json_extract(data,'$.inStock') END,
+            '$.stockQuantity', MAX(0, ROUND(json_extract(data,'$.stockQuantity') - ?, 4)),
+            '$.inStock', CASE WHEN ROUND(json_extract(data,'$.stockQuantity') - ?, 4) <= 0 THEN json('false') ELSE json_extract(data,'$.inStock') END,
             '$.updatedAt', ?
           ), updated_at=?
           WHERE id=? AND json_type(data,'$.stockQuantity') IN ('integer','real')
-            AND json_extract(data,'$.stockQuantity') >= ?
+            AND ROUND(json_extract(data,'$.stockQuantity'), 4) >= ROUND(?, 4)
             AND EXISTS (SELECT 1 FROM customer_orders WHERE id=? AND stock_deducted=2)`)
           .bind(qty, qty, now, now, productId, qty, id),
         env.DB.prepare(`INSERT INTO order_stock_deductions (order_id,product_id,quantity)
