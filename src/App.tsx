@@ -398,9 +398,9 @@ export default function App() {
     [storeSettings.whatsappNumber, storeSettings.phone, orderText]
   );
 
-  const handleSaveCustomerOrder = async (): Promise<boolean> => {
+  const handleSaveCustomerOrder = async (turnstileToken: string): Promise<boolean> => {
     try {
-      const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerName, customerPhone, note: customerNote, items: cartItemsList.map(item => ({ name: item.product.name, quantity: item.qty, unit: item.selectedUnit, price: item.unitPrice })) }) });
+      const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerName, customerPhone, turnstileToken, note: customerNote, items: cartItemsList.map(item => ({ name: item.product.name, quantity: item.qty, unit: item.selectedUnit, price: item.unitPrice })) }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || 'Could not save order');
       showToast('Order saved. Opening WhatsApp…');
