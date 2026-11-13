@@ -239,7 +239,8 @@ export function AdminUploadApp({
   const [settingsForm, setSettingsForm] = useState<StoreSettings>(storeSettings);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const occasionFileInputRef = useRef<HTMLInputElement | null>(null);
-  const scannerFileInputRef = useRef<HTMLInputElement | null>(null);\n  const backupFileInputRef = useRef<HTMLInputElement | null>(null);
+  const scannerFileInputRef = useRef<HTMLInputElement | null>(null);
+  const backupFileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     setSettingsForm(storeSettings);
