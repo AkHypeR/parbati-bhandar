@@ -280,13 +280,15 @@ export default function App() {
     for (const item of Object.values(cart)) {
       const product = products.find((entry) => entry.id === item.product.id) || item.product;
       const stockQuantity = Number(product.stockQuantity);
-      const lowStockThreshold = Number(product.lowStockThreshold);
+      const configuredThreshold = Number(product.lowStockThreshold);
+      // Use a safe default of 5 units when the owner has not configured a threshold.
+      const lowStockThreshold = Number.isFinite(configuredThreshold) && configuredThreshold > 0
+        ? configuredThreshold
+        : 5;
       const isLowStock = product.inStock &&
         Number.isFinite(stockQuantity) &&
-        Number.isFinite(lowStockThreshold) &&
-        lowStockThreshold > 0 &&
         stockQuantity > 0 &&
-        stockQuantity < lowStockThreshold;
+        stockQuantity <= lowStockThreshold;
       if (isLowStock) {
         lowStockInCart.add(product.id);
         if (!lowStockCartStartedAt.current.has(product.id)) {
