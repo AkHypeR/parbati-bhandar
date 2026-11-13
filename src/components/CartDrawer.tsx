@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { TurnstileWidget } from './TurnstileWidget';
 import {
   ShoppingCart,
@@ -141,36 +141,47 @@ export function CartDrawer({
     return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
   };
 
-  if (!isOpen) return null;
+  const recommendationProducts = useMemo(() => {
+    const cartProductIds = new Set(cartItemsList.map(item => item.product.id));
+    // Normalize category labels so equivalent labels (e.g. Masala and Spices)
+    // can share recommendations.
+    const normalizeCategory = (value: string | undefined) => {
+      const category = (value || '').trim().toLowerCase();
+      if (/masala|spice|মশলা/.test(category)) return 'spices-masala';
+      if (/rice|atta|flour|চাল|আটা/.test(category)) return 'rice-atta';
+      if (/dal|pulse|lentil|ছোলা|ডাল/.test(category)) return 'dal-pulses';
+      if (/mustard oil|cooking oil|oil|ghee|তেল|ঘি/.test(category)) return 'oil-ghee';
+      if (/tea|biscuit|চা|বিস্কুট/.test(category)) return 'tea-biscuits';
+      if (/dairy|milk|egg|দুধ|ডিম/.test(category)) return 'dairy-eggs';
+      if (/daily essential|salt|sugar|নিত্যপ্রয়োজনীয়|লবণ|চিনি/.test(category)) return 'daily-essentials';
+      if (/breakfast|cereal|oats|সকালের/.test(category)) return 'breakfast-cereals';
+      if (/snack|packaged food|noodle|স্ন্যাকস|প্যাকেটজাত/.test(category)) return 'snacks-packaged';
+      if (/personal care|শিশু/.test(category)) return 'personal-care';
+      if (/cleaning|household|detergent|soap|পরিষ্কার/.test(category)) return 'cleaning-household';
+      return category.replace(/[^a-z0-9\u0980-\u09ff]+/g, '');
+    };
+    const inStock = products.filter(product =>
+      product.inStock &&
+      !cartProductIds.has(product.id) &&
+      (product.stockQuantity == null || Number(product.stockQuantity) > 0)
+    );
+    const cartCategories = new Set(cartItemsList.map(item => normalizeCategory(item.product.category)).filter(Boolean));
+    const sameCategory = inStock.filter(product => cartCategories.has(normalizeCategory(product.category)));
 
-  const cartProductIds = new Set(cartItemsList.map(item => item.product.id));
-  // Normalize category labels so "Masala", "Spices", and "Spices & Masala"
-  // are treated as the same category even if products were entered differently.
-  const normalizeCategory = (value: string | undefined) => {
-    const category = (value || '').trim().toLowerCase();
-    if (/masala|spice|মশলা/.test(category)) return 'spices-masala';
-    if (/rice|atta|flour|চাল|আটা/.test(category)) return 'rice-atta';
-    if (/dal|pulse|lentil|ছোলা|ডাল/.test(category)) return 'dal-pulses';
-    if (/mustard oil|cooking oil|oil|ghee|তেল|ঘি/.test(category)) return 'oil-ghee';
-    if (/tea|biscuit|চা|বিস্কুট/.test(category)) return 'tea-biscuits';
-    if (/dairy|milk|egg|দুধ|ডিম/.test(category)) return 'dairy-eggs';
-    if (/daily essential|salt|sugar|নিত্যপ্রয়োজনীয়|লবণ|চিনি/.test(category)) return 'daily-essentials';
-    if (/breakfast|cereal|oats|সকালের/.test(category)) return 'breakfast-cereals';
-    if (/snack|packaged food|noodle|স্ন্যাকস|প্যাকেটজাত/.test(category)) return 'snacks-packaged';
-    if (/personal care|শিশু/.test(category)) return 'personal-care';
-    if (/cleaning|household|detergent|soap|পরিষ্কার/.test(category)) return 'cleaning-household';
-    return category.replace(/[^a-z0-9\u0980-\u09ff]+/g, '');
-  };
-  const cartCategories = new Set(cartItemsList.map(item => normalizeCategory(item.product.category)).filter(Boolean));
-  const categoryRecommendations = products.filter(product =>
-    product.inStock &&
-    !cartProductIds.has(product.id) &&
-    cartCategories.has(normalizeCategory(product.category)) &&
-    (product.stockQuantity == null || Number(product.stockQuantity) > 0)
-  );
-  const bestFiveProducts = categoryRecommendations.filter(product => product.isBestItem)
-    .sort((left, right) => Number(left.bestItemRank ?? 999) - Number(right.bestItemRank ?? 999));
-  const recommendationProducts = (bestFiveProducts.length ? bestFiveProducts : categoryRecommendations).slice(0, 5);
+    // If matching-category products exist, randomly pick up to five from that group.
+    if (sameCategory.length > 0) {
+      return [...sameCategory].sort(() => Math.random() - 0.5).slice(0, 5);
+    }
+
+    // Otherwise fall back to the store's five highest-ranked in-stock best items.
+    const ranked = [...inStock].sort((left, right) => {
+      if (Boolean(left.isBestItem) !== Boolean(right.isBestItem)) return left.isBestItem ? -1 : 1;
+      return Number(left.bestItemRank ?? 999) - Number(right.bestItemRank ?? 999);
+    });
+    return ranked.slice(0, 5);
+  }, [products, cartItemsList]);
+
+  if (!isOpen) return null;
 
   const getRemainingStock = (product: Product) => {
     if (product.stockQuantity === undefined || product.stockQuantity === null || !Number.isFinite(Number(product.stockQuantity))) return Number.POSITIVE_INFINITY;
@@ -409,7 +420,7 @@ export function CartDrawer({
                   <div className="flex items-center justify-between gap-2">
                     <div>
                       <h4 className="text-sm font-extrabold text-slate-900">Complete your grocery list</h4>
-                      <p className="text-[11px] text-slate-500">More products from the categories in your shopping list.</p>
+                      <p className="text-[11px] text-slate-500">{recommendationProducts.length > 0 && cartItemsList.some(item => products.some(product => product.inStock && product.stockQuantity !== 0 && product.category === item.product.category && !cartItemsList.some(cartItem => cartItem.product.id === product.id))) ? "A random selection from matching categories." : "Popular in-stock picks from our store."}</p>
                     </div>
                   </div>
                   {recommendationProducts.length > 0 && (
@@ -428,7 +439,7 @@ export function CartDrawer({
                     ))}
                   </div>
                   )}
-                  {recommendationProducts.length === 0 && <p className="text-xs text-slate-500">No more in-stock items are available in the categories you selected.</p>}
+                  {recommendationProducts.length === 0 && <p className="text-xs text-slate-500">No other in-stock products are available right now.</p>}
                 </section>
               )}
               {checkoutStep === 'checkout' && <>
