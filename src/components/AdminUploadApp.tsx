@@ -222,9 +222,9 @@ export function AdminUploadApp({
     finally { setUpdatingOrderId(null); }
   };
   const messageOrderCustomer = (order: CustomerOrder, kind: 'ready' | 'unavailable') => {
-    const phone = order.customerPhone.replace(/\\D/g, '');
+    const phone = order.customerPhone.replace(/\D/g, '');
     const relevantItems = kind === 'unavailable' ? order.items.filter(item => item.unavailable) : order.items.filter(item => !item.unavailable);
-    const lines = relevantItems.map(item => `• ${item.name} — ${item.unit} × ${item.quantity}`).join('\\n');
+    const lines = relevantItems.map(item => `• ${item.name} — ${item.unit} × ${item.quantity}`).join('\n');
     const message = kind === 'ready'
       ? `নমস্কার ${order.customerName}! আপনার Parbati Bhandar-এর অর্ডারের উপলব্ধ পণ্যগুলি প্রস্তুত।\\n\\n${lines || 'আপনার অর্ডারটি প্রস্তুত।'}\\n\\nআপনি সুবিধামতো দোকান থেকে সংগ্রহ করতে পারেন। ধন্যবাদ।`
       : `নমস্কার ${order.customerName}, আপনার অর্ডারের নিচের পণ্যগুলি বর্তমানে স্টকে নেই:\\n\\n${lines || 'কোনও পণ্য unavailable হিসেবে চিহ্নিত করা হয়নি।'}\\n\\nদয়া করে দোকানের সঙ্গে যোগাযোগ করুন। ধন্যবাদ।`;
