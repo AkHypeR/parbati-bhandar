@@ -2219,7 +2219,7 @@ export function AdminUploadApp({
                     ) : (
                       <>
                         <label className="block text-[11px] font-bold uppercase text-slate-700">
-                          Upload Scanner Picture (Phone Camera / Gallery)
+                          Upload Scanner Picture from Gallery
                         </label>
                         <input
                           ref={scannerFileInputRef}
@@ -2235,7 +2235,7 @@ export function AdminUploadApp({
                             className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-2xs"
                           >
                             <Camera className="w-3.5 h-3.5" />
-                            <span>Upload Scanner Picture</span>
+                            <span>Choose from Gallery</span>
                           </button>
                           {settingsForm.scannerImageUrl && (
                             <button
