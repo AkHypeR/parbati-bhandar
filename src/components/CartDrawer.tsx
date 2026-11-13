@@ -26,7 +26,7 @@ interface CartDrawerProps {
   setCustomerPhone: (v: string) => void;
   rememberCustomerDetails: boolean;
   setRememberCustomerDetails: (v: boolean) => void;
-  onSaveOrder: (turnstileToken: string, pushSubscription?: PushSubscriptionJSON | null) => Promise<boolean>;
+  onSaveOrder: (turnstileToken: string, pushSubscription?: PushSubscriptionJSON | null) => Promise<number | null>;
   setCustomerName: (v: string) => void;
   customerNote: string;
   setCustomerNote: (v: string) => void;
@@ -117,7 +117,21 @@ export function CartDrawer({
     if (savingOrder) return;
     const popup = window.open('about:blank', '_blank');
     setSavingOrder(true);
-    try { const saved = await onSaveOrder(turnstileToken, pushSubscription); if (saved && popup) { clearCart(); popup.location.href = whatsAppUrl; setTurnstileToken(''); onClose(); } else if (popup) popup.close(); }
+    try {
+      const orderNumber = await onSaveOrder(turnstileToken, pushSubscription);
+      if (orderNumber !== null) {
+        clearCart();
+        setTurnstileToken('');
+        if (popup) {
+          try {
+            const whatsapp = new URL(whatsAppUrl);
+            whatsapp.searchParams.set('text', `${orderText}\\n\\nOrder Reference: #${orderNumber}\\nKeep this number and your phone number to track your order on the store website.`);
+            popup.location.href = whatsapp.toString();
+          } catch { popup.location.href = whatsAppUrl; }
+        }
+        onClose();
+      } else if (popup) popup.close();
+    }
     finally { setSavingOrder(false); }
   };
 
