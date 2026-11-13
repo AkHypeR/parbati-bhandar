@@ -46,6 +46,10 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     reservation_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL,
     expires_at INTEGER NOT NULL, PRIMARY KEY(reservation_id,product_id)
   )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS order_stock_reservations (
+    order_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL,
+    PRIMARY KEY(order_id,product_id)
+  )`).run();
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS cart_stock_reservation_guard (
     reservation_id TEXT PRIMARY KEY, expected_count INTEGER NOT NULL, actual_count INTEGER NOT NULL,
     CHECK(expected_count=actual_count)
