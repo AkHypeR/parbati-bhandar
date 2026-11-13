@@ -485,7 +485,7 @@ export function CustomerStorefront({
           </div>}
         </div>
       </section>
-
+      )}
 
       {/* ===================================================================== */}
       {/* STICKY SEARCH BAR & CATEGORY RIBBON (Follows User on Scroll)          */}
