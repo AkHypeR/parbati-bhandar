@@ -2,32 +2,47 @@ import { json, type Env } from "../_lib/env";
 
 type HoldItem = { productId: string; quantity: number; unit: string };
 
-function stockUnits(item: HoldItem, product: any): number | null {
-  const clean = (v: unknown) => String(v || "").trim().toLowerCase().replace(/\\s+/g, " ");
-  const requestedUnit = clean(item.unit), stockUnit = clean(product.unit);
-  if (requestedUnit === stockUnit) return Number(item.quantity);
-  const measure = (v: string): { dimension: string; base: number } | null => {
-    const m = v.match(/(\\d+(?:\\.\\d+)?)\\s*(kg|kgs|kilograms?|g|gm|grams?|l|litres?|liters?|ml|millilitres?|milliliters?)\\b/i);
-    if (!m) return null;
-    const n = Number(m[1]), u = m[2].toLowerCase();
-    if (["kg","kgs","kilogram","kilograms"].includes(u)) return {dimension:"mass",base:n*1000};
-    if (["g","gm","gram","grams"].includes(u)) return {dimension:"mass",base:n};
-    if (["l","litre","litres","liter","liters"].includes(u)) return {dimension:"volume",base:n*1000};
-    return {dimension:"volume",base:n};
+function stockUnits(item: { quantity: number; unit: string }, product: any): number | null {
+  const clean = (value: unknown) => String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
+  const itemUnit = clean(item.unit);
+  const stockUnit = clean(product.unit);
+  if (itemUnit === stockUnit) return Number(item.quantity);
+
+  const measure = (value: string): { dimension: string; base: number } | null => {
+    const match = value.match(/(\d+(?:\.\d+)?)\s*(kg|kgs|kilograms?|g|gm|grams?|l|litres?|liters?|ml|millilitres?|milliliters?)\b/i);
+    if (!match) return null;
+    const amount = Number(match[1]);
+    const unit = match[2].toLowerCase();
+    if (["kg", "kgs", "kilogram", "kilograms"].includes(unit)) return { dimension: "mass", base: amount * 1000 };
+    if (["g", "gm", "gram", "grams"].includes(unit)) return { dimension: "mass", base: amount };
+    if (["l", "litre", "litres", "liter", "liters"].includes(unit)) return { dimension: "volume", base: amount * 1000 };
+    return { dimension: "volume", base: amount };
   };
-  const req=measure(requestedUnit), base=measure(stockUnit);
-  if(req && base && req.dimension===base.dimension && base.base>0) return Number(item.quantity)*req.base/base.base;
+  const requested = measure(itemUnit);
+  const stored = measure(stockUnit);
+  if (requested && stored && requested.dimension === stored.dimension && stored.base > 0) {
+    return Number(item.quantity) * requested.base / stored.base;
+  }
+
+  // Packaged grocery variants (for example a 25g cereal pouch) are one
+  // sellable piece each when inventory is tracked in pcs/pieces/units.
+  const countableStockUnit = /^(pcs?|pieces?|units?|items?|nos?|numbers?)$/i.test(stockUnit);
+  const packagedProduct = /(pouch|packet|pack|sachet|bottle|jar|tin|can|box|carton)/i.test(String(product.name || ""));
+  if (countableStockUnit && (packagedProduct || /^(pcs?|pieces?|units?|items?|nos?|numbers?)$/i.test(itemUnit))) {
+    return Number(item.quantity);
+  }
+
   if (/(packet|pack|pouch|bottle|jar|bag)/i.test(stockUnit)) {
-    const count=requestedUnit.match(/(\\d+)\\s*[- ]?pack/i);
-    if(count) return Number(item.quantity)*Number(count[1]);
-    if (/(pack|packet|pouch|bottle|jar|bag)/i.test(requestedUnit)) return Number(item.quantity);
+    const packCount = itemUnit.match(/(\d+)\s*[- ]?pack/i);
+    if (packCount) return Number(item.quantity) * Number(packCount[1]);
+    if (/(pack|packet|pouch|bottle|jar|bag)/i.test(itemUnit)) return Number(item.quantity);
   }
   if (/pair/i.test(stockUnit)) {
-    const pieces=requestedUnit.match(/(\\d+)\\s*(piece|pieces|pcs)/i);
-    if(pieces) return Number(item.quantity)*Number(pieces[1])/2;
-    if(/tray/i.test(requestedUnit)) return Number(item.quantity)*15;
-    if(/dozen/i.test(requestedUnit)) return Number(item.quantity)*6;
-    if(/pair/i.test(requestedUnit)) return Number(item.quantity);
+    const pieces = itemUnit.match(/(\d+)\s*(piece|pieces|pcs)/i);
+    if (pieces) return Number(item.quantity) * Number(pieces[1]) / 2;
+    if (/tray/i.test(itemUnit)) return Number(item.quantity) * 15;
+    if (/dozen/i.test(itemUnit)) return Number(item.quantity) * 6;
+    if (/pair/i.test(itemUnit)) return Number(item.quantity);
   }
   return null;
 }
