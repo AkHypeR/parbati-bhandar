@@ -576,7 +576,7 @@ export function AdminUploadApp({
               <button type="button" onClick={() => {
                 const phone = replyCustomerPhone.replace(/\D/g, '');
                 if (!replyCustomerName.trim() || phone.length < 10) { showToast('Enter customer name and a valid WhatsApp number.', 'error'); return; }
-                const msg = `নমস্কার ${replyCustomerName.trim()}! আপনার Parbati Bhandar-এর অর্ডার লিস্ট তৈরি। আপনি সুবিধামতো যেকোনো সময় দোকান থেকে এসে সংগ্রহ করতে পারেন। ধন্যবাদ।${replyNote.trim() ? '\\n\\n' + replyNote.trim() : ''}`;
+                const msg = `নমস্কার ${replyCustomerName.trim()}! আপনার Parbati Bhandar-এর অর্ডার লিস্ট তৈরি। আপনি সুবিধামতো যেকোনো সময় দোকান থেকে এসে সংগ্রহ করতে পারেন। ধন্যবাদ।${replyNote.trim() ? '\n\n' + replyNote.trim() : ''}`;
                 window.open(`https://wa.me/${phone.length === 10 ? '91' + phone : phone}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener,noreferrer');
               }} className="rounded-xl bg-emerald-600 px-4 py-3 text-sm font-extrabold text-white shadow-sm hover:bg-emerald-700">Ready for pickup message</button>
               <button type="button" onClick={() => {
