@@ -98,13 +98,21 @@ export function CartDrawer({
     const threshold = Number.isFinite(configuredThreshold) && configuredThreshold > 0
       ? configuredThreshold
       : 5;
-    const isLowStock = currentProduct.lowStock === true ||
-      (Number.isFinite(stock) && stock > 0 && stock <= threshold);
-    if (!currentProduct.inStock || !isLowStock) return null;
+    let startedAt: unknown;
     try {
       const saved = JSON.parse(localStorage.getItem('parbati_bhandar_low_stock_cart_timers_v1') || '{}');
-      const startedAt = saved?.[currentProduct.id];
-      if (typeof startedAt !== 'number' || !Number.isFinite(startedAt)) return '05:00';
+      startedAt = saved?.[currentProduct.id];
+    } catch { startedAt = undefined; }
+    // Keep the cart warning visible even if the catalogue's lowStock flag changes
+    // after this customer's own stock reservation is counted.
+    const hasActiveLowStockTimer = typeof startedAt === 'number' && Number.isFinite(startedAt);
+    const isLowStock = currentProduct.lowStock === true ||
+      product.lowStock === true ||
+      (Number.isFinite(stock) && stock > 0 && stock <= threshold) ||
+      hasActiveLowStockTimer;
+    if (!currentProduct.inStock || !isLowStock) return null;
+    try {
+      if (!hasActiveLowStockTimer) return '05:00';
       const remaining = Math.max(0, 5 * 60 * 1000 - (timerNow - startedAt));
       const minutes = Math.floor(remaining / 60000);
       const seconds = Math.floor((remaining % 60000) / 1000);
