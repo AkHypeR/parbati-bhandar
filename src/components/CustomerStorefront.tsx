@@ -343,6 +343,21 @@ export function CustomerStorefront({
                 )?.[1] || 'পার্বতী ভান্ডার'}
               </span>
               <span className="block h-0.5 bg-amber-400 rounded-full w-20 sm:w-28 mt-0.5" />
+              {!liveIsOpen && (
+                <span
+                  role="status"
+                  aria-live="polite"
+                  className="mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-rose-200 bg-gradient-to-r from-rose-50 via-white to-amber-50 px-2.5 py-1 text-[9px] sm:text-[10px] font-extrabold tracking-wide text-rose-700 shadow-sm"
+                >
+                  <span className="relative flex h-2 w-2 shrink-0">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-60 motion-reduce:animate-none" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-rose-600" />
+                  </span>
+                  <span className="animate-pulse motion-reduce:animate-none">🌙 STORE CLOSED</span>
+                  <span aria-hidden="true" className="animate-bounce motion-reduce:animate-none">✦</span>
+                  <span className="font-semibold text-rose-600/80">• Back soon</span>
+                </span>
+              )}
             </button>
 
             {/* Right: Call, WhatsApp & QR Code Quick Buttons */}
