@@ -409,7 +409,8 @@ export default function App() {
     delta: number,
     option?: { selectedUnit?: string; unitPrice?: number; unitMrp?: number | null }
   ) => {
-    setCart((prev) => updateCartQuantity(prev, product, delta, option));
+    const latestProduct = products.find((entry) => entry.id === product.id) || product;
+    setCart((prev) => updateCartQuantity(prev, latestProduct, delta, option));
   };
 
   const { cartItemsList, cartTotalItems, cartTotalPrice, cartTotalSaved } = useMemo(
