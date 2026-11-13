@@ -784,7 +784,7 @@ export function AdminUploadApp({
                     <div className="mt-2 grid grid-cols-2 gap-2">
                       <button type="button" onClick={event => { event.stopPropagation(); messageOrderCustomer(order, 'ready'); }} className="rounded-lg border border-emerald-200 px-2 py-2 text-xs font-bold text-emerald-800">WhatsApp: Ready</button>
                       <button type="button" onClick={event => { event.stopPropagation(); messageOrderCustomer(order, 'unavailable'); }} className="rounded-lg border border-amber-200 px-2 py-2 text-xs font-bold text-amber-900">WhatsApp: Unavailable</button>
-                       <button type="button" disabled={updatingOrderId === order.id} onClick={event => { event.stopPropagation(); deleteCustomerOrder(order.id; }} className="col-span-2 rounded-lg border border-red-200 bg-red-50 px-2 py-2 text-xs font-bold text-red-700 disabled:opacity-50"><Trash2 className="mr-1 inline h-3.5 w-3.5" /> Delete Order</button>
+                       <button type="button" disabled={updatingOrderId === order.id} onClick={event => { event.stopPropagation(); deleteCustomerOrder(order.id); }} className="col-span-2 rounded-lg border border-red-200 bg-red-50 px-2 py-2 text-xs font-bold text-red-700 disabled:opacity-50"><Trash2 className="mr-1 inline h-3.5 w-3.5" /> Delete Order</button>
                     </div>
                   </article>
                 ))}
