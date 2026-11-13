@@ -1,7 +1,9 @@
 import { json, ownerRequired, type Env } from "../_lib/env";
+import { sendPushNotification } from "@mmmike/web-push/send";
 
 type OrderItem = { name: string; quantity: number; unit: string; price: number };
 const ensureTable = async (env: Env) => {
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS push_subscriptions (order_id TEXT PRIMARY KEY, subscription_json TEXT NOT NULL, created_at INTEGER NOT NULL)`);
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS customer_orders (
    id TEXT PRIMARY KEY, customer_name TEXT NOT NULL, customer_phone TEXT NOT NULL,
    note TEXT, items_json TEXT NOT NULL, total REAL NOT NULL, status TEXT NOT NULL DEFAULT 'new',
@@ -47,6 +49,11 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const id = crypto.randomUUID(), now = Date.now();
   await env.DB.prepare("INSERT INTO customer_orders (id,order_number,customer_name,customer_phone,note,items_json,total,status,created_at,updated_at) VALUES (?,?,?,?,?,?,?,'new',?,?)")
     .bind(id,orderNumber,name,phone,note,JSON.stringify(items),total,now,now).run();
+  const subscription = body?.pushSubscription;
+  if (subscription && typeof subscription.endpoint === "string" && typeof subscription.keys?.p256dh === "string" && typeof subscription.keys?.auth === "string" && subscription.endpoint.startsWith("https://")) {
+    await env.DB.prepare("INSERT OR REPLACE INTO push_subscriptions (order_id,subscription_json,created_at) VALUES (?,?,?)")
+      .bind(id,JSON.stringify({endpoint:subscription.endpoint,keys:{p256dh:subscription.keys.p256dh,auth:subscription.keys.auth}}),now).run();
+  }
   return json({ ok: true, orderId: id, orderNumber }, 201, { "cache-control": "no-store" });
 };
 
@@ -65,8 +72,29 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   let body: any; try { body = await request.json(); } catch { return json({error:"Invalid update."},400); }
   const status = String(body?.status || "");
   if (!["new","ready","unavailable","completed","cancelled"].includes(status) || !body?.id) return json({error:"Invalid order status."},400);
-  const result = await env.DB.prepare("UPDATE customer_orders SET status=?, updated_at=? WHERE id=?").bind(status,Date.now(),String(body.id)).run();
-  return json({ok:true,changes:result.meta.changes});
+  const id = String(body.id);
+  const order = await env.DB.prepare("SELECT status,customer_name,order_number FROM customer_orders WHERE id=?").bind(id).first<any>();
+  if (!order) return json({error:"Order not found."},404);
+  if (order.status === status) return json({ok:true,changes:0,notification:"No status change."});
+  const result = await env.DB.prepare("UPDATE customer_orders SET status=?, updated_at=? WHERE id=?").bind(status,Date.now(),id).run();
+  let notification = "not-configured";
+  if (["ready","unavailable","completed","cancelled"].includes(status) && env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.VAPID_SUBJECT) {
+    const saved = await env.DB.prepare("SELECT subscription_json FROM push_subscriptions WHERE order_id=?").bind(id).first<any>();
+    if (saved?.subscription_json) {
+      const messages: Record<string,{title:string;body:string}> = {
+        ready:{title:"Your order is ready!",body:"Order #" + order.order_number + " is ready for pickup at Parbati Bhandar."},
+        unavailable:{title:"Order update from Parbati Bhandar",body:"There is an availability update for order #" + order.order_number + ". Please contact the store."},
+        completed:{title:"Order completed",body:"Order #" + order.order_number + " has been marked completed. Thank you!"},
+        cancelled:{title:"Order cancelled",body:"Order #" + order.order_number + " has been cancelled. Please contact the store if you have questions."}
+      };
+      try {
+        const delivered = await sendPushNotification(JSON.parse(saved.subscription_json),{...messages[status],url:"/",tag:"order-" + id},{publicKey:env.VAPID_PUBLIC_KEY,privateKey:env.VAPID_PRIVATE_KEY,subject:env.VAPID_SUBJECT},{ttl:3600,urgency:"high"});
+        notification = delivered ? "sent" : "subscription-expired";
+        if (!delivered) await env.DB.prepare("DELETE FROM push_subscriptions WHERE order_id=?").bind(id).run();
+      } catch (error) { console.error("Order push notification failed",error); notification = "send-failed"; }
+    } else notification = "customer-not-subscribed";
+  }
+  return json({ok:true,changes:result.meta.changes,notification});
 };
 
 export const onRequestDelete: PagesFunction<Env> = async ({ request, env }) => {
