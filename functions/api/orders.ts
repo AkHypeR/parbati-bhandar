@@ -4,7 +4,7 @@ import { sendPushNotification } from "@mmmike/web-push/send";
 
 type OrderItem = { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean };
 
-function stockUnitsForOrder(item: OrderItem, product: any): number | null {
+function stockUnitsForOrder(item: { quantity: number; unit: string }, product: any): number | null {
   const clean = (value: unknown) => String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
   const itemUnit = clean(item.unit);
   const stockUnit = clean(product.unit);
@@ -26,8 +26,14 @@ function stockUnitsForOrder(item: OrderItem, product: any): number | null {
     return Number(item.quantity) * requested.base / stored.base;
   }
 
-  // Pack bundles and common piece-count varieties are expressed in the
-  // product's stock unit, not as a separate inventory SKU.
+  // Packaged grocery variants (for example a 25g cereal pouch) are one
+  // sellable piece each when inventory is tracked in pcs/pieces/units.
+  const countableStockUnit = /^(pcs?|pieces?|units?|items?|nos?|numbers?)$/i.test(stockUnit);
+  const packagedProduct = /(pouch|packet|pack|sachet|bottle|jar|tin|can|box|carton)/i.test(String(product.name || ""));
+  if (countableStockUnit && (packagedProduct || /^(pcs?|pieces?|units?|items?|nos?|numbers?)$/i.test(itemUnit))) {
+    return Number(item.quantity);
+  }
+
   if (/(packet|pack|pouch|bottle|jar|bag)/i.test(stockUnit)) {
     const packCount = itemUnit.match(/(\d+)\s*[- ]?pack/i);
     if (packCount) return Number(item.quantity) * Number(packCount[1]);
