@@ -87,6 +87,20 @@ interface VarietyFormRow {
   inStock: boolean;
 }
 
+async function uploadImageToCloudinary(dataUrl: string, folder: string): Promise<string> {
+  const response = await fetch('/api/upload', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify({ dataUrl, folder }),
+  });
+  const result = await response.json();
+  if (!response.ok || !result.url) {
+    throw new Error(result.error || 'Image upload failed');
+  }
+  return result.url as string;
+}
+
 export function AdminUploadApp({
   products,
   filteredAdminProducts,
@@ -274,10 +288,11 @@ export function AdminUploadApp({
     if (!file) return;
     try {
       const compressed = await compressImageToBase64(file);
-      setImageUrl(compressed);
-      showToast('Product photo compressed & ready!');
+      const url = await uploadImageToCloudinary(compressed, 'products');
+      setImageUrl(url);
+      showToast('Product photo uploaded to Cloudinary!');
     } catch {
-      showToast('Could not process image file', 'error');
+      showToast('Could not upload product photo to Cloudinary', 'error');
     }
   };
 
@@ -287,10 +302,11 @@ export function AdminUploadApp({
     if (!file) return;
     try {
       const compressed = await compressImageToBase64(file, 720, 0.8);
-      setSettingsForm((prev) => ({ ...prev, occasionImageUrl: compressed }));
-      showToast('Special Occasion banner photo uploaded! Click Save Settings to publish.');
+      const url = await uploadImageToCloudinary(compressed, 'banners');
+      setSettingsForm((prev) => ({ ...prev, occasionImageUrl: url }));
+      showToast('Banner photo uploaded to Cloudinary! Click Save Settings to publish.');
     } catch {
-      showToast('Could not process occasion image file', 'error');
+      showToast('Could not upload banner photo to Cloudinary', 'error');
     }
   };
 
@@ -300,14 +316,15 @@ export function AdminUploadApp({
     if (!file) return;
     try {
       const compressed = await compressImageToBase64(file, 600, 0.85);
+      const url = await uploadImageToCloudinary(compressed, 'scanner');
       setSettingsForm((prev) => ({
         ...prev,
-        scannerImageUrl: compressed,
+        scannerImageUrl: url,
         scannerMode: 'upload',
       }));
-      showToast('Scanner picture uploaded! Click Save Settings to apply.');
+      showToast('Scanner picture uploaded to Cloudinary! Click Save Settings to apply.');
     } catch {
-      showToast('Could not process scanner image file', 'error');
+      showToast('Could not upload scanner picture to Cloudinary', 'error');
     }
   };
 
