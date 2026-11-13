@@ -30,7 +30,7 @@ function stockUnitsForOrder(item: OrderItem, product: any): number | null {
   if (/(packet|pack|pouch|bottle|jar|bag)/i.test(stockUnit)) {
     const packCount = itemUnit.match(/(\d+)\s*[- ]?pack/i);
     if (packCount) return Number(item.quantity) * Number(packCount[1]);
-    if (/(single pack|1 pack|packet|pouch|bottle|jar|bag)/i.test(itemUnit)) return Number(item.quantity);
+    if (/(pack|packet|pouch|bottle|jar|bag)/i.test(itemUnit)) return Number(item.quantity);
   }
   if (/pair/i.test(stockUnit)) {
     const pieces = itemUnit.match(/(\d+)\s*(piece|pieces|pcs)/i);
