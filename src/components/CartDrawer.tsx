@@ -92,9 +92,12 @@ export function CartDrawer({
     // and threshold from the live catalog so the countdown appears consistently.
     const currentProduct = products.find(item => item.id === product.id) || product;
     const stock = Number(currentProduct.stockQuantity);
-    const threshold = Number(currentProduct.lowStockThreshold);
-    if (!currentProduct.inStock || !Number.isFinite(stock) || !Number.isFinite(threshold) ||
-        stock <= 0 || threshold <= 0 || stock >= threshold) return null;
+    const configuredThreshold = Number(currentProduct.lowStockThreshold);
+    // Match the cart-expiry rule: default to 5 units if no threshold is configured.
+    const threshold = Number.isFinite(configuredThreshold) && configuredThreshold > 0
+      ? configuredThreshold
+      : 5;
+    if (!currentProduct.inStock || !Number.isFinite(stock) || stock <= 0 || stock > threshold) return null;
     try {
       const saved = JSON.parse(localStorage.getItem('parbati_bhandar_low_stock_cart_timers_v1') || '{}');
       const startedAt = saved?.[currentProduct.id];
@@ -337,6 +340,9 @@ export function CartDrawer({
 
               {/* Order review list — Step 1 */}
               <div className="py-2">
+                <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-semibold text-amber-900">
+                  ⚠️ Order soon to avoid losing low-stock items. Their 5-minute cart timer is shown below the item name.
+                </div>
                 <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-slate-400 pb-1.5">
                   <span>Item Name</span>
                   <span>Quantity ({cartTotalItems} total)</span>
@@ -369,9 +375,14 @@ export function CartDrawer({
                               Qty: {selectedUnit} &times; {qty}
                             </p>
                             {getLowStockCountdown(product) !== null && (
-                              <p className="mt-1 inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-1 text-[10px] font-extrabold text-amber-800">
-                                ⏳ Low-stock hold expires in {getLowStockCountdown(product)}
-                              </p>
+                              <div className="mt-1 flex flex-col items-start gap-1">
+                                <span className="inline-flex items-center gap-1 rounded-md bg-amber-100 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-amber-900">
+                                  ⚠️ Order soon — low stock!
+                                </span>
+                                <span className="inline-flex items-center gap-1 rounded-md bg-red-50 px-2 py-1 text-[10px] font-extrabold text-red-700">
+                                  ⏳ Item leaves your cart in {getLowStockCountdown(product)}
+                                </span>
+                              </div>
                             )}
                           </div>
                         </div>
