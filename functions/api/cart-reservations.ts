@@ -84,12 +84,21 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     if(units===null || !Number.isFinite(units) || units<=0) return json({error:"Could not match the selected quantity for "+product.name+"."},409);
     totals.set(item.productId,(totals.get(item.productId)||0)+units);
   }
-  const now=Date.now(), expires=now+10*60*1000;
-  const statements:any[]=[
-    env.DB.prepare("DELETE FROM cart_stock_reservations WHERE reservation_id=?").bind(reservationId),
-    env.DB.prepare("DELETE FROM cart_stock_reservation_guard WHERE reservation_id=?").bind(reservationId)
-  ];
+  const now=Date.now();
+  const statements:any[]=[];
+  if (totals.size) {
+    const placeholders = Array.from(totals.keys()).map(() => "?").join(",");
+    statements.push(env.DB.prepare("DELETE FROM cart_stock_reservations WHERE reservation_id=? AND product_id NOT IN ("+placeholders+")").bind(reservationId,...Array.from(totals.keys())));
+  } else {
+    statements.push(env.DB.prepare("DELETE FROM cart_stock_reservations WHERE reservation_id=?").bind(reservationId));
+  }
+  statements.push(env.DB.prepare("DELETE FROM cart_stock_reservation_guard WHERE reservation_id=?").bind(reservationId));
   for(const [productId,quantity] of totals){
+    const productRow=await env.DB.prepare("SELECT data FROM products WHERE id=?").bind(productId).first<any>();
+    const product=productRow ? JSON.parse(productRow.data) : {};
+    const threshold=Number(product.lowStockThreshold);
+    const isLowStock=Number.isFinite(threshold) && threshold>0 && Number(product.stockQuantity)<=threshold;
+    const expires=now+(isLowStock?5:10)*60*1000;
     statements.push(env.DB.prepare(`INSERT INTO cart_stock_reservations(reservation_id,product_id,quantity,expires_at)
       SELECT ?,?,?,? WHERE EXISTS(
         SELECT 1 FROM products p WHERE p.id=?
@@ -98,10 +107,14 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
         AND ROUND(json_extract(p.data,'$.stockQuantity')
           - COALESCE((SELECT SUM(r.quantity) FROM order_stock_reservations r WHERE r.product_id=p.id),0)
           - COALESCE((SELECT SUM(h.quantity) FROM cart_stock_reservations h WHERE h.product_id=p.id AND h.expires_at>? AND h.reservation_id!=?),0),4)>=ROUND(?,4)
-      )`).bind(reservationId,productId,quantity,expires,productId,now,reservationId,quantity));
+      )
+      ON CONFLICT(reservation_id,product_id) DO UPDATE SET
+        quantity=excluded.quantity,
+        expires_at=MIN(cart_stock_reservations.expires_at,excluded.expires_at)`).bind(reservationId,productId,quantity,expires,productId,now,reservationId,quantity));
   }
   statements.push(env.DB.prepare(`INSERT INTO cart_stock_reservation_guard(reservation_id,expected_count,actual_count)
-    SELECT ?,?,(SELECT COUNT(*) FROM cart_stock_reservations WHERE reservation_id=?)`).bind(reservationId,totals.size,reservationId));
+    SELECT ?,?,(SELECT COUNT(*) FROM cart_stock_reservations WHERE reservation_id=?)
+    ON CONFLICT(reservation_id) DO UPDATE SET expected_count=excluded.expected_count,actual_count=excluded.actual_count`).bind(reservationId,totals.size,reservationId));
   try { await env.DB.batch(statements); }
   catch(error) {
     console.error("Cart stock reservation failed",error);
