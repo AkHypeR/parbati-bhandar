@@ -791,6 +791,7 @@ export function AdminUploadApp({
             )}
             </>
             <p className="text-center text-[11px] text-slate-500">WhatsApp messages open as drafts; review and send them manually. Completed/cancelled orders are automatically deleted 7 days after their last status update. You can also delete any order manually.</p>
+            </>
           </section>
             )}
         )}
