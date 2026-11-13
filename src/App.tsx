@@ -122,7 +122,7 @@ export default function App() {
   const [copiedNotice, setCopiedNotice] = useState(false);
 
   // Admin View States
-  const [adminTab, setAdminTab] = useState<'inventory' | 'add' | 'settings'>('inventory');
+  const [adminTab, setAdminTab] = useState<'inventory' | 'add' | 'settings' | 'quickReplies'>('inventory');
   const [adminSearch, setAdminSearch] = useState('');
   const [adminCategoryFilter, setAdminCategoryFilter] = useState('all');
   const [adminLowStockOnly, setAdminLowStockOnly] = useState(false);
