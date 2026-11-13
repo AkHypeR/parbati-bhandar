@@ -67,15 +67,36 @@ function loadInitialSettings(): StoreSettings {
   return DEFAULT_STORE_SETTINGS;
 }
 
+function sanitizeCart(value: unknown): CartMap {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  const safeEntries: [string, CartMap[string]][] = [];
+  for (const [key, rawItem] of Object.entries(value as Record<string, unknown>)) {
+    if (!rawItem || typeof rawItem !== 'object') continue;
+    const item = rawItem as Partial<CartMap[string]>;
+    const product = item.product;
+    const qty = Number(item.qty);
+    if (!product || typeof product !== 'object' ||
+        typeof product.id !== 'string' || typeof product.name !== 'string' ||
+        !Number.isFinite(qty) || qty <= 0) continue;
+    const selectedUnit = typeof item.selectedUnit === 'string' && item.selectedUnit
+      ? item.selectedUnit : (product.unit || '1 unit');
+    const unitPrice = Number(item.unitPrice ?? product.price ?? 0);
+    safeEntries.push([key, {
+      cartKey: typeof item.cartKey === 'string' ? item.cartKey : key,
+      product,
+      selectedUnit,
+      unitPrice: Number.isFinite(unitPrice) ? unitPrice : 0,
+      unitMrp: item.unitMrp ?? product.mrp,
+      qty,
+    }]);
+  }
+  return Object.fromEntries(safeEntries);
+}
+
 function loadInitialCart(): CartMap {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.CART);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed === 'object') {
-        return parsed;
-      }
-    }
+    if (raw) return sanitizeCart(JSON.parse(raw));
   } catch {
     // ignore storage errors
   }
@@ -294,7 +315,7 @@ export default function App() {
   useEffect(() => {
     const handleStorageSync = (e: StorageEvent) => {
       if (e.key === STORAGE_KEYS.CART && e.newValue) {
-        try { setCart(JSON.parse(e.newValue)); } catch { /* ignore */ }
+        try { setCart(sanitizeCart(JSON.parse(e.newValue))); } catch { /* ignore */ }
       }
     };
     window.addEventListener('storage', handleStorageSync);
