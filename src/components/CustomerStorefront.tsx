@@ -1452,7 +1452,7 @@ export function CustomerStorefront({
             <div className="flex items-center justify-between gap-3"><p className="font-bold text-slate-900">Order #{trackingResult.orderNumber}</p><span className="text-[10px] font-semibold text-slate-400">Auto-updates every 15 seconds</span></div>
             {trackingResult.status === 'cancelled' && <p className="mt-2 rounded-lg bg-red-50 p-2 text-xs font-semibold text-red-700">This order was cancelled. Please contact the store if you need help.</p>}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3 text-xs">
-              {['Received','Under review','Ready for pickup','Completed'].map((label,index)=><div key={label} aria-current={trackingStep === index ? 'step' : undefined} className={'rounded-lg p-2 text-center font-semibold '+(trackingStep >= index?'bg-emerald-50 text-emerald-800':'bg-slate-100 text-slate-500')}>{label}</div>)}
+              {['Received','Ready for pickup','Completed'].map((label,index)=>{ const stepIndex=[0,2,3][index]; return <div key={label} aria-current={trackingStep === stepIndex ? 'step' : undefined} className={'rounded-lg p-2 text-center font-semibold '+(trackingStep >= stepIndex?'bg-emerald-50 text-emerald-800':'bg-slate-100 text-slate-500')}>{label}</div>; })}
             </div>
             <div className="mt-3 space-y-2">{trackingResult.items.map((item:any,index:number)=><div key={index} className="flex justify-between gap-3 text-sm"><span>{item.name} · {item.quantity} {item.unit}</span><span className={item.unavailable?'text-red-600 font-bold':'text-emerald-700 font-semibold'}>{item.unavailable?'Unavailable':'Available'}</span></div>)}</div>
           </div>}
