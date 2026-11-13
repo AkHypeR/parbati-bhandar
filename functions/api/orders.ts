@@ -76,8 +76,17 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   const id = String(body.id);
   const order = await env.DB.prepare("SELECT status,customer_name,order_number,items_json,stock_deducted FROM customer_orders WHERE id=?").bind(id).first<any>();
   if (!order) return json({error:"Order not found."},404);
-  const items: OrderItem[] = Array.isArray(body.items) ? body.items.map((x: any) => ({...x, unavailable: !!x.unavailable})) : JSON.parse(order.items_json || "[]");
-  if (status === "ready" && !Number(order.stock_deducted || 0)) {
+  const savedItems: OrderItem[] = JSON.parse(order.items_json || "[]");
+  if (Array.isArray(body.items) && body.items.length !== savedItems.length) return json({error:"Order items do not match. Refresh and try again."},409);
+  // Only accept the per-item availability flag from the browser; preserve trusted
+  // product names, IDs, quantities, units and prices stored with the original order.
+  const items: OrderItem[] = savedItems.map((item, index) => ({
+    ...item,
+    unavailable: Array.isArray(body.items) ? !!body.items[index]?.unavailable : !!item.unavailable
+  }));
+  // Deduct inventory only on the transition into Ready, never on an item-toggle
+  // save against an order that was already marked Ready.
+  if (status === "ready" && order.status !== "ready" && !Number(order.stock_deducted || 0)) {
     const updates: Array<{id:string; data:string; updatedAt:number}> = [];
     for (const item of items) {
       if (item.unavailable || !item.productId) continue;
