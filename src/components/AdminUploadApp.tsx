@@ -736,7 +736,6 @@ export function AdminUploadApp({
                     </div>
                     {order.note && <div className="mt-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-900"><strong>Customer note</strong><p className="mt-1">{order.note}</p></div>}
                     <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                      {order.status === 'new' && <button type="button" disabled={updatingOrderId === order.id} onClick={() => updateCustomerOrder(order.id,'review')} className="rounded-lg bg-violet-700 px-3 py-3 text-sm font-bold text-white disabled:opacity-50">Review Order (অর্ডার মিলিয়ে নিন)</button>}
                       <button type="button" disabled={updatingOrderId === order.id || order.status !== 'review'} onClick={() => { if (window.confirm('Confirm this order as Ready for pickup? Available items will be deducted from stock once.')) void updateCustomerOrder(order.id,'ready'); }} className="rounded-lg bg-emerald-600 px-3 py-3 text-sm font-bold text-white disabled:opacity-50">{order.status === 'new' ? 'Review first' : 'Confirm Ready'}</button>
                       <button type="button" disabled={updatingOrderId === order.id || order.status !== 'ready'} onClick={() => updateCustomerOrder(order.id,'completed')} className="rounded-lg bg-slate-200 px-3 py-3 text-sm font-bold text-slate-800 disabled:opacity-50">Completed</button>
                       <button type="button" disabled={updatingOrderId === order.id || ['ready','completed','cancelled'].includes(order.status)} onClick={() => updateCustomerOrder(order.id,'cancelled')} className="rounded-lg bg-red-50 px-3 py-3 text-sm font-bold text-red-700 disabled:opacity-50">Cancel</button>
@@ -798,7 +797,6 @@ export function AdminUploadApp({
                     <div className="mt-2 grid grid-cols-2 gap-2">
                       <button type="button" onClick={event => { event.stopPropagation(); messageOrderCustomer(order, 'ready'); }} className="rounded-lg border border-emerald-200 px-2 py-2 text-xs font-bold text-emerald-800">WhatsApp: Ready</button>
                       <button type="button" onClick={event => { event.stopPropagation(); messageOrderCustomer(order, 'unavailable'); }} className="rounded-lg border border-amber-200 px-2 py-2 text-xs font-bold text-amber-900">WhatsApp: Unavailable</button>
-                       <button type="button" disabled={updatingOrderId === order.id} onClick={event => { event.stopPropagation(); deleteCustomerOrder(order.id); }} className="col-span-2 rounded-lg border border-red-200 bg-red-50 px-2 py-2 text-xs font-bold text-red-700 disabled:opacity-50"><Trash2 className="mr-1 inline h-3.5 w-3.5" /> Delete Order</button>
                     </div>
                   </article>
                 ))}
