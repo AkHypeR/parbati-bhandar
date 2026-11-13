@@ -116,6 +116,10 @@ export default function App() {
   // Customer Shopping List / Inquiry Drawer
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
+  const [lastSavedOrderNumber, setLastSavedOrderNumber] = useState(() => {
+    try { return localStorage.getItem('parbati_bhandar_last_order_number_v1') || ''; }
+    catch { return ''; }
+  });
   const [customerNote, setCustomerNote] = useState('');
   const [rememberCustomerDetails, setRememberCustomerDetails] = useState(false);
 
@@ -381,7 +385,7 @@ export default function App() {
     [storeSettings.whatsappNumber, storeSettings.phone, orderText]
   );
 
-  const handleSaveCustomerOrder = async (turnstileToken: string, pushSubscription?: PushSubscriptionJSON | null): Promise<boolean> => {
+  const handleSaveCustomerOrder = async (turnstileToken: string, pushSubscription?: PushSubscriptionJSON | null): Promise<number | null> => {
     try {
       const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerName, customerPhone, turnstileToken, pushSubscription, note: customerNote, items: cartItemsList.map(item => ({ productId: item.product.id, name: item.product.name, quantity: item.qty, unit: item.selectedUnit, price: item.unitPrice })) }) });
       const result = await response.json().catch(() => ({}));
@@ -391,9 +395,13 @@ export default function App() {
       } else {
         try { localStorage.removeItem('parbati_bhandar_customer_details_v1'); } catch { /* Ignore unavailable storage. */ }
       }
-      showToast('Order saved. Opening WhatsApp…');
-      return true;
-    } catch (error) { showToast((error as Error).message, 'error'); return false; }
+      const orderNumber = Number(result.orderNumber);
+      if (!Number.isInteger(orderNumber) || orderNumber < 1) throw new Error('Order was saved, but its tracking number could not be confirmed.');
+      setLastSavedOrderNumber(String(orderNumber));
+      try { localStorage.setItem('parbati_bhandar_last_order_number_v1', String(orderNumber)); } catch { /* Tracking number can still be copied from WhatsApp. */ }
+      showToast(`Order #${orderNumber} saved. Keep this number to track your order.`);
+      return orderNumber;
+    } catch (error) { showToast((error as Error).message, 'error'); return null; }
   };
 
   const handleCopyShoppingList = () => {
@@ -813,6 +821,7 @@ export default function App() {
             updateCartQty={updateCartQty}
             setIsCartOpen={setIsCartOpen}
             setIsQrModalOpen={setIsQrModalOpen}
+            lastOrderNumber={lastSavedOrderNumber}
             onSecretOwnerAccess={() => {
               setActiveMode('admin');
               showToast('Owner Portal Access Triggered');
