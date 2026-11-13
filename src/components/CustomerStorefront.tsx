@@ -1135,7 +1135,7 @@ export function CustomerStorefront({
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
+          <div className="pb-product-grid grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
             {filteredCustomerProducts.map((product) => {
               const activeOpt = getActiveOptionForProduct(product);
               const activeCartKey = makeCartKey(product.id, activeOpt.label);
@@ -1156,7 +1156,7 @@ export function CustomerStorefront({
               return (
                 <div
                   key={product.id}
-                  className={`group bg-white rounded-xl sm:rounded-2xl border border-emerald-100 shadow-[0_2px_10px_rgba(16,80,45,0.05)] transition-all flex flex-col justify-between overflow-hidden min-w-0 hover:shadow-lg hover:-translate-y-0.5 ${
+                  className={`pb-product-card group bg-white rounded-xl sm:rounded-2xl border border-emerald-100 shadow-[0_2px_10px_rgba(16,80,45,0.05)] transition-all flex flex-col justify-between overflow-hidden min-w-0 hover:shadow-lg hover:-translate-y-0.5 ${
                     product.inStock
                       ? 'border-emerald-100 hover:border-emerald-400 hover:shadow-md'
                       : 'border-slate-200 opacity-70 bg-slate-50'
@@ -1164,7 +1164,7 @@ export function CustomerStorefront({
                 >
                   <div>
                     {/* Product Visual Box */}
-                    <div className="relative aspect-square w-full max-h-44 bg-gradient-to-br from-[#f6fbf5] to-[#edf6ec] flex items-center justify-center p-2.5 sm:p-4 border-b border-emerald-50">
+                    <div className="pb-product-image relative aspect-square w-full max-h-44 bg-gradient-to-br from-[#f6fbf5] to-[#edf6ec] flex items-center justify-center p-2.5 sm:p-4 border-b border-emerald-50">
                       {product.imageUrl ? (
                         <img
                           src={product.imageUrl}
@@ -1208,12 +1208,12 @@ export function CustomerStorefront({
                     </div>
 
                     {/* Product Info */}
-                    <div className="p-2.5 sm:p-3.5 space-y-2 sm:space-y-2.5">
+                    <div className="pb-product-info p-2.5 sm:p-3.5 space-y-2 sm:space-y-2.5">
                       <div>
                         <div className="text-[9px] sm:text-[11px] font-semibold text-[#0d647d] uppercase tracking-wider truncate">
                           {product.category}
                         </div>
-                        <h3 className="font-bold text-slate-900 text-xs sm:text-base line-clamp-2 mt-0.5 min-h-[2.25rem] sm:min-h-[2.5rem]">
+                        <h3 className="pb-product-name font-bold text-slate-900 text-xs sm:text-base line-clamp-2 mt-0.5 min-h-[2.25rem] sm:min-h-[2.5rem]">
                           {product.name}
                         </h3>
                       </div>
@@ -1494,7 +1494,7 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       <div
         aria-label="Sticky Shopping Cart Bar"
-        className="fixed bottom-0 inset-x-0 z-40 bg-white border-t border-slate-200 shadow-[0_-8px_24px_rgba(15,23,42,0.1)]"
+        className="pb-mobile-bottom-cart fixed bottom-0 inset-x-0 z-40 bg-white border-t border-slate-200 shadow-[0_-8px_24px_rgba(15,23,42,0.1)]"
       >
         <div className="max-w-3xl mx-auto">
           {/* Product Thumbnails + Total & Saved + Yellow "Proceed" Pill Button */}
