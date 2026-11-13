@@ -49,6 +49,14 @@ const ensureTable = async (env: Env) => {
    note TEXT, items_json TEXT NOT NULL, total REAL NOT NULL, status TEXT NOT NULL DEFAULT 'new',
    created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, order_number INTEGER
   )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS order_stock_reservations (
+    order_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL,
+    PRIMARY KEY (order_id, product_id)
+  )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS order_stock_reservation_guard (
+    order_id TEXT PRIMARY KEY, expected_count INTEGER NOT NULL, actual_count INTEGER NOT NULL,
+    CHECK (expected_count = actual_count)
+  )`).run();
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS order_stock_deductions (
     order_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL,
     PRIMARY KEY (order_id, product_id)
@@ -112,37 +120,56 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   })) : [];
   if (!name || phone.length < 10 || phone.length > 15 || !items.length || items.some((x: OrderItem) => !x.name)) return json({ error: "Please enter your name, valid phone number and at least one item." }, 400);
 
-  // Re-check live inventory at checkout. This prevents a stale customer page
-  // from accepting an item after the owner has confirmed another order and
-  // the final unit has been deducted.
-  const requestedByProduct = new Map<string, { quantity: number; name: string; unit: string }>();
+  // Reserve inventory at checkout, not only when the owner later confirms.
+  // This prevents two pending orders from both claiming the final unit.
+  const requestedByProduct = new Map<string, { quantity: number; name: string }>();
   for (const item of items) {
     if (!item.productId) continue;
-    const current = requestedByProduct.get(item.productId) || { quantity: 0, name: item.name, unit: item.unit };
-    current.quantity += item.quantity;
-    requestedByProduct.set(item.productId, current);
-  }
-  for (const [productId, requested] of requestedByProduct) {
-    const productRow = await env.DB.prepare("SELECT data FROM products WHERE id=?").bind(productId).first<any>();
-    if (!productRow) return json({ error: requested.name + " is no longer available. Please refresh your cart." }, 409);
+    const productRow = await env.DB.prepare("SELECT data FROM products WHERE id=?").bind(item.productId).first<any>();
+    if (!productRow) return json({ error: item.name + " is no longer available. Please refresh your cart." }, 409);
     const product = JSON.parse(productRow.data);
     if (product.inStock === false || (typeof product.stockQuantity === "number" && product.stockQuantity <= 0)) {
-      return json({ error: requested.name + " is now out of stock. Please remove it from your cart." }, 409);
+      return json({ error: item.name + " is now out of stock. Please remove it from your cart." }, 409);
     }
     if (typeof product.stockQuantity === "number") {
-      const stockUnits = stockUnitsForOrder({ ...requested, productId, price: 0 }, product);
-      if (stockUnits === null || stockUnits > Number(product.stockQuantity) + 1e-9) {
-        return json({ error: "There is not enough stock for " + requested.name + ". Please update your cart." }, 409);
+      const units = stockUnitsForOrder(item, product);
+      if (units === null || !Number.isFinite(units) || units <= 0) {
+        return json({ error: "Could not match the ordered unit for " + item.name + " with its stock unit. Please contact the store." }, 409);
       }
+      const current = requestedByProduct.get(item.productId) || { quantity: 0, name: item.name };
+      current.quantity += units;
+      requestedByProduct.set(item.productId, current);
     }
   }
-
   const total = items.reduce((sum: number, x: OrderItem) => sum + x.price * x.quantity, 0);
   const sequence = await env.DB.prepare("INSERT INTO order_sequence (name,value) VALUES ('customer_orders',1) ON CONFLICT(name) DO UPDATE SET value=value+1 RETURNING value").first<any>();
   const orderNumber = Number(sequence?.value || 1);
   const id = crypto.randomUUID();
-  await env.DB.prepare("INSERT INTO customer_orders (id,order_number,customer_name,customer_phone,note,items_json,total,status,created_at,updated_at) VALUES (?,?,?,?,?,?,?,'new',?,?)")
-    .bind(id,orderNumber,name,phone,note,JSON.stringify(items),total,now,now).run();
+  const reservationStatements = [
+    env.DB.prepare("INSERT INTO customer_orders (id,order_number,customer_name,customer_phone,note,items_json,total,status,created_at,updated_at) VALUES (?,?,?,?,?,?,?,'new',?,?)")
+      .bind(id,orderNumber,name,phone,note,JSON.stringify(items),total,now,now)
+  ];
+  for (const [productId, requested] of requestedByProduct) {
+    reservationStatements.push(env.DB.prepare(`INSERT INTO order_stock_reservations (order_id,product_id,quantity)
+      SELECT ?,?,? WHERE EXISTS (
+        SELECT 1 FROM products p
+        WHERE p.id=? AND COALESCE(json_extract(p.data,'$.inStock'),1)=1
+          AND json_type(p.data,'$.stockQuantity') IN ('integer','real')
+          AND ROUND(json_extract(p.data,'$.stockQuantity') -
+            COALESCE((SELECT SUM(r.quantity) FROM order_stock_reservations r WHERE r.product_id=p.id),0),4) >= ROUND(?,4)
+      )`).bind(id,productId,requested.quantity,productId,requested.quantity));
+  }
+  if (requestedByProduct.size) {
+    reservationStatements.push(env.DB.prepare(`INSERT INTO order_stock_reservation_guard (order_id,expected_count,actual_count)
+      SELECT ?,?,(SELECT COUNT(*) FROM order_stock_reservations WHERE order_id=?)`)
+      .bind(id,requestedByProduct.size,id));
+  }
+  try {
+    await env.DB.batch(reservationStatements);
+  } catch (error) {
+    console.error("Atomic checkout stock reservation failed", error);
+    return json({ error: "This item has just been ordered by another customer or there is not enough stock. Please refresh your cart and try again." }, 409);
+  }
   const subscription = body?.pushSubscription;
   if (subscription && typeof subscription.endpoint === "string" && typeof subscription.keys?.p256dh === "string" && typeof subscription.keys?.auth === "string" && subscription.endpoint.startsWith("https://")) {
     await env.DB.prepare("INSERT OR REPLACE INTO push_subscriptions (order_id,subscription_json,created_at) VALUES (?,?,?)")
@@ -251,6 +278,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
       );
     }
     statements.push(
+      env.DB.prepare("DELETE FROM order_stock_reservations WHERE order_id=?").bind(id),
       env.DB.prepare(`INSERT INTO order_stock_deduction_guard (order_id,expected_count,actual_count)
         SELECT ?,?,(SELECT COUNT(*) FROM order_stock_deductions WHERE order_id=?)`)
         .bind(id, deductions.size, id),
@@ -267,9 +295,15 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
       return json({error:"Stock changed while this order was being confirmed. Refresh the order, review availability, and try again."},409);
     }
   } else {
-    const result = await env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,updated_at=?,confirmed_at=CASE WHEN ?='ready' THEN COALESCE(confirmed_at,?) ELSE confirmed_at END WHERE id=?")
-      .bind(status,JSON.stringify(items),Date.now(),status,Date.now(),id).run();
-    changes = Number(result.meta.changes || 0);
+    const updateStatement = env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,updated_at=?,confirmed_at=CASE WHEN ?='ready' THEN COALESCE(confirmed_at,?) ELSE confirmed_at END WHERE id=?")
+      .bind(status,JSON.stringify(items),Date.now(),status,Date.now(),id);
+    if (["cancelled","unavailable"].includes(status)) {
+      const results = await env.DB.batch([updateStatement,env.DB.prepare("DELETE FROM order_stock_reservations WHERE order_id=?").bind(id)]);
+      changes = Number(results[0]?.meta.changes || 0);
+    } else {
+      const result = await updateStatement.run();
+      changes = Number(result.meta.changes || 0);
+    }
   }
   let notification = "not-configured";
   if (["ready","unavailable","completed","cancelled"].includes(status) && env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.VAPID_SUBJECT) {
@@ -297,6 +331,6 @@ export const onRequestDelete: PagesFunction<Env> = async ({ request, env }) => {
   let body: any; try { body = await request.json(); } catch { return json({ error: "Invalid delete request." }, 400); }
   const id = String(body?.id || "").trim();
   if (!id) return json({ error: "Order ID is required." }, 400);
-  const result = await env.DB.prepare("DELETE FROM customer_orders WHERE id=?").bind(id).run();
-  return json({ ok: true, changes: result.meta.changes }, 200, { "cache-control": "no-store" });
+  const results = await env.DB.batch([env.DB.prepare("DELETE FROM customer_orders WHERE id=?").bind(id),env.DB.prepare("DELETE FROM order_stock_reservations WHERE order_id=?").bind(id)]);
+  return json({ ok: true, changes: results[0]?.meta.changes || 0 }, 200, { "cache-control": "no-store" });
 };
