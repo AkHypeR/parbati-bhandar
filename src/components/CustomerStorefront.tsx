@@ -104,7 +104,11 @@ export function CustomerStorefront({
   const [trackingError, setTrackingError] = useState('');
   const [trackingLoading, setTrackingLoading] = useState(false);
   useEffect(() => {
-    if (lastOrderNumber) setTrackingOrderNumber(lastOrderNumber);
+    if (lastOrderNumber) {
+      setTrackingOrderNumber(lastOrderNumber);
+      setTrackingResult(null);
+      setTrackingError('');
+    }
   }, [lastOrderNumber]);
   useEffect(() => {
     if (lastOrderPhone) setTrackingPhone(lastOrderPhone);
