@@ -111,6 +111,8 @@ export function AdminUploadApp({
   storeSettings,
   maintenanceMode,
   onToggleMaintenance,
+  onSetMaintenanceTimer,
+  maintenanceUntil,
   adminTab,
   setAdminTab,
   adminSearch,
