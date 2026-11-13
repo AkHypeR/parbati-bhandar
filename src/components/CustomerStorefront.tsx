@@ -185,6 +185,16 @@ export function CustomerStorefront({
       .sort((a, b) => { const q = searchQuery.trim().toLocaleLowerCase(); return Number(!a.name.toLocaleLowerCase().startsWith(q)) - Number(!b.name.toLocaleLowerCase().startsWith(q)) || a.name.localeCompare(b.name); }).slice(0, 6)
     : [];
 
+  // Stock is tracked per product, so all selected sizes/varieties share the same stock limit.
+  const getRemainingStock = (product: Product) => {
+    if (!Number.isFinite(Number(product.stockQuantity))) return Number.POSITIVE_INFINITY;
+    const alreadyInCart = Object.values(cart).reduce(
+      (total, item) => total + (item.product.id === product.id ? Number(item.qty || 0) : 0),
+      0
+    );
+    return Math.max(0, Number(product.stockQuantity) - alreadyInCart);
+  };
+
   const getActiveOptionForProduct = (product: Product) => {
     if (selectedOptions[product.id]) {
       return selectedOptions[product.id];
@@ -885,7 +895,7 @@ export function CustomerStorefront({
                             <div className="flex items-center bg-emerald-600 text-white rounded-2xl overflow-hidden text-sm font-black shadow-lg shrink-0">
                               <button type="button" aria-label={`Decrease quantity of ${item.name}`} onClick={() => updateCartQty(item, -1, { selectedUnit: activeOpt.label, unitPrice: activeOpt.price, unitMrp: activeOpt.mrp })} className="px-3 py-2.5 hover:bg-emerald-700 cursor-pointer">-</button>
                               <span className="px-2.5">{inCartQty}</span>
-                              <button type="button" aria-label={`Increase quantity of ${item.name}`} onClick={() => updateCartQty(item, 1, { selectedUnit: activeOpt.label, unitPrice: activeOpt.price, unitMrp: activeOpt.mrp })} className="px-3 py-2.5 hover:bg-emerald-700 cursor-pointer">+</button>
+                              <button type="button" aria-label={`Increase quantity of ${item.name}`} disabled={getRemainingStock(item) <= 0} onClick={() => updateCartQty(item, 1, { selectedUnit: activeOpt.label, unitPrice: activeOpt.price, unitMrp: activeOpt.mrp })} className="px-3 py-2.5 hover:bg-emerald-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">+</button>
                             </div>
                           )}
                         </div>
@@ -1370,6 +1380,7 @@ export function CustomerStorefront({
                           <button
                             type="button"
                             aria-label={`Increase quantity of ${product.name}`}
+                            disabled={getRemainingStock(product) <= 0}
                             onClick={() =>
                               updateCartQty(product, 1, {
                                 selectedUnit: activeOpt.label,
@@ -1377,7 +1388,7 @@ export function CustomerStorefront({
                                 unitMrp: activeOpt.mrp,
                               })
                             }
-                            className="p-2 hover:bg-emerald-700 transition-colors cursor-pointer"
+                            className="p-2 hover:bg-emerald-700 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                           >
                             <Plus className="w-3.5 h-3.5" />
                           </button>
