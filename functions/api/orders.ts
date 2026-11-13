@@ -181,7 +181,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
     // prevents concurrent Ready clicks from deducting the same order twice.
     // SQL decrements the current JSON stock value, and the guard table forces
     // the entire transaction to roll back if any product has changed/ran short.
-    const statements: D1PreparedStatement[] = [
+    const statements = [
       env.DB.prepare("UPDATE customer_orders SET stock_deducted=2 WHERE id=? AND stock_deducted=0 AND status!='ready'").bind(id)
     ];
     for (const [productId, entry] of deductions) {
