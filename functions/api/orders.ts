@@ -4,13 +4,13 @@ import { sendPushNotification } from "@mmmike/web-push/send";
 type OrderItem = { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean };
 
 function stockUnitsForOrder(item: OrderItem, product: any): number | null {
-  const clean = (value: unknown) => String(value || "").trim().toLowerCase().replace(/\\s+/g, " ");
+  const clean = (value: unknown) => String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
   const itemUnit = clean(item.unit);
   const stockUnit = clean(product.unit);
   if (itemUnit === stockUnit) return Number(item.quantity);
 
   const measure = (value: string): { dimension: string; base: number } | null => {
-    const match = value.match(/(\\d+(?:\\.\\d+)?)\\s*(kg|kgs|kilograms?|g|gm|grams?|l|litres?|liters?|ml|millilitres?|milliliters?)\\b/i);
+    const match = value.match(/(\d+(?:\.\d+)?)\s*(kg|kgs|kilograms?|g|gm|grams?|l|litres?|liters?|ml|millilitres?|milliliters?)\b/i);
     if (!match) return null;
     const amount = Number(match[1]);
     const unit = match[2].toLowerCase();
@@ -28,12 +28,12 @@ function stockUnitsForOrder(item: OrderItem, product: any): number | null {
   // Pack bundles and common piece-count varieties are expressed in the
   // product's stock unit, not as a separate inventory SKU.
   if (/(packet|pack|pouch|bottle|jar|bag)/i.test(stockUnit)) {
-    const packCount = itemUnit.match(/(\\d+)\\s*[- ]?pack/i);
+    const packCount = itemUnit.match(/(\d+)\s*[- ]?pack/i);
     if (packCount) return Number(item.quantity) * Number(packCount[1]);
     if (/(single pack|1 pack|packet|pouch|bottle|jar|bag)/i.test(itemUnit)) return Number(item.quantity);
   }
   if (/pair/i.test(stockUnit)) {
-    const pieces = itemUnit.match(/(\\d+)\\s*(piece|pieces|pcs)/i);
+    const pieces = itemUnit.match(/(\d+)\s*(piece|pieces|pcs)/i);
     if (pieces) return Number(item.quantity) * Number(pieces[1]) / 2;
     if (/dozen/i.test(itemUnit)) return Number(item.quantity) * 6;
     if (/pair/i.test(itemUnit)) return Number(item.quantity);
@@ -122,6 +122,15 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   const id = String(body.id);
   const order = await env.DB.prepare("SELECT status,customer_name,order_number,items_json,stock_deducted FROM customer_orders WHERE id=?").bind(id).first<any>();
   if (!order) return json({error:"Order not found."},404);
+  if (Array.isArray(body.items) && !["new","review"].includes(order.status)) {
+    return json({error:"Item availability can only be changed while an order is under review."},409);
+  }
+  if (status === "review" && !["new","review"].includes(order.status)) {
+    return json({error:"Only a new order can enter review."},409);
+  }
+  if (status === "cancelled" && ["ready","completed"].includes(order.status)) {
+    return json({error:"A ready or completed order cannot be cancelled from this screen."},409);
+  }
   const savedItems: OrderItem[] = JSON.parse(order.items_json || "[]");
   if (Array.isArray(body.items) && body.items.length !== savedItems.length) return json({error:"Order items do not match. Refresh and try again."},409);
   // Only accept the per-item availability flag from the browser; preserve trusted
