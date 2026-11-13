@@ -541,36 +541,37 @@ export default function App() {
 
   const handleOwnerPinLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!supabase || !isSupabaseConfigured) {
-      setPinError('Cloud login is not configured. Check the Supabase environment values.');
-      return;
-    }
     setAuthLoading(true);
     setPinError('');
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: '7001.akashroy@gmail.com', password: ownerPassword,
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ password: ownerPassword }),
       });
-      if (error) throw error;
-      if (data.user?.email?.toLowerCase() !== '7001.akashroy@gmail.com') {
-        await supabase.auth.signOut();
-        throw new Error('This account is not authorised for the Parbati Bhandar owner portal.');
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(result.error || 'Owner sign-in failed. Please try again.');
       }
       setIsOwnerUnlocked(true);
       setOwnerPassword('');
       showToast('Welcome to Parbati Bhandar Owner Portal!');
     } catch (error) {
-      setPinError((error as Error).message || 'Sign-in failed. Check your email and password.');
+      setPinError((error as Error).message || 'Owner sign-in failed. Please try again.');
     } finally {
       setAuthLoading(false);
     }
   };
 
   const handleOwnerSignOut = async () => {
-    await supabase?.auth.signOut();
-    setIsOwnerUnlocked(false);
-    setActiveMode('customer');
-    showToast('You have signed out of the owner portal.');
+    try {
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+    } finally {
+      setIsOwnerUnlocked(false);
+      setActiveMode('customer');
+      showToast('You have signed out of the owner portal.');
+    }
   };
 
   // Stats & Live Open Status
@@ -602,7 +603,7 @@ export default function App() {
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-400 hidden sm:block">
-                  Owner access is protected by Supabase authentication
+                  Owner access is protected by Cloudflare secure sessions
                 </p>
               </div>
             </div>
