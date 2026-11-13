@@ -301,11 +301,11 @@ export function CustomerStorefront({
   const deliveryEtaMins = storeSettings.deliveryEtaMins || '10';
 
   return (
-    <div className="flex-1 flex flex-col bg-white text-slate-900 pb-24">
+    <div className="flex-1 flex flex-col bg-[#f4f8f3] text-slate-900 pb-24">
       {/* ===================================================================== */}
       {/* TOP MOBILE-FIRST APP BAR WITH SHOP NAME                               */}
       {/* ===================================================================== */}
-      <header className="bg-white border-b border-slate-100">
+      <header className="bg-[#087a45] text-white border-b border-emerald-900/20 shadow-sm">
         <div className="max-w-5xl mx-auto px-3.5 sm:px-6 pt-3 pb-2">
           {/* Row 1: Profile | Shop Name (5-tap secret owner access) | Quick Actions */}
           <div className="flex items-center justify-between gap-2">
@@ -316,9 +316,9 @@ export function CustomerStorefront({
                 onClick={() => setIsProfileOpen((open) => !open)}
                 aria-label="My profile and orders"
                 aria-expanded={isProfileOpen}
-                className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-slate-800 cursor-pointer shrink-0"
+                className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 border border-white/20 flex items-center justify-center text-white cursor-pointer shrink-0 transition-colors"
               >
-                <User className="w-4 h-4 fill-slate-800" />
+                <User className="w-4 h-4" />
               </button>
             </div>
 
@@ -332,17 +332,17 @@ export function CustomerStorefront({
             >
               <div className="flex items-center justify-center gap-1.5 min-w-0">
                 <Store className="w-4 h-4 sm:w-5 sm:h-5 text-[#0d647d] shrink-0" />
-                <span className="text-base sm:text-xl font-black tracking-tight text-slate-950 leading-tight">
+                <span className="text-base sm:text-xl font-black tracking-tight text-white leading-tight">
                   {(storeSettings.storeName || 'Parbati Bhandar (পার্বতী ভান্ডার)')
                     .replace(/\s*\(.*\)\s*$/, '')}
                 </span>
               </div>
-              <span className="text-[11px] sm:text-xs font-extrabold text-[#0d647d] leading-tight">
+              <span className="text-[11px] sm:text-xs font-extrabold text-emerald-100 leading-tight">
                 {(storeSettings.storeName || 'Parbati Bhandar (পার্বতী ভান্ডার)').match(
                   /\((.*)\)/
                 )?.[1] || 'পার্বতী ভান্ডার'}
               </span>
-              <span className="block h-0.5 bg-amber-400 rounded-full w-20 sm:w-28 mt-0.5" />
+              <span className="block h-0.5 bg-lime-300 rounded-full w-20 sm:w-28 mt-0.5" />
               {!liveIsOpen && (
                 <span
                   role="status"
@@ -365,7 +365,7 @@ export function CustomerStorefront({
               <a
                 href={`tel:${(storeSettings.phone || '+919734765207').replace(/\s+/g, '')}`}
                 aria-label="Call Store"
-                className="w-9 h-9 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center justify-center transition-colors"
+                className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 text-white border border-white/20 flex items-center justify-center transition-colors"
                 title="Call Parbati Bhandar: 097347 65207"
               >
                 <Phone className="w-4 h-4" />
@@ -377,7 +377,7 @@ export function CustomerStorefront({
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp Store"
-                className="w-9 h-9 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-2xs transition-colors"
+                className="w-9 h-9 rounded-full bg-[#f6c744] hover:bg-[#f0b91f] text-emerald-950 flex items-center justify-center shadow-2xs transition-colors"
                 title="WhatsApp Parbati Bhandar"
               >
                 <MessageCircle className="w-4 h-4" />
@@ -386,7 +386,7 @@ export function CustomerStorefront({
                 type="button"
                 onClick={() => setIsQrModalOpen(true)}
                 aria-label="Shop QR Poster"
-                className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 flex items-center justify-center cursor-pointer transition-colors"
+                className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 text-white border border-white/20 flex items-center justify-center cursor-pointer transition-colors"
                 title="Show Store QR Code"
               >
                 <QrCode className="w-4 h-4" />
@@ -395,20 +395,20 @@ export function CustomerStorefront({
           </div>
 
           {/* Customer / Burdwan Location Line */}
-          <div className="mt-3 flex items-center gap-2.5">
+          <div className="mt-3 flex items-center gap-2.5 rounded-xl bg-white/10 border border-white/15 px-3 py-2">
             <button
               type="button"
               onClick={() => setIsAddressExpanded(!isAddressExpanded)}
               className="flex-1 min-w-0 text-left group cursor-pointer"
             >
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-900 font-extrabold text-xs tracking-tight">
+                <span className="px-2 py-0.5 rounded bg-white/15 text-white font-extrabold text-xs tracking-tight">
                   Swasti Pally - BURDWAN
                 </span>
                 <span
                   className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
                     liveIsOpen
-                      ? 'bg-emerald-100 text-emerald-800'
+                      ? 'bg-lime-100 text-emerald-900'
                       : 'bg-red-100 text-red-700'
                   }`}
                 >
@@ -421,7 +421,7 @@ export function CustomerStorefront({
                 </span>
               </div>
               <div className="flex items-center justify-between gap-1 mt-0.5">
-                <p className="text-xs sm:text-sm text-slate-700 font-medium truncate">
+                <p className="text-xs sm:text-sm text-emerald-50 font-medium truncate">
                   {storeSettings.address || 'Swasti Pally, Gangpur, Dis-Burdwan, 713103, BURD...'}
                 </p>
                 {isAddressExpanded ? (
@@ -552,7 +552,7 @@ export function CustomerStorefront({
                   }
                 }}
                 placeholder='Search for "Miniket Rice", "Atta", "Mustard Oil", "Ghee"...'
-                className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white text-slate-900 placeholder-slate-400 text-xs sm:text-sm font-medium border border-slate-300 shadow-2xs focus:outline-none focus:border-[#0d647d] focus:ring-2 focus:ring-sky-200"
+                className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white text-slate-900 placeholder-slate-400 text-xs sm:text-sm font-medium border border-emerald-200 shadow-sm focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
                 autoComplete="off"
               />
               {searchSuggestions.length > 0 && <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl"><p className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Suggested products</p>{searchSuggestions.map(product => <button key={product.id} type="button" onClick={() => { setSearchQuery(product.name); setIsSearchSubmitted(true); setSelectedCategory("all"); setInStockOnly(false); setTimeout(() => catalogSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50); }} className="flex w-full items-center justify-between gap-3 border-t border-slate-100 px-4 py-3 text-left text-sm font-semibold text-slate-800 hover:bg-emerald-50 active:bg-emerald-100"><span className="min-w-0 truncate">{product.name}</span><span className="shrink-0 text-xs text-slate-400">{product.category}</span></button>)}</div>}
@@ -625,15 +625,15 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       <section
         aria-label="Nomoshkar Grahok Welcome Banner"
-        className={`relative bg-white pt-3 pb-2 overflow-hidden ${isSearchSubmitted ? "hidden" : ""}`}
+        className={`relative bg-gradient-to-b from-[#eaf7ed] via-[#f7fbf6] to-[#f4f8f3] pt-4 pb-3 overflow-hidden ${isSearchSubmitted ? "hidden" : ""}`}
       >
-        <div className="max-w-xl mx-auto px-4 relative">
-          <div className="flex items-end justify-between px-4 sm:px-10">
+        <div className="max-w-5xl mx-auto px-4 relative">
+          <div className="relative overflow-hidden rounded-2xl border border-emerald-100 bg-gradient-to-r from-[#075b37] via-[#087a45] to-[#15945a] px-4 sm:px-8 pt-4 pb-2 shadow-lg animate-[fadeIn_700ms_ease-out]">
             {/* Left: Architectural Illustration of Burdwan Curzon Gate (কার্জন গেট) */}
             <div className="relative z-10 -mb-1.5">
               <svg
                 viewBox="0 0 140 88"
-                className="w-28 sm:w-32 h-20 text-slate-700"
+                className="w-28 sm:w-36 h-20 sm:h-24 text-emerald-50 drop-shadow-md animate-[float_3.5s_ease-in-out_infinite]"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
                 aria-hidden="true"
@@ -701,15 +701,15 @@ export function CustomerStorefront({
             </div>
 
             {/* Right: "Nomoshkar Grahok" Typography */}
-            <div className="text-center sm:text-right pb-1 z-10">
-              <div className="font-serif text-sm sm:text-base text-slate-600 tracking-wide">
+            <div className="text-right pb-3 z-10 relative">
+              <div className="font-serif text-sm sm:text-base text-emerald-100 tracking-wide">
                 {greetingTop}
               </div>
-              <div className="font-serif text-2xl sm:text-3xl font-extrabold text-[#14233c] tracking-tight leading-none mt-0.5">
+              <div className="font-serif text-3xl sm:text-4xl font-black text-white tracking-tight leading-none mt-0.5 drop-shadow-md">
                 {greetingMain}
               </div>
               {storeSettings.greetingBengali && (
-                <div className="text-[11px] font-semibold text-emerald-800 mt-1">
+                <div className="text-[11px] font-semibold text-lime-100 mt-1">
                   {storeSettings.greetingBengali}
                 </div>
               )}
@@ -719,7 +719,7 @@ export function CustomerStorefront({
           {/* Sweeping Curved Horizon Line under Curzon Gate & Nomoshkar Grahok */}
           <svg
             viewBox="0 0 600 24"
-            className="w-full h-4 text-[#1e293b] -mt-1"
+            className="w-full h-4 text-emerald-300 -mt-1 relative z-10"
             fill="none"
             preserveAspectRatio="none"
             aria-hidden="true"
@@ -740,7 +740,7 @@ export function CustomerStorefront({
       <section
         ref={bestItemsSectionRef}
         aria-label="Special Occasion and Best Items Showcase"
-        className="max-w-5xl mx-auto w-full px-3.5 sm:px-6 pt-2 pb-4 space-y-3"
+        className="max-w-5xl mx-auto w-full px-3.5 sm:px-6 pt-3 pb-4 space-y-3"
       >
         {/* =================================================================== */}
         {/* MERGED HERO SLIDER BAR: FESTIVE BANNER + BEST 5 RANKED SPOTLIGHT    */}
@@ -794,7 +794,7 @@ export function CustomerStorefront({
             </div>
 
             {/* Main Peek-Framed Slider Stage with Prev / Next Controls */}
-            <div className="relative flex items-center justify-center gap-2 sm:gap-3 overflow-hidden">
+            <div className="relative flex items-center justify-center gap-2 sm:gap-3 overflow-hidden rounded-[28px] bg-gradient-to-br from-[#e3f5e7] via-white to-[#e6f6eb] p-1.5 sm:p-3 shadow-[0_14px_40px_rgba(5,90,48,0.12)]">
               {/* Left Peek Edge Card (Visual Framing like the mobile screenshot) */}
               <div
                 aria-hidden="true"
@@ -931,7 +931,7 @@ export function CustomerStorefront({
                         }));
 
                   return (
-                    <div className="group relative w-full max-w-[760px] mx-auto h-[min(680px,78vh)] min-h-[520px] sm:min-h-[560px] lg:min-h-[600px] rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-md border-2 border-amber-300/90 bg-gradient-to-br from-[#fffbeb] via-white to-[#ecfdf5] select-none">
+                    <div className="group relative w-full max-w-[760px] mx-auto h-[min(520px,70vh)] min-h-[390px] sm:min-h-[460px] lg:min-h-[500px] rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-xl border-2 border-emerald-200 bg-gradient-to-br from-[#f0fff4] via-white to-[#dcfce7] select-none animate-[fadeIn_550ms_ease-out]">
                       {/* Large product artwork, styled like a storefront campaign banner */}
                       <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6 lg:p-8 pb-44 sm:pb-48 lg:pb-52">
                         {item.imageUrl ? (
@@ -939,7 +939,7 @@ export function CustomerStorefront({
                             src={item.imageUrl}
                             alt={item.name}
                             referrerPolicy="no-referrer"
-                            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-[1.04]"
+                            className="w-full h-full object-contain transition-transform duration-700 ease-out animate-[float_4s_ease-in-out_infinite] group-hover:scale-[1.07]"
                           />
                         ) : (
                           <span className="text-8xl sm:text-9xl drop-shadow-xs">{item.emoji || '🛍️'}</span>
@@ -1227,13 +1227,13 @@ export function CustomerStorefront({
                   key={product.id}
                   className={`group bg-white rounded-xl sm:rounded-2xl border transition-all flex flex-col justify-between overflow-hidden min-w-0 ${
                     product.inStock
-                      ? 'border-slate-200/90 hover:border-[#0d647d] hover:shadow-md'
+                      ? 'border-emerald-100 hover:border-emerald-400 hover:shadow-md'
                       : 'border-slate-200 opacity-70 bg-slate-50'
                   }`}
                 >
                   <div>
                     {/* Product Visual Box */}
-                    <div className="relative aspect-square w-full max-h-44 bg-[#f7f8fa] flex items-center justify-center p-2.5 sm:p-4 border-b border-slate-100">
+                    <div className="relative aspect-square w-full max-h-44 bg-gradient-to-br from-[#f6fbf5] to-[#edf6ec] flex items-center justify-center p-2.5 sm:p-4 border-b border-emerald-50">
                       {product.imageUrl ? (
                         <img
                           src={product.imageUrl}
