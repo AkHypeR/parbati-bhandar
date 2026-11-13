@@ -86,6 +86,23 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   } catch { return json({ error: "Security verification is temporarily unavailable. Please try again." }, 503); }
   await ensureTable(env);
   await purgeExpiredCustomerOrders(env);
+
+  // Enforce store hours and maintenance on the server as well as in the UI.
+  const settingsRow = await env.DB.prepare("SELECT data FROM store_settings WHERE id=1").first<any>();
+  let storeSettings: any = {};
+  try { storeSettings = settingsRow?.data ? JSON.parse(settingsRow.data) : {}; } catch { storeSettings = {}; }
+  const now = Date.now();
+  const maintenanceActive = storeSettings.maintenanceMode === true &&
+    !(typeof storeSettings.maintenanceUntil === "number" && now >= storeSettings.maintenanceUntil);
+  const istNow = new Date(now + 5.5 * 60 * 60 * 1000);
+  const istHour = istNow.getUTCHours();
+  const scheduledOpen = istHour >= 7 && istHour < 22;
+  const storeOpen = storeSettings.autoSchedule === true
+    ? scheduledOpen
+    : storeSettings.isOpen !== false;
+  if (maintenanceActive) return json({ error: "The store is temporarily closed. Please place your order after it reopens." }, 403);
+  if (!storeOpen) return json({ error: "The store is currently closed. Online orders are paused until the store opens." }, 403);
+
   const name = String(body?.customerName || "").trim().slice(0, 100);
   const phone = String(body?.customerPhone || "").replace(/\D/g, "").slice(0, 15);
   const note = String(body?.note || "").trim().slice(0, 500);
