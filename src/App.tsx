@@ -698,14 +698,33 @@ export default function App() {
       {activeMode === 'customer' ? (
         maintenanceMode ? (
           <div className="fixed inset-0 z-[100] min-h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-[#063b35] to-slate-900 text-white flex items-center justify-center px-5">
-            <div className="absolute inset-0 opacity-20" aria-hidden="true"><div className="absolute -top-20 -left-16 h-72 w-72 rounded-full bg-emerald-400 blur-3xl animate-pulse" /><div className="absolute -bottom-24 -right-16 h-80 w-80 rounded-full bg-amber-300 blur-3xl animate-pulse" /></div>
-            <div className="relative w-full max-w-xl rounded-[2rem] border border-white/15 bg-white/10 p-8 sm:p-12 text-center shadow-2xl backdrop-blur-xl">
-              <div className="mx-auto mb-6 grid h-24 w-24 place-items-center rounded-3xl bg-amber-400 text-slate-950 shadow-lg animate-bounce"><span className="text-5xl" aria-hidden="true">🛠️</span></div>
-              <button type="button" aria-label="Parbati Bhandar" onClick={() => setMaintenanceLogoTaps(count => { if (count + 1 >= 5) { setActiveMode('admin'); showToast('Owner portal access'); return 0; } return count + 1; })} className="text-xs font-black uppercase tracking-[0.28em] text-amber-300 cursor-default select-none focus:outline-none">{'Parbati Bhandar'}</button>
-              <h1 className="mt-3 text-3xl sm:text-4xl font-black tracking-tight">We’ll be back soon!</h1>
-              <p className="mx-auto mt-4 max-w-md text-sm sm:text-base leading-7 text-slate-200">We’re making a few improvements to serve you better. Online shopping is temporarily paused while we work behind the scenes.</p>
-              <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-300/10 px-5 py-2.5 text-sm font-bold text-amber-200"><span className="h-2.5 w-2.5 rounded-full bg-amber-300 animate-pulse" /> Store maintenance in progress</div>
-              <p className="mt-8 text-xs text-slate-400">Thank you for your patience • ধন্যবাদ</p>
+            <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+              <div className="absolute -left-24 -top-24 h-80 w-80 rounded-full bg-emerald-400/25 blur-3xl animate-pulse" />
+              <div className="absolute -bottom-28 -right-20 h-96 w-96 rounded-full bg-amber-300/20 blur-3xl animate-pulse" />
+              <div className="absolute left-[12%] top-[18%] h-2 w-2 rounded-full bg-amber-200 animate-ping" />
+              <div className="absolute right-[16%] top-[28%] h-1.5 w-1.5 rounded-full bg-emerald-200 animate-ping [animation-delay:700ms]" />
+              <div className="absolute bottom-[20%] left-[20%] h-1.5 w-1.5 rounded-full bg-white animate-ping [animation-delay:1200ms]" />
+            </div>
+            <div className="relative w-full max-w-xl overflow-hidden rounded-[2rem] border border-white/15 bg-white/[0.09] p-8 text-center shadow-2xl backdrop-blur-xl sm:p-12">
+              <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-emerald-200/80 to-transparent" />
+              <div className="relative mx-auto mb-7 grid h-28 w-28 place-items-center">
+                <div className="absolute inset-0 rounded-full border border-dashed border-amber-200/50 animate-[spin_18s_linear_infinite]" />
+                <div className="absolute inset-2 rounded-full border border-emerald-200/30 animate-[spin_12s_linear_infinite_reverse]" />
+                <div className="absolute -right-1 top-3 h-3 w-3 rounded-full bg-amber-300 shadow-[0_0_18px_rgba(252,211,77,0.9)] animate-pulse" />
+                <div className="relative grid h-20 w-20 place-items-center rounded-[1.7rem] border border-amber-200/50 bg-gradient-to-br from-amber-300 via-amber-400 to-orange-500 text-slate-950 shadow-[0_12px_45px_rgba(245,158,11,0.3)] animate-[float_3.5s_ease-in-out_infinite]">
+                  <span className="text-5xl drop-shadow-sm" aria-hidden="true">🛠️</span>
+                </div>
+              </div>
+              <button type="button" aria-label="Parbati Bhandar" onClick={() => setMaintenanceLogoTaps(count => { if (count + 1 >= 5) { setActiveMode('admin'); showToast('Owner portal access'); return 0; } return count + 1; })} className="text-xs font-black uppercase tracking-[0.32em] text-amber-300 cursor-default select-none focus:outline-none">{'Parbati Bhandar'}</button>
+              <h1 className="mt-4 bg-gradient-to-r from-white via-emerald-100 to-amber-200 bg-clip-text text-3xl font-black tracking-tight text-transparent sm:text-4xl">We’ll be back soon!</h1>
+              <p className="mx-auto mt-4 max-w-md text-sm leading-7 text-slate-200 sm:text-base">We’re making a few improvements to serve you better. Online shopping is temporarily paused while we work behind the scenes.</p>
+              <div className="mx-auto mt-8 flex w-fit items-center gap-3 rounded-full border border-amber-300/30 bg-amber-300/10 px-5 py-3 text-sm font-bold text-amber-100 shadow-[0_0_28px_rgba(251,191,36,0.08)]">
+                <span className="relative flex h-2.5 w-2.5"><span className="absolute inline-flex h-full w-full rounded-full bg-amber-300 opacity-70 animate-ping" /><span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-amber-300" /></span>
+                <span>Store maintenance in progress</span>
+                <span className="inline-flex gap-1"><i className="h-1 w-1 rounded-full bg-amber-200 animate-bounce" /><i className="h-1 w-1 rounded-full bg-amber-200 animate-bounce [animation-delay:150ms]" /><i className="h-1 w-1 rounded-full bg-amber-200 animate-bounce [animation-delay:300ms]" /></span>
+              </div>
+              <div className="mx-auto mt-8 h-1.5 w-40 overflow-hidden rounded-full bg-white/10"><div className="h-full w-1/2 rounded-full bg-gradient-to-r from-emerald-300 via-amber-300 to-emerald-300 animate-[shimmer_2.2s_ease-in-out_infinite]" /></div>
+              <p className="mt-6 text-xs text-slate-400">Thank you for your patience • ধন্যবাদ</p>
 
             </div>
           </div>
