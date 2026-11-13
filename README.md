@@ -46,3 +46,5 @@ The shopping cart remains local to each customer's browser. WhatsApp ordering re
 5. In Supabase Authentication → URL Configuration, add your deployed Netlify URL to the allowed redirect URLs if you later enable OAuth.
 
 Never expose a Supabase `service_role` or secret key in frontend environment variables.
+
+<!-- Cloudflare Pages deployment refresh: 2026-11-13 -->
