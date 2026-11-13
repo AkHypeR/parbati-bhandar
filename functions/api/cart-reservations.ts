@@ -85,6 +85,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     totals.set(item.productId,(totals.get(item.productId)||0)+units);
   }
   const now=Date.now();
+  let latestExpiresAt=now;
   const statements:any[]=[];
   if (totals.size) {
     const placeholders = Array.from(totals.keys()).map(() => "?").join(",");
@@ -99,6 +100,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     const threshold=Number(product.lowStockThreshold);
     const isLowStock=Number.isFinite(threshold) && threshold>0 && Number(product.stockQuantity)<=threshold;
     const expires=now+(isLowStock?5:10)*60*1000;
+    latestExpiresAt=Math.max(latestExpiresAt,expires);
     statements.push(env.DB.prepare(`INSERT INTO cart_stock_reservations(reservation_id,product_id,quantity,expires_at)
       SELECT ?,?,?,? WHERE EXISTS(
         SELECT 1 FROM products p WHERE p.id=?
@@ -120,7 +122,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     console.error("Cart stock reservation failed",error);
     return json({error:"This item was just added by another customer or there is not enough stock. Refresh the store and adjust your cart."},409);
   }
-  return json({ok:true,expiresAt:expires},200,{"cache-control":"no-store"});
+  return json({ok:true,expiresAt:latestExpiresAt},200,{"cache-control":"no-store"});
 };
 
 export const onRequestDelete: PagesFunction<Env> = async ({ request, env }) => {
