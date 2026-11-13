@@ -7,6 +7,10 @@ async function ensureOrders(env: Env) {
     status TEXT NOT NULL DEFAULT 'new', created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL, order_number INTEGER
   )`).run();
+  const columns = await env.DB.prepare("PRAGMA table_info(customer_orders)").all<any>();
+  if (!(columns.results || []).some((column: any) => column.name === "order_number")) {
+    await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN order_number INTEGER").run();
+  }
 }
 
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
