@@ -16,6 +16,8 @@ export interface Product {
   inStock: boolean;
   stockQuantity?: number;
   lowStockThreshold?: number;
+  /** Public, quantity-free low-stock signal returned to customer storefronts. */
+  lowStock?: boolean;
   emoji: string;
   imageUrl?: string;
   badge?: string;
