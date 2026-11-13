@@ -289,13 +289,19 @@ export default function App() {
         : 5;
       // Public customer catalog intentionally hides exact quantities and thresholds.
       // The API supplies a boolean lowStock flag instead; owner catalog can still use counts.
+      // Once a low-stock cart timer starts, keep the warning active for this
+      // cart session. The public catalogue can recalculate lowStock after placing
+      // this customer's own reservation, so the live flag may temporarily turn false.
+      const hasActiveLowStockTimer = lowStockCartStartedAt.current.has(product.id);
       const isLowStock = product.inStock && (
         product.lowStock === true ||
-        (Number.isFinite(stockQuantity) && stockQuantity > 0 && stockQuantity <= lowStockThreshold)
+        item.product.lowStock === true ||
+        (Number.isFinite(stockQuantity) && stockQuantity > 0 && stockQuantity <= lowStockThreshold) ||
+        hasActiveLowStockTimer
       );
       if (isLowStock) {
         lowStockInCart.add(product.id);
-        if (!lowStockCartStartedAt.current.has(product.id)) {
+        if (!hasActiveLowStockTimer) {
           lowStockCartStartedAt.current.set(product.id, Date.now());
         }
       }
