@@ -62,6 +62,7 @@ const ensureTable = async (env: Env) => {
     await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN order_number INTEGER").run();
   }
   if (!(columns.results || []).some((column: any) => column.name === "stock_deducted")) await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN stock_deducted INTEGER NOT NULL DEFAULT 0").run();
+  if (!(columns.results || []).some((column: any) => column.name === "confirmed_at")) await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN confirmed_at INTEGER").run();
   const unnumbered = await env.DB.prepare("SELECT id FROM customer_orders WHERE order_number IS NULL ORDER BY created_at ASC, id ASC").all<any>();
   let nextNumber = 1;
   for (const row of unnumbered.results || []) {
@@ -210,7 +211,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
       env.DB.prepare(`INSERT INTO order_stock_deduction_guard (order_id,expected_count,actual_count)
         SELECT ?,?,(SELECT COUNT(*) FROM order_stock_deductions WHERE order_id=?)`)
         .bind(id, deductions.size, id),
-      env.DB.prepare("UPDATE customer_orders SET stock_deducted=1,status='ready',items_json=?,updated_at=? WHERE id=? AND stock_deducted=2")
+      env.DB.prepare("UPDATE customer_orders SET stock_deducted=1,status='ready',items_json=?,updated_at=?,confirmed_at=COALESCE(confirmed_at,?) WHERE id=? AND stock_deducted=2")
         .bind(JSON.stringify(items), Date.now(), id)
     );
     try {
@@ -223,8 +224,8 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
       return json({error:"Stock changed while this order was being confirmed. Refresh the order, review availability, and try again."},409);
     }
   } else {
-    const result = await env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,updated_at=? WHERE id=?")
-      .bind(status,JSON.stringify(items),Date.now(),id).run();
+    const result = await env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,updated_at=?,confirmed_at=CASE WHEN ?='ready' THEN COALESCE(confirmed_at,?) ELSE confirmed_at END WHERE id=?")
+      .bind(status,JSON.stringify(items),Date.now(),status,Date.now(),id).run();
     changes = Number(result.meta.changes || 0);
   }
   let notification = "not-configured";
