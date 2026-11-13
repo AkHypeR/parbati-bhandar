@@ -49,6 +49,10 @@ const ensureTable = async (env: Env) => {
    note TEXT, items_json TEXT NOT NULL, total REAL NOT NULL, status TEXT NOT NULL DEFAULT 'new',
    created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, order_number INTEGER
   )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS cart_stock_reservations (
+    reservation_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL,
+    expires_at INTEGER NOT NULL, PRIMARY KEY (reservation_id, product_id)
+  )`).run();
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS order_stock_reservations (
     order_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL,
     PRIMARY KEY (order_id, product_id)
@@ -121,6 +125,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   })) : [];
   if (!name || phone.length < 10 || phone.length > 15 || !items.length || items.some((x: OrderItem) => !x.name)) return json({ error: "Please enter your name, valid phone number and at least one item." }, 400);
 
+  const cartReservationId = String(body?.cartReservationId || "").slice(0,80);
   // Reserve inventory at checkout, not only when the owner later confirms.
   // This prevents two pending orders from both claiming the final unit.
   const requestedByProduct = new Map<string, { quantity: number; name: string }>();
@@ -147,6 +152,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const orderNumber = Number(sequence?.value || 1);
   const id = crypto.randomUUID();
   const reservationStatements = [
+    ...(cartReservationId ? [env.DB.prepare("DELETE FROM cart_stock_reservations WHERE reservation_id=?").bind(cartReservationId)] : []),
     env.DB.prepare("INSERT INTO customer_orders (id,order_number,customer_name,customer_phone,note,items_json,total,status,created_at,updated_at) VALUES (?,?,?,?,?,?,?,'new',?,?)")
       .bind(id,orderNumber,name,phone,note,JSON.stringify(items),total,now,now)
   ];
@@ -157,8 +163,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
         WHERE p.id=? AND COALESCE(json_extract(p.data,'$.inStock'),1)=1
           AND json_type(p.data,'$.stockQuantity') IN ('integer','real')
           AND ROUND(json_extract(p.data,'$.stockQuantity') -
-            COALESCE((SELECT SUM(r.quantity) FROM order_stock_reservations r WHERE r.product_id=p.id),0),4) >= ROUND(?,4)
-      )`).bind(id,productId,requested.quantity,productId,requested.quantity));
+            COALESCE((SELECT SUM(r.quantity) FROM order_stock_reservations r WHERE r.product_id=p.id),0) -
+            COALESCE((SELECT SUM(h.quantity) FROM cart_stock_reservations h WHERE h.product_id=p.id AND h.expires_at>? AND h.reservation_id!=?),0),4) >= ROUND(?,4)
+      )`).bind(id,productId,requested.quantity,productId,now,cartReservationId,requested.quantity));
   }
   if (requestedByProduct.size) {
     reservationStatements.push(env.DB.prepare(`INSERT INTO order_stock_reservation_guard (order_id,expected_count,actual_count)
