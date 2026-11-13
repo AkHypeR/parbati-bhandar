@@ -6,6 +6,9 @@ export interface Env {
   CLOUDINARY_API_KEY: string;
   CLOUDINARY_API_SECRET: string;
   TURNSTILE_SECRET_KEY: string;
+  VAPID_PUBLIC_KEY?: string;
+  VAPID_PRIVATE_KEY?: string;
+  VAPID_SUBJECT?: string;
 }
 export const json = (data: unknown, status = 200, headers: HeadersInit = {}) =>
   new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json; charset=utf-8", ...headers } });
