@@ -1192,7 +1192,7 @@ export function CustomerStorefront({
                             {product.badge}
                           </span>
                         )}
-                        {product.inStock && Number(product.stockQuantity) > 0 && isProductLowStock(product) && (
+                        {product.inStock && (product as any).lowStock === true && (
                           <span className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-orange-300 bg-gradient-to-r from-orange-100 to-amber-100 px-2 py-1 text-[9px] font-black leading-tight tracking-wide text-orange-900 shadow-sm animate-pulse motion-reduce:animate-none">
                             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-orange-600" />
                             LOW STOCK · ORDER SOON
