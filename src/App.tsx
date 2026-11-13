@@ -712,7 +712,9 @@ export default function App() {
                 <div className="absolute inset-2 rounded-full border border-emerald-200/30 animate-[spin_12s_linear_infinite_reverse]" />
                 <div className="absolute -right-1 top-3 h-3 w-3 rounded-full bg-amber-300 shadow-[0_0_18px_rgba(252,211,77,0.9)] animate-pulse" />
                 <div className="relative grid h-20 w-20 place-items-center rounded-[1.7rem] border border-amber-200/50 bg-gradient-to-br from-amber-300 via-amber-400 to-orange-500 text-slate-950 shadow-[0_12px_45px_rgba(245,158,11,0.3)] animate-[float_3.5s_ease-in-out_infinite]">
-                  <span className="text-5xl drop-shadow-sm" aria-hidden="true">🛠️</span>
+                  <span className="text-5xl drop-shadow-sm" aria-hidden="true">🧺</span>
+                  <span className="absolute -right-2 -top-2 text-xl drop-shadow-md animate-[float_2.8s_ease-in-out_infinite]" aria-hidden="true">🍎</span>
+                  <span className="absolute -bottom-2 -left-2 text-xl drop-shadow-md animate-[float_3.2s_ease-in-out_infinite]" aria-hidden="true">🥬</span>
                 </div>
               </div>
               <button type="button" aria-label="Parbati Bhandar" onClick={() => setMaintenanceLogoTaps(count => { if (count + 1 >= 5) { setActiveMode('admin'); showToast('Owner portal access'); return 0; } return count + 1; })} className="text-xs font-black uppercase tracking-[0.32em] text-amber-300 cursor-default select-none focus:outline-none">{'Parbati Bhandar'}</button>
