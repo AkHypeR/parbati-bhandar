@@ -24,7 +24,7 @@ interface CartDrawerProps {
   customerName: string;
   customerPhone: string;
   setCustomerPhone: (v: string) => void;
-  onSaveOrder: (turnstileToken: string) => Promise<boolean>;
+  onSaveOrder: (turnstileToken: string, pushSubscription?: PushSubscriptionJSON | null) => Promise<boolean>;
   setCustomerName: (v: string) => void;
   customerNote: string;
   setCustomerNote: (v: string) => void;
@@ -63,7 +63,42 @@ export function CartDrawer({
   const [phoneError, setPhoneError] = useState(false);
   const [savingOrder, setSavingOrder] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState('');
+  const [pushSubscription, setPushSubscription] = useState<PushSubscriptionJSON | null>(null);
+  const [pushState, setPushState] = useState<'off' | 'working' | 'on' | 'unsupported' | 'error'>('off');
   const nameInputRef = useRef<HTMLInputElement | null>(null);
+
+  const enableOrderNotifications = async () => {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
+      setPushState('unsupported');
+      return;
+    }
+    if (!hasCustomerPhone) { setPhoneError(true); return; }
+    setPushState('working');
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') { setPushState('error'); return; }
+      const keyResponse = await fetch('/api/push-key', { cache: 'no-store' });
+      const keyData = await keyResponse.json();
+      if (!keyResponse.ok || !keyData.publicKey) throw new Error('Notifications are not configured yet.');
+      const registration = await navigator.serviceWorker.register('/sw.js');
+      const existing = await registration.pushManager.getSubscription();
+      const subscription = existing || await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(keyData.publicKey)
+      });
+      setPushSubscription(subscription.toJSON());
+      setPushState('on');
+    } catch (error) {
+      console.error('Push subscription failed', error);
+      setPushState('error');
+    }
+  };
+
+  const urlBase64ToUint8Array = (value: string) => {
+    const padding = '='.repeat((4 - value.length % 4) % 4);
+    const base64 = (value + padding).replace(/-/g, '+').replace(/_/g, '/');
+    return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+  };
 
   if (!isOpen) return null;
 
@@ -78,7 +113,7 @@ export function CartDrawer({
     if (savingOrder) return;
     const popup = window.open('about:blank', '_blank');
     setSavingOrder(true);
-    try { const saved = await onSaveOrder(turnstileToken); if (saved && popup) { clearCart(); popup.location.href = whatsAppUrl; setTurnstileToken(''); onClose(); } else if (popup) popup.close(); }
+    try { const saved = await onSaveOrder(turnstileToken, pushSubscription); if (saved && popup) { clearCart(); popup.location.href = whatsAppUrl; setTurnstileToken(''); onClose(); } else if (popup) popup.close(); }
     finally { setSavingOrder(false); }
   };
 
@@ -188,6 +223,15 @@ export function CartDrawer({
                   <label htmlFor="cart-customer-phone" className="text-xs font-extrabold text-slate-800">Phone number (WhatsApp) *</label>
                   <input id="cart-customer-phone" type="tel" inputMode="tel" value={customerPhone} onChange={e => { setCustomerPhone(e.target.value); setPhoneError(false); }} placeholder="Enter 10-digit mobile number" className={"w-full px-3.5 py-2.5 rounded-xl border bg-white text-xs sm:text-sm font-bold " + (phoneError ? "border-red-400" : "border-slate-300")} />
                   {phoneError && <p className="text-xs font-bold text-red-600">Enter a valid phone number (at least 10 digits).</p>}
+                </div>
+                <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 space-y-2">
+                  <div className="text-xs font-bold text-emerald-900">Order status notifications (optional)</div>
+                  <p className="text-[11px] text-emerald-800">Get an alert when your order is ready, unavailable, cancelled or completed. Allow notifications on this device.</p>
+                  <button type="button" onClick={enableOrderNotifications} disabled={pushState === 'working' || pushState === 'on'} className="w-full rounded-lg bg-emerald-700 px-3 py-2 text-xs font-bold text-white disabled:opacity-60">
+                    {pushState === 'working' ? 'Enabling…' : pushState === 'on' ? '✓ Notifications enabled for this order' : 'Enable order notifications'}
+                  </button>
+                  {pushState === 'unsupported' && <p className="text-[11px] text-amber-800">This browser or device does not support web push notifications.</p>}
+                  {pushState === 'error' && <p className="text-[11px] text-red-700">Could not enable notifications. Check browser permission and try again.</p>}
                 </div>
                 <input
                   type="text"
