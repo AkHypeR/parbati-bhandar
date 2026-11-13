@@ -212,7 +212,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
         SELECT ?,?,(SELECT COUNT(*) FROM order_stock_deductions WHERE order_id=?)`)
         .bind(id, deductions.size, id),
       env.DB.prepare("UPDATE customer_orders SET stock_deducted=1,status='ready',items_json=?,updated_at=?,confirmed_at=COALESCE(confirmed_at,?) WHERE id=? AND stock_deducted=2")
-        .bind(JSON.stringify(items), Date.now(), id)
+        .bind(JSON.stringify(items), Date.now(), Date.now(), id)
     );
     try {
       const results = await env.DB.batch(statements);
