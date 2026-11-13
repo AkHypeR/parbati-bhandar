@@ -111,6 +111,32 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     unit: String(x.unit || "").slice(0, 30), price: Math.max(0, Number(x.price) || 0)
   })) : [];
   if (!name || phone.length < 10 || phone.length > 15 || !items.length || items.some((x: OrderItem) => !x.name)) return json({ error: "Please enter your name, valid phone number and at least one item." }, 400);
+
+  // Re-check live inventory at checkout. This prevents a stale customer page
+  // from accepting an item after the owner has confirmed another order and
+  // the final unit has been deducted.
+  const requestedByProduct = new Map<string, { quantity: number; name: string; unit: string }>();
+  for (const item of items) {
+    if (!item.productId) continue;
+    const current = requestedByProduct.get(item.productId) || { quantity: 0, name: item.name, unit: item.unit };
+    current.quantity += item.quantity;
+    requestedByProduct.set(item.productId, current);
+  }
+  for (const [productId, requested] of requestedByProduct) {
+    const productRow = await env.DB.prepare("SELECT data FROM products WHERE id=?").bind(productId).first<any>();
+    if (!productRow) return json({ error: requested.name + " is no longer available. Please refresh your cart." }, 409);
+    const product = JSON.parse(productRow.data);
+    if (product.inStock === false || (typeof product.stockQuantity === "number" && product.stockQuantity <= 0)) {
+      return json({ error: requested.name + " is now out of stock. Please remove it from your cart." }, 409);
+    }
+    if (typeof product.stockQuantity === "number") {
+      const stockUnits = stockUnitsForOrder({ ...requested, productId, price: 0 }, product);
+      if (stockUnits === null || stockUnits > Number(product.stockQuantity) + 1e-9) {
+        return json({ error: "There is not enough stock for " + requested.name + ". Please update your cart." }, 409);
+      }
+    }
+  }
+
   const total = items.reduce((sum: number, x: OrderItem) => sum + x.price * x.quantity, 0);
   const sequence = await env.DB.prepare("INSERT INTO order_sequence (name,value) VALUES ('customer_orders',1) ON CONFLICT(name) DO UPDATE SET value=value+1 RETURNING value").first<any>();
   const orderNumber = Number(sequence?.value || 1);
