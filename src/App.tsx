@@ -247,9 +247,37 @@ export default function App() {
       }).catch(() => {});
     };
     syncCartHold();
-    const heartbeat = window.setInterval(syncCartHold, 3 * 60 * 1000);
-    return () => window.clearInterval(heartbeat);
   }, [cart, cloudReady, activeMode, isOwnerUnlocked]);
+
+  // Low-stock products are held for five minutes, then removed if no order is placed.
+  const lowStockCartStartedAt = useRef<Map<string, number>>(new Map());
+  useEffect(() => {
+    const lowStockInCart = new Set<string>();
+    for (const item of Object.values(cart)) {
+      const product = products.find((entry) => entry.id === item.product.id) || item.product;
+      if (product.inStock && Number(product.stockQuantity) > 0 && isProductLowStock(product)) {
+        lowStockInCart.add(product.id);
+        if (!lowStockCartStartedAt.current.has(product.id)) lowStockCartStartedAt.current.set(product.id, Date.now());
+      }
+    }
+    for (const id of Array.from(lowStockCartStartedAt.current.keys())) {
+      if (!lowStockInCart.has(id)) lowStockCartStartedAt.current.delete(id);
+    }
+    const timers = Array.from(lowStockCartStartedAt.current.entries()).map(([productId, startedAt]) => {
+      const remaining = Math.max(0, 5 * 60 * 1000 - (Date.now() - startedAt));
+      return window.setTimeout(() => {
+        setCart((prev) => {
+          const next: CartMap = {};
+          for (const [key, item] of Object.entries(prev)) if (item.product.id !== productId) next[key] = item;
+          return next;
+        });
+        lowStockCartStartedAt.current.delete(productId);
+        const expiredProduct = products.find((entry) => entry.id === productId);
+        showToast((expiredProduct?.name || 'A low-stock item') + ' was removed from your cart after 5 minutes so another customer can order it.', 'error');
+      }, remaining);
+    });
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [cart, products]);
 
   // Keep the cart local to this device; the live catalogue and settings are cloud-backed.
   useEffect(() => {
