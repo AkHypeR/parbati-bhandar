@@ -705,6 +705,14 @@ export default function App() {
               <p className="mx-auto mt-4 max-w-md text-sm sm:text-base leading-7 text-slate-200">We’re making a few improvements to serve you better. Online shopping is temporarily paused while we work behind the scenes.</p>
               <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-300/10 px-5 py-2.5 text-sm font-bold text-amber-200"><span className="h-2.5 w-2.5 rounded-full bg-amber-300 animate-pulse" /> Store maintenance in progress</div>
               <p className="mt-8 text-xs text-slate-400">Thank you for your patience • ধন্যবাদ</p>
+              <button
+                type="button"
+                onClick={() => setActiveMode('admin')}
+                className="mt-7 inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-amber-300"
+              >
+                <Lock className="h-4 w-4 text-amber-300" />
+                Owner access
+              </button>
             </div>
           </div>
         ) : (
