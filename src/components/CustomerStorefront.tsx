@@ -776,13 +776,13 @@ export function CustomerStorefront({
 
                       {/* Middle Content: Product Artwork + Title + Pack Selector */}
                       <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 my-1 px-7 sm:px-2">
-                        <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white border border-amber-200/80 shadow-xs flex items-center justify-center shrink-0 overflow-hidden">
+                        <div className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-3xl bg-white border border-amber-200/80 shadow-md flex items-center justify-center shrink-0 overflow-hidden">
                           {item.imageUrl ? (
                             <img
                               src={item.imageUrl}
                               alt={item.name}
                               referrerPolicy="no-referrer"
-                              className="w-full h-full object-contain p-2"
+                              className="w-full h-full object-contain p-1"
                             />
                           ) : (
                             <span className="text-5xl sm:text-6xl drop-shadow-xs">
