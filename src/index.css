@@ -47,3 +47,33 @@
     scroll-behavior: auto !important;
   }
 }
+
+
+@keyframes welcomeRise {
+  from { opacity: 0; transform: translateY(18px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes welcomeOrbit { to { transform: rotate(360deg); } }
+@keyframes welcomeShine {
+  0%, 15% { transform: translateX(-120%); }
+  65%, 100% { transform: translateX(360%); }
+}
+@keyframes welcomeSparkle {
+  0%, 100% { opacity: .55; transform: scale(.85) rotate(-12deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(12deg); }
+}
+@keyframes welcomeFloat {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+@keyframes closedGlow {
+  0%, 100% { box-shadow: 0 4px 14px rgba(190,18,60,.28); filter: saturate(1); }
+  50% { box-shadow: 0 5px 22px rgba(244,63,94,.55); filter: saturate(1.25); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[welcomeRise_800ms_cubic-bezier\(\.2\,\.8\,\.2\,1\)\],
+  [class*="animate-\[welcome"],
+  [class*="animate-\[closedGlow"] {
+    animation: none !important;
+  }
+}
