@@ -431,6 +431,41 @@ export function CustomerStorefront({
         </div>
       </header>
 
+      {/* Order tracking and recent history are placed near the top for easy access. */}
+      <section className="max-w-3xl mx-auto w-full px-4 py-4" aria-label="Track your order">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+          <h2 className="text-lg font-black text-slate-900">Track Your Order</h2>
+          <p className="text-sm text-slate-500 mt-1">Track a specific order or view all orders placed with your phone number in the last 7 days.</p>
+          {lastOrderNumber && <div className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 p-3"><p className="text-xs font-bold uppercase tracking-wide text-emerald-800">Your order was placed successfully</p><div className="mt-1 flex flex-wrap items-center justify-between gap-2"><p className="text-xl font-black text-emerald-950">Order #{lastOrderNumber}</p><button type="button" onClick={() => { void navigator.clipboard?.writeText(String(lastOrderNumber)); }} className="rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-emerald-800 border border-emerald-200">Copy order number</button></div><p className="mt-1 text-xs text-emerald-800">Keep this number and your phone number to track this order.</p></div>}
+          <form onSubmit={trackOrder} className="grid sm:grid-cols-3 gap-2.5 mt-4">
+            <input required inputMode="numeric" value={trackingOrderNumber} onChange={e=>setTrackingOrderNumber(e.target.value)} placeholder="Order number" className="min-w-0 rounded-xl border border-slate-300 px-3 py-2.5 text-sm" />
+            <input required inputMode="tel" value={trackingPhone} onChange={e=>setTrackingPhone(e.target.value)} placeholder="Phone number" className="min-w-0 rounded-xl border border-slate-300 px-3 py-2.5 text-sm" />
+            <button disabled={trackingLoading} className="rounded-xl bg-[#0d647d] text-white font-bold px-4 py-2.5 disabled:opacity-60">{trackingLoading ? 'Checking…' : 'Track Order'}</button>
+          </form>
+          <button type="button" onClick={loadOrderHistory} disabled={historyLoading || trackingPhone.replace(/\D/g, '').length < 10} className="mt-3 w-full rounded-xl border border-[#0d647d] px-4 py-2.5 text-sm font-bold text-[#0d647d] disabled:opacity-50">{historyLoading ? 'Loading history…' : 'View 7-day order history'}</button>
+          <p className="mt-1 text-[11px] text-slate-400">Use the same phone number you entered when ordering. Order history is automatically deleted after 7 days.</p>
+          {historyError && <p role="alert" className="mt-2 text-sm text-red-600">{historyError}</p>}
+          {historyLoaded && <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
+            <div className="flex items-center justify-between gap-2"><h3 className="font-bold text-slate-900">Your recent orders</h3><span className="text-[10px] text-slate-400">Last 7 days</span></div>
+            {orderHistory.length === 0 ? <p className="rounded-xl bg-slate-50 p-3 text-sm text-slate-500">No orders found for this phone number in the last 7 days.</p> : orderHistory.map((order:any) => <div key={order.orderNumber} className="rounded-xl border border-slate-200 p-3">
+              <div className="flex flex-wrap items-center justify-between gap-2"><p className="font-bold text-sm text-slate-900">Order #{order.orderNumber}</p><span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700">{({new:'Received',ready:'Ready for pickup',completed:'Completed',unavailable:'Availability update',cancelled:'Cancelled',review:'Received'} as Record<string,string>)[order.status] || order.status}</span></div>
+              <p className="mt-1 text-[11px] text-slate-400">{new Date(order.createdAt).toLocaleString()}</p>
+              <div className="mt-2 space-y-1">{order.items.map((item:any,index:number)=><div key={index} className="flex justify-between gap-2 text-xs"><span>{item.name} · {item.quantity} {item.unit}</span><span className={item.unavailable?'font-semibold text-red-600':'text-emerald-700'}>{item.unavailable?'Unavailable':'Available'}</span></div>)}</div>
+            </div>)}
+          </div>}
+          {trackingError && <p role="alert" className="text-sm text-red-600 mt-3">{trackingError}</p>}
+          {trackingResult && <div className="mt-4 border-t border-slate-100 pt-4">
+            <div className="flex items-center justify-between gap-3"><p className="font-bold text-slate-900">Order #{trackingResult.orderNumber}</p><span className="text-[10px] font-semibold text-slate-400">Auto-updates every 15 seconds</span></div>
+            {trackingResult.status === 'cancelled' && <p className="mt-2 rounded-lg bg-red-50 p-2 text-xs font-semibold text-red-700">This order was cancelled. Please contact the store if you need help.</p>}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3 text-xs">
+              {['Received','Ready for pickup','Completed'].map((label,index)=>{ const stepIndex=[0,2,3][index]; return <div key={label} aria-current={trackingStep === stepIndex ? 'step' : undefined} className={'rounded-lg p-2 text-center font-semibold '+(trackingStep >= stepIndex?'bg-emerald-50 text-emerald-800':'bg-slate-100 text-slate-500')}>{label}</div>; })}
+            </div>
+            <div className="mt-3 space-y-2">{trackingResult.items.map((item:any,index:number)=><div key={index} className="flex justify-between gap-3 text-sm"><span>{item.name} · {item.quantity} {item.unit}</span><span className={item.unavailable?'text-red-600 font-bold':'text-emerald-700 font-semibold'}>{item.unavailable?'Unavailable':'Available'}</span></div>)}</div>
+          </div>}
+        </div>
+      </section>
+
+
       {/* ===================================================================== */}
       {/* STICKY SEARCH BAR & CATEGORY RIBBON (Follows User on Scroll)          */}
       {/* ===================================================================== */}
@@ -1426,38 +1461,6 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       {/* STOREFRONT FOOTER (Clean Customer Footer — NO Owner Login Button!)    */}
       {/* ===================================================================== */}
-            <section className="max-w-3xl mx-auto px-4 py-6" aria-label="Track your order">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
-          <h2 className="text-lg font-black text-slate-900">Track Your Order</h2>
-          <p className="text-sm text-slate-500 mt-1">Track a specific order or view all orders placed with your phone number in the last 7 days.</p>
-          {lastOrderNumber && <p className="mt-2 rounded-lg bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800">Your latest order number: #{lastOrderNumber} (already filled in below)</p>}
-          <form onSubmit={trackOrder} className="grid sm:grid-cols-3 gap-2.5 mt-4">
-            <input required inputMode="numeric" value={trackingOrderNumber} onChange={e=>setTrackingOrderNumber(e.target.value)} placeholder="Order number" className="min-w-0 rounded-xl border border-slate-300 px-3 py-2.5 text-sm" />
-            <input required inputMode="tel" value={trackingPhone} onChange={e=>setTrackingPhone(e.target.value)} placeholder="Phone number" className="min-w-0 rounded-xl border border-slate-300 px-3 py-2.5 text-sm" />
-            <button disabled={trackingLoading} className="rounded-xl bg-[#0d647d] text-white font-bold px-4 py-2.5 disabled:opacity-60">{trackingLoading ? 'Checking…' : 'Track Order'}</button>
-          </form>
-          <button type="button" onClick={loadOrderHistory} disabled={historyLoading || trackingPhone.replace(/\D/g, '').length < 10} className="mt-3 w-full rounded-xl border border-[#0d647d] px-4 py-2.5 text-sm font-bold text-[#0d647d] disabled:opacity-50">{historyLoading ? 'Loading history…' : 'View 7-day order history'}</button>
-          <p className="mt-1 text-[11px] text-slate-400">Use the same phone number you entered when ordering. Order history is automatically deleted after 7 days.</p>
-          {historyError && <p role="alert" className="mt-2 text-sm text-red-600">{historyError}</p>}
-          {historyLoaded && <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
-            <div className="flex items-center justify-between gap-2"><h3 className="font-bold text-slate-900">Your recent orders</h3><span className="text-[10px] text-slate-400">Last 7 days</span></div>
-            {orderHistory.length === 0 ? <p className="rounded-xl bg-slate-50 p-3 text-sm text-slate-500">No orders found for this phone number in the last 7 days.</p> : orderHistory.map((order:any) => <div key={order.orderNumber} className="rounded-xl border border-slate-200 p-3">
-              <div className="flex flex-wrap items-center justify-between gap-2"><p className="font-bold text-sm text-slate-900">Order #{order.orderNumber}</p><span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700">{({new:'Received',ready:'Ready for pickup',completed:'Completed',unavailable:'Availability update',cancelled:'Cancelled',review:'Received'} as Record<string,string>)[order.status] || order.status}</span></div>
-              <p className="mt-1 text-[11px] text-slate-400">{new Date(order.createdAt).toLocaleString()}</p>
-              <div className="mt-2 space-y-1">{order.items.map((item:any,index:number)=><div key={index} className="flex justify-between gap-2 text-xs"><span>{item.name} · {item.quantity} {item.unit}</span><span className={item.unavailable?'font-semibold text-red-600':'text-emerald-700'}>{item.unavailable?'Unavailable':'Available'}</span></div>)}</div>
-            </div>)}
-          </div>}
-          {trackingError && <p role="alert" className="text-sm text-red-600 mt-3">{trackingError}</p>}
-          {trackingResult && <div className="mt-4 border-t border-slate-100 pt-4">
-            <div className="flex items-center justify-between gap-3"><p className="font-bold text-slate-900">Order #{trackingResult.orderNumber}</p><span className="text-[10px] font-semibold text-slate-400">Auto-updates every 15 seconds</span></div>
-            {trackingResult.status === 'cancelled' && <p className="mt-2 rounded-lg bg-red-50 p-2 text-xs font-semibold text-red-700">This order was cancelled. Please contact the store if you need help.</p>}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3 text-xs">
-              {['Received','Ready for pickup','Completed'].map((label,index)=>{ const stepIndex=[0,2,3][index]; return <div key={label} aria-current={trackingStep === stepIndex ? 'step' : undefined} className={'rounded-lg p-2 text-center font-semibold '+(trackingStep >= stepIndex?'bg-emerald-50 text-emerald-800':'bg-slate-100 text-slate-500')}>{label}</div>; })}
-            </div>
-            <div className="mt-3 space-y-2">{trackingResult.items.map((item:any,index:number)=><div key={index} className="flex justify-between gap-3 text-sm"><span>{item.name} · {item.quantity} {item.unit}</span><span className={item.unavailable?'text-red-600 font-bold':'text-emerald-700 font-semibold'}>{item.unavailable?'Unavailable':'Available'}</span></div>)}</div>
-          </div>}
-        </div>
-      </section>
 
 <footer className="bg-slate-50 border-t border-slate-200 mt-10 py-6 px-4 text-xs text-slate-600">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
