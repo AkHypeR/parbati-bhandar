@@ -169,7 +169,7 @@ export function AdminUploadApp({
   const [replyCustomerPhone, setReplyCustomerPhone] = useState('');
   const [missingProducts, setMissingProducts] = useState('');
   const [replyNote, setReplyNote] = useState('');
-  type CustomerOrder = { id: string; customerName: string; customerPhone: string; note?: string; items: { name: string; quantity: number; unit: string; price: number }[]; total: number; status: 'new' | 'ready' | 'unavailable' | 'completed' | 'cancelled'; createdAt: number };
+  type CustomerOrder = { id: string; orderNumber: number; customerName: string; customerPhone: string; note?: string; items: { name: string; quantity: number; unit: string; price: number }[]; total: number; status: 'new' | 'ready' | 'unavailable' | 'completed' | 'cancelled'; createdAt: number };
   const [customerOrders, setCustomerOrders] = useState<CustomerOrder[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
@@ -192,6 +192,18 @@ export function AdminUploadApp({
       if (!response.ok) throw new Error(data.error || 'Could not update order.');
       setCustomerOrders(prev => prev.map(order => order.id === id ? { ...order, status } : order));
       showToast('Order status updated.');
+    } catch (error) { showToast((error as Error).message, 'error'); }
+    finally { setUpdatingOrderId(null); }
+  };
+  const deleteCustomerOrder = async (id: string) => {
+    if (!window.confirm('Delete this order permanently? This cannot be undone.')) return;
+    setUpdatingOrderId(id);
+    try {
+      const response = await fetch('/api/orders', { method: 'DELETE', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Could not delete order.');
+      setCustomerOrders(prev => prev.filter(order => order.id !== id));
+      showToast('Order deleted.');
     } catch (error) { showToast((error as Error).message, 'error'); }
     finally { setUpdatingOrderId(null); }
   };
@@ -611,7 +623,7 @@ export function AdminUploadApp({
                   <article key={order.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
-                        <h3 className="font-extrabold text-slate-900">{order.customerName}</h3>
+                        <h3 className="font-extrabold text-slate-900">#{order.orderNumber} · {order.customerName}</h3>
                         <a href={`tel:${order.customerPhone}`} className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-emerald-700"><Phone className="h-3 w-3" /> {order.customerPhone}</a>
                         <p className="mt-1 text-[11px] text-slate-400">{new Date(order.createdAt).toLocaleString('en-IN')}</p>
                       </div>
@@ -632,12 +644,13 @@ export function AdminUploadApp({
                     <div className="mt-2 grid grid-cols-2 gap-2">
                       <button type="button" onClick={() => messageOrderCustomer(order, 'ready')} className="rounded-lg border border-emerald-200 px-2 py-2 text-xs font-bold text-emerald-800">WhatsApp: Ready</button>
                       <button type="button" onClick={() => messageOrderCustomer(order, 'unavailable')} className="rounded-lg border border-amber-200 px-2 py-2 text-xs font-bold text-amber-900">WhatsApp: Unavailable</button>
+                       <button type="button" disabled={updatingOrderId === order.id} onClick={() => deleteCustomerOrder(order.id)} className="col-span-2 rounded-lg border border-red-200 bg-red-50 px-2 py-2 text-xs font-bold text-red-700 disabled:opacity-50"><Trash2 className="mr-1 inline h-3.5 w-3.5" /> Delete Order</button>
                     </div>
                   </article>
                 ))}
               </div>
             )}
-            <p className="text-center text-[11px] text-slate-500">WhatsApp messages open as drafts; review and send them manually. Completed/cancelled orders older than 30 days are automatically cleared.</p>
+            <p className="text-center text-[11px] text-slate-500">WhatsApp messages open as drafts; review and send them manually. Completed/cancelled orders are automatically deleted 7 days after their last status update. You can also delete any order manually.</p>
           </section>
         )}
         {adminTab === 'quickReplies' && (
