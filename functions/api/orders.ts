@@ -144,6 +144,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   if (status === "ready" && order.status === "new") {
     return json({error:"Review this order before confirming it as ready."},409);
   }
+  let changes = 0;
   if (status === "completed" && order.status !== "ready" && order.status !== "completed") {
     return json({error:"Only a ready order can be marked completed."},409);
   }
@@ -214,14 +215,16 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
     try {
       const results = await env.DB.batch(statements);
       if (!results[0]?.meta?.changes) return json({error:"This order has already had its stock deducted. Refresh the order list."},409);
+      changes = Number(results[results.length - 1]?.meta?.changes || 0);
       // The guard row is retained as an audit record and blocks a second deduction.
     } catch (error) {
       console.error("Atomic order stock deduction failed", error);
       return json({error:"Stock changed while this order was being confirmed. Refresh the order, review availability, and try again."},409);
     }
   } else {
-    await env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,updated_at=? WHERE id=?")
+    const result = await env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,updated_at=? WHERE id=?")
       .bind(status,JSON.stringify(items),Date.now(),id).run();
+    changes = Number(result.meta.changes || 0);
   }
   let notification = "not-configured";
   if (["ready","unavailable","completed","cancelled"].includes(status) && env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.VAPID_SUBJECT) {
@@ -240,7 +243,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
       } catch (error) { console.error("Order push notification failed",error); notification = "send-failed"; }
     } else notification = "customer-not-subscribed";
   }
-  return json({ok:true,changes:result.meta.changes,notification});
+  return json({ok:true,changes,notification});
 };
 
 export const onRequestDelete: PagesFunction<Env> = async ({ request, env }) => {
