@@ -37,6 +37,8 @@ function stockUnits(item: { quantity: number; unit: string }, product: any): num
     if (packCount) return Number(item.quantity) * Number(packCount[1]);
     if (/(pack|packet|pouch|bottle|jar|bag)/i.test(itemUnit)) return Number(item.quantity);
   }
+  // Packaged SKUs such as cereal pouches are counted as one sellable pack.
+  if (/(pouch|packet|pack|sachet|bottle|jar|tin|can|box|carton)/i.test(String(product.name || ""))) return Number(item.quantity);
   if (/pair/i.test(stockUnit)) {
     const pieces = itemUnit.match(/(\d+)\s*(piece|pieces|pcs)/i);
     if (pieces) return Number(item.quantity) * Number(pieces[1]) / 2;
