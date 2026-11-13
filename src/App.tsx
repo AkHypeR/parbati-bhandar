@@ -242,9 +242,17 @@ export default function App() {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ reservationId: cartReservationId.current, items })
         });
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok) showToast(data.error || 'Could not reserve your cart stock. Please refresh.', 'error');
-      }).catch(() => {});
+        const responseText = await response.text();
+        let data: any = {};
+        try { data = responseText ? JSON.parse(responseText) : {}; } catch { /* Cloudflare may return an HTML error page. */ }
+        if (!response.ok) {
+          const detail = data.error || (response.status ? `Reservation service returned HTTP ${response.status}.` : 'Reservation service did not respond.');
+          showToast(detail, 'error');
+        }
+      }).catch((error) => {
+        console.error('Cart stock reservation request failed', error);
+        showToast('Could not reach the stock reservation service. Check your connection and refresh the store.', 'error');
+      });
     };
     syncCartHold();
   }, [cart, cloudReady, activeMode, isOwnerUnlocked]);
