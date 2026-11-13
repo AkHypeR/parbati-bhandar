@@ -174,6 +174,7 @@ export function AdminUploadApp({
   const [replyNote, setReplyNote] = useState('');
   type CustomerOrder = { id: string; orderNumber: number; customerName: string; customerPhone: string; note?: string; items: { name: string; quantity: number; unit: string; price: number }[]; total: number; status: 'new' | 'ready' | 'unavailable' | 'completed' | 'cancelled'; createdAt: number };
   const [customerOrders, setCustomerOrders] = useState<CustomerOrder[]>([]);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [orderSearch, setOrderSearch] = useState('');
   const [orderStatusFilter, setOrderStatusFilter] = useState('all');
   const visibleCustomerOrders = customerOrders.filter(order => {
@@ -697,6 +698,41 @@ export function AdminUploadApp({
 
         {adminTab === 'orders' && (
           <section className="space-y-4">
+            {selectedOrderId && customerOrders.some(order => order.id === selectedOrderId) ? (() => {
+              const order = customerOrders.find(item => item.id === selectedOrderId)!;
+              return (
+                <div className="space-y-4">
+                  <button type="button" onClick={() => setSelectedOrderId(null)} className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50">← Back to all orders</button>
+                  <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+                    <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 pb-4">
+                      <div><p className="text-xs font-bold uppercase tracking-wide text-slate-400">Order details</p><h2 className="mt-1 text-2xl font-black text-slate-900">Order #{order.orderNumber}</h2><p className="mt-1 text-sm text-slate-500">{new Date(order.createdAt).toLocaleString('en-IN')}</p></div>
+                      <span className={`rounded-full px-3 py-1.5 text-xs font-extrabold uppercase ${order.status === 'new' ? 'bg-blue-100 text-blue-800' : order.status === 'ready' ? 'bg-emerald-100 text-emerald-800' : order.status === 'unavailable' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}`}>{order.status === 'ready' ? 'Ready for pickup' : order.status}</span>
+                    </div>
+                    <div className="grid gap-4 py-5 sm:grid-cols-2">
+                      <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-bold uppercase text-slate-400">Customer</p><p className="mt-1 text-lg font-extrabold text-slate-900">{order.customerName}</p><a onClick={event => event.stopPropagation()} href={`tel:${order.customerPhone}`} className="mt-1 inline-flex items-center gap-2 text-sm font-semibold text-emerald-700"><Phone className="h-4 w-4" />{order.customerPhone}</a></div>
+                      <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-bold uppercase text-slate-400">Order value</p><p className="mt-1 text-2xl font-black text-slate-900">₹{Number(order.total || 0).toFixed(2)}</p><p className="text-xs text-slate-500">Estimated total; confirm at pickup</p></div>
+                    </div>
+                    <div className="rounded-xl border border-slate-200 p-4">
+                      <h3 className="mb-3 text-sm font-extrabold uppercase tracking-wide text-slate-500">Items ordered</h3>
+                      <div className="divide-y divide-slate-100">{order.items.map((item,index) => <div key={index} className="flex items-center justify-between gap-4 py-3 text-sm"><div><p className="font-bold text-slate-800">{item.name}</p><p className="text-xs text-slate-500">{item.unit} · Quantity {item.quantity}</p></div><strong className="shrink-0 text-slate-900">₹{(Number(item.price || 0) * Number(item.quantity || 0)).toFixed(2)}</strong></div>)}</div>
+                      <div className="mt-3 flex justify-between border-t border-slate-200 pt-3 font-extrabold"><span>Estimated total</span><span>₹{Number(order.total || 0).toFixed(2)}</span></div>
+                    </div>
+                    {order.note && <div className="mt-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-900"><strong>Customer note</strong><p className="mt-1">{order.note}</p></div>}
+                    <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                      <button type="button" disabled={updatingOrderId === order.id} onClick={event => { event.stopPropagation(); updateCustomerOrder(order.id; }'ready')} className="rounded-lg bg-emerald-600 px-3 py-3 text-sm font-bold text-white disabled:opacity-50">Mark Ready</button>
+                      <button type="button" disabled={updatingOrderId === order.id} onClick={() => updateCustomerOrder(order.id,'unavailable')} className="rounded-lg bg-amber-400 px-3 py-3 text-sm font-bold text-slate-950 disabled:opacity-50">Unavailable</button>
+                      <button type="button" disabled={updatingOrderId === order.id} onClick={() => updateCustomerOrder(order.id,'completed')} className="rounded-lg bg-slate-200 px-3 py-3 text-sm font-bold text-slate-800 disabled:opacity-50">Completed</button>
+                      <button type="button" disabled={updatingOrderId === order.id} onClick={() => updateCustomerOrder(order.id,'cancelled')} className="rounded-lg bg-red-50 px-3 py-3 text-sm font-bold text-red-700 disabled:opacity-50">Cancel</button>
+                    </div>
+                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                      <button type="button" onClick={event => { event.stopPropagation(); messageOrderCustomer(order; }'ready')} className="rounded-lg border border-emerald-200 px-3 py-3 text-sm font-bold text-emerald-800">WhatsApp: Ready</button>
+                      <button type="button" onClick={() => messageOrderCustomer(order,'unavailable')} className="rounded-lg border border-amber-200 px-3 py-3 text-sm font-bold text-amber-900">WhatsApp: Unavailable</button>
+                      <button type="button" disabled={updatingOrderId === order.id} onClick={() => { deleteCustomerOrder(order.id); setSelectedOrderId(null); }} className="rounded-lg border border-red-200 bg-red-50 px-3 py-3 text-sm font-bold text-red-700 disabled:opacity-50 sm:col-span-2"><Trash2 className="mr-1 inline h-4 w-4" /> Delete Order</button>
+                    </div>
+                  </article>
+                </div>
+              );
+            })() : (
             <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-4">
               <div>
                 <h2 className="text-lg font-extrabold text-slate-900">Customer Orders</h2>
@@ -724,7 +760,7 @@ export function AdminUploadApp({
             {ordersLoading && customerOrders.length === 0 ? <p className="rounded-xl bg-white p-6 text-center text-sm text-slate-500">Loading orders…</p> : customerOrders.length === 0 ? <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center"><ClipboardList className="mx-auto mb-2 h-8 w-8 text-slate-300" /><p className="font-bold text-slate-700">No customer orders yet</p><p className="mt-1 text-xs text-slate-500">New shopping-list requests will appear here.</p></div> : (
               <div className="grid gap-3">
                 {visibleCustomerOrders.length === 0 ? <p className="rounded-xl bg-white p-6 text-center text-sm text-slate-500">No orders match these filters.</p> : visibleCustomerOrders.map(order => (
-                  <article key={order.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <article key={order.id} role="button" tabIndex={0} aria-label={`Open order #${order.orderNumber} details`} onClick={() => setSelectedOrderId(order.id)} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setSelectedOrderId(order.id); } }} className="cursor-pointer rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-emerald-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
                         <h3 className="font-extrabold text-slate-900">#{order.orderNumber} · {order.customerName}</h3>
@@ -748,7 +784,7 @@ export function AdminUploadApp({
                     <div className="mt-2 grid grid-cols-2 gap-2">
                       <button type="button" onClick={() => messageOrderCustomer(order, 'ready')} className="rounded-lg border border-emerald-200 px-2 py-2 text-xs font-bold text-emerald-800">WhatsApp: Ready</button>
                       <button type="button" onClick={() => messageOrderCustomer(order, 'unavailable')} className="rounded-lg border border-amber-200 px-2 py-2 text-xs font-bold text-amber-900">WhatsApp: Unavailable</button>
-                       <button type="button" disabled={updatingOrderId === order.id} onClick={() => deleteCustomerOrder(order.id)} className="col-span-2 rounded-lg border border-red-200 bg-red-50 px-2 py-2 text-xs font-bold text-red-700 disabled:opacity-50"><Trash2 className="mr-1 inline h-3.5 w-3.5" /> Delete Order</button>
+                       <button type="button" disabled={updatingOrderId === order.id} onClick={event => { event.stopPropagation(); deleteCustomerOrder(order.id; }} className="col-span-2 rounded-lg border border-red-200 bg-red-50 px-2 py-2 text-xs font-bold text-red-700 disabled:opacity-50"><Trash2 className="mr-1 inline h-3.5 w-3.5" /> Delete Order</button>
                     </div>
                   </article>
                 ))}
@@ -756,6 +792,7 @@ export function AdminUploadApp({
             )}
             <p className="text-center text-[11px] text-slate-500">WhatsApp messages open as drafts; review and send them manually. Completed/cancelled orders are automatically deleted 7 days after their last status update. You can also delete any order manually.</p>
           </section>
+            )}
         )}
         {adminTab === 'quickReplies' && (
           <section className="mx-auto max-w-2xl rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
