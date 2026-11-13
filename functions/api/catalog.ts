@@ -31,7 +31,11 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     // only the public availability flag used by the storefront.
     if (!owner) {
       const held = heldByProduct.get(String(product.id)) || 0;
-      if (typeof product.stockQuantity === "number" && product.inStock !== false && product.stockQuantity - held <= 0) product.inStock = false;
+      const remaining = typeof product.stockQuantity === "number" ? product.stockQuantity - held : null;
+      product.lowStock = remaining !== null && product.inStock !== false &&
+        Number.isFinite(Number(product.lowStockThreshold)) && Number(product.lowStockThreshold) > 0 &&
+        remaining > 0 && remaining <= Number(product.lowStockThreshold);
+      if (typeof product.stockQuantity === "number" && product.inStock !== false && remaining <= 0) product.inStock = false;
       delete product.stockQuantity;
       delete product.lowStockThreshold;
     }
