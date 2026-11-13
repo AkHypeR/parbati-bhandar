@@ -21,6 +21,9 @@ interface CartDrawerProps {
   cartTotalPrice: number;
   cartTotalSaved: number;
   customerName: string;
+  customerPhone: string;
+  setCustomerPhone: (v: string) => void;
+  onSaveOrder: () => Promise<boolean>;
   setCustomerName: (v: string) => void;
   customerNote: string;
   setCustomerNote: (v: string) => void;
@@ -42,6 +45,9 @@ export function CartDrawer({
   cartItemsList,
   cartTotalItems,
   customerName,
+  customerPhone,
+  setCustomerPhone,
+  onSaveOrder,
   setCustomerName,
   customerNote,
   setCustomerNote,
@@ -53,18 +59,24 @@ export function CartDrawer({
   orderText,
 }: CartDrawerProps) {
   const [nameError, setNameError] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
+  const [savingOrder, setSavingOrder] = useState(false);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
 
   if (!isOpen) return null;
 
   const hasCustomerName = customerName.trim().length > 0;
+  const hasCustomerPhone = customerPhone.replace(/\D/g, '').length >= 10;
 
-  const handleWhatsAppProceed = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (!hasCustomerName) {
-      e.preventDefault();
-      setNameError(true);
-      nameInputRef.current?.focus();
-    }
+  const handleWhatsAppProceed = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (!hasCustomerName) { setNameError(true); nameInputRef.current?.focus(); return; }
+    if (!hasCustomerPhone) { setPhoneError(true); return; }
+    if (savingOrder) return;
+    const popup = window.open('about:blank', '_blank');
+    setSavingOrder(true);
+    try { const saved = await onSaveOrder(); if (saved && popup) { popup.location.href = whatsAppUrl; onClose(); } else if (popup) popup.close(); }
+    finally { setSavingOrder(false); }
   };
 
   return (
@@ -169,6 +181,11 @@ export function CartDrawer({
                   )}
                 </div>
 
+                <div className="space-y-1">
+                  <label htmlFor="cart-customer-phone" className="text-xs font-extrabold text-slate-800">Phone number (WhatsApp) *</label>
+                  <input id="cart-customer-phone" type="tel" inputMode="tel" value={customerPhone} onChange={e => { setCustomerPhone(e.target.value); setPhoneError(false); }} placeholder="Enter 10-digit mobile number" className={"w-full px-3.5 py-2.5 rounded-xl border bg-white text-xs sm:text-sm font-bold " + (phoneError ? "border-red-400" : "border-slate-300")} />
+                  {phoneError && <p className="text-xs font-bold text-red-600">Enter a valid phone number (at least 10 digits).</p>}
+                </div>
                 <input
                   type="text"
                   aria-label="Order Note"
@@ -304,7 +321,7 @@ export function CartDrawer({
                 }`}
               >
                 <MessageCircle className="w-4 h-4 shrink-0" />
-                <span>{hasCustomerName ? 'Proceed to WhatsApp' : 'Enter Name & Proceed'}</span>
+                <span>{savingOrder ? 'Saving order…' : hasCustomerName && hasCustomerPhone ? 'Save Order & Proceed' : 'Enter Name, Phone & Proceed'}</span>
               </a>
             </div>
 
