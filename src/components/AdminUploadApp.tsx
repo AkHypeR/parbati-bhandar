@@ -39,6 +39,8 @@ interface AdminUploadAppProps {
   products: Product[];
   filteredAdminProducts: Product[];
   storeSettings: StoreSettings;
+  maintenanceMode: boolean;
+  onToggleMaintenance: () => void;
   adminTab: 'inventory' | 'add' | 'settings';
   setAdminTab: (tab: 'inventory' | 'add' | 'settings') => void;
   adminSearch: string;
@@ -105,6 +107,8 @@ export function AdminUploadApp({
   products,
   filteredAdminProducts,
   storeSettings,
+  maintenanceMode,
+  onToggleMaintenance,
   adminTab,
   setAdminTab,
   adminSearch,
@@ -1694,6 +1698,12 @@ export function AdminUploadApp({
               </button>
             </div>
 
+            <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 sm:p-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-3"><span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-emerald-200 text-xl">🛠️</span><div><h3 className="text-sm font-black text-slate-900">Store maintenance mode</h3><p className="mt-1 text-xs leading-5 text-slate-600">When ON, customers see a maintenance screen and cannot browse, add items or place orders. Your owner portal stays available.</p><p className="mt-2 text-xs font-extrabold text-emerald-700">Currently {maintenanceMode ? 'ON • Storefront paused' : 'OFF • Storefront live'}</p></div></div>
+                <button type="button" role="switch" aria-checked={maintenanceMode} aria-label="Toggle store maintenance mode" onClick={onToggleMaintenance} className={'relative inline-flex h-10 w-[76px] shrink-0 items-center rounded-full p-1 transition-colors ' + (maintenanceMode ? 'bg-amber-500' : 'bg-emerald-600')}><span className={'grid h-8 w-8 place-items-center rounded-full bg-white text-[10px] font-black text-slate-900 shadow transition-transform ' + (maintenanceMode ? 'translate-x-9' : 'translate-x-0')}>{maintenanceMode ? 'ON' : 'OFF'}</span></button>
+              </div>
+            </div>
             <form onSubmit={handleSaveSettingsSubmit} className="space-y-4">
               <div>
                 <label
