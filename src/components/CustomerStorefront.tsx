@@ -117,9 +117,24 @@ export function CustomerStorefront({
   useEffect(() => {
     if (lastOrderPhone) setTrackingPhone(lastOrderPhone);
   }, [lastOrderPhone]);
+  const readOrderApiResponse = async (response: Response) => {
+    const body = await response.text();
+    let data: any;
+    try {
+      data = body ? JSON.parse(body) : {};
+    } catch {
+      throw new Error(
+        response.status === 404 || body.trimStart().startsWith('<')
+          ? 'Order history service is not available in this website deployment yet. Please try again after the latest Cloudflare deployment finishes.'
+          : 'The order service returned an invalid response. Please try again.'
+      );
+    }
+    return data;
+  };
+
   const fetchTrackedOrder = async (orderNumber: string, phone: string) => {
     const response = await fetch('/api/orders/track?orderNumber=' + encodeURIComponent(orderNumber) + '&phone=' + encodeURIComponent(phone), { cache: 'no-store' });
-    const data = await response.json();
+    const data = await readOrderApiResponse(response);
     if (!response.ok) throw new Error(data.error || 'Unable to find order');
     return data;
   };
@@ -127,7 +142,7 @@ export function CustomerStorefront({
     setHistoryLoading(true); setHistoryError(''); setHistoryLoaded(false);
     try {
       const response = await fetch('/api/orders/track?history=1&phone=' + encodeURIComponent(trackingPhone), { cache: 'no-store' });
-      const data = await response.json();
+      const data = await readOrderApiResponse(response);
       if (!response.ok) throw new Error(data.error || 'Unable to load order history');
       setOrderHistory(Array.isArray(data.orders) ? data.orders : []);
       setHistoryLoaded(true);
