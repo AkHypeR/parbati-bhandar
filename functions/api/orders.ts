@@ -3,7 +3,7 @@ import { sendPushNotification } from "@mmmike/web-push/send";
 
 type OrderItem = { name: string; quantity: number; unit: string; price: number };
 const ensureTable = async (env: Env) => {
-  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS push_subscriptions (order_id TEXT PRIMARY KEY, subscription_json TEXT NOT NULL, created_at INTEGER NOT NULL)`);.run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS push_subscriptions (order_id TEXT PRIMARY KEY, subscription_json TEXT NOT NULL, created_at INTEGER NOT NULL)`).run();
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS customer_orders (
    id TEXT PRIMARY KEY, customer_name TEXT NOT NULL, customer_phone TEXT NOT NULL,
    note TEXT, items_json TEXT NOT NULL, total REAL NOT NULL, status TEXT NOT NULL DEFAULT 'new',
