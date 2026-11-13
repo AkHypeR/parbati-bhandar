@@ -822,6 +822,7 @@ export default function App() {
             setIsCartOpen={setIsCartOpen}
             setIsQrModalOpen={setIsQrModalOpen}
             lastOrderNumber={lastSavedOrderNumber}
+            lastOrderPhone={customerPhone}
             onSecretOwnerAccess={() => {
               setActiveMode('admin');
               showToast('Owner Portal Access Triggered');
