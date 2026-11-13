@@ -436,18 +436,28 @@ export function CustomerStorefront({
       </header>
 
       {/* Order tracking and recent history are placed near the top for easy access. */}
-      <section className="max-w-3xl mx-auto w-full px-4 py-4" aria-label="Track your order">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
-          <h2 className="text-lg font-black text-slate-900">Track Your Order</h2>
-          <p className="text-sm text-slate-500 mt-1">Track a specific order or view all orders placed with your phone number in the last 7 days.</p>
+      <section id="customer-order-tools" className="max-w-3xl mx-auto w-full px-4 py-4 scroll-mt-4" aria-label="Track your order">
+        <div className="relative overflow-hidden rounded-3xl border-2 border-sky-200 bg-gradient-to-br from-sky-50 via-white to-amber-50 p-4 sm:p-5 shadow-[0_8px_28px_rgba(13,100,125,0.12)]">
+          <div className="absolute -right-8 -top-10 h-28 w-28 rounded-full bg-amber-200/40 blur-2xl pointer-events-none" />
+          <div className="relative flex items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75 motion-reduce:animate-none" /><span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-600" /></span>
+                <span className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-700">Live order updates</span>
+              </div>
+              <h2 className="mt-1 text-xl sm:text-2xl font-black tracking-tight text-slate-950">Track Your Order</h2>
+              <p className="text-xs sm:text-sm text-slate-600 mt-1">Know exactly when your order is received, ready, or completed.</p>
+            </div>
+            <div className="hidden sm:flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-100 text-[#0d647d] shadow-inner"><RefreshCw className="h-6 w-6" /></div>
+          </div>
           {lastOrderNumber && <div className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 p-3"><p className="text-xs font-bold uppercase tracking-wide text-emerald-800">Your order was placed successfully</p><div className="mt-1 flex flex-wrap items-center justify-between gap-2"><p className="text-xl font-black text-emerald-950">Order #{lastOrderNumber}</p><button type="button" onClick={() => { void navigator.clipboard?.writeText(String(lastOrderNumber)); }} className="rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-emerald-800 border border-emerald-200">Copy order number</button></div><p className="mt-1 text-xs text-emerald-800">Keep this number and your phone number to track this order.</p></div>}
           <form onSubmit={trackOrder} className="grid sm:grid-cols-3 gap-2.5 mt-4">
             <input required inputMode="numeric" value={trackingOrderNumber} onChange={e=>setTrackingOrderNumber(e.target.value)} placeholder="Order number" className="min-w-0 rounded-xl border border-slate-300 px-3 py-2.5 text-sm" />
             <input required inputMode="tel" value={trackingPhone} onChange={e=>setTrackingPhone(e.target.value)} placeholder="Phone number" className="min-w-0 rounded-xl border border-slate-300 px-3 py-2.5 text-sm" />
-            <button disabled={trackingLoading} className="rounded-xl bg-[#0d647d] text-white font-bold px-4 py-2.5 disabled:opacity-60">{trackingLoading ? 'Checking…' : 'Track Order'}</button>
+            <button disabled={trackingLoading} className="rounded-xl bg-gradient-to-r from-[#0d647d] to-sky-700 text-white font-black px-4 py-2.5 shadow-md shadow-sky-900/15 transition-all hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60 motion-reduce:transition-none">{trackingLoading ? 'Checking…' : 'TRACK ORDER →'}</button>
           </form>
-          <button type="button" onClick={loadOrderHistory} disabled={historyLoading || trackingPhone.replace(/\D/g, '').length < 10} className="mt-3 w-full rounded-xl border border-[#0d647d] px-4 py-2.5 text-sm font-bold text-[#0d647d] disabled:opacity-50">{historyLoading ? 'Loading history…' : 'View 7-day order history'}</button>
-          <p className="mt-1 text-[11px] text-slate-400">Use the same phone number you entered when ordering. Order history is automatically deleted after 7 days.</p>
+          <button type="button" onClick={loadOrderHistory} disabled={historyLoading || trackingPhone.replace(/\D/g, '').length < 10} className="group mt-3 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-amber-400 bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-300 px-4 py-3 text-sm font-black text-amber-950 shadow-[0_5px_16px_rgba(245,158,11,0.22)] transition-all hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-amber-200 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"><Clock className="h-4 w-4" />{historyLoading ? 'Loading your orders…' : 'VIEW MY PREVIOUS ORDERS'}<span className="rounded-full bg-white/70 px-2 py-0.5 text-[10px] font-black">7 DAYS</span></button>
+          <p className="mt-1.5 text-center text-[11px] text-slate-500">Enter the same phone number used at checkout. Previous orders stay available for 7 days.</p>
           {historyError && <p role="alert" className="mt-2 text-sm text-red-600">{historyError}</p>}
           {historyLoaded && <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
             <div className="flex items-center justify-between gap-2"><h3 className="font-bold text-slate-900">Your recent orders</h3><span className="text-[10px] text-slate-400">Last 7 days</span></div>
