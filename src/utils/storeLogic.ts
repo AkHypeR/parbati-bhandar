@@ -79,6 +79,11 @@ export const CATEGORIES: CategoryInfo[] = [
   { id: 'Tea & Biscuits', name: 'Tea & Biscuits (চা ও বিস্কুট)', icon: '☕', color: 'bg-purple-100 text-purple-800' },
   { id: 'Dairy & Eggs', name: 'Dairy & Eggs (দুধ ও ডিম)', icon: '🥛', color: 'bg-blue-100 text-blue-800' },
   { id: 'Daily Essentials', name: 'Daily Essentials (নিত্যপ্রয়োজনীয়)', icon: '🧼', color: 'bg-teal-100 text-teal-800' },
+  { id: 'Breakfast & Cereals', name: 'Breakfast & Cereals (সকালের খাবার ও সিরিয়াল)', icon: '🥣', color: 'bg-orange-100 text-orange-800' },
+  { id: 'Snacks & Packaged Foods', name: 'Snacks & Packaged Foods (স্ন্যাকস ও প্যাকেটজাত খাবার)', icon: '🍪', color: 'bg-rose-100 text-rose-800' },
+  { id: 'Personal Care', name: 'Personal Care (ব্যক্তিগত পরিচর্যা)', icon: '🧴', color: 'bg-pink-100 text-pink-800' },
+  { id: 'Cleaning & Household', name: 'Cleaning & Household (পরিষ্কার ও গৃহস্থালি)', icon: '🧹', color: 'bg-cyan-100 text-cyan-800' },
+  { id: 'Baby & Family Care', name: 'Baby & Family Care (শিশু ও পরিবার)', icon: '🍼', color: 'bg-violet-100 text-violet-800' },
 ];
 
 export const UNITS: string[] = [
