@@ -174,6 +174,16 @@ export function AdminUploadApp({
   const [replyNote, setReplyNote] = useState('');
   type CustomerOrder = { id: string; orderNumber: number; customerName: string; customerPhone: string; note?: string; items: { name: string; quantity: number; unit: string; price: number }[]; total: number; status: 'new' | 'ready' | 'unavailable' | 'completed' | 'cancelled'; createdAt: number };
   const [customerOrders, setCustomerOrders] = useState<CustomerOrder[]>([]);
+  const [orderSearch, setOrderSearch] = useState('');
+  const [orderStatusFilter, setOrderStatusFilter] = useState('all');
+  const visibleCustomerOrders = customerOrders.filter(order => {
+    const term = orderSearch.trim().toLowerCase();
+    const matchesSearch = !term || [order.customerName, order.customerPhone, String(order.orderNumber)].some(value => value.toLowerCase().includes(term));
+    return matchesSearch && (orderStatusFilter === 'all' || order.status === orderStatusFilter);
+  });
+  const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
+  const todaysOrders = customerOrders.filter(order => order.createdAt >= todayStart.getTime());
+  const todaysEstimatedSales = todaysOrders.filter(order => !['cancelled', 'unavailable'].includes(order.status)).reduce((sum, order) => sum + Number(order.total || 0), 0);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
   const loadCustomerOrders = async () => {
@@ -695,9 +705,24 @@ export function AdminUploadApp({
                 <RefreshCw className={`h-4 w-4 ${ordersLoading ? 'animate-spin' : ''}`} /> Refresh
               </button>
             </div>
+            {customerOrders.length > 0 && (
+              <div className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-3">
+                <div className="rounded-xl bg-emerald-50 p-3"><p className="text-xs font-semibold text-emerald-800">Orders today</p><p className="mt-1 text-xl font-extrabold text-emerald-950">{todaysOrders.length}</p></div>
+                <div className="rounded-xl bg-sky-50 p-3"><p className="text-xs font-semibold text-sky-800">Estimated order value today</p><p className="mt-1 text-xl font-extrabold text-sky-950">₹{todaysEstimatedSales.toFixed(2)}</p></div>
+                <div className="rounded-xl bg-slate-50 p-3"><p className="text-xs font-semibold text-slate-600">Orders shown</p><p className="mt-1 text-xl font-extrabold text-slate-900">{visibleCustomerOrders.length} / {customerOrders.length}</p></div>
+                <label className="text-xs font-bold text-slate-700 sm:col-span-2">Search orders
+                  <input value={orderSearch} onChange={e => setOrderSearch(e.target.value)} placeholder="Customer, phone or order number" className="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-medium outline-none focus:border-emerald-600" />
+                </label>
+                <label className="text-xs font-bold text-slate-700">Filter by status
+                  <select value={orderStatusFilter} onChange={e => setOrderStatusFilter(e.target.value)} className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-medium">
+                    <option value="all">All statuses</option><option value="new">New</option><option value="ready">Ready</option><option value="unavailable">Unavailable</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option>
+                  </select>
+                </label>
+              </div>
+            )}
             {ordersLoading && customerOrders.length === 0 ? <p className="rounded-xl bg-white p-6 text-center text-sm text-slate-500">Loading orders…</p> : customerOrders.length === 0 ? <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center"><ClipboardList className="mx-auto mb-2 h-8 w-8 text-slate-300" /><p className="font-bold text-slate-700">No customer orders yet</p><p className="mt-1 text-xs text-slate-500">New shopping-list requests will appear here.</p></div> : (
               <div className="grid gap-3">
-                {customerOrders.map(order => (
+                {visibleCustomerOrders.length === 0 ? <p className="rounded-xl bg-white p-6 text-center text-sm text-slate-500">No orders match these filters.</p> : visibleCustomerOrders.map(order => (
                   <article key={order.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
