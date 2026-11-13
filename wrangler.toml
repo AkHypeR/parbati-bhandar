@@ -5,7 +5,7 @@ compatibility_date = "2026-11-12"
 [[d1_databases]]
 binding = "DB"
 database_name = "parbati-bhandar"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "7b9876ff-d2a3-4b1c-a040-7d9f6802aa0a"
 migrations_dir = "migrations"
 
 [[r2_buckets]]
