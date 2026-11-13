@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { TurnstileWidget } from './TurnstileWidget';
 import {
   ShoppingCart,
   ShoppingBag,
@@ -23,7 +24,7 @@ interface CartDrawerProps {
   customerName: string;
   customerPhone: string;
   setCustomerPhone: (v: string) => void;
-  onSaveOrder: () => Promise<boolean>;
+  onSaveOrder: (turnstileToken: string) => Promise<boolean>;
   setCustomerName: (v: string) => void;
   customerNote: string;
   setCustomerNote: (v: string) => void;
@@ -61,6 +62,7 @@ export function CartDrawer({
   const [nameError, setNameError] = useState(false);
   const [phoneError, setPhoneError] = useState(false);
   const [savingOrder, setSavingOrder] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState('');
   const nameInputRef = useRef<HTMLInputElement | null>(null);
 
   if (!isOpen) return null;
@@ -72,10 +74,11 @@ export function CartDrawer({
     e.preventDefault();
     if (!hasCustomerName) { setNameError(true); nameInputRef.current?.focus(); return; }
     if (!hasCustomerPhone) { setPhoneError(true); return; }
+    if (!turnstileToken) { window.alert('Please complete the security check first.'); return; }
     if (savingOrder) return;
     const popup = window.open('about:blank', '_blank');
     setSavingOrder(true);
-    try { const saved = await onSaveOrder(); if (saved && popup) { popup.location.href = whatsAppUrl; onClose(); } else if (popup) popup.close(); }
+    try { const saved = await onSaveOrder(turnstileToken); if (saved && popup) { popup.location.href = whatsAppUrl; setTurnstileToken(''); onClose(); } else if (popup) popup.close(); }
     finally { setSavingOrder(false); }
   };
 
@@ -271,6 +274,11 @@ export function CartDrawer({
                     );
                   })}
                 </div>
+              </div>
+
+              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <p className="mb-2 text-xs font-bold text-slate-700">Security check</p>
+                <TurnstileWidget onVerify={setTurnstileToken} />
               </div>
 
               {/* Text-Format WhatsApp Bill Preview (Name & Quantity Only) */}
