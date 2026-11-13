@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { TurnstileWidget } from './TurnstileWidget';
 import {
   ShoppingCart,
@@ -75,7 +75,35 @@ export function CartDrawer({
   const [turnstileToken, setTurnstileToken] = useState('');
   const [pushSubscription, setPushSubscription] = useState<PushSubscriptionJSON | null>(null);
   const [pushState, setPushState] = useState<'off' | 'working' | 'on' | 'unsupported' | 'error'>('off');
+  const [timerNow, setTimerNow] = useState(Date.now());
   const nameInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Refresh the visible low-stock countdown once per second while the cart is open.
+  useEffect(() => {
+    if (!isOpen) return;
+    const refresh = () => setTimerNow(Date.now());
+    refresh();
+    const interval = window.setInterval(refresh, 1000);
+    return () => window.clearInterval(interval);
+  }, [isOpen]);
+
+  const getLowStockCountdown = (product: Product): string | null => {
+    const stock = Number(product.stockQuantity);
+    const threshold = Number(product.lowStockThreshold);
+    if (!product.inStock || !Number.isFinite(stock) || !Number.isFinite(threshold) ||
+        stock <= 0 || threshold <= 0 || stock >= threshold) return null;
+    try {
+      const saved = JSON.parse(localStorage.getItem('parbati_bhandar_low_stock_cart_timers_v1') || '{}');
+      const startedAt = saved?.[product.id];
+      if (typeof startedAt !== 'number' || !Number.isFinite(startedAt)) return '05:00';
+      const remaining = Math.max(0, 5 * 60 * 1000 - (timerNow - startedAt));
+      const minutes = Math.floor(remaining / 60000);
+      const seconds = Math.floor((remaining % 60000) / 1000);
+      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    } catch {
+      return '05:00';
+    }
+  };
 
   const enableOrderNotifications = async () => {
     if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
@@ -313,6 +341,11 @@ export function CartDrawer({
                             <p className="text-xs font-bold text-emerald-800 tabular-nums">
                               Qty: {selectedUnit} &times; {qty}
                             </p>
+                            {getLowStockCountdown(product) !== null && (
+                              <p className="mt-1 inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-1 text-[10px] font-extrabold text-amber-800">
+                                ⏳ Low-stock hold expires in {getLowStockCountdown(product)}
+                              </p>
+                            )}
                           </div>
                         </div>
 
