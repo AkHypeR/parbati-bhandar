@@ -22,6 +22,7 @@ import {
   Upload,
   MessageCircle,
   ClipboardList,
+  BellRing,
   Phone,
   Database,
   Download,
@@ -176,6 +177,9 @@ export function AdminUploadApp({
   const [replyNote, setReplyNote] = useState('');
   type CustomerOrder = { id: string; orderNumber: number; customerName: string; customerPhone: string; note?: string; items: { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean }[]; total: number; status: 'new' | 'review' | 'ready' | 'unavailable' | 'completed' | 'cancelled'; createdAt: number };
   const [customerOrders, setCustomerOrders] = useState<CustomerOrder[]>([]);
+  const knownOrderIdsRef = useRef<Set<string>>(new Set());
+  const hasOrderSnapshotRef = useRef(false);
+  const newOrdersCount = customerOrders.filter(order => order.status === 'new').length;
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [orderSearch, setOrderSearch] = useState('');
   const [orderStatusFilter, setOrderStatusFilter] = useState('all');
@@ -189,17 +193,49 @@ export function AdminUploadApp({
   const todaysEstimatedSales = todaysOrders.filter(order => !['cancelled', 'unavailable'].includes(order.status)).reduce((sum, order) => sum + Number(order.total || 0), 0);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
-  const loadCustomerOrders = async () => {
-    setOrdersLoading(true);
+  const loadCustomerOrders = async (silent = false) => {
+    if (!silent) setOrdersLoading(true);
     try {
       const response = await fetch('/api/orders', { credentials: 'same-origin', cache: 'no-store' });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not load orders.');
-      setCustomerOrders(Array.isArray(data.orders) ? data.orders : []);
-    } catch (error) { showToast((error as Error).message, 'error'); }
-    finally { setOrdersLoading(false); }
+      const incoming: CustomerOrder[] = Array.isArray(data.orders) ? data.orders : [];
+      if (hasOrderSnapshotRef.current) {
+        const freshOrders = incoming.filter(order => !knownOrderIdsRef.current.has(order.id));
+        if (freshOrders.length) {
+          const latest = freshOrders.sort((a, b) => b.createdAt - a.createdAt)[0];
+          showToast(`New order received: #${latest.orderNumber} · ${latest.customerName}`);
+          if ('Notification' in window && Notification.permission === 'granted') {
+            try {
+              new Notification('New Parbati Bhandar order', {
+                body: `Order #${latest.orderNumber} from ${latest.customerName}`,
+                icon: '/favicon.svg',
+                tag: `new-order-${latest.id}`
+              });
+            } catch { /* In-app alert remains available if browser notifications are blocked. */ }
+          }
+        }
+      } else {
+        hasOrderSnapshotRef.current = true;
+      }
+      knownOrderIdsRef.current = new Set(incoming.map(order => order.id));
+      setCustomerOrders(incoming);
+    } catch (error) {
+      if (!silent) showToast((error as Error).message, 'error');
+    } finally {
+      if (!silent) setOrdersLoading(false);
+    }
   };
-  useEffect(() => { if (adminTab === 'orders') loadCustomerOrders(); }, [adminTab]);
+  useEffect(() => {
+    if (adminTab === 'orders') void loadCustomerOrders();
+  }, [adminTab]);
+  useEffect(() => {
+    const pollOrders = () => {
+      if (document.visibilityState === 'visible') void loadCustomerOrders(true);
+    };
+    const timer = window.setInterval(pollOrders, 15000);
+    return () => window.clearInterval(timer);
+  }, []);
   const updateCustomerOrder = async (id: string, status: CustomerOrder['status'], items?: CustomerOrder['items']) => {
     setUpdatingOrderId(id);
     try {
@@ -682,7 +718,10 @@ export function AdminUploadApp({
               onClick={() => setAdminTab('orders')}
               className={`flex w-full sm:w-auto justify-center items-center gap-2 px-3 sm:px-4 py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-150 cursor-pointer whitespace-normal sm:whitespace-nowrap min-h-11 ${adminTab === 'orders' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
             >
-              <ClipboardList className="w-4 h-4" />
+              <span className="relative inline-flex">
+                <ClipboardList className="w-4 h-4" />
+                {newOrdersCount > 0 && <span className="absolute -right-2 -top-2 grid h-4 min-w-4 place-items-center rounded-full bg-red-600 px-1 text-[9px] font-black leading-none text-white ring-2 ring-white">{newOrdersCount > 99 ? '99+' : newOrdersCount}</span>}
+              </span>
               <span>Orders</span>
             </button>
 
