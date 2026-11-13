@@ -927,8 +927,7 @@ export default function App() {
           setEditingProduct={setEditingProduct}
           onSaveProduct={handleSaveProduct}
           onSaveSettings={handleSaveSettings}
-          onResetSampleProducts={handleResetSampleProducts}
-          showToast={showToast}
+            showToast={showToast}
           totalProductsCount={totalProductsCount}
           inStockCount={inStockCount}
           outOfStockCount={outOfStockCount}
