@@ -110,7 +110,17 @@ export default function App() {
   const [maintenanceUntil, setMaintenanceUntil] = useState<number | null>(null);
   const [maintenanceNow, setMaintenanceNow] = useState(Date.now());
   const [maintenanceLogoTaps, setMaintenanceLogoTaps] = useState(0);
-  const [cart, setCart] = useState<CartMap>(loadInitialCart);
+  const [cart, setCart] = useState<CartMap>(loadInitialCart);\n  const cartReservationId = useRef<string>(() => {
+    try {
+      const existing = localStorage.getItem('parbati_bhandar_cart_reservation_v1');
+      if (existing && /^[a-zA-Z0-9-]{16,80}$/.test(existing)) return existing;
+      const created = crypto.randomUUID();
+      localStorage.setItem('parbati_bhandar_cart_reservation_v1', created);
+      return created;
+    } catch { return crypto.randomUUID(); }
+  } as any);
+  const reservationQueueRef = useRef<Promise<any>>(Promise.resolve());
+
 
   // Mode Switcher: 'customer' | 'admin'
   const [activeMode, setActiveMode] = useState<'customer' | 'admin'>('customer');
@@ -215,6 +225,31 @@ export default function App() {
       showToast('Maintenance timer set. Storefront will reopen automatically.');
     } catch (error) { showToast((error as Error).message, 'error'); }
   };
+  // Hold finite inventory while items remain in the customer's cart. Holds
+  // expire after 10 minutes and are refreshed every 3 minutes; checkout transfers
+  // the hold into the order reservation so two shoppers cannot claim the last unit.
+  useEffect(() => {
+    if (!cloudReady || activeMode !== 'customer' || isOwnerUnlocked) return;
+    const syncCartHold = () => {
+      const items = Object.values(cart).map(item => ({
+        productId: item.product.id,
+        quantity: Number(item.qty || 0),
+        unit: item.selectedUnit || item.product.unit || '1 unit'
+      }));
+      reservationQueueRef.current = reservationQueueRef.current.catch(() => {}).then(async () => {
+        const response = await fetch('/api/cart-reservations', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reservationId: cartReservationId.current, items })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) showToast(data.error || 'Could not reserve your cart stock. Please refresh.', 'error');
+      }).catch(() => {});
+    };
+    syncCartHold();
+    const heartbeat = window.setInterval(syncCartHold, 3 * 60 * 1000);
+    return () => window.clearInterval(heartbeat);
+  }, [cart, cloudReady, activeMode, isOwnerUnlocked]);
+
   // Keep the cart local to this device; the live catalogue and settings are cloud-backed.
   useEffect(() => {
     try { localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(cart)); } catch { /* ignore */ }
@@ -409,7 +444,7 @@ export default function App() {
   const handleSaveCustomerOrder = async (turnstileToken: string, pushSubscription?: PushSubscriptionJSON | null): Promise<number | null> => {
     if (!checkIsStoreOpenIST(storeSettings)) { showToast('The store is closed. Orders cannot be placed right now.', 'error'); return null; }
     try {
-      const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerName, customerPhone, turnstileToken, pushSubscription, note: customerNote, items: cartItemsList.map(item => ({ productId: item.product.id, name: item.product.name, quantity: item.qty, unit: item.selectedUnit, price: item.unitPrice })) }) });
+      const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerName, customerPhone, turnstileToken, pushSubscription, cartReservationId: cartReservationId.current, note: customerNote, items: cartItemsList.map(item => ({ productId: item.product.id, name: item.product.name, quantity: item.qty, unit: item.selectedUnit, price: item.unitPrice })) }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || 'Could not save order');
       if (rememberCustomerDetails) {
