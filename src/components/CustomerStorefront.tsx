@@ -117,7 +117,7 @@ export function CustomerStorefront({
   // Refresh the matching order in the background so customers see owner updates
   // without having to submit the tracking form again.
   useEffect(() => {
-    if (!trackingResult?.orderNumber || !trackingPhone) return;
+    if (!trackingResult?.orderNumber || !trackingPhone || ['completed','cancelled'].includes(trackingResult.status)) return;
     const timer = window.setInterval(() => {
       void fetchTrackedOrder(String(trackingResult.orderNumber), trackingPhone)
         .then(setTrackingResult)
