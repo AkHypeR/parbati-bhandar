@@ -248,9 +248,15 @@ export function AdminUploadApp({
         try { await onRefreshProducts(); }
         catch { inventoryRefreshFailed = true; }
       }
+      const notificationNote = ({
+        'not-configured': ' Push alerts are not configured on Cloudflare.',
+        'customer-not-subscribed': ' Customer did not enable notifications for this order at checkout.',
+        'send-failed': ' The customer notification could not be sent.',
+        'subscription-expired': ' The customer notification subscription has expired.'
+      } as Record<string, string>)[data.notification] || '';
       showToast(inventoryRefreshFailed
         ? 'Order is ready, but inventory could not refresh. Reload the inventory tab.'
-        : items ? 'Item availability saved.' : 'Order status updated.', inventoryRefreshFailed ? 'error' : 'success');
+        : (items ? 'Item availability saved.' : 'Order status updated.') + notificationNote, inventoryRefreshFailed ? 'error' : (notificationNote ? 'error' : 'success'));
     } catch (error) { showToast((error as Error).message, 'error'); }
     finally { setUpdatingOrderId(null); }
   };
