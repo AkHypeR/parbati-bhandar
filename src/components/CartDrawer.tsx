@@ -328,7 +328,7 @@ export function CartDrawer({
                             <button
                               type="button"
                               aria-label={`Add one more ${product.name} (${selectedUnit})`}
-                              disabled={getRemainingStock(product) <= 0}
+                              disabled={!product.inStock || getRemainingStock(product) <= 0}
                               onClick={() =>
                                 updateCartQty(product, 1, {
                                   selectedUnit,
