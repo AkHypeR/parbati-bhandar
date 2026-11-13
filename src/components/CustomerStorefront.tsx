@@ -135,6 +135,10 @@ export function CustomerStorefront({
       setHistoryError((error as Error).message || 'Unable to load order history.');
     } finally { setHistoryLoading(false); }
   };
+  useEffect(() => {
+    if (!lastOrderNumber || trackingPhone.replace(/\D/g, '').length < 10) return;
+    void loadOrderHistory(trackingPhone);
+  }, [lastOrderNumber, trackingPhone]);
   const trackOrder = async (event: React.FormEvent) => {
     event.preventDefault(); setTrackingLoading(true); setTrackingError(''); setTrackingResult(null);
     try { setTrackingResult(await fetchTrackedOrder(trackingOrderNumber, trackingPhone)); }
