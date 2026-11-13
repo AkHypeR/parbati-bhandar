@@ -344,19 +344,7 @@ export function CustomerStorefront({
               </span>
               <span className="block h-0.5 bg-lime-300 rounded-full w-20 sm:w-28 mt-0.5" />
               {!liveIsOpen && (
-                <span
-                  role="status"
-                  aria-live="polite"
-                  className="mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-rose-200 bg-gradient-to-r from-rose-50 via-white to-amber-50 px-2.5 py-1 text-[9px] sm:text-[10px] font-extrabold tracking-wide text-rose-700 shadow-sm"
-                >
-                  <span className="relative flex h-2 w-2 shrink-0">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-60 motion-reduce:animate-none" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-rose-600" />
-                  </span>
-                  <span className="animate-pulse motion-reduce:animate-none">🌙 STORE CLOSED</span>
-                  <span aria-hidden="true" className="animate-bounce motion-reduce:animate-none">✦</span>
-                  <span className="font-semibold text-rose-600/80">• Back soon</span>
-                </span>
+                <span role="status" aria-live="polite" className="mt-1.5 inline-flex items-center gap-2 rounded-full border border-rose-200/70 bg-gradient-to-r from-[#7f1d1d] via-[#be123c] to-[#9f1239] px-3 py-1.5 text-[9px] sm:text-[10px] font-black tracking-[.12em] text-white shadow-[0_4px_16px_rgba(190,18,60,.35)] animate-[closedGlow_2.4s_ease-in-out_infinite]"><span className="relative flex h-2.5 w-2.5 shrink-0"><span className="absolute inset-0 rounded-full bg-white/80 animate-ping motion-reduce:animate-none"/><span className="relative m-auto h-2 w-2 rounded-full bg-amber-300 ring-2 ring-white/40"/></span><span>🌙 STORE CLOSED</span><span aria-hidden="true" className="text-amber-200 text-xs">✦</span><span className="font-semibold tracking-normal text-rose-100">We’ll welcome you soon</span></span>          </span>
               )}
             </button>
 
@@ -628,94 +616,37 @@ export function CustomerStorefront({
         className={`relative bg-gradient-to-b from-[#eaf7ed] via-[#f7fbf6] to-[#f4f8f3] pt-4 pb-3 overflow-hidden ${isSearchSubmitted ? "hidden" : ""}`}
       >
         <div className="max-w-5xl mx-auto px-4 relative">
-          <div className="relative overflow-hidden rounded-2xl border border-emerald-100 bg-gradient-to-r from-[#075b37] via-[#087a45] to-[#15945a] px-4 sm:px-8 pt-4 pb-2 shadow-lg animate-[fadeIn_700ms_ease-out]">
-            {/* Left: Architectural Illustration of Burdwan Curzon Gate (কার্জন গেট) */}
-            <div className="relative z-10 -mb-1.5">
-              <svg
-                viewBox="0 0 140 88"
-                className="w-28 sm:w-36 h-20 sm:h-24 text-emerald-50 drop-shadow-md animate-[float_3.5s_ease-in-out_infinite]"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                {/* Top Finials & Pediment of Curzon Gate */}
-                <path
-                  d="M42 22 L98 22 L94 14 L70 8 L46 14 Z"
-                  fill="#cbd5e1"
-                  stroke="#334155"
-                  strokeWidth="1.8"
-                />
-                <circle cx="70" cy="6" r="2.5" fill="#334155" />
-                <circle cx="48" cy="11" r="2" fill="#334155" />
-                <circle cx="92" cy="11" r="2" fill="#334155" />
-                {/* Side Towers */}
-                <rect
-                  x="26"
-                  y="24"
-                  width="18"
-                  height="60"
-                  fill="#e2e8f0"
-                  stroke="#334155"
-                  strokeWidth="1.8"
-                />
-                <rect
-                  x="96"
-                  y="24"
-                  width="18"
-                  height="60"
-                  fill="#e2e8f0"
-                  stroke="#334155"
-                  strokeWidth="1.8"
-                />
-                {/* Main Central Archway */}
-                <path
-                  d="M44 22 H96 V84 H84 V52 C84 42 56 42 56 52 V84 H44 V22 Z"
-                  fill="#f1f5f9"
-                  stroke="#334155"
-                  strokeWidth="1.8"
-                />
-                {/* Inner Arch Ring Details */}
-                <path
-                  d="M52 84 V51 C52 37 88 37 88 51 V84"
-                  stroke="#475569"
-                  strokeWidth="1.4"
-                  strokeDasharray="2 2"
-                />
-                {/* Side Small Arches */}
-                <path
-                  d="M31 84 V60 C31 55 39 55 39 60 V84"
-                  fill="#94a3b8"
-                  stroke="#334155"
-                  strokeWidth="1.4"
-                />
-                <path
-                  d="M101 84 V60 C101 55 109 55 109 60 V84"
-                  fill="#94a3b8"
-                  stroke="#334155"
-                  strokeWidth="1.4"
-                />
-                {/* Horizontal Cornice Lines */}
-                <line x1="23" y1="24" x2="117" y2="24" stroke="#1e293b" strokeWidth="2.2" />
-                <line x1="25" y1="34" x2="115" y2="34" stroke="#475569" strokeWidth="1.4" />
-              </svg>
-            </div>
-
-            {/* Right: "Nomoshkar Grahok" Typography */}
-            <div className="text-right pb-3 z-10 relative">
-              <div className="font-serif text-sm sm:text-base text-emerald-100 tracking-wide">
-                {greetingTop}
-              </div>
-              <div className="font-serif text-3xl sm:text-4xl font-black text-white tracking-tight leading-none mt-0.5 drop-shadow-md">
-                {greetingMain}
-              </div>
-              {storeSettings.greetingBengali && (
-                <div className="text-[11px] font-semibold text-lime-100 mt-1">
-                  {storeSettings.greetingBengali}
+          <div className="relative isolate overflow-hidden rounded-[26px] border border-emerald-200/70 bg-[#063f2c] px-5 sm:px-9 py-5 sm:py-6 shadow-[0_18px_45px_rgba(4,75,42,0.22)] animate-[welcomeRise_800ms_cubic-bezier(.2,.8,.2,1)]">
+            <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_15%_20%,rgba(250,204,21,.22),transparent_28%),radial-gradient(circle_at_88%_85%,rgba(74,222,128,.24),transparent_32%),linear-gradient(115deg,#064e36,#087a45_55%,#064e36)]" />
+            <div aria-hidden="true" className="absolute -top-16 -right-10 h-52 w-52 rounded-full border border-lime-200/20 animate-[welcomeOrbit_18s_linear_infinite]" />
+            <div aria-hidden="true" className="absolute -bottom-24 -left-12 h-56 w-56 rounded-full border border-amber-200/20 animate-[welcomeOrbit_24s_linear_infinite_reverse]" />
+            <div aria-hidden="true" className="absolute inset-x-0 top-0 h-1 overflow-hidden bg-white/10"><span className="block h-full w-1/3 bg-gradient-to-r from-transparent via-amber-300 to-transparent animate-[welcomeShine_4s_ease-in-out_infinite]" /></div>
+            <div className="relative z-10 grid grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-6">
+              <div className="relative flex items-center justify-start min-w-0">
+                <div className="relative rounded-2xl bg-white/10 border border-white/15 p-2 sm:p-3 shadow-inner">
+                  <svg viewBox="0 0 140 88" className="w-28 sm:w-40 h-20 sm:h-28 drop-shadow-[0_8px_12px_rgba(0,0,0,.25)]" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M42 22 L98 22 L94 14 L70 8 L46 14 Z" fill="#f8e7b2" stroke="#fef3c7" strokeWidth="1.8"/>
+                    <circle cx="70" cy="6" r="2.5" fill="#fde68a"/><circle cx="48" cy="11" r="2" fill="#fde68a"/><circle cx="92" cy="11" r="2" fill="#fde68a"/>
+                    <rect x="26" y="24" width="18" height="60" fill="#e8f2df" stroke="#fff7d6" strokeWidth="1.8"/><rect x="96" y="24" width="18" height="60" fill="#e8f2df" stroke="#fff7d6" strokeWidth="1.8"/>
+                    <path d="M44 22 H96 V84 H84 V52 C84 42 56 42 56 52 V84 H44 V22 Z" fill="#fff9e8" stroke="#fff7d6" strokeWidth="1.8"/>
+                    <path d="M52 84 V51 C52 37 88 37 88 51 V84" stroke="#b7c9a9" strokeWidth="1.6"/>
+                    <path d="M31 84 V60 C31 55 39 55 39 60 V84 M101 84 V60 C101 55 109 55 109 60 V84" stroke="#b7c9a9" strokeWidth="1.6"/>
+                    <path d="M23 24 H117 M25 34 H115" stroke="#fef3c7" strokeWidth="2"/>
+                  </svg>
                 </div>
-              )}
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-amber-300 px-2.5 py-1 text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-emerald-950 shadow-md">Bardhaman • Local roots</span>
+              </div>
+              <div className="col-span-2 sm:col-span-1 text-center sm:min-w-[260px] sm:px-2">
+                <div className="inline-flex items-center gap-2 rounded-full border border-amber-200/35 bg-white/10 px-3 py-1 text-[10px] sm:text-xs font-extrabold uppercase tracking-[.2em] text-amber-200"><span className="animate-[welcomeSparkle_2s_ease-in-out_infinite]">✦</span>{greetingTop}<span className="animate-[welcomeSparkle_2s_ease-in-out_infinite]">✦</span></div>
+                <h2 className="mt-2 font-serif text-4xl sm:text-5xl font-black leading-none tracking-tight text-white drop-shadow-lg">{greetingMain}</h2>
+                {storeSettings.greetingBengali && <p className="mt-2 text-sm sm:text-base font-bold text-lime-100">{storeSettings.greetingBengali}</p>}
+                <p className="mt-2 text-[10px] sm:text-xs font-semibold tracking-wide text-emerald-100/90">Fresh essentials • Fair prices • Friendly service</p>
+                <div className="mx-auto mt-3 h-1 w-24 rounded-full bg-gradient-to-r from-transparent via-amber-300 to-transparent" />
+              </div>
+              <div aria-hidden="true" className="hidden sm:flex flex-col items-end justify-center gap-2 text-right"><span className="text-4xl animate-[welcomeFloat_3s_ease-in-out_infinite]">🧺</span><span className="text-3xl animate-[welcomeFloat_3s_ease-in-out_infinite]">🥬</span><span className="text-[10px] font-black uppercase tracking-widest text-lime-100/80">Your neighbourhood store</span></div>
             </div>
+            <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-around text-base opacity-75"><span className="animate-[welcomeFloat_3s_ease-in-out_infinite]">🌼</span><span>✦</span><span className="animate-[welcomeFloat_3s_ease-in-out_infinite]">🌿</span><span>✦</span><span className="animate-[welcomeFloat_3s_ease-in-out_infinite]">🌼</span></div>
           </div>
-
           {/* Sweeping Curved Horizon Line under Curzon Gate & Nomoshkar Grahok */}
           <svg
             viewBox="0 0 600 24"
