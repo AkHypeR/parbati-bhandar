@@ -255,7 +255,7 @@ export default function App() {
     const lowStockInCart = new Set<string>();
     for (const item of Object.values(cart)) {
       const product = products.find((entry) => entry.id === item.product.id) || item.product;
-      if (product.inStock && Number(product.stockQuantity) > 0 && isProductLowStock(product)) {
+      if (product.inStock && (product as any).lowStock === true) {
         lowStockInCart.add(product.id);
         if (!lowStockCartStartedAt.current.has(product.id)) lowStockCartStartedAt.current.set(product.id, Date.now());
       }
