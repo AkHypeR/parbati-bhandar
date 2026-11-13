@@ -103,6 +103,8 @@ export default function App() {
   const [recoveryConfirm, setRecoveryConfirm] = useState('');
   const [recoveryMessage, setRecoveryMessage] = useState('');
   const [cloudReady, setCloudReady] = useState(false);
+  const [productSyncStatus, setProductSyncStatus] = useState<'loading' | 'saving' | 'saved' | 'error'>('loading');
+  const productSyncRequest = useRef(0);
   const previousProductIds = useRef<string[]>([]);
 
   // Modals: QR Poster & Free Hosting Guide
@@ -265,6 +267,7 @@ export default function App() {
     async function loadCloud() {
       if (!isSupabaseConfigured || !supabase) {
         setCloudReady(true);
+        setProductSyncStatus('error');
         showToast('Supabase keys are missing. Add the VITE_SUPABASE values to enable cloud sync.', 'error');
         return;
       }
@@ -275,9 +278,11 @@ export default function App() {
         setProducts(nextProducts);
         previousProductIds.current = nextProducts.map(p => p.id);
         if (settings) setStoreSettings({ ...DEFAULT_STORE_SETTINGS, ...settings });
+        setProductSyncStatus('saved');
         setCloudReady(true);
       } catch (error) {
         if (!cancelled) {
+          setProductSyncStatus('error');
           setCloudReady(true);
           showToast(`Could not load the online catalogue: ${(error as Error).message}`, 'error');
         }
@@ -289,12 +294,22 @@ export default function App() {
 
   useEffect(() => {
     if (!cloudReady || !isOwnerUnlocked) return;
+    const requestId = ++productSyncRequest.current;
     const currentIds = products.map(p => p.id);
     const removed = previousProductIds.current.filter(id => !currentIds.includes(id));
     previousProductIds.current = currentIds;
-    void saveCloudProducts(products).then(() => deleteCloudProducts(removed)).catch(error => {
-      showToast(`Cloud product save failed: ${(error as Error).message}`, 'error');
-    });
+    setProductSyncStatus('saving');
+    void saveCloudProducts(products)
+      .then(() => deleteCloudProducts(removed))
+      .then(() => {
+        if (productSyncRequest.current === requestId) setProductSyncStatus('saved');
+      })
+      .catch(error => {
+        if (productSyncRequest.current === requestId) {
+          setProductSyncStatus('error');
+          showToast(`Cloud product save failed: ${(error as Error).message}`, 'error');
+        }
+      });
   }, [products, cloudReady, isOwnerUnlocked]);
 
   useEffect(() => {
@@ -883,6 +898,7 @@ export default function App() {
         /* ========================================== */
         <AdminUploadApp
           products={products}
+          productSyncStatus={productSyncStatus}
           filteredAdminProducts={filteredAdminProducts}
           storeSettings={storeSettings}
           maintenanceMode={maintenanceMode}
