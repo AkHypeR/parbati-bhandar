@@ -121,6 +121,21 @@ export default function App() {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerNote, setCustomerNote] = useState('');
+  const [rememberCustomerDetails, setRememberCustomerDetails] = useState(false);
+
+  // Restore only details the customer previously chose to remember on this device.
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('parbati_bhandar_customer_details_v1');
+      if (!saved) return;
+      const details = JSON.parse(saved);
+      if (typeof details?.name === 'string' && typeof details?.phone === 'string') {
+        setCustomerName(details.name.slice(0, 100));
+        setCustomerPhone(details.phone.slice(0, 20));
+        setRememberCustomerDetails(true);
+      }
+    } catch { /* Ignore unavailable or invalid local storage. */ }
+  }, []);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [copiedNotice, setCopiedNotice] = useState(false);
 
@@ -418,6 +433,11 @@ export default function App() {
       const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerName, customerPhone, turnstileToken, pushSubscription, note: customerNote, items: cartItemsList.map(item => ({ name: item.product.name, quantity: item.qty, unit: item.selectedUnit, price: item.unitPrice })) }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || 'Could not save order');
+      if (rememberCustomerDetails) {
+        try { localStorage.setItem('parbati_bhandar_customer_details_v1', JSON.stringify({ name: customerName.trim(), phone: customerPhone.trim() })); } catch { /* Saving details is optional. */ }
+      } else {
+        try { localStorage.removeItem('parbati_bhandar_customer_details_v1'); } catch { /* Ignore unavailable storage. */ }
+      }
       showToast('Order saved. Opening WhatsApp…');
       return true;
     } catch (error) { showToast((error as Error).message, 'error'); return false; }
@@ -855,6 +875,8 @@ export default function App() {
             customerName={customerName}
             customerPhone={customerPhone}
             setCustomerPhone={setCustomerPhone}
+            rememberCustomerDetails={rememberCustomerDetails}
+            setRememberCustomerDetails={setRememberCustomerDetails}
             onSaveOrder={handleSaveCustomerOrder}
             setCustomerName={setCustomerName}
             customerNote={customerNote}
