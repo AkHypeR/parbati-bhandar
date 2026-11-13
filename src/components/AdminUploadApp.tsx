@@ -172,7 +172,7 @@ export function AdminUploadApp({
   const [replyCustomerPhone, setReplyCustomerPhone] = useState('');
   const [missingProducts, setMissingProducts] = useState('');
   const [replyNote, setReplyNote] = useState('');
-  type CustomerOrder = { id: string; orderNumber: number; customerName: string; customerPhone: string; note?: string; items: { name: string; quantity: number; unit: string; price: number }[]; total: number; status: 'new' | 'ready' | 'unavailable' | 'completed' | 'cancelled'; createdAt: number };
+  type CustomerOrder = { id: string; orderNumber: number; customerName: string; customerPhone: string; note?: string; items: { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean }[]; total: number; status: 'new' | 'ready' | 'unavailable' | 'completed' | 'cancelled'; createdAt: number };
   const [customerOrders, setCustomerOrders] = useState<CustomerOrder[]>([]);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [orderSearch, setOrderSearch] = useState('');
@@ -198,14 +198,14 @@ export function AdminUploadApp({
     finally { setOrdersLoading(false); }
   };
   useEffect(() => { if (adminTab === 'orders') loadCustomerOrders(); }, [adminTab]);
-  const updateCustomerOrder = async (id: string, status: CustomerOrder['status']) => {
+  const updateCustomerOrder = async (id: string, status: CustomerOrder['status'], items?: CustomerOrder['items']) => {
     setUpdatingOrderId(id);
     try {
-      const response = await fetch('/api/orders', { method: 'PATCH', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status }) });
+      const response = await fetch('/api/orders', { method: 'PATCH', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status, ...(items ? { items } : {}) }) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not update order.');
-      setCustomerOrders(prev => prev.map(order => order.id === id ? { ...order, status } : order));
-      showToast('Order status updated.');
+      setCustomerOrders(prev => prev.map(order => order.id === id ? { ...order, status, ...(items ? { items } : {}) } : order));
+      showToast(items ? 'Item availability saved.' : 'Order status updated.');
     } catch (error) { showToast((error as Error).message, 'error'); }
     finally { setUpdatingOrderId(null); }
   };
@@ -223,10 +223,11 @@ export function AdminUploadApp({
   };
   const messageOrderCustomer = (order: CustomerOrder, kind: 'ready' | 'unavailable') => {
     const phone = order.customerPhone.replace(/\\D/g, '');
-    const lines = order.items.map(item => `• ${item.name} — ${item.unit} × ${item.quantity}`).join('\\n');
+    const relevantItems = kind === 'unavailable' ? order.items.filter(item => item.unavailable) : order.items.filter(item => !item.unavailable);
+    const lines = relevantItems.map(item => `• ${item.name} — ${item.unit} × ${item.quantity}`).join('\\n');
     const message = kind === 'ready'
-      ? `নমস্কার ${order.customerName}! আপনার Parbati Bhandar-এর অর্ডার লিস্ট তৈরি।\\n\\n${lines}\\n\\nআপনি সুবিধামতো দোকান থেকে সংগ্রহ করতে পারেন। ধন্যবাদ।`
-      : `নমস্কার ${order.customerName}, আপনার Parbati Bhandar-এর অর্ডার লিস্টের কিছু পণ্য বর্তমানে স্টকে নেই।\\n\\n${lines}\\n\\nদয়া করে দোকানের সঙ্গে যোগাযোগ করুন। ধন্যবাদ।`;
+      ? `নমস্কার ${order.customerName}! আপনার Parbati Bhandar-এর অর্ডারের উপলব্ধ পণ্যগুলি প্রস্তুত।\\n\\n${lines || 'আপনার অর্ডারটি প্রস্তুত।'}\\n\\nআপনি সুবিধামতো দোকান থেকে সংগ্রহ করতে পারেন। ধন্যবাদ।`
+      : `নমস্কার ${order.customerName}, আপনার অর্ডারের নিচের পণ্যগুলি বর্তমানে স্টকে নেই:\\n\\n${lines || 'কোনও পণ্য unavailable হিসেবে চিহ্নিত করা হয়নি।'}\\n\\nদয়া করে দোকানের সঙ্গে যোগাযোগ করুন। ধন্যবাদ।`;
     window.open(`https://wa.me/${phone.length === 10 ? '91' + phone : phone}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
   };
 
@@ -714,7 +715,7 @@ export function AdminUploadApp({
                     </div>
                     <div className="rounded-xl border border-slate-200 p-4">
                       <h3 className="mb-3 text-sm font-extrabold uppercase tracking-wide text-slate-500">Items ordered</h3>
-                      <div className="divide-y divide-slate-100">{order.items.map((item,index) => <div key={index} className="flex items-center justify-between gap-4 py-3 text-sm"><div><p className="font-bold text-slate-800">{item.name}</p><p className="text-xs text-slate-500">{item.unit} · Quantity {item.quantity}</p></div><strong className="shrink-0 text-slate-900">₹{(Number(item.price || 0) * Number(item.quantity || 0)).toFixed(2)}</strong></div>)}</div>
+                      <div className="divide-y divide-slate-100">{order.items.map((item,index) => <div key={index} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm"><div className="min-w-0"><p className={`font-bold ${item.unavailable ? 'text-amber-800 line-through' : 'text-slate-800'}`}>{item.name}</p><p className="text-xs text-slate-500">{item.unit} · Quantity {item.quantity}</p>{item.unavailable && <span className="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-extrabold uppercase text-amber-900">Unavailable</span>}</div><div className="flex items-center gap-3"><strong className="shrink-0 text-slate-900">₹{(Number(item.price || 0) * Number(item.quantity || 0)).toFixed(2)}</strong><button type="button" disabled={updatingOrderId === order.id} onClick={() => updateCustomerOrder(order.id, order.status, order.items.map((entry,itemIndex) => itemIndex === index ? { ...entry, unavailable: !entry.unavailable } : entry))} className={`rounded-lg border px-3 py-2 text-xs font-bold disabled:opacity-50 ${item.unavailable ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>{item.unavailable ? 'Mark available' : 'Mark unavailable'}</button></div></div>)}</div>
                       <div className="mt-3 flex justify-between border-t border-slate-200 pt-3 font-extrabold"><span>Estimated total</span><span>₹{Number(order.total || 0).toFixed(2)}</span></div>
                     </div>
                     {order.note && <div className="mt-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-900"><strong>Customer note</strong><p className="mt-1">{order.note}</p></div>}
