@@ -99,11 +99,32 @@ export function CustomerStorefront({
   const [trackingResult, setTrackingResult] = useState<any>(null);
   const [trackingError, setTrackingError] = useState('');
   const [trackingLoading, setTrackingLoading] = useState(false);
+  const fetchTrackedOrder = async (orderNumber: string, phone: string) => {
+    const response = await fetch('/api/orders/track?orderNumber=' + encodeURIComponent(orderNumber) + '&phone=' + encodeURIComponent(phone), { cache: 'no-store' });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Unable to find order');
+    return data;
+  };
   const trackOrder = async (event: React.FormEvent) => {
     event.preventDefault(); setTrackingLoading(true); setTrackingError(''); setTrackingResult(null);
-    try { const response = await fetch('/api/orders/track?orderNumber=' + encodeURIComponent(trackingOrderNumber) + '&phone=' + encodeURIComponent(trackingPhone)); const data = await response.json(); if (!response.ok) throw new Error(data.error || 'Unable to find order'); setTrackingResult(data); }
+    try { setTrackingResult(await fetchTrackedOrder(trackingOrderNumber, trackingPhone)); }
     catch (error) { setTrackingError((error as Error).message); } finally { setTrackingLoading(false); }
   };
+  const trackingStep = trackingResult
+    ? ({ new: 0, review: 1, ready: 2, completed: 3, unavailable: 1 } as Record<string, number>)[trackingResult.status] ?? -1
+    : -1;
+
+  // Refresh the matching order in the background so customers see owner updates
+  // without having to submit the tracking form again.
+  useEffect(() => {
+    if (!trackingResult?.orderNumber || !trackingPhone) return;
+    const timer = window.setInterval(() => {
+      void fetchTrackedOrder(String(trackingResult.orderNumber), trackingPhone)
+        .then(setTrackingResult)
+        .catch(() => {});
+    }, 15000);
+    return () => window.clearInterval(timer);
+  }, [trackingResult?.orderNumber, trackingPhone]);
   // Per-product selected variety or weight option label
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, { label: string; price: number; mrp: number | null; inStock: boolean }>
@@ -1375,9 +1396,10 @@ export function CustomerStorefront({
           </form>
           {trackingError && <p role="alert" className="text-sm text-red-600 mt-3">{trackingError}</p>}
           {trackingResult && <div className="mt-4 border-t border-slate-100 pt-4">
-            <p className="font-bold text-slate-900">Order #{trackingResult.orderNumber}</p>
+            <div className="flex items-center justify-between gap-3"><p className="font-bold text-slate-900">Order #{trackingResult.orderNumber}</p><span className="text-[10px] font-semibold text-slate-400">Auto-updates every 15 seconds</span></div>
+            {trackingResult.status === 'cancelled' && <p className="mt-2 rounded-lg bg-red-50 p-2 text-xs font-semibold text-red-700">This order was cancelled. Please contact the store if you need help.</p>}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3 text-xs">
-              {['new','review','ready','completed'].map((step,index)=><div key={step} className={'rounded-lg p-2 text-center font-semibold '+(['new','review','ready','completed'].indexOf(trackingResult.status)>=index?'bg-emerald-50 text-emerald-800':'bg-slate-100 text-slate-500')}>{['Received','Under review','Ready for pickup','Completed'][index]}</div>)}
+              {['Received','Under review','Ready for pickup','Completed'].map((label,index)=><div key={label} aria-current={trackingStep === index ? 'step' : undefined} className={'rounded-lg p-2 text-center font-semibold '+(trackingStep >= index?'bg-emerald-50 text-emerald-800':'bg-slate-100 text-slate-500')}>{label}</div>)}
             </div>
             <div className="mt-3 space-y-2">{trackingResult.items.map((item:any,index:number)=><div key={index} className="flex justify-between gap-3 text-sm"><span>{item.name} · {item.quantity} {item.unit}</span><span className={item.unavailable?'text-red-600 font-bold':'text-emerald-700 font-semibold'}>{item.unavailable?'Unavailable':'Available'}</span></div>)}</div>
           </div>}
