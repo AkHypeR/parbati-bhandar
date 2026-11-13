@@ -1,4 +1,5 @@
 import { json, ownerRequired, type Env } from "../_lib/env";
+import { purgeExpiredCustomerOrders } from "../_lib/order-retention";
 import { sendPushNotification } from "@mmmike/web-push/send";
 
 type OrderItem = { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean };
@@ -108,8 +109,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const denied = await ownerRequired(request, env); if (denied) return denied;
   await ensureTable(env);
-  // Automatically clear completed/cancelled orders after 7 days.
-  await env.DB.prepare("DELETE FROM customer_orders WHERE status IN ('completed','cancelled') AND updated_at < ?").bind(Date.now() - 7*86400000).run();
+  // Retain customer order history for seven days from order creation, regardless of status.
+  await purgeExpiredCustomerOrders(env);
   const rows = await env.DB.prepare("SELECT id,order_number,customer_name,customer_phone,note,items_json,total,status,created_at,updated_at FROM customer_orders ORDER BY order_number DESC LIMIT 100").all<any>();
   return json({ orders: (rows.results || []).map((r: any) => ({ id:r.id, orderNumber:r.order_number, customerName:r.customer_name, customerPhone:r.customer_phone, note:r.note, items:JSON.parse(r.items_json), total:r.total, status:r.status, createdAt:r.created_at, updatedAt:r.updated_at })) }, 200, { "cache-control": "no-store" });
 };
