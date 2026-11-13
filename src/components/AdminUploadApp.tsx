@@ -719,7 +719,7 @@ export function AdminUploadApp({
               className={`flex w-full sm:w-auto justify-center items-center gap-2 px-3 sm:px-4 py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-150 cursor-pointer whitespace-normal sm:whitespace-nowrap min-h-11 ${adminTab === 'orders' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
             >
               <span className="relative inline-flex">
-                <ClipboardList className="w-4 h-4" />
+                <BellRing className="w-4 h-4" />
                 {newOrdersCount > 0 && <span className="absolute -right-2 -top-2 grid h-4 min-w-4 place-items-center rounded-full bg-red-600 px-1 text-[9px] font-black leading-none text-white ring-2 ring-white">{newOrdersCount > 99 ? '99+' : newOrdersCount}</span>}
               </span>
               <span>Orders</span>
