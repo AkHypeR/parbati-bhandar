@@ -113,12 +113,22 @@ export function CartDrawer({
   if (!isOpen) return null;
 
   const cartProductIds = new Set(cartItemsList.map(item => item.product.id));
-  const bestFiveProducts = products.filter(product => product.inStock && !cartProductIds.has(product.id) && product.isBestItem)
-    .sort((left, right) => Number(left.bestItemRank ?? 999) - Number(right.bestItemRank ?? 999)).slice(0, 5);
-  const recommendationProducts = bestFiveProducts.length ? bestFiveProducts : products.filter(product => product.inStock && !cartProductIds.has(product.id)).slice(0, 5);
+  // Recommend only products from categories already represented in the customer's cart.
+  const cartCategories = new Set(cartItemsList.map(item => item.product.category).filter(Boolean));
+  const categoryRecommendations = products.filter(product =>
+    product.inStock &&
+    !cartProductIds.has(product.id) &&
+    cartCategories.has(product.category) &&
+    (product.stockQuantity == null || Number(product.stockQuantity) > 0)
+  );
+  const bestFiveProducts = categoryRecommendations.filter(product => product.isBestItem)
+    .sort((left, right) => Number(left.bestItemRank ?? 999) - Number(right.bestItemRank ?? 999));
+  const recommendationProducts = (bestFiveProducts.length ? bestFiveProducts : categoryRecommendations).slice(0, 5);
   const addRandomRecommendation = () => {
-    const choices = products.filter(product => product.inStock && !cartProductIds.has(product.id));
-    if (choices.length) updateCartQty(choices[Math.floor(Math.random() * choices.length)], 1);
+    if (categoryRecommendations.length) {
+      const randomProduct = categoryRecommendations[Math.floor(Math.random() * categoryRecommendations.length)];
+      updateCartQty(randomProduct, 1);
+    }
   };
 
   const getRemainingStock = (product: Product) => {
@@ -353,10 +363,11 @@ export function CartDrawer({
                   <div className="flex items-center justify-between gap-2">
                     <div>
                       <h4 className="text-sm font-extrabold text-slate-900">Complete your grocery list</h4>
-                      <p className="text-[11px] text-slate-500">Check your items, or add something useful before checkout.</p>
+                      <p className="text-[11px] text-slate-500">Suggestions are picked from the same categories as the items in your cart.</p>
                     </div>
-                    <button type="button" onClick={addRandomRecommendation} disabled={!products.some(product => product.inStock && !cartProductIds.has(product.id))} className="shrink-0 rounded-xl bg-amber-100 px-3 py-2 text-xs font-bold text-amber-900 disabled:opacity-50">🎲 Surprise me</button>
+                    <button type="button" onClick={addRandomRecommendation} disabled={categoryRecommendations.length === 0} className="shrink-0 rounded-xl bg-amber-100 px-3 py-2 text-xs font-bold text-amber-900 disabled:opacity-50">🎲 Surprise me</button>
                   </div>
+                  {recommendationProducts.length > 0 && (
                   <div className="grid grid-cols-2 gap-2">
                     {recommendationProducts.map(product => (
                       <div key={product.id} className="rounded-xl border border-slate-200 p-3">
@@ -371,7 +382,8 @@ export function CartDrawer({
                       </div>
                     ))}
                   </div>
-                  {recommendationProducts.length === 0 && <p className="text-xs text-slate-500">You have all available products in your list.</p>}
+                  )}
+                  {recommendationProducts.length === 0 && <p className="text-xs text-slate-500">No more in-stock items are available in the categories you selected.</p>}
                 </section>
               )}
               {checkoutStep === 'checkout' && <>
