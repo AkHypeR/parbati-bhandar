@@ -54,6 +54,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     reservation_id TEXT PRIMARY KEY, expected_count INTEGER NOT NULL, actual_count INTEGER NOT NULL,
     CHECK(expected_count=actual_count)
   )`).run();
+  const cleanupNow = Date.now();
+  await env.DB.prepare("DELETE FROM cart_stock_reservations WHERE expires_at<=?").bind(cleanupNow).run();
+  await env.DB.prepare("DELETE FROM cart_stock_reservation_guard WHERE NOT EXISTS (SELECT 1 FROM cart_stock_reservations h WHERE h.reservation_id=cart_stock_reservation_guard.reservation_id)").run();
   const totals=new Map<string,number>();
   for(const item of items){
     const row=await env.DB.prepare("SELECT data FROM products WHERE id=?").bind(item.productId).first<any>();
