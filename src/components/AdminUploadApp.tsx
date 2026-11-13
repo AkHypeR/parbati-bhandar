@@ -463,6 +463,34 @@ export function AdminUploadApp({
     lowStockThreshold: lowStockThreshold !== '' ? Number(lowStockThreshold) : undefined,
   });
 
+  const restockProducts = products.filter(product =>
+    product.inStock && isProductLowStock({
+      stockQuantity: product.stockQuantity,
+      lowStockThreshold: product.lowStockThreshold,
+    })
+  );
+  const exportInventoryCsv = () => {
+    const escapeCsv = (value: unknown) => `"${String(value ?? '').replace(/"/g, '""')}"`;
+    const rows = [
+      ['Product', 'Category', 'Selling Price (INR)', 'MRP (INR)', 'Unit', 'In Stock', 'Stock Quantity', 'Low Stock Alert'],
+      ...products.map(product => [
+        product.name, product.category, product.price, product.mrp ?? '',
+        product.unit, product.inStock ? 'Yes' : 'No',
+        product.stockQuantity ?? '', product.lowStockThreshold ?? '',
+      ]),
+    ];
+    const csv = '\\uFEFF' + rows.map(row => row.map(escapeCsv).join(',')).join('\\r\\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `parbati-bhandar-inventory-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    showToast('Inventory CSV downloaded.');
+  };
+
   return (
     <div className="flex-1 bg-gradient-to-b from-slate-100 to-slate-50 pb-16">
       {/* Owner Admin Header */}
@@ -1343,6 +1371,53 @@ export function AdminUploadApp({
         {/* ========================================== */}
         {adminTab === 'inventory' && (
           <div className="space-y-4">
+            <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h2 className="text-base font-extrabold tracking-tight text-slate-900">Inventory overview</h2>
+                  <p className="mt-1 text-xs text-slate-500">A quick check of stock that may need attention.</p>
+                </div>
+                <button type="button" onClick={exportInventoryCsv} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 transition hover:bg-slate-100">
+                  <Globe className="h-4 w-4" /> Export inventory CSV
+                </button>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                <div className="rounded-xl bg-slate-50 p-3">
+                  <p className="text-[11px] font-semibold text-slate-500">Catalogue</p>
+                  <p className="mt-1 text-xl font-black tabular-nums text-slate-900">{totalProductsCount}</p>
+                </div>
+                <div className="rounded-xl bg-emerald-50 p-3">
+                  <p className="text-[11px] font-semibold text-emerald-700">Available</p>
+                  <p className="mt-1 text-xl font-black tabular-nums text-emerald-800">{inStockCount}</p>
+                </div>
+                <div className="rounded-xl bg-amber-50 p-3">
+                  <p className="text-[11px] font-semibold text-amber-700">Restock soon</p>
+                  <p className="mt-1 text-xl font-black tabular-nums text-amber-800">{restockProducts.length}</p>
+                </div>
+                <div className="rounded-xl bg-rose-50 p-3">
+                  <p className="text-[11px] font-semibold text-rose-700">Unavailable</p>
+                  <p className="mt-1 text-xl font-black tabular-nums text-rose-800">{outOfStockCount}</p>
+                </div>
+              </div>
+              {restockProducts.length > 0 ? (
+                <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50/70 p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-xs font-extrabold text-amber-900"><AlertTriangle className="mr-1 inline h-4 w-4" /> Restock attention</p>
+                    <button type="button" onClick={() => setAdminLowStockOnly(true)} className="text-xs font-bold text-amber-900 underline underline-offset-2">View low-stock items</button>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {restockProducts.slice(0, 6).map(product => (
+                      <span key={product.id} className="rounded-lg border border-amber-200 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-slate-700">
+                        {product.name} · {product.stockQuantity ?? 0} left
+                      </span>
+                    ))}
+                    {restockProducts.length > 6 && <span className="self-center text-[11px] text-amber-800">+{restockProducts.length - 6} more</span>}
+                  </div>
+                </div>
+              ) : (
+                <p className="mt-4 rounded-xl bg-emerald-50 px-3 py-2.5 text-xs font-semibold text-emerald-800"><CheckCircle2 className="mr-1 inline h-4 w-4" /> No low-stock products need attention right now.</p>
+              )}
+            </section>
             {/* =============================================================== */}
             {/* HERO SLIDER MANAGER: FESTIVE BANNER TOGGLE + BEST 5 ORDER (1-5) */}
             {/* =============================================================== */}
