@@ -207,11 +207,14 @@ export function AdminUploadApp({
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not update order.');
       setCustomerOrders(prev => prev.map(order => order.id === id ? { ...order, status, ...(items ? { items } : {}) } : order));
+      let inventoryRefreshFailed = false;
       if (status === 'ready') {
         try { await onRefreshProducts(); }
-        catch { showToast('Order is ready, but inventory could not refresh. Reload the inventory tab.', 'error'); }
+        catch { inventoryRefreshFailed = true; }
       }
-      showToast(items ? 'Item availability saved.' : 'Order status updated.');
+      showToast(inventoryRefreshFailed
+        ? 'Order is ready, but inventory could not refresh. Reload the inventory tab.'
+        : items ? 'Item availability saved.' : 'Order status updated.', inventoryRefreshFailed ? 'error' : 'success');
     } catch (error) { showToast((error as Error).message, 'error'); }
     finally { setUpdatingOrderId(null); }
   };
@@ -736,7 +739,7 @@ export function AdminUploadApp({
                       {order.status === 'new' && <button type="button" disabled={updatingOrderId === order.id} onClick={() => updateCustomerOrder(order.id,'review')} className="rounded-lg bg-violet-700 px-3 py-3 text-sm font-bold text-white disabled:opacity-50">Review Order (অর্ডার মিলিয়ে নিন)</button>}
                       <button type="button" disabled={updatingOrderId === order.id || order.status !== 'review'} onClick={() => { if (window.confirm('Confirm this order as Ready for pickup? Available items will be deducted from stock once.')) void updateCustomerOrder(order.id,'ready'); }} className="rounded-lg bg-emerald-600 px-3 py-3 text-sm font-bold text-white disabled:opacity-50">{order.status === 'new' ? 'Review first' : 'Confirm Ready'}</button>
                       <button type="button" disabled={updatingOrderId === order.id || order.status !== 'ready'} onClick={() => updateCustomerOrder(order.id,'completed')} className="rounded-lg bg-slate-200 px-3 py-3 text-sm font-bold text-slate-800 disabled:opacity-50">Completed</button>
-                      <button type="button" disabled={updatingOrderId === order.id || ['completed','cancelled'].includes(order.status)} onClick={() => updateCustomerOrder(order.id,'cancelled')} className="rounded-lg bg-red-50 px-3 py-3 text-sm font-bold text-red-700 disabled:opacity-50">Cancel</button>
+                      <button type="button" disabled={updatingOrderId === order.id || ['ready','completed','cancelled'].includes(order.status)} onClick={() => updateCustomerOrder(order.id,'cancelled')} className="rounded-lg bg-red-50 px-3 py-3 text-sm font-bold text-red-700 disabled:opacity-50">Cancel</button>
                     </div>
                     <div className="mt-3 grid gap-2 sm:grid-cols-2">
                       <button type="button" onClick={() => messageOrderCustomer(order,'ready')} className="rounded-lg border border-emerald-200 px-3 py-3 text-sm font-bold text-emerald-800">WhatsApp: Ready</button>
