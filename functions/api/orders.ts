@@ -196,7 +196,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
           SET data = json_set(
             data,
             '$.stockQuantity', MAX(0, ROUND(json_extract(data,'$.stockQuantity') - ?, 4)),
-            '$.inStock', CASE WHEN ROUND(json_extract(data,'$.stockQuantity') - ?, 4) <= 0 THEN json('false') ELSE json_extract(data,'$.inStock') END,
+            '$.inStock', CASE WHEN ROUND(json_extract(data,'$.stockQuantity') - ?, 4) <= 0 THEN json('false') ELSE json('true') END,
             '$.updatedAt', ?
           ), updated_at=?
           WHERE id=? AND json_type(data,'$.stockQuantity') IN ('integer','real')
