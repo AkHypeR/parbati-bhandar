@@ -35,6 +35,7 @@ function stockUnitsForOrder(item: OrderItem, product: any): number | null {
   if (/pair/i.test(stockUnit)) {
     const pieces = itemUnit.match(/(\d+)\s*(piece|pieces|pcs)/i);
     if (pieces) return Number(item.quantity) * Number(pieces[1]) / 2;
+    if (/tray/i.test(itemUnit)) return Number(item.quantity) * 15;
     if (/dozen/i.test(itemUnit)) return Number(item.quantity) * 6;
     if (/pair/i.test(itemUnit)) return Number(item.quantity);
   }
