@@ -117,6 +117,7 @@ export default function App() {
 
   // Customer Shopping List / Inquiry Drawer
   const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
   const [customerNote, setCustomerNote] = useState('');
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [copiedNotice, setCopiedNotice] = useState(false);
@@ -396,6 +397,16 @@ export default function App() {
     () => buildWhatsAppUrl(storeSettings.whatsappNumber || storeSettings.phone, orderText),
     [storeSettings.whatsappNumber, storeSettings.phone, orderText]
   );
+
+  const handleSaveCustomerOrder = async (): Promise<boolean> => {
+    try {
+      const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerName, customerPhone, note: customerNote, items: cartItemsList.map(item => ({ name: item.product.name, quantity: item.qty, unit: item.selectedUnit, price: item.unitPrice })) }) });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || 'Could not save order');
+      showToast('Order saved. Opening WhatsApp…');
+      return true;
+    } catch (error) { showToast((error as Error).message, 'error'); return false; }
+  };
 
   const handleCopyShoppingList = () => {
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -827,6 +838,9 @@ export default function App() {
             cartTotalPrice={cartTotalPrice}
             cartTotalSaved={cartTotalSaved}
             customerName={customerName}
+            customerPhone={customerPhone}
+            setCustomerPhone={setCustomerPhone}
+            onSaveOrder={handleSaveCustomerOrder}
             setCustomerName={setCustomerName}
             customerNote={customerNote}
             setCustomerNote={setCustomerNote}
