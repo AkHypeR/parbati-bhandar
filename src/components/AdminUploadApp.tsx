@@ -20,6 +20,7 @@ import {
   Star,
   Globe,
   Upload,
+  MessageCircle,
 } from 'lucide-react';
 import {
   CATEGORIES,
@@ -43,8 +44,8 @@ interface AdminUploadAppProps {
   onToggleMaintenance: () => void;
   onSetMaintenanceTimer: (durationMinutes: number) => void;
   maintenanceUntil: number | null;
-  adminTab: 'inventory' | 'add' | 'settings';
-  setAdminTab: (tab: 'inventory' | 'add' | 'settings') => void;
+  adminTab: 'inventory' | 'add' | 'settings' | 'quickReplies';
+  setAdminTab: (tab: 'inventory' | 'add' | 'settings' | 'quickReplies') => void;
   adminSearch: string;
   setAdminSearch: (q: string) => void;
   adminCategoryFilter: string;
@@ -162,6 +163,10 @@ export function AdminUploadApp({
   const [allowCustomWeights, setAllowCustomWeights] = useState(false);
   const [varietyRows, setVarietyRows] = useState<VarietyFormRow[]>([]);
   const [maintenanceHours, setMaintenanceHours] = useState('2');
+  const [replyCustomerName, setReplyCustomerName] = useState('');
+  const [replyCustomerPhone, setReplyCustomerPhone] = useState('');
+  const [missingProducts, setMissingProducts] = useState('');
+  const [replyNote, setReplyNote] = useState('');
 
   // Inline Stock & Low Stock Threshold Edits in Inventory List
   const [inlineStockEdits, setInlineStockEdits] = useState<
@@ -521,6 +526,15 @@ export function AdminUploadApp({
 
             <button
               type="button"
+              onClick={() => setAdminTab('quickReplies')}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer whitespace-nowrap shrink-0 ${adminTab === 'quickReplies' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>Customer WhatsApp Replies</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => setIsQrModalOpen(true)}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-amber-100 text-amber-900 hover:bg-amber-200 transition-all cursor-pointer whitespace-nowrap shrink-0"
             >
@@ -533,6 +547,49 @@ export function AdminUploadApp({
 
       {/* Main Admin Workspace */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
+        {adminTab === 'quickReplies' && (
+          <section className="mx-auto max-w-2xl rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+            <div className="mb-5 flex items-start gap-3">
+              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-emerald-100 text-emerald-700"><MessageCircle className="h-6 w-6" /></div>
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">Quick customer replies</h2>
+                <p className="mt-1 text-sm text-slate-500">Send a ready-for-pickup reminder or tell a customer which items are unavailable. No order tracking is stored here.</p>
+              </div>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="text-xs font-bold text-slate-700">Customer name
+                <input value={replyCustomerName} onChange={e => setReplyCustomerName(e.target.value)} placeholder="Enter customer name" className="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-3 text-sm font-medium outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100" />
+              </label>
+              <label className="text-xs font-bold text-slate-700">WhatsApp number
+                <input value={replyCustomerPhone} onChange={e => setReplyCustomerPhone(e.target.value)} inputMode="tel" placeholder="10-digit mobile number" className="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-3 text-sm font-medium outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100" />
+              </label>
+            </div>
+            <div className="mt-4 space-y-1.5">
+              <label className="text-xs font-bold text-slate-700">Unavailable products (if any)</label>
+              <textarea value={missingProducts} onChange={e => setMissingProducts(e.target.value)} rows={3} placeholder="Example: Fortune Mustard Oil 1L, Moong Dal 500g" className="w-full rounded-xl border border-slate-300 px-3 py-3 text-sm outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100" />
+            </div>
+            <div className="mt-4 space-y-1.5">
+              <label className="text-xs font-bold text-slate-700">Optional note</label>
+              <input value={replyNote} onChange={e => setReplyNote(e.target.value)} placeholder="Example: The remaining items are ready" className="w-full rounded-xl border border-slate-300 px-3 py-3 text-sm outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100" />
+            </div>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <button type="button" onClick={() => {
+                const phone = replyCustomerPhone.replace(/\D/g, '');
+                if (!replyCustomerName.trim() || phone.length < 10) { showToast('Enter customer name and a valid WhatsApp number.', 'error'); return; }
+                const msg = `নমস্কার ${replyCustomerName.trim()}! আপনার Parbati Bhandar-এর অর্ডার লিস্ট তৈরি। আপনি সুবিধামতো যেকোনো সময় দোকান থেকে এসে সংগ্রহ করতে পারেন। ধন্যবাদ।${replyNote.trim() ? '\\n\\n' + replyNote.trim() : ''}`;
+                window.open(`https://wa.me/${phone.length === 10 ? '91' + phone : phone}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener,noreferrer');
+              }} className="rounded-xl bg-emerald-600 px-4 py-3 text-sm font-extrabold text-white shadow-sm hover:bg-emerald-700">Ready for pickup message</button>
+              <button type="button" onClick={() => {
+                const phone = replyCustomerPhone.replace(/\D/g, '');
+                if (!replyCustomerName.trim() || phone.length < 10) { showToast('Enter customer name and a valid WhatsApp number.', 'error'); return; }
+                if (!missingProducts.trim()) { showToast('List the unavailable products first.', 'error'); return; }
+                const msg = `নমস্কার ${replyCustomerName.trim()}, Parbati Bhandar থেকে বলছি। দুঃখিত, আপনার অর্ডার লিস্টের এই পণ্যগুলি বর্তমানে স্টকে নেই: ${missingProducts.trim()}।${replyNote.trim() ? '\\n\\n' + replyNote.trim() : ''} বাকি পণ্যগুলি সম্পর্কে জানতে আমাদের WhatsApp-এ রিপ্লাই করুন। ধন্যবাদ।`;
+                window.open(`https://wa.me/${phone.length === 10 ? '91' + phone : phone}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener,noreferrer');
+              }} className="rounded-xl bg-amber-400 px-4 py-3 text-sm font-extrabold text-slate-950 shadow-sm hover:bg-amber-300">Unavailable items message</button>
+            </div>
+            <p className="mt-4 text-[11px] leading-5 text-slate-500">WhatsApp opens with the message filled in. Review it and press Send yourself. This does not create a delivery workflow or automatically send messages.</p>
+          </section>
+        )}
         {/* ========================================== */}
         {/* TAB 1: UPLOAD / EDIT PRODUCT FORM          */}
         {/* ========================================== */}
