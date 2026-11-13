@@ -114,7 +114,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const total = items.reduce((sum: number, x: OrderItem) => sum + x.price * x.quantity, 0);
   const sequence = await env.DB.prepare("INSERT INTO order_sequence (name,value) VALUES ('customer_orders',1) ON CONFLICT(name) DO UPDATE SET value=value+1 RETURNING value").first<any>();
   const orderNumber = Number(sequence?.value || 1);
-  const id = crypto.randomUUID(), now = Date.now();
+  const id = crypto.randomUUID();
   await env.DB.prepare("INSERT INTO customer_orders (id,order_number,customer_name,customer_phone,note,items_json,total,status,created_at,updated_at) VALUES (?,?,?,?,?,?,?,'new',?,?)")
     .bind(id,orderNumber,name,phone,note,JSON.stringify(items),total,now,now).run();
   const subscription = body?.pushSubscription;
