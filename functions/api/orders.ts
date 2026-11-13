@@ -94,6 +94,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   } catch { return json({ error: "Security verification is temporarily unavailable. Please try again." }, 503); }
   await ensureTable(env);
   await purgeExpiredCustomerOrders(env);
+  await env.DB.prepare("DELETE FROM order_stock_reservations WHERE order_id NOT IN (SELECT id FROM customer_orders)").run();
 
   // Enforce store hours and maintenance on the server as well as in the UI.
   const settingsRow = await env.DB.prepare("SELECT data FROM store_settings WHERE id=1").first<any>();
