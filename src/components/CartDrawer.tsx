@@ -155,9 +155,15 @@ export function CartDrawer({
               <ShoppingBag className="w-12 h-12 text-slate-300 mx-auto" />
               <p className="text-slate-600 font-semibold">Your grocery list is empty</p>
               <p className="text-xs text-slate-400 max-w-xs mx-auto">
-                Choose any weight (e.g. 200g, 500g, 2 kg) or pack variety and tap &ldquo;+ Add&rdquo;
-                to prepare your shopping list.
+                Your cart is currently empty. Browse the store and add groceries to your shopping list.
               </p>
+              <button
+                type="button"
+                onClick={onClose}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-emerald-800"
+              >
+                ← Back to home page
+              </button>
             </div>
           ) : (
             <>
