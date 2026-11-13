@@ -1,23 +1,35 @@
-# Parbati Bhandar — Cloudflare migration
+# Parbati Bhandar — Cloudflare Pages
 
-## Cloudflare Pages settings
+## Pages project
 - Repository: `AkHypeR/parbati-bhandar`
-- Branch: `cloudflare-migration` (preview/test before production)
+- Production branch: `main`
 - Build command: `npm run build`
-- Output directory: `dist`
+- Build output directory: `dist`
+- Runtime: Cloudflare Pages Functions
 
-## Required Cloudflare resources
-1. Create a D1 database named `parbati-bhandar`; copy its database ID into `wrangler.toml`.
-2. Create an R2 bucket named `parbati-bhandar-images`.
-3. Apply `migrations/0001_initial.sql` to D1.
-4. Bind D1 as `DB` and R2 as `IMAGES` in the Pages project.
-5. Add encrypted Pages secrets `OWNER_PASSWORD` and `SESSION_SECRET`. Use a unique password of at least 16 characters and a separate random secret of at least 32 characters. Never commit secrets.
-6. Deploy preview, test all flows, then connect the production domain.
+## Cloudflare resources
+1. Create or use the D1 database named `parbati-bhandar`.
+2. Keep the D1 binding named `DB`; its database ID is recorded in `wrangler.toml`.
+3. Apply `migrations/0001_initial.sql` to D1. Order tables and stock-deduction audit tables are created by the API when needed.
+4. Product catalogue, customer orders and store settings are stored in D1.
+5. Product and store images are uploaded to Cloudinary; no Supabase or R2 storage is required.
 
-## Migration scope
-Owner authentication is verified in a Pages Function and uses a signed HttpOnly/Secure/SameSite cookie with a 12-hour expiry. Catalogue and settings are stored in D1. Product, banner and scanner images are stored in R2 and served through a cached Pages Function. Static assets use the Cloudflare CDN.
+## Pages variables and secrets
+Configure these under **Workers & Pages → parbati-bhandar → Settings → Variables and Secrets**:
+- `OWNER_PASSWORD` — private owner access password.
+- `SESSION_SECRET` — separate random signing secret (at least 32 characters).
+- `TURNSTILE_SECRET_KEY` — Cloudflare Turnstile secret for customer order submission.
+- `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` — image upload credentials.
+- `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` — optional web-push notifications.
 
-The existing Google Maps destination link is retained; verify it in the preview. Static requests and dynamic API requests have different plan limits. The app is designed to reduce backend calls, but no unlimited dynamic traffic is promised.
+Never commit real secrets or put them in browser-side Vite variables.
+
+## Order and stock behaviour
+- Customers track orders using order number + phone number.
+- The public catalogue exposes availability only; inventory counts are owner-only.
+- The owner reviews an order, marks unavailable items, then confirms Ready.
+- D1 applies stock deductions transactionally and only once per order.
+- Products reaching zero stock are automatically marked unavailable in the public catalogue.
 
 ## Security
-Never put owner credentials in frontend code or GitHub. D1 and R2 writes are available only to authenticated owner sessions. Configure rate limiting on the login endpoint before public launch.
+Owner login is handled by Cloudflare Pages Functions using a signed HttpOnly/Secure/SameSite session cookie. Configure rate limiting for the login endpoint before a wider public launch.
