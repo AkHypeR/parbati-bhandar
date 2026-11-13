@@ -29,7 +29,6 @@ import { CartDrawer } from './components/CartDrawer';
 import { OwnerPinGate } from './components/OwnerPinGate';
 import { AdminUploadApp } from './components/AdminUploadApp';
 import { QrPosterModal, SetupGuideModal } from './components/Modals';
-import { supabase, isSupabaseConfigured } from './lib/supabase';
 import { fetchCloudCatalog, saveCloudProducts, deleteCloudProducts, saveCloudSettings } from './lib/cloudStore';
 
 const STORAGE_KEYS = {
@@ -98,10 +97,7 @@ export default function App() {
   const [ownerPassword, setOwnerPassword] = useState('');
   const [pinError, setPinError] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
-  const [isPasswordRecovery, setIsPasswordRecovery] = useState(false);
-  const [recoveryPassword, setRecoveryPassword] = useState('');
-  const [recoveryConfirm, setRecoveryConfirm] = useState('');
-  const [recoveryMessage, setRecoveryMessage] = useState('');
+  const [ownerCatalogReady, setOwnerCatalogReady] = useState(false);
   const [cloudReady, setCloudReady] = useState(false);
   const [productSyncStatus, setProductSyncStatus] = useState<'loading' | 'saving' | 'saved' | 'error'>('loading');
   const productSyncRequest = useRef(0);
@@ -161,84 +157,6 @@ export default function App() {
 
 
   useEffect(() => {
-    if (!supabase) return;
-
-    let active = true;
-    const showRecoveryScreen = () => {
-      if (!active) return;
-      setIsPasswordRecovery(true);
-      setActiveMode('admin');
-      setRecoveryMessage('');
-    };
-
-    // Supabase emits PASSWORD_RECOVERY after it has exchanged the email link
-    // for a valid recovery session. This is more reliable than checking the URL
-    // alone, because the verification redirect can change the URL fragment.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'PASSWORD_RECOVERY' && session) {
-        showRecoveryScreen();
-      }
-    });
-
-    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
-    const query = new URLSearchParams(window.location.search);
-    if (hash.get('type') === 'recovery' || query.get('type') === 'recovery') {
-      showRecoveryScreen();
-      // Fallback for cases where Supabase processed the link before this
-      // component subscribed to the auth event.
-      void supabase.auth.getSession().then(({ data, error }) => {
-        if (active && error) setRecoveryMessage(error.message);
-        if (active && !data.session) {
-          setRecoveryMessage('The password-reset link could not be verified. Request a fresh reset email and open its link only once.');
-        }
-      });
-    }
-
-    const authError = hash.get('error_description') || query.get('error_description');
-    if (authError) {
-      setIsPasswordRecovery(true);
-      setActiveMode('admin');
-      setRecoveryMessage(authError.replace(/\\+/g, ' '));
-    }
-
-    return () => {
-      active = false;
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  const handlePasswordRecovery = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setRecoveryMessage('');
-    if (recoveryPassword.length < 12) {
-      setRecoveryMessage('Use at least 12 characters for your new password.');
-      return;
-    }
-    if (recoveryPassword !== recoveryConfirm) {
-      setRecoveryMessage('The passwords do not match.');
-      return;
-    }
-    if (!supabase) {
-      setRecoveryMessage('Supabase is not configured.');
-      return;
-    }
-    setAuthLoading(true);
-    const { error } = await supabase.auth.updateUser({ password: recoveryPassword });
-    setAuthLoading(false);
-    if (error) {
-      setRecoveryMessage(error.message);
-      return;
-    }
-    await supabase.auth.signOut();
-    window.history.replaceState({}, document.title, window.location.pathname);
-    setIsPasswordRecovery(false);
-    setRecoveryPassword('');
-    setRecoveryConfirm('');
-    setOwnerPassword('');
-    setRecoveryMessage('Password updated successfully. Return to Owner Access and sign in with your new password.');
-  };
-
-  useEffect(() => {
     let cancelled = false;
     const refreshMaintenance = () => fetch('/api/settings', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : Promise.reject()).then(data => { if (!cancelled) { setMaintenanceMode(data?.settings?.maintenanceMode === true); setMaintenanceUntil(typeof data?.settings?.maintenanceUntil === 'number' ? data.settings.maintenanceUntil : null); } }).catch(() => {});
     void refreshMaintenance();
@@ -280,12 +198,6 @@ export default function App() {
   useEffect(() => {
     let cancelled = false;
     async function loadCloud() {
-      if (!isSupabaseConfigured || !supabase) {
-        setCloudReady(true);
-        setProductSyncStatus('error');
-        showToast('Supabase keys are missing. Add the VITE_SUPABASE values to enable cloud sync.', 'error');
-        return;
-      }
       try {
         const { products: cloudProducts, settings } = await fetchCloudCatalog();
         if (cancelled) return;
@@ -299,7 +211,7 @@ export default function App() {
         if (!cancelled) {
           setProductSyncStatus('error');
           setCloudReady(true);
-          showToast(`Could not load the online catalogue: ${(error as Error).message}`, 'error');
+          showToast(`Could not load the Cloudflare catalogue: ${(error as Error).message}`, 'error');
         }
       }
     }
@@ -307,8 +219,49 @@ export default function App() {
     return () => { cancelled = true; };
   }, []);
 
+  // Once the owner is authenticated, reload the private catalogue that includes
+  // stock counts. The public catalogue deliberately omits those fields.
   useEffect(() => {
-    if (!cloudReady || !isOwnerUnlocked) return;
+    if (!cloudReady || !isOwnerUnlocked) {
+      setOwnerCatalogReady(false);
+      return;
+    }
+    let cancelled = false;
+    setOwnerCatalogReady(false);
+    void fetchCloudCatalog().then(({ products: cloudProducts, settings }) => {
+      if (cancelled) return;
+      setProducts(cloudProducts);
+      previousProductIds.current = cloudProducts.map(p => p.id);
+      if (settings) setStoreSettings({ ...DEFAULT_STORE_SETTINGS, ...settings });
+      setOwnerCatalogReady(true);
+    }).catch(error => {
+      if (!cancelled) {
+        setProductSyncStatus('error');
+        showToast(`Could not load owner inventory: ${(error as Error).message}`, 'error');
+      }
+    });
+    return () => { cancelled = true; };
+  }, [cloudReady, isOwnerUnlocked]);
+
+  // Keep already-open customer storefronts in sync with stock changes.
+  useEffect(() => {
+    if (!cloudReady || activeMode !== 'customer' || isOwnerUnlocked) return;
+    const timer = window.setInterval(() => {
+      void fetchCloudCatalog().then(({ products: cloudProducts }) => {
+        setProducts(cloudProducts);
+      }).catch(() => {});
+    }, 20000);
+    return () => window.clearInterval(timer);
+  }, [cloudReady, activeMode, isOwnerUnlocked]);
+
+  const refreshCloudProducts = async () => {
+    const { products: cloudProducts } = await fetchCloudCatalog();
+    setProducts(cloudProducts);
+    previousProductIds.current = cloudProducts.map(p => p.id);
+  };
+
+  useEffect(() => {
+    if (!cloudReady || !isOwnerUnlocked || !ownerCatalogReady) return;
     const requestId = ++productSyncRequest.current;
     const currentIds = products.map(p => p.id);
     const removed = previousProductIds.current.filter(id => !currentIds.includes(id));
@@ -325,14 +278,14 @@ export default function App() {
           showToast(`Cloud product save failed: ${(error as Error).message}`, 'error');
         }
       });
-  }, [products, cloudReady, isOwnerUnlocked]);
+  }, [products, cloudReady, isOwnerUnlocked, ownerCatalogReady]);
 
   useEffect(() => {
-    if (!cloudReady || !isOwnerUnlocked) return;
+    if (!cloudReady || !isOwnerUnlocked || !ownerCatalogReady) return;
     void saveCloudSettings(storeSettings).catch(error => {
       showToast(`Cloud settings save failed: ${(error as Error).message}`, 'error');
     });
-  }, [storeSettings, cloudReady, isOwnerUnlocked]);
+  }, [storeSettings, cloudReady, isOwnerUnlocked, ownerCatalogReady]);
 
   useEffect(() => {
     const handleStorageSync = (e: StorageEvent) => {
@@ -890,18 +843,6 @@ export default function App() {
           />
         </>
         )
-      ) : isPasswordRecovery ? (
-        <div className="flex-1 flex items-center justify-center p-4 bg-slate-100">
-          <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-6 sm:p-8 max-w-md w-full space-y-5">
-            <div className="text-center"><h2 className="text-xl font-extrabold text-slate-900">Set a new owner password</h2><p className="text-sm text-slate-500 mt-2">Choose a new password with at least 12 characters.</p></div>
-            <form onSubmit={handlePasswordRecovery} className="space-y-3">
-              <input type="password" autoComplete="new-password" required minLength={12} value={recoveryPassword} onChange={e=>setRecoveryPassword(e.target.value)} placeholder="New password" className="w-full px-4 py-3 rounded-2xl border-2 border-slate-300" />
-              <input type="password" autoComplete="new-password" required minLength={12} value={recoveryConfirm} onChange={e=>setRecoveryConfirm(e.target.value)} placeholder="Confirm new password" className="w-full px-4 py-3 rounded-2xl border-2 border-slate-300" />
-              {recoveryMessage && <p role="alert" className="text-sm text-red-700 bg-red-50 rounded-xl p-3">{recoveryMessage}</p>}
-              <button disabled={authLoading} type="submit" className="w-full py-3 rounded-2xl bg-emerald-600 text-white font-bold disabled:opacity-60">{authLoading ? 'Updating…' : 'Save new password'}</button>
-            </form>
-          </div>
-        </div>
       ) : !isOwnerUnlocked ? (
         /* ========================================== */
         /* OWNER PIN PROTECTION SCREEN                */
@@ -957,6 +898,7 @@ export default function App() {
           setActiveMode={setActiveMode}
           setIsOwnerUnlocked={setIsOwnerUnlocked}
           setIsQrModalOpen={setIsQrModalOpen}
+          onRefreshProducts={refreshCloudProducts}
         />
       )}
 
