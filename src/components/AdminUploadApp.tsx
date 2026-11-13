@@ -41,6 +41,8 @@ interface AdminUploadAppProps {
   storeSettings: StoreSettings;
   maintenanceMode: boolean;
   onToggleMaintenance: () => void;
+  onSetMaintenanceTimer: (durationMinutes: number) => void;
+  maintenanceUntil: number | null;
   adminTab: 'inventory' | 'add' | 'settings';
   setAdminTab: (tab: 'inventory' | 'add' | 'settings') => void;
   adminSearch: string;
@@ -157,6 +159,7 @@ export function AdminUploadApp({
   const [bestItemRank, setBestItemRank] = useState<number>(1);
   const [allowCustomWeights, setAllowCustomWeights] = useState(false);
   const [varietyRows, setVarietyRows] = useState<VarietyFormRow[]>([]);
+  const [maintenanceHours, setMaintenanceHours] = useState('2');
 
   // Inline Stock & Low Stock Threshold Edits in Inventory List
   const [inlineStockEdits, setInlineStockEdits] = useState<
@@ -1702,6 +1705,20 @@ export function AdminUploadApp({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-start gap-3"><span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-emerald-200 text-xl">🛠️</span><div><h3 className="text-sm font-black text-slate-900">Store maintenance mode</h3><p className="mt-1 text-xs leading-5 text-slate-600">When ON, customers see a maintenance screen and cannot browse, add items or place orders. Your owner portal stays available.</p><p className="mt-2 text-xs font-extrabold text-emerald-700">Currently {maintenanceMode ? 'ON • Storefront paused' : 'OFF • Storefront live'}</p></div></div>
                 <button type="button" role="switch" aria-checked={maintenanceMode} aria-label="Toggle store maintenance mode" onClick={onToggleMaintenance} className={'relative inline-flex h-10 w-[76px] shrink-0 items-center rounded-full p-1 transition-colors ' + (maintenanceMode ? 'bg-amber-500' : 'bg-emerald-600')}><span className={'grid h-8 w-8 place-items-center rounded-full bg-white text-[10px] font-black text-slate-900 shadow transition-transform ' + (maintenanceMode ? 'translate-x-9' : 'translate-x-0')}>{maintenanceMode ? 'ON' : 'OFF'}</span></button>
+              </div>
+              <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 space-y-3">
+                <div>
+                  <h4 className="text-sm font-extrabold text-slate-900">Automatic maintenance timer</h4>
+                  <p className="mt-1 text-xs leading-5 text-slate-600">Set how long the store should stay paused. The storefront will reopen automatically when the timer ends.</p>
+                  {maintenanceUntil && <p className="mt-2 text-xs font-bold text-amber-800">Scheduled to reopen: {new Date(maintenanceUntil).toLocaleString()}</p>}
+                </div>
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <label className="flex-1 text-xs font-bold text-slate-700">Duration (hours)
+                    <input type="number" min="0.02" max="168" step="0.5" value={maintenanceHours} onChange={e => setMaintenanceHours(e.target.value)} className="mt-1 w-full rounded-xl border border-amber-200 bg-white px-3 py-2.5 text-sm font-semibold" />
+                  </label>
+                  <button type="button" onClick={() => { const hours = Number(maintenanceHours); if (!Number.isFinite(hours) || hours <= 0 || hours > 168) { showToast('Enter a duration up to 168 hours (7 days).', 'error'); return; } onSetMaintenanceTimer(Math.max(1, Math.round(hours * 60))); }} className="self-end rounded-xl bg-amber-500 px-4 py-3 text-xs font-extrabold text-slate-950 hover:bg-amber-400">Start timer &amp; enable</button>
+                </div>
+                <p className="text-[11px] text-slate-500">You can still turn maintenance OFF manually at any time.</p>
               </div>
             </div>
             <form onSubmit={handleSaveSettingsSubmit} className="space-y-4">
