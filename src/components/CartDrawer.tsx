@@ -168,9 +168,12 @@ export function CartDrawer({
     const cartCategories = new Set(cartItemsList.map(item => normalizeCategory(item.product.category)).filter(Boolean));
     const sameCategory = inStock.filter(product => cartCategories.has(normalizeCategory(product.category)));
 
-    // If matching-category products exist, randomly pick up to five from that group.
+    // Rank matching-category items first, then randomly choose from the top five.
     if (sameCategory.length > 0) {
-      return [...sameCategory].sort(() => Math.random() - 0.5).slice(0, 5);
+      const topCategoryFive = [...sameCategory].sort((left, right) =>
+        Number(left.bestItemRank ?? 999) - Number(right.bestItemRank ?? 999)
+      ).slice(0, 5);
+      return topCategoryFive.sort(() => Math.random() - 0.5);
     }
 
     // Otherwise fall back to the store's five highest-ranked in-stock best items.
@@ -420,7 +423,7 @@ export function CartDrawer({
                   <div className="flex items-center justify-between gap-2">
                     <div>
                       <h4 className="text-sm font-extrabold text-slate-900">Complete your grocery list</h4>
-                      <p className="text-[11px] text-slate-500">{recommendationProducts.length > 0 && cartItemsList.some(item => products.some(product => product.inStock && product.stockQuantity !== 0 && product.category === item.product.category && !cartItemsList.some(cartItem => cartItem.product.id === product.id))) ? "A random selection from matching categories." : "Popular in-stock picks from our store."}</p>
+                      <p className="text-[11px] text-slate-500">Random picks from matching categories, or popular products if no match is available.</p>
                     </div>
                   </div>
                   {recommendationProducts.length > 0 && (
