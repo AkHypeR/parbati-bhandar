@@ -173,6 +173,7 @@ export function CustomerStorefront({
 
   // Location / Store Info Expandable Pill
   const [isAddressExpanded, setIsAddressExpanded] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isSearchSubmitted, setIsSearchSubmitted] = useState(false);
 
   // Active slide index and auto-play state for the Merged Festive + Best 5 Hero Slider
@@ -297,8 +298,9 @@ export function CustomerStorefront({
             <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
-                onClick={() => setIsAddressExpanded(!isAddressExpanded)}
-                aria-label="Store info and customer greeting"
+                onClick={() => setIsProfileOpen((open) => !open)}
+                aria-label="My profile and orders"
+                aria-expanded={isProfileOpen}
                 className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-slate-800 cursor-pointer shrink-0"
               >
                 <User className="w-4 h-4 fill-slate-800" />
@@ -435,28 +437,33 @@ export function CustomerStorefront({
         </div>
       </header>
 
-      {/* Order tracking and recent history are placed near the top for easy access. */}
-      <section id="customer-order-tools" className="max-w-3xl mx-auto w-full px-4 py-4 scroll-mt-4" aria-label="Track your order">
-        <div className="relative overflow-hidden rounded-3xl border-2 border-sky-200 bg-gradient-to-br from-sky-50 via-white to-amber-50 p-4 sm:p-5 shadow-[0_8px_28px_rgba(13,100,125,0.12)]">
-          <div className="absolute -right-8 -top-10 h-28 w-28 rounded-full bg-amber-200/40 blur-2xl pointer-events-none" />
-          <div className="relative flex items-center justify-between gap-3">
+      {/* Order tracking and order history live inside the customer profile menu. */}
+      {isProfileOpen && (
+      <section id="customer-order-tools" className="max-w-3xl mx-auto w-full px-4 py-3 scroll-mt-4" aria-label="My profile and orders">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
             <div>
-              <div className="flex items-center gap-2">
-                <span className="relative flex h-2.5 w-2.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75 motion-reduce:animate-none" /><span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-600" /></span>
-                <span className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-700">Live order updates</span>
-              </div>
-              <h2 className="mt-1 text-xl sm:text-2xl font-black tracking-tight text-slate-950">Track Your Order</h2>
-              <p className="text-xs sm:text-sm text-slate-600 mt-1">Know exactly when your order is received, ready, or completed.</p>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Parbati Bhandar account</p>
+              <h2 className="mt-0.5 text-lg font-extrabold text-slate-900">My profile & orders</h2>
+              <p className="mt-0.5 text-xs text-slate-500">Track a delivery or revisit your recent purchases.</p>
             </div>
-            <div className="hidden sm:flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-100 text-[#0d647d] shadow-inner"><RefreshCw className="h-6 w-6" /></div>
+            <button type="button" onClick={() => setIsProfileOpen(false)} aria-label="Close profile" className="rounded-full p-2 text-slate-500 hover:bg-slate-100"><X className="h-4 w-4" /></button>
+          </div>
+          {lastOrderNumber && <div className="mt-3 rounded-xl border border-emerald-100 bg-emerald-50/70 p-3"><p className="text-[11px] font-semibold text-emerald-800">Latest order placed</p><div className="mt-1 flex flex-wrap items-center justify-between gap-2"><p className="text-lg font-extrabold text-slate-900">Order #{lastOrderNumber{'}'}</p><button type="button" onClick={() => { void navigator.clipboard?.writeText(String(lastOrderNumber)); }} className="rounded-lg border border-emerald-200 bg-white px-3 py-1.5 text-xs font-semibold text-emerald-800">Copy number</button></div><p className="mt-1 text-xs text-slate-600">Use this order number and your phone number to track it.</p></div>
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-bold text-slate-900">Track an order</h3>
+              <p className="text-xs text-slate-500 mt-0.5">Enter your order number and phone number.</p>
+            </div>
+            <RefreshCw className="h-5 w-5 text-slate-400" />
           </div>
           {lastOrderNumber && <div className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 p-3"><p className="text-xs font-bold uppercase tracking-wide text-emerald-800">Your order was placed successfully</p><div className="mt-1 flex flex-wrap items-center justify-between gap-2"><p className="text-xl font-black text-emerald-950">Order #{lastOrderNumber}</p><button type="button" onClick={() => { void navigator.clipboard?.writeText(String(lastOrderNumber)); }} className="rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-emerald-800 border border-emerald-200">Copy order number</button></div><p className="mt-1 text-xs text-emerald-800">Keep this number and your phone number to track this order.</p></div>}
           <form onSubmit={trackOrder} className="grid sm:grid-cols-3 gap-2.5 mt-4">
             <input required inputMode="numeric" value={trackingOrderNumber} onChange={e=>setTrackingOrderNumber(e.target.value)} placeholder="Order number" className="min-w-0 rounded-xl border border-slate-300 px-3 py-2.5 text-sm" />
             <input required inputMode="tel" value={trackingPhone} onChange={e=>setTrackingPhone(e.target.value)} placeholder="Phone number" className="min-w-0 rounded-xl border border-slate-300 px-3 py-2.5 text-sm" />
-            <button disabled={trackingLoading} className="rounded-xl bg-gradient-to-r from-[#0d647d] to-sky-700 text-white font-black px-4 py-2.5 shadow-md shadow-sky-900/15 transition-all hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60 motion-reduce:transition-none">{trackingLoading ? 'Checking…' : 'TRACK ORDER →'}</button>
+            <button disabled={trackingLoading} className="rounded-xl bg-[#0d647d] text-white font-bold px-4 py-2.5 hover:bg-[#094e62] disabled:opacity-60">{trackingLoading ? 'Checking…' : 'TRACK ORDER →'}</button>
           </form>
-          <button type="button" onClick={loadOrderHistory} disabled={historyLoading || trackingPhone.replace(/\D/g, '').length < 10} className="group mt-3 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-amber-400 bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-300 px-4 py-3 text-sm font-black text-amber-950 shadow-[0_5px_16px_rgba(245,158,11,0.22)] transition-all hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-amber-200 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"><Clock className="h-4 w-4" />{historyLoading ? 'Loading your orders…' : 'VIEW MY PREVIOUS ORDERS'}<span className="rounded-full bg-white/70 px-2 py-0.5 text-[10px] font-black">7 DAYS</span></button>
+          <button type="button" onClick={loadOrderHistory} disabled={historyLoading || trackingPhone.replace(/\D/g, '').length < 10} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-800 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-200 disabled:cursor-not-allowed disabled:opacity-50"><Clock className="h-4 w-4" />{historyLoading ? 'Loading your orders…' : 'View previous orders'}<span className="rounded-full bg-white/70 px-2 py-0.5 text-[10px] font-black">7 DAYS</span></button>
           <p className="mt-1.5 text-center text-[11px] text-slate-500">Enter the same phone number used at checkout. Previous orders stay available for 7 days.</p>
           {historyError && <p role="alert" className="mt-2 text-sm text-red-600">{historyError}</p>}
           {historyLoaded && <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
