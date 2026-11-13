@@ -220,7 +220,7 @@ export function AdminUploadApp({
   };
   const openOrderForReview = (order: CustomerOrder) => {
     setSelectedOrderId(order.id);
-    if (order.status === 'new') void updateCustomerOrder(order.id, 'review');
+    // Opening an order does not change its status.
   };
   const deleteCustomerOrder = async (id: string) => {
     if (!window.confirm('Delete this order permanently? This cannot be undone.')) return;
@@ -729,14 +729,14 @@ export function AdminUploadApp({
                     <div className="rounded-xl border border-slate-200 p-4">
                       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                         <h3 className="text-sm font-extrabold uppercase tracking-wide text-slate-500">Items ordered · Review each quantity</h3>
-                        {order.status === 'new' && <button type="button" disabled={updatingOrderId === order.id} onClick={() => updateCustomerOrder(order.id, 'review')} className="rounded-lg bg-violet-700 px-3 py-2 text-xs font-extrabold text-white disabled:opacity-50">Review Order (অর্ডার মিলিয়ে নিন)</button>}
+                        
                       </div>
-                      <div className="divide-y divide-slate-100">{order.items.map((item,index) => <div key={index} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm"><div className="min-w-0"><p className={`font-bold ${item.unavailable ? 'text-amber-800 line-through' : 'text-slate-800'}`}>{item.name}</p><p className="text-xs text-slate-500">{item.unit} · Quantity {item.quantity}</p>{item.unavailable && <span className="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-extrabold uppercase text-amber-900">Unavailable</span>}</div><div className="flex items-center gap-3"><strong className="shrink-0 text-slate-900">₹{(Number(item.price || 0) * Number(item.quantity || 0)).toFixed(2)}</strong><button type="button" disabled={updatingOrderId === order.id || order.status !== 'review'} onClick={() => updateCustomerOrder(order.id, order.status, order.items.map((entry,itemIndex) => itemIndex === index ? { ...entry, unavailable: !entry.unavailable } : entry))} className={`rounded-lg border px-3 py-2 text-xs font-bold disabled:opacity-50 ${item.unavailable ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>{item.unavailable ? 'Mark available' : 'Mark unavailable'}</button></div></div>)}</div>
+                      <div className="divide-y divide-slate-100">{order.items.map((item,index) => <div key={index} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm"><div className="min-w-0"><p className={`font-bold ${item.unavailable ? 'text-amber-800 line-through' : 'text-slate-800'}`}>{item.name}</p><p className="text-xs text-slate-500">{item.unit} · Quantity {item.quantity}</p>{item.unavailable && <span className="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-extrabold uppercase text-amber-900">Unavailable</span>}</div><div className="flex items-center gap-3"><strong className="shrink-0 text-slate-900">₹{(Number(item.price || 0) * Number(item.quantity || 0)).toFixed(2)}</strong><button type="button" disabled={updatingOrderId === order.id || !['new','review'].includes(order.status)} onClick={() => updateCustomerOrder(order.id, order.status, order.items.map((entry,itemIndex) => itemIndex === index ? { ...entry, unavailable: !entry.unavailable } : entry))} className={`rounded-lg border px-3 py-2 text-xs font-bold disabled:opacity-50 ${item.unavailable ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>{item.unavailable ? 'Mark available' : 'Mark unavailable'}</button></div></div>)}</div>
                       <div className="mt-3 flex justify-between border-t border-slate-200 pt-3 font-extrabold"><span>Estimated total</span><span>₹{Number(order.total || 0).toFixed(2)}</span></div>
                     </div>
                     {order.note && <div className="mt-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-900"><strong>Customer note</strong><p className="mt-1">{order.note}</p></div>}
                     <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                      <button type="button" disabled={updatingOrderId === order.id || order.status !== 'review'} onClick={() => { if (window.confirm('Confirm this order as Ready for pickup? Available items will be deducted from stock once.')) void updateCustomerOrder(order.id,'ready'); }} className="rounded-lg bg-emerald-600 px-3 py-3 text-sm font-bold text-white disabled:opacity-50">{order.status === 'new' ? 'Review first' : 'Confirm Ready'}</button>
+                      <button type="button" disabled={updatingOrderId === order.id || !['new','review'].includes(order.status)} onClick={() => void updateCustomerOrder(order.id,'ready')} className="rounded-lg bg-emerald-600 px-3 py-3 text-sm font-bold text-white disabled:opacity-50">Confirm Ready</button>
                       <button type="button" disabled={updatingOrderId === order.id || order.status !== 'ready'} onClick={() => updateCustomerOrder(order.id,'completed')} className="rounded-lg bg-slate-200 px-3 py-3 text-sm font-bold text-slate-800 disabled:opacity-50">Completed</button>
                       <button type="button" disabled={updatingOrderId === order.id || ['ready','completed','cancelled'].includes(order.status)} onClick={() => updateCustomerOrder(order.id,'cancelled')} className="rounded-lg bg-red-50 px-3 py-3 text-sm font-bold text-red-700 disabled:opacity-50">Cancel</button>
                     </div>
@@ -768,7 +768,7 @@ export function AdminUploadApp({
               </label>
               <label className="text-xs font-bold text-slate-700">Filter by status
                 <select value={orderStatusFilter} onChange={e => setOrderStatusFilter(e.target.value)} className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-medium">
-                  <option value="all">All statuses</option><option value="new">Received</option><option value="review">Under review</option><option value="ready">Ready for pickup</option><option value="unavailable">Unavailable (legacy)</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option>
+                  <option value="all">All statuses</option><option value="new">Received</option><option value="ready">Ready for pickup</option><option value="unavailable">Unavailable (legacy)</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option>
                 </select>
               </label>
             </div>
@@ -791,7 +791,7 @@ export function AdminUploadApp({
                     </div>
                     {order.note && <p className="mb-3 rounded-lg bg-amber-50 p-2 text-xs text-amber-900">Note: {order.note}</p>}
                     <div className="grid grid-cols-2 gap-2">
-                      <button type="button" disabled={updatingOrderId === order.id} onClick={event => { event.stopPropagation(); openOrderForReview(order); }} className="rounded-lg bg-violet-700 px-2 py-2 text-xs font-bold text-white disabled:opacity-50">{order.status === 'new' ? 'Review Order (অর্ডার মিলিয়ে নিন)' : 'Open order review'}</button>
+                      <button type="button" disabled={updatingOrderId === order.id} onClick={event => { event.stopPropagation(); setSelectedOrderId(order.id); }} className="rounded-lg bg-violet-700 px-2 py-2 text-xs font-bold text-white disabled:opacity-50">Open order</button>
                       <button type="button" disabled={updatingOrderId === order.id || ['completed','cancelled'].includes(order.status)} onClick={event => { event.stopPropagation(); deleteCustomerOrder(order.id); }} className="rounded-lg border border-red-200 bg-red-50 px-2 py-2 text-xs font-bold text-red-700 disabled:opacity-50"><Trash2 className="mr-1 inline h-3.5 w-3.5" /> Delete Order</button>
                     </div>
                     <div className="mt-2 grid grid-cols-2 gap-2">
@@ -802,7 +802,7 @@ export function AdminUploadApp({
                 ))}
               </div>
             )}
-            <p className="text-center text-[11px] text-slate-500">WhatsApp messages open as drafts; review and send them manually. Completed/cancelled orders are automatically deleted 7 days after their last status update. You can also delete any order manually.</p>
+            <p className="text-center text-[11px] text-slate-500">Completed/cancelled orders are automatically deleted 7 days after their last status update. You can also delete any order manually.</p>
             </>
             )}
           </section>
