@@ -470,11 +470,11 @@ export function AdminUploadApp({
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <div className="flex items-center gap-3 mb-1.5">
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-800">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mb-2">
+                <span className="basis-full sm:basis-auto text-xs font-bold uppercase tracking-wider text-amber-800">
                   Parbati Bhandar Owner Portal
                 </span>
-                <span aria-hidden="true" className="text-slate-300">
+                <span aria-hidden="true" className="hidden sm:inline text-slate-300">
                   ·
                 </span>
                 <span
@@ -495,7 +495,7 @@ export function AdminUploadApp({
                     setIsOwnerUnlocked(false);
                     setActiveMode('customer');
                   }}
-                  className="text-xs font-semibold text-red-600 hover:underline flex items-center gap-1 cursor-pointer"
+                  className="ml-auto sm:ml-0 text-xs font-semibold text-red-600 hover:underline inline-flex items-center gap-1 cursor-pointer whitespace-nowrap"
                 >
                   <Lock className="w-3 h-3" />
                   <span>Lock Admin</span>
