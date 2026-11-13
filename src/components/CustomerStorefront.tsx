@@ -108,6 +108,7 @@ export function CustomerStorefront({
 
   // Location / Store Info Expandable Pill
   const [isAddressExpanded, setIsAddressExpanded] = useState(false);
+  const [isSearchSubmitted, setIsSearchSubmitted] = useState(false);
 
   // Active slide index and auto-play state for the Merged Festive + Best 5 Hero Slider
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
@@ -373,16 +374,25 @@ export function CustomerStorefront({
                 aria-label="Search store products"
                 value={searchQuery}
                 onChange={(e) => handleSearchInputChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    setIsSearchSubmitted(true);
+                    setSelectedCategory('all');
+                    setInStockOnly(false);
+                    setTimeout(() => catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+                  }
+                }}
                 placeholder='Search for "Miniket Rice", "Atta", "Mustard Oil", "Ghee"...'
                 className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white text-slate-900 placeholder-slate-400 text-xs sm:text-sm font-medium border border-slate-300 shadow-2xs focus:outline-none focus:border-[#0d647d] focus:ring-2 focus:ring-sky-200"
                 autoComplete="off"
               />
-              {searchSuggestions.length > 0 && <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl"><p className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Suggested products</p>{searchSuggestions.map(product => <button key={product.id} type="button" onClick={() => setSearchQuery(product.name)} className="flex w-full items-center justify-between gap-3 border-t border-slate-100 px-4 py-3 text-left text-sm font-semibold text-slate-800 hover:bg-emerald-50 active:bg-emerald-100"><span className="min-w-0 truncate">{product.name}</span><span className="shrink-0 text-xs text-slate-400">{product.category}</span></button>)}</div>}
+              {searchSuggestions.length > 0 && <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl"><p className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Suggested products</p>{searchSuggestions.map(product => <button key={product.id} type="button" onClick={() => { setSearchQuery(product.name); setIsSearchSubmitted(true); setSelectedCategory("all"); setInStockOnly(false); setTimeout(() => catalogSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50); }} className="flex w-full items-center justify-between gap-3 border-t border-slate-100 px-4 py-3 text-left text-sm font-semibold text-slate-800 hover:bg-emerald-50 active:bg-emerald-100"><span className="min-w-0 truncate">{product.name}</span><span className="shrink-0 text-xs text-slate-400">{product.category}</span></button>)}</div>}
               {searchQuery && (
                 <button
                   type="button"
                   aria-label="Clear search query"
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => { setSearchQuery(''); setIsSearchSubmitted(false); }}
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
                 >
                   <X className="w-4 h-4" />
@@ -447,7 +457,7 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       <section
         aria-label="Nomoshkar Grahok Welcome Banner"
-        className="relative bg-white pt-3 pb-2 overflow-hidden"
+        className={`relative bg-white pt-3 pb-2 overflow-hidden ${isSearchSubmitted ? "hidden" : ""}`}
       >
         <div className="max-w-xl mx-auto px-4 relative">
           <div className="flex items-end justify-between px-4 sm:px-10">
@@ -1016,6 +1026,7 @@ export function CustomerStorefront({
               type="button"
               onClick={() => {
                 setSearchQuery('');
+                setIsSearchSubmitted(false);
                 setSelectedCategory('all');
                 setInStockOnly(false);
               }}
