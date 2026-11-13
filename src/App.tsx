@@ -275,7 +275,7 @@ export default function App() {
       void fetchCloudCatalog().then(({ products: cloudProducts }) => {
         setProducts(cloudProducts);
       }).catch(() => {});
-    }, 20000);
+    }, 5000);
     return () => window.clearInterval(timer);
   }, [cloudReady, activeMode, isOwnerUnlocked]);
 
