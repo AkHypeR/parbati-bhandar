@@ -749,9 +749,9 @@ export function CustomerStorefront({
                         }));
 
                   return (
-                    <div className="group relative w-full max-w-md mx-auto h-[520px] sm:h-[560px] rounded-[28px] overflow-hidden shadow-md border-2 border-amber-300/90 bg-gradient-to-br from-[#fffbeb] via-white to-[#ecfdf5] select-none">
+                    <div className="group relative w-full max-w-[760px] mx-auto h-[min(680px,78vh)] min-h-[520px] sm:min-h-[560px] lg:min-h-[600px] rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-md border-2 border-amber-300/90 bg-gradient-to-br from-[#fffbeb] via-white to-[#ecfdf5] select-none">
                       {/* Large product artwork, styled like a storefront campaign banner */}
-                      <div className="absolute inset-0 flex items-center justify-center p-5 pb-28 sm:pb-32">
+                      <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6 lg:p-8 pb-44 sm:pb-48 lg:pb-52">
                         {item.imageUrl ? (
                           <img
                             src={item.imageUrl}
@@ -777,7 +777,7 @@ export function CustomerStorefront({
                       </div>
 
                       {/* Product details slide over the image on hover; remain visible on touch screens */}
-                      <div className="absolute inset-x-0 bottom-0 z-10 p-4 sm:p-5 bg-gradient-to-t from-slate-950 via-slate-950/90 to-slate-950/0 text-white sm:translate-y-2 sm:opacity-95 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 transition-all duration-300">
+                      <div className="absolute inset-x-0 bottom-0 z-10 p-4 sm:p-5 lg:p-7 bg-gradient-to-t from-slate-950 via-slate-950/95 to-slate-950/0 text-white sm:translate-y-2 sm:opacity-95 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 transition-all duration-300">
                         <div className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-300">{item.category}</div>
                         <h3 className="text-xl sm:text-2xl font-black leading-tight mt-1 line-clamp-2">{item.name}</h3>
 
