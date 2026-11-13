@@ -121,32 +121,6 @@ export function CartDrawer({
   const hasCustomerName = customerName.trim().length > 0;
   const hasCustomerPhone = customerPhone.replace(/\D/g, '').length >= 10;
 
-  const handleWhatsAppProceed = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    if (!hasCustomerName) { setNameError(true); nameInputRef.current?.focus(); return; }
-    if (!hasCustomerPhone) { setPhoneError(true); return; }
-    if (!turnstileToken) { window.alert('Please complete the security check first.'); return; }
-    if (savingOrder) return;
-    const popup = window.open('about:blank', '_blank');
-    setSavingOrder(true);
-    try {
-      const orderNumber = await onSaveOrder(turnstileToken, pushSubscription);
-      if (orderNumber !== null) {
-        clearCart();
-        setTurnstileToken('');
-        if (popup) {
-          try {
-            const whatsapp = new URL(whatsAppUrl);
-            whatsapp.searchParams.set('text', `${orderText}\n\nOrder Reference: #${orderNumber}\nKeep this number and your phone number to track your order on the store website.`);
-            popup.location.href = whatsapp.toString();
-          } catch { popup.location.href = whatsAppUrl; }
-        }
-        onClose();
-      } else if (popup) popup.close();
-    }
-    finally { setSavingOrder(false); }
-  };
-
   return (
     <div
       role="dialog"
@@ -161,7 +135,7 @@ export function CartDrawer({
             <div>
               <h3 className="font-bold text-base">Parbati Bhandar Final Cart (ফর্দ)</h3>
               <p className="text-xs text-emerald-200">
-                Enter your name &amp; pass text bill (Name &amp; Quantity) to WhatsApp
+                {checkoutStep === 'review' ? 'Step 1 · Review items and recommendations' : 'Step 2 · Customer details, captcha and order placement'}
               </p>
             </div>
           </div>
