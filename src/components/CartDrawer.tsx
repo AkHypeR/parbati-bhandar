@@ -18,6 +18,7 @@ interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   cartItemsList: CartItem[];
+  products: Product[];
   cartTotalItems: number;
   cartTotalPrice: number;
   cartTotalSaved: number;
@@ -46,6 +47,7 @@ export function CartDrawer({
   isOpen,
   onClose,
   cartItemsList,
+  products,
   cartTotalItems,
   customerName,
   customerPhone,
@@ -63,6 +65,7 @@ export function CartDrawer({
   whatsAppUrl,
   orderText,
 }: CartDrawerProps) {
+  const [checkoutStep, setCheckoutStep] = useState<'review' | 'checkout'>('review');
   const [nameError, setNameError] = useState(false);
   const [phoneError, setPhoneError] = useState(false);
   const [savingOrder, setSavingOrder] = useState(false);
@@ -105,6 +108,15 @@ export function CartDrawer({
   };
 
   if (!isOpen) return null;
+
+  const cartProductIds = new Set(cartItemsList.map(item => item.product.id));
+  const bestFiveProducts = products.filter(product => product.inStock && !cartProductIds.has(product.id) && product.isBestItem)
+    .sort((left, right) => Number(left.bestItemRank ?? 999) - Number(right.bestItemRank ?? 999)).slice(0, 5);
+  const recommendationProducts = bestFiveProducts.length ? bestFiveProducts : products.filter(product => product.inStock && !cartProductIds.has(product.id)).slice(0, 5);
+  const addRandomRecommendation = () => {
+    const choices = products.filter(product => product.inStock && !cartProductIds.has(product.id));
+    if (choices.length) updateCartQty(choices[Math.floor(Math.random() * choices.length)], 1);
+  };
 
   const hasCustomerName = customerName.trim().length > 0;
   const hasCustomerPhone = customerPhone.replace(/\D/g, '').length >= 10;
@@ -175,8 +187,7 @@ export function CartDrawer({
             </div>
           ) : (
             <>
-              {/* Step 1: Required Customer Name before passing into WhatsApp */}
-              <div className="pb-3.5 space-y-2.5">
+              {checkoutStep === 'checkout' && <div className="pb-3.5 space-y-2.5">
                 <div
                   className={`p-3 rounded-2xl border ${
                     nameError && !hasCustomerName
@@ -268,9 +279,9 @@ export function CartDrawer({
                   placeholder="Optional note: e.g. Will pick up at 6 PM / Home delivery"
                   className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
-              </div>
+              </div>}
 
-              {/* Side Cart Items List — Only Shows Item Name and Quantity */}
+              {/* Order review list — Step 1 */}
               <div className="py-2">
                 <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-slate-400 pb-1.5">
                   <span>Item Name</span>
@@ -362,56 +373,69 @@ export function CartDrawer({
                   </pre>
                 </div>
               </div>
+              </>}
             </>
           )}
-          <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+          {checkoutStep === 'checkout' && <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
             <p className="mb-2 text-xs font-bold text-slate-700">Security check</p>
             <TurnstileWidget onVerify={setTurnstileToken} />
-          </div>
+          </div>}
         </div>
 
         {cartItemsList.length > 0 && (
           <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-200 space-y-3">
             <div className="flex items-center justify-between text-sm font-extrabold text-slate-900 tabular-nums">
               <span>Total Items in Bill</span>
-              <span className="text-base text-emerald-800">{cartTotalItems} items</span>
+              <span className="text-base text-emerald-800">{cartTotalItems} items · ₹{cartTotalPrice}</span>
             </div>
-
-            <div className="grid grid-cols-2 gap-2.5">
-              <button
-                type="button"
-                onClick={handleCopyShoppingList}
-                className="flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs sm:text-sm cursor-pointer whitespace-nowrap"
-              >
-                <Copy className="w-4 h-4 shrink-0" />
-                <span>{copiedNotice ? 'Copied Bill!' : 'Copy Text Bill'}</span>
-              </button>
-
-              <a
-                href={whatsAppUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={handleWhatsAppProceed}
-                className={`flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl font-bold text-xs sm:text-sm shadow-sm cursor-pointer whitespace-nowrap transition-colors ${
-                  hasCustomerName
-                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                    : 'bg-amber-400 hover:bg-amber-500 text-slate-950'
-                }`}
-              >
-                <MessageCircle className="w-4 h-4 shrink-0" />
-                <span>{savingOrder ? 'Saving order…' : hasCustomerName && hasCustomerPhone ? 'Save Order & Proceed' : 'Enter Name, Phone & Proceed'}</span>
-              </a>
-            </div>
-
-            <button
-              type="button"
-              onClick={clearCart}
-              className="w-full text-center text-xs text-red-600 hover:underline pt-1 font-medium cursor-pointer"
-            >
-              Clear Shopping List
-            </button>
+            {checkoutStep === 'review' ? (
+              <>
+                <button type="button" onClick={() => setCheckoutStep('checkout')} className="w-full flex items-center justify-center gap-2 py-3.5 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm shadow-sm">
+                  Confirm my order <span aria-hidden="true">→</span>
+                </button>
+                <div className="grid grid-cols-2 gap-2">
+                  <button type="button" onClick={handleCopyShoppingList} className="py-2.5 rounded-xl border border-slate-300 bg-white text-slate-800 font-bold text-xs">{copiedNotice ? 'Copied Bill!' : 'Copy Text Bill'}</button>
+                  <button type="button" onClick={clearCart} className="py-2.5 rounded-xl border border-red-200 bg-white text-red-600 font-bold text-xs">Clear Shopping List</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-extrabold text-slate-900">Step 2 of 2 · Place your order</p>
+                  <button type="button" onClick={() => { setCheckoutStep('review'); setTurnstileToken(''); }} className="text-xs font-bold text-emerald-700">← Edit order</button>
+                </div>
+                <button type="button" disabled={savingOrder} onClick={async () => {
+                  if (!hasCustomerName) { setNameError(true); nameInputRef.current?.focus(); return; }
+                  if (!hasCustomerPhone) { setPhoneError(true); return; }
+                  if (!turnstileToken) { window.alert('Please complete the security check first.'); return; }
+                  if (savingOrder) return;
+                  const popup = window.open('about:blank', '_blank');
+                  setSavingOrder(true);
+                  try {
+                    const orderNumber = await onSaveOrder(turnstileToken, pushSubscription);
+                    if (orderNumber !== null) {
+                      clearCart();
+                      setTurnstileToken('');
+                      if (popup) {
+                        try {
+                          const whatsapp = new URL(whatsAppUrl);
+                          whatsapp.searchParams.set('text', `${orderText}\\n\\nOrder Reference: #${orderNumber}\\nKeep this number and your phone number to track your order on the store website.`);
+                          popup.location.href = whatsapp.toString();
+                        } catch { popup.location.href = whatsAppUrl; }
+                      }
+                      onClose();
+                    } else if (popup) popup.close();
+                  } finally { setSavingOrder(false); }
+                }} className="w-full flex items-center justify-center gap-2 py-3.5 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm shadow-sm disabled:opacity-60">
+                  <MessageCircle className="w-4 h-4" />
+                  <span>{savingOrder ? 'Placing order…' : 'Place Order & Proceed'}</span>
+                </button>
+                <button type="button" onClick={handleCopyShoppingList} className="w-full py-2 text-xs font-bold text-slate-600">{copiedNotice ? 'Copied Bill!' : 'Copy Text Bill'}</button>
+              </>
+            )}
           </div>
         )}
+
       </div>
     </div>
   );
