@@ -68,6 +68,7 @@ interface CustomerStorefrontProps {
   setIsQrModalOpen: (open: boolean) => void;
   onSecretOwnerAccess: () => void;
   lastOrderNumber?: string;
+  lastOrderPhone?: string;
 }
 
 export function CustomerStorefront({
@@ -95,15 +96,19 @@ export function CustomerStorefront({
   setIsQrModalOpen,
   onSecretOwnerAccess,
   lastOrderNumber = '',
+  lastOrderPhone = '',
 }: CustomerStorefrontProps) {
   const [trackingOrderNumber, setTrackingOrderNumber] = useState(lastOrderNumber);
-  const [trackingPhone, setTrackingPhone] = useState('');
+  const [trackingPhone, setTrackingPhone] = useState(lastOrderPhone);
   const [trackingResult, setTrackingResult] = useState<any>(null);
   const [trackingError, setTrackingError] = useState('');
   const [trackingLoading, setTrackingLoading] = useState(false);
   useEffect(() => {
     if (lastOrderNumber) setTrackingOrderNumber(lastOrderNumber);
   }, [lastOrderNumber]);
+  useEffect(() => {
+    if (lastOrderPhone) setTrackingPhone(lastOrderPhone);
+  }, [lastOrderPhone]);
   const fetchTrackedOrder = async (orderNumber: string, phone: string) => {
     const response = await fetch('/api/orders/track?orderNumber=' + encodeURIComponent(orderNumber) + '&phone=' + encodeURIComponent(phone), { cache: 'no-store' });
     const data = await response.json();
