@@ -1080,21 +1080,21 @@ export function CustomerStorefront({
                       )}
 
                       {/* Top-Left Automatic Discount & Custom Tag Badges */}
-                      <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 items-start">
+                      <div className="absolute top-2.5 left-2.5 right-20 flex flex-col gap-1 items-start min-w-0">
                         {hasDiscount && activeOpt.inStock && (
-                          <span className="px-2 py-0.5 rounded-md bg-amber-400 text-slate-950 font-extrabold text-[10px] uppercase tracking-wider shadow-2xs tabular-nums">
+                          <span className="max-w-full px-2 py-1 rounded-md bg-amber-400 text-slate-950 font-extrabold text-[10px] leading-tight uppercase tracking-wider shadow-2xs tabular-nums whitespace-normal break-words">
                             {discountPercent}% OFF · Save ₹{savedAmount}
                           </span>
                         )}
                         {product.badge && (
-                          <span className="px-2 py-0.5 rounded-md bg-[#0d647d] text-white font-semibold text-[10px] shadow-2xs">
+                          <span className="max-w-full px-2 py-1 rounded-md bg-[#0d647d] text-white font-semibold text-[10px] leading-tight shadow-2xs whitespace-normal break-words">
                             {product.badge}
                           </span>
                         )}
                       </div>
 
-                      {/* Top-Right Availability Badge */}
-                      <div className="absolute top-2.5 right-2.5">
+                      {/* Top-Right Availability Badge — reserved space keeps it clear of offer labels */}
+                      <div className="absolute top-2.5 right-2.5 max-w-[4.5rem]">
                         {activeOpt.inStock ? (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
