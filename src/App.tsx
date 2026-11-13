@@ -257,9 +257,25 @@ export default function App() {
     syncCartHold();
   }, [cart, cloudReady, activeMode, isOwnerUnlocked]);
 
-  // Low-stock products are held for five minutes, then removed if no order is placed.
+  // Low-stock cart expiry is persisted so it still works after refreshes or when a phone
+  // temporarily suspends the browser tab. The expiry is checked once per second.
   const lowStockCartStartedAt = useRef<Map<string, number>>(new Map());
+  const lowStockCartTimersInitialized = useRef(false);
   useEffect(() => {
+    if (!lowStockCartTimersInitialized.current) {
+      lowStockCartTimersInitialized.current = true;
+      try {
+        const saved = JSON.parse(localStorage.getItem('parbati_bhandar_low_stock_cart_timers_v1') || '{}');
+        if (saved && typeof saved === 'object' && !Array.isArray(saved)) {
+          for (const [id, timestamp] of Object.entries(saved)) {
+            if (typeof timestamp === 'number' && Number.isFinite(timestamp) && timestamp > 0) {
+              lowStockCartStartedAt.current.set(id, timestamp);
+            }
+          }
+        }
+      } catch { /* Start fresh if saved timer data is invalid. */ }
+    }
+
     const lowStockInCart = new Set<string>();
     for (const item of Object.values(cart)) {
       const product = products.find((entry) => entry.id === item.product.id) || item.product;
@@ -270,29 +286,59 @@ export default function App() {
         Number.isFinite(lowStockThreshold) &&
         lowStockThreshold > 0 &&
         stockQuantity > 0 &&
-        stockQuantity <= lowStockThreshold;
+        stockQuantity < lowStockThreshold;
       if (isLowStock) {
         lowStockInCart.add(product.id);
-        if (!lowStockCartStartedAt.current.has(product.id)) lowStockCartStartedAt.current.set(product.id, Date.now());
+        if (!lowStockCartStartedAt.current.has(product.id)) {
+          lowStockCartStartedAt.current.set(product.id, Date.now());
+        }
       }
     }
+
     for (const id of Array.from(lowStockCartStartedAt.current.keys())) {
       if (!lowStockInCart.has(id)) lowStockCartStartedAt.current.delete(id);
     }
-    const timers = Array.from(lowStockCartStartedAt.current.entries()).map(([productId, startedAt]) => {
-      const remaining = Math.max(0, 5 * 60 * 1000 - (Date.now() - startedAt));
-      return window.setTimeout(() => {
-        setCart((prev) => {
-          const next: CartMap = {};
-          for (const [key, item] of Object.entries(prev)) if (item.product.id !== productId) next[key] = item;
-          return next;
-        });
-        lowStockCartStartedAt.current.delete(productId);
+
+    const saveTimers = () => {
+      try {
+        localStorage.setItem(
+          'parbati_bhandar_low_stock_cart_timers_v1',
+          JSON.stringify(Object.fromEntries(lowStockCartStartedAt.current))
+        );
+      } catch { /* Timer enforcement still works for the current page. */ }
+    };
+    saveTimers();
+
+    const interval = window.setInterval(() => {
+      const now = Date.now();
+      const expiredIds = Array.from(lowStockCartStartedAt.current.entries())
+        .filter(([, startedAt]) => now - startedAt >= 5 * 60 * 1000)
+        .map(([productId]) => productId);
+      if (expiredIds.length === 0) return;
+
+      for (const productId of expiredIds) lowStockCartStartedAt.current.delete(productId);
+      saveTimers();
+
+      setCart((prev) => {
+        const expiredSet = new Set(expiredIds);
+        const next: CartMap = {};
+        for (const [key, item] of Object.entries(prev)) {
+          if (!expiredSet.has(item.product.id)) next[key] = item;
+        }
+        return next;
+      });
+
+      for (const productId of expiredIds) {
         const expiredProduct = products.find((entry) => entry.id === productId);
-        showToast((expiredProduct?.name || 'A low-stock item') + ' was removed from your cart after 5 minutes so another customer can order it.', 'error');
-      }, remaining);
-    });
-    return () => timers.forEach((timer) => window.clearTimeout(timer));
+        showToast(
+          (expiredProduct?.name || 'A low-stock item') +
+          ' was removed from your cart after 5 minutes so another customer can order it.',
+          'error'
+        );
+      }
+    }, 1000);
+
+    return () => window.clearInterval(interval);
   }, [cart, products]);
 
   // Keep the cart local to this device; the live catalogue and settings are cloud-backed.
