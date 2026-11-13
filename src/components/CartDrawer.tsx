@@ -119,6 +119,12 @@ export function CartDrawer({
     if (choices.length) updateCartQty(choices[Math.floor(Math.random() * choices.length)], 1);
   };
 
+  const getRemainingStock = (product: Product) => {
+    if (product.stockQuantity === undefined || product.stockQuantity === null || !Number.isFinite(Number(product.stockQuantity))) return Number.POSITIVE_INFINITY;
+    const inCart = cartItemsList.reduce((total, item) => total + (item.product.id === product.id ? item.qty : 0), 0);
+    return Math.max(0, Number(product.stockQuantity) - inCart);
+  };
+
   const hasCustomerName = customerName.trim().length > 0;
   const hasCustomerPhone = customerPhone.replace(/\D/g, '').length >= 10;
 
@@ -320,6 +326,7 @@ export function CartDrawer({
                             <button
                               type="button"
                               aria-label={`Add one more ${product.name} (${selectedUnit})`}
+                              disabled={getRemainingStock(product) <= 0}
                               onClick={() =>
                                 updateCartQty(product, 1, {
                                   selectedUnit,
@@ -327,7 +334,7 @@ export function CartDrawer({
                                   unitMrp,
                                 })
                               }
-                              className="p-1.5 hover:bg-slate-200 text-slate-700 cursor-pointer"
+                              className="p-1.5 hover:bg-slate-200 text-slate-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                             >
                               <Plus className="w-3.5 h-3.5" />
                             </button>
