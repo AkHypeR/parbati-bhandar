@@ -10,7 +10,15 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     reservation_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL,
     expires_at INTEGER NOT NULL, PRIMARY KEY(reservation_id,product_id)
   )`).run();
-  const activeHolds = await env.DB.prepare("SELECT product_id, SUM(quantity) AS quantity FROM cart_stock_reservations WHERE expires_at>? GROUP BY product_id").bind(Date.now()).all<any>();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS order_stock_reservations (
+    order_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL,
+    PRIMARY KEY(order_id,product_id)
+  )`).run();
+  const activeHolds = await env.DB.prepare(`SELECT product_id, SUM(quantity) AS quantity FROM (
+    SELECT product_id,quantity FROM cart_stock_reservations WHERE expires_at>?
+    UNION ALL
+    SELECT product_id,quantity FROM order_stock_reservations
+  ) GROUP BY product_id`).bind(Date.now()).all<any>();
   const heldByProduct = new Map((activeHolds.results || []).map((row:any)=>[String(row.product_id),Number(row.quantity)||0]));
   const visibleProducts = (products.results || []).map(row => {
     const product = JSON.parse(row.data);
