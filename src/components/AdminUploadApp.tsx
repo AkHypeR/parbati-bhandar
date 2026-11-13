@@ -720,7 +720,7 @@ export function AdminUploadApp({
                   <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
                     <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 pb-4">
                       <div><p className="text-xs font-bold uppercase tracking-wide text-slate-400">Order details</p><h2 className="mt-1 text-2xl font-black text-slate-900">Order #{order.orderNumber}</h2><p className="mt-1 text-sm text-slate-500">{new Date(order.createdAt).toLocaleString('en-IN')}</p></div>
-                      <span className={`rounded-full px-3 py-1.5 text-xs font-extrabold uppercase ${order.status === 'new' ? 'bg-blue-100 text-blue-800' : order.status === 'review' ? 'bg-violet-100 text-violet-800' : order.status === 'ready' ? 'bg-emerald-100 text-emerald-800' : order.status === 'unavailable' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}`}>{order.status === 'new' ? 'Received' : order.status === 'review' ? 'Under review' : order.status === 'ready' ? 'Ready for pickup' : order.status}</span>
+                      <span className={`rounded-full px-3 py-1.5 text-xs font-extrabold uppercase ${order.status === 'new' ? 'bg-blue-100 text-blue-800' : order.status === 'ready' ? 'bg-emerald-100 text-emerald-800' : order.status === 'unavailable' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}`}>{order.status === 'new' ? 'Received' : order.status === 'ready' ? 'Ready for pickup' : order.status}</span>
                     </div>
                     <div className="grid gap-4 py-5 sm:grid-cols-2">
                       <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-bold uppercase text-slate-400">Customer</p><p className="mt-1 text-lg font-extrabold text-slate-900">{order.customerName}</p><a onClick={event => event.stopPropagation()} href={`tel:${order.customerPhone}`} className="mt-1 inline-flex items-center gap-2 text-sm font-semibold text-emerald-700"><Phone className="h-4 w-4" />{order.customerPhone}</a></div>
@@ -728,10 +728,10 @@ export function AdminUploadApp({
                     </div>
                     <div className="rounded-xl border border-slate-200 p-4">
                       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                        <h3 className="text-sm font-extrabold uppercase tracking-wide text-slate-500">Items ordered · Review each quantity</h3>
+                        <h3 className="text-sm font-extrabold uppercase tracking-wide text-slate-500">Items ordered · Set item availability</h3>
                         
                       </div>
-                      <div className="divide-y divide-slate-100">{order.items.map((item,index) => <div key={index} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm"><div className="min-w-0"><p className={`font-bold ${item.unavailable ? 'text-amber-800 line-through' : 'text-slate-800'}`}>{item.name}</p><p className="text-xs text-slate-500">{item.unit} · Quantity {item.quantity}</p>{item.unavailable && <span className="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-extrabold uppercase text-amber-900">Unavailable</span>}</div><div className="flex items-center gap-3"><strong className="shrink-0 text-slate-900">₹{(Number(item.price || 0) * Number(item.quantity || 0)).toFixed(2)}</strong><button type="button" disabled={updatingOrderId === order.id || !['new','review'].includes(order.status)} onClick={() => updateCustomerOrder(order.id, order.status, order.items.map((entry,itemIndex) => itemIndex === index ? { ...entry, unavailable: !entry.unavailable } : entry))} className={`rounded-lg border px-3 py-2 text-xs font-bold disabled:opacity-50 ${item.unavailable ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>{item.unavailable ? 'Mark available' : 'Mark unavailable'}</button></div></div>)}</div>
+                      <div className="divide-y divide-slate-100">{order.items.map((item,index) => <div key={index} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm"><div className="min-w-0"><p className={`font-bold ${item.unavailable ? 'text-amber-800 line-through' : 'text-slate-800'}`}>{item.name}</p><p className="text-xs text-slate-500">{item.unit} · Quantity {item.quantity}</p>{item.unavailable && <span className="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-extrabold uppercase text-amber-900">Unavailable</span>}</div><div className="flex items-center gap-3"><strong className="shrink-0 text-slate-900">₹{(Number(item.price || 0) * Number(item.quantity || 0)).toFixed(2)}</strong><button type="button" disabled={updatingOrderId === order.id || order.status !== 'new'} onClick={() => updateCustomerOrder(order.id, order.status, order.items.map((entry,itemIndex) => itemIndex === index ? { ...entry, unavailable: !entry.unavailable } : entry))} className={`rounded-lg border px-3 py-2 text-xs font-bold disabled:opacity-50 ${item.unavailable ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>{item.unavailable ? 'Mark available' : 'Mark unavailable'}</button></div></div>)}</div>
                       <div className="mt-3 flex justify-between border-t border-slate-200 pt-3 font-extrabold"><span>Estimated total</span><span>₹{Number(order.total || 0).toFixed(2)}</span></div>
                     </div>
                     {order.note && <div className="mt-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-900"><strong>Customer note</strong><p className="mt-1">{order.note}</p></div>}
@@ -741,8 +741,6 @@ export function AdminUploadApp({
                       <button type="button" disabled={updatingOrderId === order.id || ['ready','completed','cancelled'].includes(order.status)} onClick={() => updateCustomerOrder(order.id,'cancelled')} className="rounded-lg bg-red-50 px-3 py-3 text-sm font-bold text-red-700 disabled:opacity-50">Cancel</button>
                     </div>
                     <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                      <button type="button" onClick={() => messageOrderCustomer(order,'ready')} className="rounded-lg border border-emerald-200 px-3 py-3 text-sm font-bold text-emerald-800">WhatsApp: Ready</button>
-                      <button type="button" onClick={() => messageOrderCustomer(order,'unavailable')} className="rounded-lg border border-amber-200 px-3 py-3 text-sm font-bold text-amber-900">WhatsApp: Unavailable</button>
                       <button type="button" disabled={updatingOrderId === order.id} onClick={() => { deleteCustomerOrder(order.id); setSelectedOrderId(null); }} className="rounded-lg border border-red-200 bg-red-50 px-3 py-3 text-sm font-bold text-red-700 disabled:opacity-50 sm:col-span-2"><Trash2 className="mr-1 inline h-4 w-4" /> Delete Order</button>
                     </div>
                   </article>
@@ -782,7 +780,7 @@ export function AdminUploadApp({
                         <a href={`tel:${order.customerPhone}`} className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-emerald-700"><Phone className="h-3 w-3" /> {order.customerPhone}</a>
                         <p className="mt-1 text-[11px] text-slate-400">{new Date(order.createdAt).toLocaleString('en-IN')}</p>
                       </div>
-                      <span className={`rounded-full px-3 py-1 text-[11px] font-extrabold uppercase ${order.status === 'new' ? 'bg-blue-100 text-blue-800' : order.status === 'review' ? 'bg-violet-100 text-violet-800' : order.status === 'ready' ? 'bg-emerald-100 text-emerald-800' : order.status === 'unavailable' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}`}>{order.status === 'new' ? 'Received' : order.status === 'review' ? 'Under review' : order.status === 'ready' ? 'Ready for pickup' : order.status}</span>
+                      <span className={`rounded-full px-3 py-1 text-[11px] font-extrabold uppercase ${order.status === 'new' ? 'bg-blue-100 text-blue-800' : order.status === 'ready' ? 'bg-emerald-100 text-emerald-800' : order.status === 'unavailable' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}`}>{order.status === 'new' ? 'Received' : order.status === 'ready' ? 'Ready for pickup' : order.status}</span>
                     </div>
                     <div className="my-3 rounded-xl bg-slate-50 p-3">
                       <div className="mb-2 text-[11px] font-extrabold uppercase tracking-wide text-slate-500">Items ordered</div>
@@ -795,8 +793,6 @@ export function AdminUploadApp({
                       <button type="button" disabled={updatingOrderId === order.id || ['completed','cancelled'].includes(order.status)} onClick={event => { event.stopPropagation(); deleteCustomerOrder(order.id); }} className="rounded-lg border border-red-200 bg-red-50 px-2 py-2 text-xs font-bold text-red-700 disabled:opacity-50"><Trash2 className="mr-1 inline h-3.5 w-3.5" /> Delete Order</button>
                     </div>
                     <div className="mt-2 grid grid-cols-2 gap-2">
-                      <button type="button" onClick={event => { event.stopPropagation(); messageOrderCustomer(order, 'ready'); }} className="rounded-lg border border-emerald-200 px-2 py-2 text-xs font-bold text-emerald-800">WhatsApp: Ready</button>
-                      <button type="button" onClick={event => { event.stopPropagation(); messageOrderCustomer(order, 'unavailable'); }} className="rounded-lg border border-amber-200 px-2 py-2 text-xs font-bold text-amber-900">WhatsApp: Unavailable</button>
                     </div>
                   </article>
                 ))}
