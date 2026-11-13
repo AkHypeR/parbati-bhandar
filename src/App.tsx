@@ -831,6 +831,7 @@ export default function App() {
           />
           <CartDrawer
             isOpen={isCartOpen}
+            products={products}
             onClose={() => setIsCartOpen(false)}
             cartItemsList={cartItemsList}
             cartTotalItems={cartTotalItems}
