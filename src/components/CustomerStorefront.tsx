@@ -67,6 +67,7 @@ interface CustomerStorefrontProps {
   setIsCartOpen: (open: boolean) => void;
   setIsQrModalOpen: (open: boolean) => void;
   onSecretOwnerAccess: () => void;
+  lastOrderNumber?: string;
 }
 
 export function CustomerStorefront({
@@ -93,12 +94,16 @@ export function CustomerStorefront({
   setIsCartOpen,
   setIsQrModalOpen,
   onSecretOwnerAccess,
+  lastOrderNumber = '',
 }: CustomerStorefrontProps) {
-  const [trackingOrderNumber, setTrackingOrderNumber] = useState('');
+  const [trackingOrderNumber, setTrackingOrderNumber] = useState(lastOrderNumber);
   const [trackingPhone, setTrackingPhone] = useState('');
   const [trackingResult, setTrackingResult] = useState<any>(null);
   const [trackingError, setTrackingError] = useState('');
   const [trackingLoading, setTrackingLoading] = useState(false);
+  useEffect(() => {
+    if (lastOrderNumber) setTrackingOrderNumber(lastOrderNumber);
+  }, [lastOrderNumber]);
   const fetchTrackedOrder = async (orderNumber: string, phone: string) => {
     const response = await fetch('/api/orders/track?orderNumber=' + encodeURIComponent(orderNumber) + '&phone=' + encodeURIComponent(phone), { cache: 'no-store' });
     const data = await response.json();
@@ -1389,6 +1394,7 @@ export function CustomerStorefront({
         <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
           <h2 className="text-lg font-black text-slate-900">Track Your Order</h2>
           <p className="text-sm text-slate-500 mt-1">Enter your order number and phone number to check its status.</p>
+          {lastOrderNumber && <p className="mt-2 rounded-lg bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800">Your latest order number: #{lastOrderNumber} (already filled in below)</p>}
           <form onSubmit={trackOrder} className="grid sm:grid-cols-3 gap-2.5 mt-4">
             <input required inputMode="numeric" value={trackingOrderNumber} onChange={e=>setTrackingOrderNumber(e.target.value)} placeholder="Order number" className="min-w-0 rounded-xl border border-slate-300 px-3 py-2.5 text-sm" />
             <input required inputMode="tel" value={trackingPhone} onChange={e=>setTrackingPhone(e.target.value)} placeholder="Phone number" className="min-w-0 rounded-xl border border-slate-300 px-3 py-2.5 text-sm" />
