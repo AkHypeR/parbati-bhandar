@@ -855,6 +855,10 @@ export default function App() {
           onSubmit={handleOwnerPinLogin}
           onBackToCustomer={() => setActiveMode('customer')}
         />
+      ) : !ownerCatalogReady ? (
+        <div className="flex-1 grid place-items-center bg-slate-50 p-8 text-center">
+          <div><div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-emerald-600 border-t-transparent" /><p className="font-bold text-slate-800">Loading secure owner inventory…</p></div>
+        </div>
       ) : (
         /* ========================================== */
         /* VIEW 2: OWNER UPLOAD & ADMIN APP           */
