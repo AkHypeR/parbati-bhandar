@@ -49,6 +49,7 @@ export function CartDrawer({
   cartItemsList,
   products,
   cartTotalItems,
+  cartTotalPrice,
   customerName,
   customerPhone,
   setCustomerPhone,
