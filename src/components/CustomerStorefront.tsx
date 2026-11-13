@@ -449,7 +449,16 @@ export function CustomerStorefront({
             </div>
             <button type="button" onClick={() => setIsProfileOpen(false)} aria-label="Close profile" className="rounded-full p-2 text-slate-500 hover:bg-slate-100"><X className="h-4 w-4" /></button>
           </div>
-          {lastOrderNumber && <div className="mt-3 rounded-xl border border-emerald-100 bg-emerald-50/70 p-3"><p className="text-[11px] font-semibold text-emerald-800">Latest order placed</p><div className="mt-1 flex flex-wrap items-center justify-between gap-2"><p className="text-lg font-extrabold text-slate-900">Order #{lastOrderNumber}</p><button type="button" onClick={() => { void navigator.clipboard?.writeText(String(lastOrderNumber)); }} className="rounded-lg border border-emerald-200 bg-white px-3 py-1.5 text-xs font-semibold text-emerald-800">Copy number</button></div><p className="mt-1 text-xs text-slate-600">Use this order number and your phone number to track it.</p></div>
+          {lastOrderNumber ? (
+            <div className="mt-3 rounded-xl border border-emerald-100 bg-emerald-50/70 p-3">
+              <p className="text-[11px] font-semibold text-emerald-800">Latest order placed</p>
+              <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
+                <p className="text-lg font-extrabold text-slate-900">Order #{lastOrderNumber}</p>
+                <button type="button" onClick={() => { void navigator.clipboard?.writeText(String(lastOrderNumber)); }} className="rounded-lg border border-emerald-200 bg-white px-3 py-1.5 text-xs font-semibold text-emerald-800">Copy number</button>
+              </div>
+              <p className="mt-1 text-xs text-slate-600">Use this order number and your phone number to track it.</p>
+            </div>
+          ) : null}
           <div className="flex items-center justify-between gap-3">
             <div>
               <h3 className="text-sm font-bold text-slate-900">Track an order</h3>
