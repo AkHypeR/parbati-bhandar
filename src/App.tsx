@@ -87,6 +87,7 @@ export default function App() {
   const [products, setProducts] = useState<Product[]>(loadInitialProducts);
   const [storeSettings, setStoreSettings] = useState<StoreSettings>(loadInitialSettings);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [maintenanceUntil, setMaintenanceUntil] = useState<number | null>(null);
   const [maintenanceLogoTaps, setMaintenanceLogoTaps] = useState(0);
   const [cart, setCart] = useState<CartMap>(loadInitialCart);
 
@@ -220,7 +221,9 @@ export default function App() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch('/api/settings', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : Promise.reject()).then(data => { if (!cancelled) setMaintenanceMode(data?.settings?.maintenanceMode === true); }).catch(() => {});
+    const refreshMaintenance = () => fetch('/api/settings', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : Promise.reject()).then(data => { if (!cancelled) { setMaintenanceMode(data?.settings?.maintenanceMode === true); setMaintenanceUntil(typeof data?.settings?.maintenanceUntil === 'number' ? data.settings.maintenanceUntil : null); } }).catch(() => {});
+    void refreshMaintenance();
+    const timer = window.setInterval(refreshMaintenance, 30000);
     return () => { cancelled = true; };
   }, []);
 
@@ -232,6 +235,16 @@ export default function App() {
       if (!response.ok) throw new Error(result.error || 'Could not update maintenance mode');
       setMaintenanceMode(next);
       showToast(next ? 'Maintenance mode is ON. Storefront paused.' : 'Maintenance mode is OFF. Storefront live.');
+    } catch (error) { showToast((error as Error).message, 'error'); }
+  };
+  const handleSetMaintenanceTimer = async (durationMinutes: number) => {
+    try {
+      const response = await fetch('/api/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ maintenanceMode: true, durationMinutes }) });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || 'Could not set maintenance timer');
+      setMaintenanceMode(true);
+      setMaintenanceUntil(result.maintenanceUntil || null);
+      showToast('Maintenance timer set. Storefront will reopen automatically.');
     } catch (error) { showToast((error as Error).message, 'error'); }
   };
   // Keep the cart local to this device; the live catalogue and settings are cloud-backed.
@@ -814,6 +827,8 @@ export default function App() {
           storeSettings={storeSettings}
           maintenanceMode={maintenanceMode}
           onToggleMaintenance={handleToggleMaintenance}
+          onSetMaintenanceTimer={handleSetMaintenanceTimer}
+          maintenanceUntil={maintenanceUntil}
           adminTab={adminTab}
           setAdminTab={setAdminTab}
           adminSearch={adminSearch}
