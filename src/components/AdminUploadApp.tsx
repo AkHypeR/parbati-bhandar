@@ -76,7 +76,6 @@ interface AdminUploadAppProps {
     editingId?: string
   ) => void;
   onSaveSettings: (newSettings: StoreSettings) => void;
-  onResetSampleProducts: () => void;
   showToast: (message: string, type?: 'success' | 'error') => void;
   totalProductsCount: number;
   inStockCount: number;
@@ -140,7 +139,6 @@ export function AdminUploadApp({
   setEditingProduct,
   onSaveProduct,
   onSaveSettings,
-  onResetSampleProducts,
   showToast,
   totalProductsCount,
   inStockCount,
@@ -1870,14 +1868,6 @@ export function AdminUploadApp({
                   Customize your shop header, WhatsApp order number, opening schedule, and store details.
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={onResetSampleProducts}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-xs font-semibold text-slate-700 cursor-pointer whitespace-nowrap self-start"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>Restore Default 16 Items</span>
-              </button>
             </div>
 
             <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 sm:p-5">
