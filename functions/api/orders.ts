@@ -84,6 +84,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     if (!verification.success || verification.action !== "order") return json({ error: "Security check failed. Please try again." }, 403);
   } catch { return json({ error: "Security verification is temporarily unavailable. Please try again." }, 503); }
   await ensureTable(env);
+  await purgeExpiredCustomerOrders(env);
   const name = String(body?.customerName || "").trim().slice(0, 100);
   const phone = String(body?.customerPhone || "").replace(/\D/g, "").slice(0, 15);
   const note = String(body?.note || "").trim().slice(0, 500);
@@ -118,6 +119,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
 export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   const denied = await ownerRequired(request, env); if (denied) return denied;
   await ensureTable(env);
+  await purgeExpiredCustomerOrders(env);
   let body: any; try { body = await request.json(); } catch { return json({error:"Invalid update."},400); }
   const status = String(body?.status || "");
   if (!["new","review","ready","unavailable","completed","cancelled"].includes(status) || !body?.id) return json({error:"Invalid order status."},400);
