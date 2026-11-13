@@ -430,7 +430,7 @@ export default function App() {
 
   const handleSaveCustomerOrder = async (turnstileToken: string, pushSubscription?: PushSubscriptionJSON | null): Promise<boolean> => {
     try {
-      const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerName, customerPhone, turnstileToken, pushSubscription, note: customerNote, items: cartItemsList.map(item => ({ name: item.product.name, quantity: item.qty, unit: item.selectedUnit, price: item.unitPrice })) }) });
+      const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerName, customerPhone, turnstileToken, pushSubscription, note: customerNote, items: cartItemsList.map(item => ({ productId: item.product.id, name: item.product.name, quantity: item.qty, unit: item.selectedUnit, price: item.unitPrice })) }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || 'Could not save order');
       if (rememberCustomerDetails) {
