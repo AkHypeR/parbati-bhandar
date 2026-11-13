@@ -124,7 +124,7 @@ export function CustomerStorefront({
         .catch(() => {});
     }, 15000);
     return () => window.clearInterval(timer);
-  }, [trackingResult?.orderNumber, trackingPhone]);
+  }, [trackingResult?.orderNumber, trackingResult?.status, trackingPhone]);
   // Per-product selected variety or weight option label
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, { label: string; price: number; mrp: number | null; inStock: boolean }>
