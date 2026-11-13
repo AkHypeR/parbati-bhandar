@@ -23,7 +23,6 @@ import {
   MessageCircle,
   ClipboardList,
   Phone,
-  RefreshCw,
 } from 'lucide-react';
 import {
   CATEGORIES,
