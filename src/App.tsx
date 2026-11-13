@@ -185,9 +185,11 @@ export default function App() {
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
+    // Keep important cart and stock notices visible longer so customers have
+    // enough time to read them, especially on mobile screens.
     setTimeout(() => {
       setToast((prev) => (prev?.message === message ? null : prev));
-    }, 3200);
+    }, 15000);
   };
 
 
