@@ -285,10 +285,12 @@ export default function App() {
       const lowStockThreshold = Number.isFinite(configuredThreshold) && configuredThreshold > 0
         ? configuredThreshold
         : 5;
-      const isLowStock = product.inStock &&
-        Number.isFinite(stockQuantity) &&
-        stockQuantity > 0 &&
-        stockQuantity <= lowStockThreshold;
+      // Public customer catalog intentionally hides exact quantities and thresholds.
+      // The API supplies a boolean lowStock flag instead; owner catalog can still use counts.
+      const isLowStock = product.inStock && (
+        product.lowStock === true ||
+        (Number.isFinite(stockQuantity) && stockQuantity > 0 && stockQuantity <= lowStockThreshold)
+      );
       if (isLowStock) {
         lowStockInCart.add(product.id);
         if (!lowStockCartStartedAt.current.has(product.id)) {
