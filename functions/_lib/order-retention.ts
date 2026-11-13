@@ -1,7 +1,27 @@
 import type { Env } from "./env";
 
+/** Ensure the order tables exist before customer tracking is used. */
+async function ensureOrderRetentionTables(env: Env): Promise<void> {
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS customer_orders (
+    id TEXT PRIMARY KEY, customer_name TEXT NOT NULL, customer_phone TEXT NOT NULL,
+    note TEXT, items_json TEXT NOT NULL, total REAL NOT NULL,
+    status TEXT NOT NULL DEFAULT 'new', created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL, order_number INTEGER,
+    stock_deducted INTEGER NOT NULL DEFAULT 0
+  )`).run();
+  await env.DB.prepare("CREATE TABLE IF NOT EXISTS push_subscriptions (order_id TEXT PRIMARY KEY, subscription_json TEXT NOT NULL, created_at INTEGER NOT NULL)").run();
+  await env.DB.prepare("CREATE TABLE IF NOT EXISTS order_stock_deductions (order_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL, PRIMARY KEY (order_id, product_id))").run();
+  await env.DB.prepare("CREATE TABLE IF NOT EXISTS order_stock_deduction_guard (order_id TEXT PRIMARY KEY, expected_count INTEGER NOT NULL, actual_count INTEGER NOT NULL, CHECK (expected_count = actual_count))").run();
+
+  const columns = await env.DB.prepare("PRAGMA table_info(customer_orders)").all<any>();
+  const names = (columns.results || []).map((column: any) => column.name);
+  if (!names.includes("order_number")) await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN order_number INTEGER").run();
+  if (!names.includes("stock_deducted")) await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN stock_deducted INTEGER NOT NULL DEFAULT 0").run();
+}
+
 /** Delete customer orders and related records seven days after creation. */
 export async function purgeExpiredCustomerOrders(env: Env): Promise<void> {
+  await ensureOrderRetentionTables(env);
   const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
   await env.DB.batch([
     env.DB.prepare("DELETE FROM push_subscriptions WHERE order_id IN (SELECT id FROM customer_orders WHERE created_at < ?)").bind(cutoff),
