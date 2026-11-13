@@ -123,8 +123,8 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   const id = String(body.id);
   const order = await env.DB.prepare("SELECT status,customer_name,order_number,items_json,stock_deducted FROM customer_orders WHERE id=?").bind(id).first<any>();
   if (!order) return json({error:"Order not found."},404);
-  if (Array.isArray(body.items) && !["new","review"].includes(order.status)) {
-    return json({error:"Item availability can only be changed while an order is under review."},409);
+  if (Array.isArray(body.items) && order.status !== "review") {
+    return json({error:"Move this order to Under review before changing item availability."},409);
   }
   if (status === "review" && !["new","review"].includes(order.status)) {
     return json({error:"Only a new order can enter review."},409);
