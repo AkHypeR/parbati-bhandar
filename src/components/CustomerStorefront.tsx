@@ -1097,7 +1097,7 @@ export function CustomerStorefront({
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
             {filteredCustomerProducts.map((product) => {
               const activeOpt = getActiveOptionForProduct(product);
               const activeCartKey = makeCartKey(product.id, activeOpt.label);
@@ -1118,7 +1118,7 @@ export function CustomerStorefront({
               return (
                 <div
                   key={product.id}
-                  className={`group bg-white rounded-2xl border transition-all flex flex-col justify-between overflow-hidden ${
+                  className={`group bg-white rounded-xl sm:rounded-2xl border transition-all flex flex-col justify-between overflow-hidden min-w-0 ${
                     product.inStock
                       ? 'border-slate-200/90 hover:border-[#0d647d] hover:shadow-md'
                       : 'border-slate-200 opacity-70 bg-slate-50'
@@ -1126,13 +1126,13 @@ export function CustomerStorefront({
                 >
                   <div>
                     {/* Product Visual Box */}
-                    <div className="relative h-36 bg-gradient-to-b from-slate-50 to-slate-100/60 flex items-center justify-center p-3 border-b border-slate-100">
+                    <div className="relative aspect-square w-full max-h-44 bg-[#f7f8fa] flex items-center justify-center p-2.5 sm:p-4 border-b border-slate-100">
                       {product.imageUrl ? (
                         <img
                           src={product.imageUrl}
                           alt={product.name}
                           referrerPolicy="no-referrer"
-                          className="w-full h-full object-contain rounded-lg group-hover:scale-105 transition-transform duration-200"
+                          className="w-full h-full object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-200"
                         />
                       ) : (
                         <span className="text-6xl select-none filter drop-shadow-xs group-hover:scale-110 transition-transform duration-200">
@@ -1170,12 +1170,12 @@ export function CustomerStorefront({
                     </div>
 
                     {/* Product Info */}
-                    <div className="p-3.5 space-y-2.5">
+                    <div className="p-2.5 sm:p-3.5 space-y-2 sm:space-y-2.5">
                       <div>
-                        <div className="text-[11px] font-semibold text-[#0d647d] uppercase tracking-wider truncate">
+                        <div className="text-[9px] sm:text-[11px] font-semibold text-[#0d647d] uppercase tracking-wider truncate">
                           {product.category}
                         </div>
-                        <h3 className="font-bold text-slate-900 text-sm sm:text-base line-clamp-2 mt-0.5 min-h-[2.5rem]">
+                        <h3 className="font-bold text-slate-900 text-xs sm:text-base line-clamp-2 mt-0.5 min-h-[2.25rem] sm:min-h-[2.5rem]">
                           {product.name}
                         </h3>
                       </div>
@@ -1323,14 +1323,14 @@ export function CustomerStorefront({
                   </div>
 
                   {/* Price, Auto Discount Summary & Add to List Footer */}
-                  <div className="px-3.5 pb-3.5 pt-2 flex items-end justify-between gap-2 border-t border-slate-100/80">
+                  <div className="px-2.5 sm:px-3.5 pb-3 sm:pb-3.5 pt-2 flex items-end justify-between gap-1.5 sm:gap-2 border-t border-slate-100/80">
                     <div>
                       <div className="text-[11px] text-slate-500 font-medium flex items-center gap-1.5">
                         <span>Selected:</span>
                         <span className="font-bold text-slate-800">{activeOpt.label}</span>
                       </div>
                       <div className="flex items-baseline gap-1.5 tabular-nums mt-0.5">
-                        <span className="text-lg sm:text-xl font-extrabold text-slate-900">
+                        <span className="text-base sm:text-xl font-extrabold text-slate-900">
                           ₹{activeOpt.price}
                         </span>
                         {hasDiscount && activeOpt.mrp && (
@@ -1359,7 +1359,7 @@ export function CustomerStorefront({
                               unitMrp: activeOpt.mrp,
                             })
                           }
-                          className="px-4 py-2 rounded-xl bg-[#ffd814] hover:bg-[#f7ca00] text-slate-950 font-extrabold text-xs sm:text-sm flex items-center gap-1 shadow-2xs transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                          className="px-2.5 sm:px-4 py-2 rounded-lg border border-emerald-600 bg-white hover:bg-emerald-50 text-emerald-700 font-extrabold text-xs sm:text-sm flex items-center gap-1 shadow-2xs transition-colors cursor-pointer whitespace-nowrap shrink-0"
                         >
                           <Plus className="w-4 h-4" />
                           <span>Add</span>
