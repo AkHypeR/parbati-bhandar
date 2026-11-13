@@ -158,7 +158,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
     for (const item of items) {
       if (item.unavailable || !item.productId) continue;
       const row = await env.DB.prepare("SELECT data,updated_at FROM products WHERE id=?").bind(item.productId).first<any>();
-      if (!row) continue;
+      if (!row) return json({error:"The product " + item.name + " no longer exists in inventory. Mark it unavailable before confirming."},409);
       const product = JSON.parse(row.data);
       if (typeof product.stockQuantity !== "number") continue;
       const units = stockUnitsForOrder(item, product);
