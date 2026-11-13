@@ -141,23 +141,33 @@ export function CartDrawer({
   if (!isOpen) return null;
 
   const cartProductIds = new Set(cartItemsList.map(item => item.product.id));
-  // Recommend only products from categories already represented in the customer's cart.
-  const cartCategories = new Set(cartItemsList.map(item => item.product.category).filter(Boolean));
+  // Normalize category labels so "Masala", "Spices", and "Spices & Masala"
+  // are treated as the same category even if products were entered differently.
+  const normalizeCategory = (value: string | undefined) => {
+    const category = (value || '').trim().toLowerCase();
+    if (/masala|spice|মশলা/.test(category)) return 'spices-masala';
+    if (/rice|atta|flour|চাল|আটা/.test(category)) return 'rice-atta';
+    if (/dal|pulse|lentil|ছোলা|ডাল/.test(category)) return 'dal-pulses';
+    if (/mustard oil|cooking oil|oil|ghee|তেল|ঘি/.test(category)) return 'oil-ghee';
+    if (/tea|biscuit|চা|বিস্কুট/.test(category)) return 'tea-biscuits';
+    if (/dairy|milk|egg|দুধ|ডিম/.test(category)) return 'dairy-eggs';
+    if (/daily essential|salt|sugar|নিত্যপ্রয়োজনীয়|লবণ|চিনি/.test(category)) return 'daily-essentials';
+    if (/breakfast|cereal|oats|সকালের/.test(category)) return 'breakfast-cereals';
+    if (/snack|packaged food|noodle|স্ন্যাকস|প্যাকেটজাত/.test(category)) return 'snacks-packaged';
+    if (/personal care|শিশু/.test(category)) return 'personal-care';
+    if (/cleaning|household|detergent|soap|পরিষ্কার/.test(category)) return 'cleaning-household';
+    return category.replace(/[^a-z0-9\u0980-\u09ff]+/g, '');
+  };
+  const cartCategories = new Set(cartItemsList.map(item => normalizeCategory(item.product.category)).filter(Boolean));
   const categoryRecommendations = products.filter(product =>
     product.inStock &&
     !cartProductIds.has(product.id) &&
-    cartCategories.has(product.category) &&
+    cartCategories.has(normalizeCategory(product.category)) &&
     (product.stockQuantity == null || Number(product.stockQuantity) > 0)
   );
   const bestFiveProducts = categoryRecommendations.filter(product => product.isBestItem)
     .sort((left, right) => Number(left.bestItemRank ?? 999) - Number(right.bestItemRank ?? 999));
   const recommendationProducts = (bestFiveProducts.length ? bestFiveProducts : categoryRecommendations).slice(0, 5);
-  const addRandomRecommendation = () => {
-    if (categoryRecommendations.length) {
-      const randomProduct = categoryRecommendations[Math.floor(Math.random() * categoryRecommendations.length)];
-      updateCartQty(randomProduct, 1);
-    }
-  };
 
   const getRemainingStock = (product: Product) => {
     if (product.stockQuantity === undefined || product.stockQuantity === null || !Number.isFinite(Number(product.stockQuantity))) return Number.POSITIVE_INFINITY;
@@ -396,9 +406,8 @@ export function CartDrawer({
                   <div className="flex items-center justify-between gap-2">
                     <div>
                       <h4 className="text-sm font-extrabold text-slate-900">Complete your grocery list</h4>
-                      <p className="text-[11px] text-slate-500">Suggestions are picked from the same categories as the items in your cart.</p>
+                      <p className="text-[11px] text-slate-500">More products from the categories in your shopping list.</p>
                     </div>
-                    <button type="button" onClick={addRandomRecommendation} disabled={categoryRecommendations.length === 0} className="shrink-0 rounded-xl bg-amber-100 px-3 py-2 text-xs font-bold text-amber-900 disabled:opacity-50">🎲 Surprise me</button>
                   </div>
                   {recommendationProducts.length > 0 && (
                   <div className="grid grid-cols-2 gap-2">
