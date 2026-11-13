@@ -87,6 +87,7 @@ export default function App() {
   const [products, setProducts] = useState<Product[]>(loadInitialProducts);
   const [storeSettings, setStoreSettings] = useState<StoreSettings>(loadInitialSettings);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [maintenanceLogoTaps, setMaintenanceLogoTaps] = useState(0);
   const [cart, setCart] = useState<CartMap>(loadInitialCart);
 
   // Mode Switcher: 'customer' | 'admin'
@@ -700,19 +701,12 @@ export default function App() {
             <div className="absolute inset-0 opacity-20" aria-hidden="true"><div className="absolute -top-20 -left-16 h-72 w-72 rounded-full bg-emerald-400 blur-3xl animate-pulse" /><div className="absolute -bottom-24 -right-16 h-80 w-80 rounded-full bg-amber-300 blur-3xl animate-pulse" /></div>
             <div className="relative w-full max-w-xl rounded-[2rem] border border-white/15 bg-white/10 p-8 sm:p-12 text-center shadow-2xl backdrop-blur-xl">
               <div className="mx-auto mb-6 grid h-24 w-24 place-items-center rounded-3xl bg-amber-400 text-slate-950 shadow-lg animate-bounce"><span className="text-5xl" aria-hidden="true">🛠️</span></div>
-              <p className="text-xs font-black uppercase tracking-[0.28em] text-amber-300">Parbati Bhandar</p>
+              <button type="button" aria-label="Parbati Bhandar" onClick={() => setMaintenanceLogoTaps(count => { if (count + 1 >= 5) { setActiveMode('admin'); showToast('Owner portal access'); return 0; } return count + 1; })} className="text-xs font-black uppercase tracking-[0.28em] text-amber-300 cursor-default select-none focus:outline-none">{'Parbati Bhandar'}</button>
               <h1 className="mt-3 text-3xl sm:text-4xl font-black tracking-tight">We’ll be back soon!</h1>
               <p className="mx-auto mt-4 max-w-md text-sm sm:text-base leading-7 text-slate-200">We’re making a few improvements to serve you better. Online shopping is temporarily paused while we work behind the scenes.</p>
               <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-300/10 px-5 py-2.5 text-sm font-bold text-amber-200"><span className="h-2.5 w-2.5 rounded-full bg-amber-300 animate-pulse" /> Store maintenance in progress</div>
               <p className="mt-8 text-xs text-slate-400">Thank you for your patience • ধন্যবাদ</p>
-              <button
-                type="button"
-                onClick={() => setActiveMode('admin')}
-                className="mt-7 inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-amber-300"
-              >
-                <Lock className="h-4 w-4 text-amber-300" />
-                Owner access
-              </button>
+
             </div>
           </div>
         ) : (
