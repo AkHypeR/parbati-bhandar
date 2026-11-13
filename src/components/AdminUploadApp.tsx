@@ -2010,7 +2010,7 @@ export function AdminUploadApp({
                           className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-xs font-bold text-slate-800 flex items-center gap-1.5 cursor-pointer shadow-2xs"
                         >
                           <Camera className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>Upload Occasion Photo</span>
+                          <span>Choose from Gallery</span>
                         </button>
                         <button
                           type="button"
