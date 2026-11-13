@@ -88,13 +88,16 @@ export function CartDrawer({
   }, [isOpen]);
 
   const getLowStockCountdown = (product: Product): string | null => {
-    const stock = Number(product.stockQuantity);
-    const threshold = Number(product.lowStockThreshold);
-    if (!product.inStock || !Number.isFinite(stock) || !Number.isFinite(threshold) ||
+    // Cart items can contain an older product snapshot. Always read the latest stock
+    // and threshold from the live catalog so the countdown appears consistently.
+    const currentProduct = products.find(item => item.id === product.id) || product;
+    const stock = Number(currentProduct.stockQuantity);
+    const threshold = Number(currentProduct.lowStockThreshold);
+    if (!currentProduct.inStock || !Number.isFinite(stock) || !Number.isFinite(threshold) ||
         stock <= 0 || threshold <= 0 || stock >= threshold) return null;
     try {
       const saved = JSON.parse(localStorage.getItem('parbati_bhandar_low_stock_cart_timers_v1') || '{}');
-      const startedAt = saved?.[product.id];
+      const startedAt = saved?.[currentProduct.id];
       if (typeof startedAt !== 'number' || !Number.isFinite(startedAt)) return '05:00';
       const remaining = Math.max(0, 5 * 60 * 1000 - (timerNow - startedAt));
       const minutes = Math.floor(remaining / 60000);
