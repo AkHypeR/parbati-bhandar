@@ -88,6 +88,7 @@ export default function App() {
   const [storeSettings, setStoreSettings] = useState<StoreSettings>(loadInitialSettings);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [maintenanceUntil, setMaintenanceUntil] = useState<number | null>(null);
+  const [maintenanceNow, setMaintenanceNow] = useState(Date.now());
   const [maintenanceLogoTaps, setMaintenanceLogoTaps] = useState(0);
   const [cart, setCart] = useState<CartMap>(loadInitialCart);
 
@@ -226,6 +227,12 @@ export default function App() {
     const timer = window.setInterval(refreshMaintenance, 30000);
     return () => { cancelled = true; };
   }, []);
+
+  useEffect(() => {
+    if (!maintenanceMode || !maintenanceUntil) return;
+    const tick = window.setInterval(() => setMaintenanceNow(Date.now()), 1000);
+    return () => window.clearInterval(tick);
+  }, [maintenanceMode, maintenanceUntil]);
 
   const handleToggleMaintenance = async () => {
     const next = !maintenanceMode;
@@ -726,8 +733,9 @@ export default function App() {
                 <div className="absolute -right-1 top-3 h-3 w-3 rounded-full bg-amber-300 shadow-[0_0_18px_rgba(252,211,77,0.9)] animate-pulse" />
                 <div className="relative grid h-20 w-20 place-items-center rounded-[1.7rem] border border-amber-200/50 bg-gradient-to-br from-amber-300 via-amber-400 to-orange-500 text-slate-950 shadow-[0_12px_45px_rgba(245,158,11,0.3)] animate-[float_3.5s_ease-in-out_infinite]">
                   <span className="text-5xl drop-shadow-sm" aria-hidden="true">🧺</span>
-                  <span className="absolute -right-2 -top-2 text-xl drop-shadow-md animate-[float_2.8s_ease-in-out_infinite]" aria-hidden="true">🍎</span>
-                  <span className="absolute -bottom-2 -left-2 text-xl drop-shadow-md animate-[float_3.2s_ease-in-out_infinite]" aria-hidden="true">🥬</span>
+                  <span className="absolute -right-4 -top-3 rounded-xl border border-white/60 bg-white px-2 py-1 text-2xl shadow-lg animate-[float_2.8s_ease-in-out_infinite]" aria-hidden="true">🛢️</span>
+                  <span className="absolute -bottom-3 -left-4 rounded-xl border border-white/60 bg-white px-2 py-1 text-2xl shadow-lg animate-[float_3.2s_ease-in-out_infinite]" aria-hidden="true">🌾</span>
+                  <span className="absolute -right-4 -bottom-3 rounded-xl border border-white/60 bg-white px-2 py-1 text-xl shadow-lg animate-[float_3.5s_ease-in-out_infinite]" aria-hidden="true">🧂</span>
                 </div>
               </div>
               <button type="button" aria-label="Parbati Bhandar" onClick={() => setMaintenanceLogoTaps(count => { if (count + 1 >= 5) { setActiveMode('admin'); showToast('Owner portal access'); return 0; } return count + 1; })} className="text-xs font-black uppercase tracking-[0.32em] text-amber-300 cursor-default select-none focus:outline-none">{'Parbati Bhandar'}</button>
@@ -738,6 +746,13 @@ export default function App() {
                 <span>Store maintenance in progress</span>
                 <span className="inline-flex gap-1"><i className="h-1 w-1 rounded-full bg-amber-200 animate-bounce" /><i className="h-1 w-1 rounded-full bg-amber-200 animate-bounce [animation-delay:150ms]" /><i className="h-1 w-1 rounded-full bg-amber-200 animate-bounce [animation-delay:300ms]" /></span>
               </div>
+              {maintenanceUntil && maintenanceUntil > maintenanceNow && (
+                <div className="mx-auto mt-6 max-w-sm rounded-2xl border border-emerald-200/20 bg-emerald-950/30 px-5 py-4">
+                  <p className="text-xs font-bold uppercase tracking-widest text-emerald-100/80">Estimated reopening in</p>
+                  <p className="mt-2 font-mono text-3xl font-black tabular-nums tracking-wider text-white">{String(Math.floor((maintenanceUntil - maintenanceNow) / 3600000)).padStart(2, '0')}:{String(Math.floor(((maintenanceUntil - maintenanceNow) % 3600000) / 60000)).padStart(2, '0')}:{String(Math.floor(((maintenanceUntil - maintenanceNow) % 60000) / 1000)).padStart(2, '0')}</p>
+                  <p className="mt-1 text-[11px] text-emerald-100/70">The store will reopen automatically when the timer ends</p>
+                </div>
+              )}
               <div className="mx-auto mt-8 h-1.5 w-40 overflow-hidden rounded-full bg-white/10"><div className="h-full w-1/2 rounded-full bg-gradient-to-r from-emerald-300 via-amber-300 to-emerald-300 animate-[shimmer_2.2s_ease-in-out_infinite]" /></div>
               <p className="mt-6 text-xs text-slate-400">Thank you for your patience • ধন্যবাদ</p>
 
