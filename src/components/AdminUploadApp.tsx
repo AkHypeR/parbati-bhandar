@@ -40,6 +40,7 @@ import {
 
 interface AdminUploadAppProps {
   products: Product[];
+  productSyncStatus: 'loading' | 'saving' | 'saved' | 'error';
   filteredAdminProducts: Product[];
   storeSettings: StoreSettings;
   maintenanceMode: boolean;
@@ -110,6 +111,7 @@ async function uploadImageToCloudinary(dataUrl: string, folder: string): Promise
 
 export function AdminUploadApp({
   products,
+  productSyncStatus,
   filteredAdminProducts,
   storeSettings,
   maintenanceMode,
@@ -476,6 +478,18 @@ export function AdminUploadApp({
                 </span>
                 <span aria-hidden="true" className="text-slate-300">
                   ·
+                </span>
+                <span
+                  role="status"
+                  aria-live="polite"
+                  className={`inline-flex items-center gap-1 text-[11px] font-bold ${productSyncStatus === 'saved' ? 'text-emerald-700' : productSyncStatus === 'error' ? 'text-red-600' : 'text-amber-700'}`}
+                  title={productSyncStatus === 'error' ? 'The latest product changes could not be confirmed as saved online.' : 'Product catalogue cloud sync status'}
+                >
+                  {productSyncStatus === 'saving' && <RefreshCw className="w-3 h-3 animate-spin" />}
+                  {productSyncStatus === 'loading' && 'Checking cloud…'}
+                  {productSyncStatus === 'saving' && 'Saving…'}
+                  {productSyncStatus === 'saved' && <><CheckCircle2 className="w-3 h-3" /> Saved</>}
+                  {productSyncStatus === 'error' && <><XCircle className="w-3 h-3" /> Sync failed</>}
                 </span>
                 <button
                   type="button"
