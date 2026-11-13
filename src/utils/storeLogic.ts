@@ -983,6 +983,18 @@ export function updateCartQuantity(
 
   const current = existingItem?.qty || 0;
   const next = current + delta;
+  // Enforce the product's total stock across every selected variety/unit.
+  // This is a client-side guard; the order API must still validate stock server-side.
+  if (delta > 0) {
+    if (!product.inStock) return cart;
+    if (Number.isFinite(Number(product.stockQuantity))) {
+      const totalInCart = Object.values(cart).reduce(
+        (total, item) => total + (item.product.id === product.id ? Number(item.qty || 0) : 0),
+        0
+      );
+      if (totalInCart + delta > Number(product.stockQuantity)) return cart;
+    }
+  }
   if (next <= 0) {
     const copy = { ...cart };
     delete copy[actualKey];
