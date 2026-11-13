@@ -21,6 +21,9 @@ import {
   Globe,
   Upload,
   MessageCircle,
+  ClipboardList,
+  Phone,
+  RefreshCw,
 } from 'lucide-react';
 import {
   CATEGORIES,
@@ -44,8 +47,8 @@ interface AdminUploadAppProps {
   onToggleMaintenance: () => void;
   onSetMaintenanceTimer: (durationMinutes: number) => void;
   maintenanceUntil: number | null;
-  adminTab: 'inventory' | 'add' | 'settings' | 'quickReplies';
-  setAdminTab: (tab: 'inventory' | 'add' | 'settings' | 'quickReplies') => void;
+  adminTab: 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders';
+  setAdminTab: (tab: 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders') => void;
   adminSearch: string;
   setAdminSearch: (q: string) => void;
   adminCategoryFilter: string;
@@ -167,6 +170,41 @@ export function AdminUploadApp({
   const [replyCustomerPhone, setReplyCustomerPhone] = useState('');
   const [missingProducts, setMissingProducts] = useState('');
   const [replyNote, setReplyNote] = useState('');
+  type CustomerOrder = { id: string; customerName: string; customerPhone: string; note?: string; items: { name: string; quantity: number; unit: string; price: number }[]; total: number; status: 'new' | 'ready' | 'unavailable' | 'completed' | 'cancelled'; createdAt: number };
+  const [customerOrders, setCustomerOrders] = useState<CustomerOrder[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
+  const loadCustomerOrders = async () => {
+    setOrdersLoading(true);
+    try {
+      const response = await fetch('/api/orders', { credentials: 'same-origin', cache: 'no-store' });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Could not load orders.');
+      setCustomerOrders(Array.isArray(data.orders) ? data.orders : []);
+    } catch (error) { showToast((error as Error).message, 'error'); }
+    finally { setOrdersLoading(false); }
+  };
+  useEffect(() => { if (adminTab === 'orders') loadCustomerOrders(); }, [adminTab]);
+  const updateCustomerOrder = async (id: string, status: CustomerOrder['status']) => {
+    setUpdatingOrderId(id);
+    try {
+      const response = await fetch('/api/orders', { method: 'PATCH', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status }) });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Could not update order.');
+      setCustomerOrders(prev => prev.map(order => order.id === id ? { ...order, status } : order));
+      showToast('Order status updated.');
+    } catch (error) { showToast((error as Error).message, 'error'); }
+    finally { setUpdatingOrderId(null); }
+  };
+  const messageOrderCustomer = (order: CustomerOrder, kind: 'ready' | 'unavailable') => {
+    const phone = order.customerPhone.replace(/\\D/g, '');
+    const lines = order.items.map(item => `• ${item.name} — ${item.unit} × ${item.quantity}`).join('\\n');
+    const message = kind === 'ready'
+      ? `নমস্কার ${order.customerName}! আপনার Parbati Bhandar-এর অর্ডার লিস্ট তৈরি।\\n\\n${lines}\\n\\nআপনি সুবিধামতো দোকান থেকে সংগ্রহ করতে পারেন। ধন্যবাদ।`
+      : `নমস্কার ${order.customerName}, আপনার Parbati Bhandar-এর অর্ডার লিস্টের কিছু পণ্য বর্তমানে স্টকে নেই।\\n\\n${lines}\\n\\nদয়া করে দোকানের সঙ্গে যোগাযোগ করুন। ধন্যবাদ।`;
+    window.open(`https://wa.me/${phone.length === 10 ? '91' + phone : phone}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+  };
+
 
   // Inline Stock & Low Stock Threshold Edits in Inventory List
   const [inlineStockEdits, setInlineStockEdits] = useState<
@@ -526,6 +564,15 @@ export function AdminUploadApp({
 
             <button
               type="button"
+              onClick={() => setAdminTab('orders')}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer whitespace-nowrap shrink-0 ${adminTab === 'orders' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+            >
+              <ClipboardList className="w-4 h-4" />
+              <span>Orders</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => setAdminTab('quickReplies')}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer whitespace-nowrap shrink-0 ${adminTab === 'quickReplies' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
             >
@@ -547,6 +594,53 @@ export function AdminUploadApp({
 
       {/* Main Admin Workspace */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
+
+        {adminTab === 'orders' && (
+          <section className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-4">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">Customer Orders</h2>
+                <p className="text-xs text-slate-500">Pickup requests saved from the customer shopping list.</p>
+              </div>
+              <button type="button" onClick={loadCustomerOrders} disabled={ordersLoading} className="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60">
+                <RefreshCw className={`h-4 w-4 ${ordersLoading ? 'animate-spin' : ''}`} /> Refresh
+              </button>
+            </div>
+            {ordersLoading && customerOrders.length === 0 ? <p className="rounded-xl bg-white p-6 text-center text-sm text-slate-500">Loading orders…</p> : customerOrders.length === 0 ? <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center"><ClipboardList className="mx-auto mb-2 h-8 w-8 text-slate-300" /><p className="font-bold text-slate-700">No customer orders yet</p><p className="mt-1 text-xs text-slate-500">New shopping-list requests will appear here.</p></div> : (
+              <div className="grid gap-3">
+                {customerOrders.map(order => (
+                  <article key={order.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <h3 className="font-extrabold text-slate-900">{order.customerName}</h3>
+                        <a href={`tel:${order.customerPhone}`} className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-emerald-700"><Phone className="h-3 w-3" /> {order.customerPhone}</a>
+                        <p className="mt-1 text-[11px] text-slate-400">{new Date(order.createdAt).toLocaleString('en-IN')}</p>
+                      </div>
+                      <span className={`rounded-full px-3 py-1 text-[11px] font-extrabold uppercase ${order.status === 'new' ? 'bg-blue-100 text-blue-800' : order.status === 'ready' ? 'bg-emerald-100 text-emerald-800' : order.status === 'unavailable' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}`}>{order.status === 'ready' ? 'Ready for pickup' : order.status}</span>
+                    </div>
+                    <div className="my-3 rounded-xl bg-slate-50 p-3">
+                      <div className="mb-2 text-[11px] font-extrabold uppercase tracking-wide text-slate-500">Items ordered</div>
+                      <ul className="space-y-1">{order.items.map((item, index) => <li key={index} className="flex justify-between gap-3 text-xs text-slate-700"><span>{item.name} <span className="text-slate-400">({item.unit})</span></span><strong>× {item.quantity}</strong></li>)}</ul>
+                      <div className="mt-3 flex justify-between border-t border-slate-200 pt-2 text-sm font-extrabold text-slate-900"><span>Estimated total</span><span>₹{Number(order.total || 0).toFixed(2)}</span></div>
+                    </div>
+                    {order.note && <p className="mb-3 rounded-lg bg-amber-50 p-2 text-xs text-amber-900">Note: {order.note}</p>}
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                      <button type="button" disabled={updatingOrderId === order.id} onClick={() => updateCustomerOrder(order.id, 'ready')} className="rounded-lg bg-emerald-600 px-2 py-2 text-xs font-bold text-white disabled:opacity-50">Mark Ready</button>
+                      <button type="button" disabled={updatingOrderId === order.id} onClick={() => updateCustomerOrder(order.id, 'unavailable')} className="rounded-lg bg-amber-400 px-2 py-2 text-xs font-bold text-slate-950 disabled:opacity-50">Unavailable</button>
+                      <button type="button" disabled={updatingOrderId === order.id} onClick={() => updateCustomerOrder(order.id, 'completed')} className="rounded-lg bg-slate-200 px-2 py-2 text-xs font-bold text-slate-800 disabled:opacity-50">Completed</button>
+                      <button type="button" disabled={updatingOrderId === order.id} onClick={() => updateCustomerOrder(order.id, 'cancelled')} className="rounded-lg bg-red-50 px-2 py-2 text-xs font-bold text-red-700 disabled:opacity-50">Cancel</button>
+                    </div>
+                    <div className="mt-2 grid grid-cols-2 gap-2">
+                      <button type="button" onClick={() => messageOrderCustomer(order, 'ready')} className="rounded-lg border border-emerald-200 px-2 py-2 text-xs font-bold text-emerald-800">WhatsApp: Ready</button>
+                      <button type="button" onClick={() => messageOrderCustomer(order, 'unavailable')} className="rounded-lg border border-amber-200 px-2 py-2 text-xs font-bold text-amber-900">WhatsApp: Unavailable</button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+            <p className="text-center text-[11px] text-slate-500">WhatsApp messages open as drafts; review and send them manually. Completed/cancelled orders older than 30 days are automatically cleared.</p>
+          </section>
+        )}
         {adminTab === 'quickReplies' && (
           <section className="mx-auto max-w-2xl rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
             <div className="mb-5 flex items-start gap-3">
