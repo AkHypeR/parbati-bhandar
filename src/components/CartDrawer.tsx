@@ -16,6 +16,7 @@ import { CartItem, Product } from '../utils/storeLogic';
 
 interface CartDrawerProps {
   isOpen: boolean;
+  liveIsOpen: boolean;
   onClose: () => void;
   cartItemsList: CartItem[];
   products: Product[];
@@ -45,6 +46,7 @@ interface CartDrawerProps {
 
 export function CartDrawer({
   isOpen,
+  liveIsOpen,
   onClose,
   cartItemsList,
   products,
@@ -419,7 +421,8 @@ export function CartDrawer({
                   <p className="text-sm font-extrabold text-slate-900">Step 2 of 2 · Place your order</p>
                   <button type="button" onClick={() => { setCheckoutStep('review'); setTurnstileToken(''); }} className="text-xs font-bold text-emerald-700">← Edit order</button>
                 </div>
-                <button type="button" disabled={savingOrder} onClick={async () => {
+                {!liveIsOpen && <div role="status" className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-semibold text-red-800">The store is currently closed. Online orders are paused and will be available when the store opens.</div>}
+                <button type="button" disabled={savingOrder || !liveIsOpen} onClick={async () => {
                   if (!hasCustomerName) { setNameError(true); nameInputRef.current?.focus(); return; }
                   if (!hasCustomerPhone) { setPhoneError(true); return; }
                   if (!turnstileToken) { window.alert('Please complete the security check first.'); return; }
@@ -443,7 +446,7 @@ export function CartDrawer({
                   } finally { setSavingOrder(false); }
                 }} className="w-full flex items-center justify-center gap-2 py-3.5 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm shadow-sm disabled:opacity-60">
                   <MessageCircle className="w-4 h-4" />
-                  <span>{savingOrder ? 'Placing order…' : 'Place Order & Proceed'}</span>
+                  <span>{savingOrder ? 'Placing order…' : liveIsOpen ? 'Place Order & Proceed' : 'Store is closed'}</span>
                 </button>
                 <button type="button" onClick={handleCopyShoppingList} className="w-full py-2 text-xs font-bold text-slate-600">{copiedNotice ? 'Copied Bill!' : 'Copy Text Bill'}</button>
               </>
