@@ -2,12 +2,58 @@ import { json, ownerRequired, type Env } from "../_lib/env";
 import { sendPushNotification } from "@mmmike/web-push/send";
 
 type OrderItem = { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean };
+
+function stockUnitsForOrder(item: OrderItem, product: any): number | null {
+  const clean = (value: unknown) => String(value || "").trim().toLowerCase().replace(/\\s+/g, " ");
+  const itemUnit = clean(item.unit);
+  const stockUnit = clean(product.unit);
+  if (itemUnit === stockUnit) return Number(item.quantity);
+
+  const measure = (value: string): { dimension: string; base: number } | null => {
+    const match = value.match(/(\\d+(?:\\.\\d+)?)\\s*(kg|kgs|kilograms?|g|gm|grams?|l|litres?|liters?|ml|millilitres?|milliliters?)\\b/i);
+    if (!match) return null;
+    const amount = Number(match[1]);
+    const unit = match[2].toLowerCase();
+    if (["kg", "kgs", "kilogram", "kilograms"].includes(unit)) return { dimension: "mass", base: amount * 1000 };
+    if (["g", "gm", "gram", "grams"].includes(unit)) return { dimension: "mass", base: amount };
+    if (["l", "litre", "litres", "liter", "liters"].includes(unit)) return { dimension: "volume", base: amount * 1000 };
+    return { dimension: "volume", base: amount };
+  };
+  const requested = measure(itemUnit);
+  const stored = measure(stockUnit);
+  if (requested && stored && requested.dimension === stored.dimension && stored.base > 0) {
+    return Number(item.quantity) * requested.base / stored.base;
+  }
+
+  // Pack bundles and common piece-count varieties are expressed in the
+  // product's stock unit, not as a separate inventory SKU.
+  if (/(packet|pack|pouch|bottle|jar|bag)/i.test(stockUnit)) {
+    const packCount = itemUnit.match(/(\\d+)\\s*[- ]?pack/i);
+    if (packCount) return Number(item.quantity) * Number(packCount[1]);
+    if (/(single pack|1 pack|packet|pouch|bottle|jar|bag)/i.test(itemUnit)) return Number(item.quantity);
+  }
+  if (/pair/i.test(stockUnit)) {
+    const pieces = itemUnit.match(/(\\d+)\\s*(piece|pieces|pcs)/i);
+    if (pieces) return Number(item.quantity) * Number(pieces[1]) / 2;
+    if (/dozen/i.test(itemUnit)) return Number(item.quantity) * 6;
+    if (/pair/i.test(itemUnit)) return Number(item.quantity);
+  }
+  return null;
+}
 const ensureTable = async (env: Env) => {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS push_subscriptions (order_id TEXT PRIMARY KEY, subscription_json TEXT NOT NULL, created_at INTEGER NOT NULL)`).run();
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS customer_orders (
    id TEXT PRIMARY KEY, customer_name TEXT NOT NULL, customer_phone TEXT NOT NULL,
    note TEXT, items_json TEXT NOT NULL, total REAL NOT NULL, status TEXT NOT NULL DEFAULT 'new',
    created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, order_number INTEGER
+  )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS order_stock_deductions (
+    order_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL,
+    PRIMARY KEY (order_id, product_id)
+  )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS order_stock_deduction_guard (
+    order_id TEXT PRIMARY KEY, expected_count INTEGER NOT NULL, actual_count INTEGER NOT NULL,
+    CHECK (expected_count = actual_count)
   )`).run();
   const columns = await env.DB.prepare("PRAGMA table_info(customer_orders)").all<any>();
   if (!(columns.results || []).some((column: any) => column.name === "order_number")) {
@@ -84,28 +130,90 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
     ...item,
     unavailable: Array.isArray(body.items) ? !!body.items[index]?.unavailable : !!item.unavailable
   }));
-  // Deduct inventory only on the transition into Ready, never on an item-toggle
-  // save against an order that was already marked Ready.
+  // Require an explicit review before Ready. This prevents accidental stock
+  // deductions from an unopened/new order.
+  if (status === "ready" && order.status === "new") {
+    return json({error:"Review this order before confirming it as ready."},409);
+  }
+  if (status === "completed" && order.status !== "ready" && order.status !== "completed") {
+    return json({error:"Only a ready order can be marked completed."},409);
+  }
   if (status === "ready" && order.status !== "ready" && !Number(order.stock_deducted || 0)) {
-    const updates: Array<{id:string; data:string; updatedAt:number}> = [];
+    if (items.length && items.every(item => item.unavailable)) {
+      return json({error:"All items are marked unavailable. At least one available item is required to mark this order ready."},409);
+    }
+
+    // Aggregate lines for the same product so different cart varieties/weights
+    // are deducted together from the single inventory record.
+    const deductions = new Map<string, { quantity: number; product: any; updatedAt: number }>();
     for (const item of items) {
       if (item.unavailable || !item.productId) continue;
-      const row = await env.DB.prepare("SELECT data FROM products WHERE id=?").bind(item.productId).first<any>();
+      const row = await env.DB.prepare("SELECT data,updated_at FROM products WHERE id=?").bind(item.productId).first<any>();
       if (!row) continue;
       const product = JSON.parse(row.data);
       if (typeof product.stockQuantity !== "number") continue;
-      if (String(item.unit).trim().toLowerCase() !== String(product.unit || "").trim().toLowerCase()) return json({error:"Stock unit mismatch for " + item.name + ". Review the product unit before confirming."},409);
-      if (product.stockQuantity < item.quantity) return json({error:"Not enough stock for " + item.name + ". Mark it unavailable or update stock."},409);
-      product.stockQuantity = Math.max(0, product.stockQuantity - item.quantity);
-      if (product.stockQuantity === 0) product.inStock = false;
-      product.updatedAt = Date.now();
-      updates.push({id:item.productId,data:JSON.stringify(product),updatedAt:product.updatedAt});
+      const units = stockUnitsForOrder(item, product);
+      if (units === null || !Number.isFinite(units) || units <= 0) {
+        return json({error:"Could not match the ordered unit for " + item.name + " with its stock unit (" + String(product.unit || "not set") + "). Update the product unit before confirming."},409);
+      }
+      const current = deductions.get(item.productId) || { quantity: 0, product, updatedAt: Date.now() };
+      current.quantity += units;
+      deductions.set(item.productId, current);
     }
-    const claimed = await env.DB.prepare("UPDATE customer_orders SET stock_deducted=1 WHERE id=? AND stock_deducted=0").bind(id).run();
-    if (!claimed.meta.changes) return json({error:"Stock was already deducted for this order."},409);
-    for (const u of updates) await env.DB.prepare("UPDATE products SET data=?,updated_at=? WHERE id=?").bind(u.data,u.updatedAt,u.id).run();
+
+    for (const [productId, entry] of deductions) {
+      if (entry.product.stockQuantity < entry.quantity) {
+        return json({error:"Not enough stock for " + entry.product.name + ". Mark it unavailable or update stock."},409);
+      }
+    }
+
+    // D1 executes batch statements transactionally. The temporary state (2)
+    // prevents concurrent Ready clicks from deducting the same order twice.
+    // SQL decrements the current JSON stock value, and the guard table forces
+    // the entire transaction to roll back if any product has changed/ran short.
+    const statements: D1PreparedStatement[] = [
+      env.DB.prepare("UPDATE customer_orders SET stock_deducted=2 WHERE id=? AND stock_deducted=0 AND status!='ready'").bind(id)
+    ];
+    for (const [productId, entry] of deductions) {
+      const qty = entry.quantity;
+      const now = Date.now();
+      statements.push(
+        env.DB.prepare(`UPDATE products
+          SET data = json_set(
+            data,
+            '$.stockQuantity', json_extract(data,'$.stockQuantity') - ?,
+            '$.inStock', CASE WHEN json_extract(data,'$.stockQuantity') - ? <= 0 THEN json('false') ELSE json_extract(data,'$.inStock') END,
+            '$.updatedAt', ?
+          ), updated_at=?
+          WHERE id=? AND json_type(data,'$.stockQuantity') IN ('integer','real')
+            AND json_extract(data,'$.stockQuantity') >= ?
+            AND EXISTS (SELECT 1 FROM customer_orders WHERE id=? AND stock_deducted=2)`)
+          .bind(qty, qty, now, now, productId, qty, id),
+        env.DB.prepare(`INSERT INTO order_stock_deductions (order_id,product_id,quantity)
+          SELECT ?,?,? WHERE changes()=1
+            AND EXISTS (SELECT 1 FROM customer_orders WHERE id=? AND stock_deducted=2)`)
+          .bind(id, productId, qty, id)
+      );
+    }
+    statements.push(
+      env.DB.prepare(`INSERT INTO order_stock_deduction_guard (order_id,expected_count,actual_count)
+        SELECT ?,?,(SELECT COUNT(*) FROM order_stock_deductions WHERE order_id=?)`)
+        .bind(id, deductions.size, id),
+      env.DB.prepare("UPDATE customer_orders SET stock_deducted=1,status='ready',items_json=?,updated_at=? WHERE id=? AND stock_deducted=2")
+        .bind(JSON.stringify(items), Date.now(), id)
+    );
+    try {
+      const results = await env.DB.batch(statements);
+      if (!results[0]?.meta?.changes) return json({error:"This order has already had its stock deducted. Refresh the order list."},409);
+      // The guard row is retained as an audit record and blocks a second deduction.
+    } catch (error) {
+      console.error("Atomic order stock deduction failed", error);
+      return json({error:"Stock changed while this order was being confirmed. Refresh the order, review availability, and try again."},409);
+    }
+  } else {
+    await env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,updated_at=? WHERE id=?")
+      .bind(status,JSON.stringify(items),Date.now(),id).run();
   }
-  const result = await env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,updated_at=? WHERE id=?").bind(status,JSON.stringify(items),Date.now(),id).run();
   let notification = "not-configured";
   if (["ready","unavailable","completed","cancelled"].includes(status) && env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.VAPID_SUBJECT) {
     const saved = await env.DB.prepare("SELECT subscription_json FROM push_subscriptions WHERE order_id=?").bind(id).first<any>();
