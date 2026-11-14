@@ -127,13 +127,19 @@ export default function App() {
   const getAppPath = () => window.location.pathname.replace(/\/+$/, '') || '/';
   const adminRouteTabs = { '/owner': 'inventory', '/owner/inventory': 'inventory', '/owner/add-product': 'add', '/owner/orders': 'orders', '/owner/settings': 'settings', '/owner/whatsapp-replies': 'quickReplies' } as const;
   const getAdminTabFromPath = () => adminRouteTabs[getAppPath() as keyof typeof adminRouteTabs] || 'inventory';
-  const [activeMode, setActiveModeState] = useState<'customer' | 'admin'>(() => getAppPath().startsWith('/owner') ? 'admin' : 'customer');
-  const setActiveMode = (mode: 'customer' | 'admin') => {
-    const nextPath = mode === 'admin' ? '/owner/inventory' : '/';
-    if (getAppPath() !== nextPath) window.history.pushState({}, '', nextPath);
-    setActiveModeState(mode);
-    if (mode === 'admin') setAdminTabState(getAdminTabFromPath());
+  const [currentPath, setCurrentPath] = useState(() => getAppPath());
+  const navigateToPath = (path: string) => {
+    if (getAppPath() !== path) window.history.pushState({}, '', path);
+    setCurrentPath(path);
+    if (path.startsWith('/owner')) {
+      setActiveModeState('admin');
+      setAdminTabState(adminRouteTabs[path as keyof typeof adminRouteTabs] || 'inventory');
+    } else {
+      setActiveModeState('customer');
+    }
   };
+  const [activeMode, setActiveModeState] = useState<'customer' | 'admin'>(() => getAppPath().startsWith('/owner') ? 'admin' : 'customer');
+  const setActiveMode = (mode: 'customer' | 'admin') => navigateToPath(mode === 'admin' ? '/owner/inventory' : '/');
   const [isOwnerUnlocked, setIsOwnerUnlocked] = useState(false);
   const [ownerPassword, setOwnerPassword] = useState('');
   const [pinError, setPinError] = useState('');
@@ -184,9 +190,7 @@ export default function App() {
   const [adminTab, setAdminTabState] = useState<'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders'>(() => getAdminTabFromPath());
   const adminTabRoutes = { inventory: '/owner/inventory', add: '/owner/add-product', orders: '/owner/orders', settings: '/owner/settings', quickReplies: '/owner/whatsapp-replies' } as const;
   const setAdminTab = (tab: 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders') => {
-    const nextPath = adminTabRoutes[tab];
-    if (getAppPath() !== nextPath) window.history.pushState({}, '', nextPath);
-    setAdminTabState(tab);
+    navigateToPath(adminTabRoutes[tab]);
   };
   const [adminSearch, setAdminSearch] = useState('');
   const [adminCategoryFilter, setAdminCategoryFilter] = useState('all');
@@ -479,6 +483,7 @@ export default function App() {
   useEffect(() => {
     const syncRoute = () => {
       const path = getAppPath();
+      setCurrentPath(path);
       if (path.startsWith('/owner')) {
         setActiveModeState('admin');
         setAdminTabState(getAdminTabFromPath());
@@ -991,6 +996,8 @@ export default function App() {
         <>
           <CustomerStorefront
             storeSettings={storeSettings}
+            currentPage={currentPath === '/track-order' ? 'track' : currentPath === '/previous-orders' ? 'history' : currentPath === '/cart' ? 'cart' : 'home'}
+            onNavigate={navigateToPath}
             liveIsOpen={liveIsOpen}
             inStockCount={inStockCount}
             products={products}
@@ -1021,10 +1028,10 @@ export default function App() {
             }}
           />
           <CartDrawer
-            isOpen={isCartOpen}
+            isOpen={currentPath === '/cart'}
             liveIsOpen={liveIsOpen}
             products={products}
-            onClose={() => setIsCartOpen(false)}
+            onClose={() => navigateToPath('/')}
             cartItemsList={cartItemsList}
             cartTotalItems={cartTotalItems}
             cartTotalPrice={cartTotalPrice}
