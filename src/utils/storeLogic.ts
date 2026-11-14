@@ -857,11 +857,12 @@ export function buildHeroSlides(
 ): HeroSlide[] {
   const slides: HeroSlide[] = [];
   const occasionImage = settings.occasionImageUrl || '';
-  const isChhathOccasion = /chhath|ছট/i.test(`${settings.occasionTitle || ''} ${settings.occasionTag || ''} ${occasionImage}`);
+  const isChhathOccasion = /chhath|ছট\s*(পূজা|পুজো)?/i.test(`${settings.occasionTitle || ''} ${settings.occasionSubtitle || ''} ${settings.occasionTag || ''} ${occasionImage}`);
   const hasCustomOccasion = Boolean(settings.occasionTitle?.trim() || occasionImage.trim());
-  // A blank occasion setting gets the ready-to-use Christmas campaign.
-  // Any owner-selected occasion (including older Chhath settings) is preserved.
-  const shouldShowOccasion = settings.showOccasionBanner === true || !hasCustomOccasion;
+  // Chhath is a dedicated seasonal campaign: keep its hero visible even if an
+  // older saved setting has the generic occasion-banner switch turned off.
+  // Other owner-selected occasions continue to respect the normal switch.
+  const shouldShowOccasion = isChhathOccasion || settings.showOccasionBanner === true || !hasCustomOccasion;
   if (shouldShowOccasion) {
     slides.push({
       type: 'festive',
