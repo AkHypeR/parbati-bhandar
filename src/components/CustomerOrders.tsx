@@ -27,7 +27,6 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
   const [editing, setEditing] = useState(false);
   const [editQuantities, setEditQuantities] = useState<number[]>([]);
   const [editAdditions, setEditAdditions] = useState<Array<{ productId: string; quantity: number }>>([]);
-  const [selectedAddProductId, setSelectedAddProductId] = useState('');
   const [addProductSearch, setAddProductSearch] = useState('');
   const [savingAction, setSavingAction] = useState(false);
   const [actionMessage, setActionMessage] = useState('');
