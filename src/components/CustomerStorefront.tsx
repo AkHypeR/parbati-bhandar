@@ -1054,6 +1054,56 @@ export function CustomerStorefront({
         )}
       </section>
 
+      {/* Deals of the Day — owner-curated, multi-product quick-add shelf */}
+      {storeSettings.dealsOfDayEnabled === true && (() => {
+        const dealProducts = (storeSettings.dealProductIds || [])
+          .map(id => products.find(product => product.id === id))
+          .filter((product): product is Product => Boolean(product && product.inStock));
+        if (!dealProducts.length) return null;
+        return (
+          <section aria-label="Deals of the Day" className="max-w-5xl mx-auto w-full px-3.5 sm:px-6 pb-4">
+            <div className="overflow-hidden rounded-2xl border border-rose-200 bg-gradient-to-r from-rose-50 via-white to-orange-50 shadow-sm">
+              <div className="flex items-center justify-between gap-2 px-3.5 sm:px-4 py-3 border-b border-rose-100">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="w-9 h-9 rounded-xl bg-rose-500 text-white flex items-center justify-center text-lg shadow-sm">🔥</span>
+                  <div className="min-w-0">
+                    <h2 className="text-sm sm:text-base font-black text-slate-900">Deals of the Day</h2>
+                    <p className="text-[10px] sm:text-xs text-slate-500">Today’s picks • আজকের সেরা অফার</p>
+                  </div>
+                </div>
+                <span className="shrink-0 rounded-full bg-rose-100 px-2.5 py-1 text-[10px] font-black text-rose-700">{dealProducts.length} DEAL{dealProducts.length === 1 ? '' : 'S'}</span>
+              </div>
+              <div className="flex gap-3 overflow-x-auto p-3 snap-x snap-mandatory">
+                {dealProducts.map(product => {
+                  const discount = calculateDiscountDetails(product.price, product.mrp);
+                  const cartKey = makeCartKey(product.id, product.unit || '1 unit');
+                  const quantity = cart[cartKey]?.qty || cart[product.id]?.qty || 0;
+                  return (
+                    <article key={product.id} className="w-[148px] sm:w-[172px] shrink-0 snap-start rounded-xl border border-rose-100 bg-white p-2.5 shadow-sm">
+                      <div className="relative flex h-24 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-50 to-amber-50 overflow-hidden">
+                        {product.imageUrl ? (
+                          <img src={product.imageUrl} alt={product.name} loading="lazy" referrerPolicy="no-referrer" className="h-full w-full object-contain p-2" />
+                        ) : <span className="text-4xl">{product.emoji || '🛍️'}</span>}
+                        {discount.hasDiscount && <span className="absolute left-1.5 top-1.5 rounded-md bg-rose-600 px-1.5 py-0.5 text-[9px] font-black text-white">{discount.discountPercent}% OFF</span>}
+                      </div>
+                      <h3 className="mt-2 h-9 overflow-hidden text-[11px] font-extrabold leading-4 text-slate-800">{product.name}</h3>
+                      <p className="mt-1 text-[10px] text-slate-500">{product.unit}</p>
+                      <div className="mt-1 flex items-baseline gap-1.5">
+                        <span className="text-sm font-black text-slate-900">₹{product.price}</span>
+                        {discount.hasDiscount && <span className="text-[10px] text-slate-400 line-through">₹{product.mrp}</span>}
+                      </div>
+                      <button type="button" onClick={() => updateCartQty(product, 1)} className="mt-2 flex w-full items-center justify-center gap-1 rounded-lg border border-emerald-600 bg-emerald-50 py-2 text-xs font-black text-emerald-700 hover:bg-emerald-600 hover:text-white active:scale-[.98]">
+                        <Plus className="h-3.5 w-3.5" /> {quantity > 0 ? `ADD MORE · ${quantity}` : 'ADD'}
+                      </button>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        );
+      })()}
+
       {/* ===================================================================== */}
       {/* MAIN GROCERY CATALOG GRID                                             */}
       {/* ===================================================================== */}
