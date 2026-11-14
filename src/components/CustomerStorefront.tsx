@@ -612,7 +612,7 @@ export function CustomerStorefront({
                 className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white text-slate-900 placeholder-slate-400 text-xs sm:text-sm font-medium border border-blue-200 shadow-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
                 autoComplete="off"
               />
-              {searchSuggestions.length > 0 && <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl"><p className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Suggested products</p>{searchSuggestions.map(product => <button key={product.id} type="button" onClick={() => { setSearchQuery(product.name); setIsSearchSubmitted(true); setSelectedCategory("all"); setInStockOnly(false); setTimeout(() => catalogSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50); }} className="flex min-h-12 w-full items-center gap-3 border-t border-slate-100 px-4 py-3 text-left text-sm font-semibold text-slate-800 hover:bg-blue-50 active:bg-blue-100"><span className="min-w-0 truncate">{product.name}</span></button>)}</div>}
+              {/* Search is a live filter: keep the header clean and show matching products only below. */}
               {searchQuery && (
                 <button
                   type="button"
@@ -1122,7 +1122,7 @@ export function CustomerStorefront({
         ref={catalogSectionRef}
         className="max-w-6xl mx-auto px-3.5 sm:px-6 py-5 flex-1 w-full"
       >
-        {searchQuery.trim() && <div className="mb-4 border-b border-slate-100 pb-3"><h2 className="text-base font-extrabold text-slate-900">Search results <span className="ml-1 text-xs font-semibold text-slate-500">· {filteredCustomerProducts.length} products</span></h2></div>}
+        {searchQuery.trim() && <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-white px-4 py-3 shadow-sm"><div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-[.16em] text-blue-700">Your search</p><h2 className="truncate text-base font-extrabold text-slate-900">{filteredCustomerProducts.length} {filteredCustomerProducts.length === 1 ? "product" : "products"} found</h2><p className="truncate text-xs text-slate-500">Matching “{searchQuery.trim()}”</p></div><button type="button" onClick={() => {setSearchQuery("");setIsSearchSubmitted(false);setSelectedCategory("all");setInStockOnly(false);}} className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs font-bold text-slate-700 hover:bg-slate-100"><X className="h-3.5 w-3.5"/> Clear</button></div>}
         {/* Search mode shows only the matching product list, without extra filters. */}
         {!searchQuery.trim() && <div className="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
           <div>
@@ -1192,7 +1192,7 @@ export function CustomerStorefront({
             </button>
           </div>
         ) : (
-          <div className="pb-product-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
+          <div className={searchQuery.trim() ? "pb-product-grid mx-auto grid w-full max-w-3xl grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4" : "pb-product-grid grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4"}>
             {filteredCustomerProducts.map((product) => {
               const activeOpt = getActiveOptionForProduct(product);
               const activeCartKey = makeCartKey(product.id, activeOpt.label);
@@ -1214,7 +1214,7 @@ export function CustomerStorefront({
               return (
                 <div
                   key={product.id}
-                  className={`pb-product-card group bg-white rounded-xl sm:rounded-2xl border border-blue-100 shadow-[0_2px_10px_rgba(16,80,45,0.05)] transition-all flex flex-col justify-between overflow-hidden min-w-0 hover:shadow-lg hover:-translate-y-0.5 ${
+                  className={`pb-product-card group bg-white rounded-2xl border border-slate-200 shadow-[0_3px_14px_rgba(15,23,42,0.06)] transition-all flex flex-col justify-between overflow-hidden min-w-0 hover:shadow-lg hover:-translate-y-0.5 ${
                     product.inStock
                       ? 'border-blue-100 hover:border-blue-400 hover:shadow-md'
                       : 'border-slate-200 opacity-70 bg-slate-50'
@@ -1222,7 +1222,7 @@ export function CustomerStorefront({
                 >
                   <div>
                     {/* Product Visual Box */}
-                    <div className="pb-product-image relative aspect-square w-full max-h-44 bg-gradient-to-br from-[#f5f8ff] to-[#eaf1ff] flex items-center justify-center p-2.5 sm:p-4 border-b border-blue-50">
+                    <div className={`pb-product-image relative aspect-[16/9] sm:aspect-square w-full max-h-44 bg-gradient-to-br from-[#f5f8ff] to-[#eaf1ff] flex items-center justify-center p-3 sm:p-4 border-b border-blue-50 ${searchQuery.trim() ? "sm:max-h-40" : ""}`}>
                       {product.imageUrl ? (
                         <img
                           src={product.imageUrl}
@@ -1429,7 +1429,7 @@ export function CustomerStorefront({
                   </div>
 
                   {/* Price, Auto Discount Summary & Add to List Footer */}
-                  <div className="px-2.5 sm:px-3.5 pb-3 sm:pb-3.5 pt-2 flex flex-wrap sm:flex-nowrap items-end justify-between gap-2 border-t border-slate-100/80">
+                  <div className="px-3 sm:px-3.5 pb-3 sm:pb-3.5 pt-3 flex flex-nowrap items-center justify-between gap-2 border-t border-slate-100/80 bg-slate-50/60">
                     <div>
                       <div className="text-[11px] text-slate-500 font-medium flex items-center gap-1.5">
                         <span>Selected:</span>
@@ -1471,7 +1471,7 @@ export function CustomerStorefront({
                           <span>Add</span>
                         </button>
                       ) : (
-                        <div className="flex w-[116px] max-w-full items-center justify-between bg-blue-600 text-white rounded-xl overflow-hidden shadow-xs shrink-0">
+                        <div className="flex w-[112px] min-w-[112px] items-center justify-between bg-blue-700 text-white rounded-xl overflow-hidden shadow-sm ring-1 ring-blue-800/10 shrink-0">
                           <button
                             type="button"
                             aria-label={`Decrease quantity of ${product.name}`}
