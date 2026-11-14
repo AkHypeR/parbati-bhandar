@@ -16,6 +16,8 @@ import { CartItem, Product } from '../utils/storeLogic';
 
 interface CartDrawerProps {
   isOpen: boolean;
+  customerAuthenticated: boolean;
+  onRequireLogin: () => void;
   liveIsOpen: boolean;
   onClose: () => void;
   cartItemsList: CartItem[];
@@ -46,6 +48,8 @@ interface CartDrawerProps {
 
 export function CartDrawer({
   isOpen,
+  customerAuthenticated,
+  onRequireLogin,
   liveIsOpen,
   onClose,
   cartItemsList,
@@ -291,6 +295,7 @@ export function CartDrawer({
                     required
                     aria-label="Customer Name (Required)"
                     value={customerName}
+                    readOnly={customerAuthenticated}
                     onChange={(e) => {
                       setCustomerName(e.target.value);
                       if (e.target.value.trim()) {
@@ -318,18 +323,19 @@ export function CartDrawer({
 
                 <div className="space-y-1">
                   <label htmlFor="cart-customer-phone" className="text-xs font-extrabold text-slate-800">Phone number (WhatsApp) *</label>
-                  <input id="cart-customer-phone" type="tel" inputMode="tel" value={customerPhone} onChange={e => { setCustomerPhone(e.target.value); setPhoneError(false); }} placeholder="Enter 10-digit mobile number" className={"w-full px-3.5 py-2.5 rounded-xl border bg-white text-xs sm:text-sm font-bold " + (phoneError ? "border-red-400" : "border-slate-300")} />
+                  <input id="cart-customer-phone" type="tel" inputMode="tel" value={customerPhone} readOnly={customerAuthenticated} onChange={e => { setCustomerPhone(e.target.value); setPhoneError(false); }} placeholder="Enter 10-digit mobile number" className={"w-full px-3.5 py-2.5 rounded-xl border bg-white text-xs sm:text-sm font-bold " + (phoneError ? "border-red-400" : "border-slate-300")} />
                   {phoneError && <p className="text-xs font-bold text-red-600">Enter a valid phone number (at least 10 digits).</p>}
                 </div>
-                <label className="flex items-start gap-2 text-[11px] text-slate-600">
-                  <input
-                    type="checkbox"
-                    checked={rememberCustomerDetails}
-                    onChange={(e) => setRememberCustomerDetails(e.target.checked)}
-                    className="mt-0.5 accent-emerald-700"
-                  />
-                  <span><strong>Remember my name and phone on this device</strong><br />Optional. Saved only in this browser to make your next checkout faster. You can untick this anytime.</span>
-                </label>
+                {!customerAuthenticated && <label className="flex items-start gap-2 text-[11px] text-slate-600">
+                                  <input
+                                    type="checkbox"
+                                    checked={rememberCustomerDetails}
+                                    onChange={(e) => setRememberCustomerDetails(e.target.checked)}
+                                    className="mt-0.5 accent-emerald-700"
+                                  />
+                                  <span><strong>Remember my name and phone on this device</strong><br />Optional. Saved only in this browser to make your next checkout faster. You can untick this anytime.</span>
+                                </label>}
+                {customerAuthenticated && <p className="rounded-lg bg-emerald-50 px-3 py-2 text-[11px] font-semibold text-emerald-800">Signed-in account details are being used for this order.</p>}
                 <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 space-y-2">
                   <div className="text-xs font-bold text-emerald-900">Order status notifications (optional)</div>
                   <p className="text-[11px] text-emerald-800">Get an alert when your order is ready, unavailable, cancelled or completed. Allow notifications on this device.</p>
@@ -502,8 +508,8 @@ export function CartDrawer({
             </div>
             {checkoutStep === 'review' ? (
               <>
-                <button type="button" onClick={() => setCheckoutStep('checkout')} className="w-full flex items-center justify-center gap-2 py-3.5 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm shadow-sm">
-                  Confirm my order <span aria-hidden="true">→</span>
+                <button type="button" onClick={() => customerAuthenticated ? setCheckoutStep('checkout') : onRequireLogin()} className="w-full flex items-center justify-center gap-2 py-3.5 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm shadow-sm">
+                  {customerAuthenticated ? <>Confirm my order <span aria-hidden="true">→</span></> : <>Sign in to continue checkout <span aria-hidden="true">→</span></>}
                 </button>
                 <div className="grid grid-cols-2 gap-2">
                   <button type="button" onClick={handleCopyShoppingList} className="py-2.5 rounded-xl border border-slate-300 bg-white text-slate-800 font-bold text-xs">{copiedNotice ? 'Copied Bill!' : 'Copy Text Bill'}</button>
