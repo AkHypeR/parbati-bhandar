@@ -1,0 +1,40 @@
+name: Verify Android app bundles
+
+on:
+  push:
+    paths:
+      - "mobile/**"
+      - ".github/workflows/verify-mobile-apps.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "mobile/**"
+      - ".github/workflows/verify-mobile-apps.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [customer, owner]
+    defaults:
+      run:
+        working-directory: mobile/${{ matrix.app }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.1
+      - name: Install app dependencies
+        run: npm install --no-audit --no-fund
+      - name: Validate Expo configuration
+        run: npx expo config --type public
+      - name: Bundle Android JavaScript
+        run: npx expo export --platform android
