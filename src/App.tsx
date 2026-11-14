@@ -267,40 +267,8 @@ export default function App() {
       showToast('Maintenance timer set. Storefront will reopen automatically.');
     } catch (error) { showToast((error as Error).message, 'error'); }
   };
-  // Hold finite inventory while items remain in the customer's cart. Holds
-  // expire after 10 minutes and are refreshed every 3 minutes; checkout transfers
-  // the hold into the order reservation so two shoppers cannot claim the last unit.
-  useEffect(() => {
-    if (!cloudReady || activeMode !== 'customer' || isOwnerUnlocked) return;
-    const syncCartHold = () => {
-      const items = Object.values(cart).map(item => ({
-        productId: item.product.id,
-        quantity: Number(item.qty || 0),
-        unit: item.selectedUnit || item.product.unit || '1 unit'
-      }));
-      // Do not call the reservation endpoint for an empty cart. This effect
-      // runs when the storefront first loads, and an empty cart has nothing
-      // to reserve; calling the API here can surface a needless 404 toast.
-      if (items.length === 0) return;
-      reservationQueueRef.current = reservationQueueRef.current.catch(() => {}).then(async () => {
-        const response = await fetch('/api/cart-reservations', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ reservationId: cartReservationId.current, items })
-        });
-        const responseText = await response.text();
-        let data: any = {};
-        try { data = responseText ? JSON.parse(responseText) : {}; } catch { /* Cloudflare may return an HTML error page. */ }
-        if (!response.ok) {
-          const detail = data.error || (response.status ? `Reservation service returned HTTP ${response.status}.` : 'Reservation service did not respond.');
-          showToast(detail, 'error');
-        }
-      }).catch((error) => {
-        console.error('Cart stock reservation request failed', error);
-        showToast('Could not reach the stock reservation service. Check your connection and refresh the store.', 'error');
-      });
-    };
-    syncCartHold();
-  }, [cart, cloudReady, activeMode, isOwnerUnlocked]);
+  // Cart items do not reserve inventory. Stock is checked and deducted
+  // atomically by the order API only after a customer places an order.
 
   // Low-stock cart expiry is persisted so it still works after refreshes or when a phone
   // temporarily suspends the browser tab. The expiry is checked once per second.
