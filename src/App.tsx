@@ -837,6 +837,21 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
+      {currentPath !== '/' && (
+        <div className="sticky top-0 z-[60] border-b border-emerald-100 bg-white/95 shadow-sm backdrop-blur-sm">
+          <div className="mx-auto flex w-full max-w-7xl items-center px-3 py-2 sm:px-6">
+            <button
+              type="button"
+              onClick={() => navigateToPath('/')}
+              className="inline-flex min-h-10 items-center gap-2 rounded-xl px-3 text-sm font-extrabold text-emerald-800 transition-colors hover:bg-emerald-50 active:bg-emerald-100"
+              aria-label="Go to homepage"
+            >
+              <span aria-hidden="true" className="text-lg leading-none">⌂</span>
+              <span>Back to Homepage</span>
+            </button>
+          </div>
+        </div>
+      )}
       {/* ================================================================= */}
       {/* TOP BAR SHOWN ONLY IN OWNER ADMIN MODE (Hidden from Customers!)   */}
       {/* ================================================================= */}
