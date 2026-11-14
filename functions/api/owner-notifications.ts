@@ -48,7 +48,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       const outcomes = await Promise.all(chunk.map(async (row: any) => {
         try {
           const delivered = await sendPushNotification(JSON.parse(row.subscription_json), {
-            title, body: message, url: "/account", tag: "store-announcement-" + crypto.randomUUID()
+            title, body: message, url: "/notifications", tag: "store-announcement-" + crypto.randomUUID()
           }, {
             publicKey: env.VAPID_PUBLIC_KEY!, privateKey: env.VAPID_PRIVATE_KEY!, subject: env.VAPID_SUBJECT!
           }, { ttl: 86400, urgency: "normal" });
