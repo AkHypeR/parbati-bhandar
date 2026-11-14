@@ -24,6 +24,7 @@ import {
   QrCode,
   Scale,
   User,
+  Bell,
   ChevronDown,
   ChevronUp,
   ChevronLeft,
@@ -53,7 +54,7 @@ interface CustomerStorefrontProps {
   darkMode: boolean;
   onToggleDarkMode: () => void;
   storeSettings: StoreSettings;
-  currentPage: 'home' | 'track' | 'history' | 'cart';
+  currentPage: 'home' | 'track' | 'history' | 'cart' | 'notifications';
   onNavigate: (path: string) => void;
   liveIsOpen: boolean;
   inStockCount: number;
@@ -439,11 +440,20 @@ export function CustomerStorefront({
               <button
                 type="button"
                 onClick={() => onNavigate('/account')}
-                aria-label="My account and orders"
+                aria-label="My profile and orders"
                 aria-expanded={currentPage === 'history'}
                 className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 border border-white/20 flex items-center justify-center text-white cursor-pointer shrink-0 transition-colors"
               >
                 <User className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('/notifications')}
+                aria-label="Store notifications"
+                aria-current={currentPage === 'notifications' ? 'page' : undefined}
+                className={'relative w-9 h-9 rounded-full border flex items-center justify-center text-white cursor-pointer shrink-0 transition-colors ' + (currentPage === 'notifications' ? 'bg-white/30 border-white/50' : 'bg-white/15 hover:bg-white/25 border-white/20')}
+              >
+                <Bell className="w-4 h-4" />
               </button>
             </div>
 
