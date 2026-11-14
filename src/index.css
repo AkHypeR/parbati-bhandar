@@ -1,5 +1,26 @@
 @import "tailwindcss";
 
+/* Parbati Bhandar colour system
+   Primary: midnight navy (#172554) for brand surfaces and strong headings.
+   Action: royal blue (#2563eb) for primary buttons, links and selected states.
+   Accent: warm saffron (#f6c744) for highlights, offers and key attention cues.
+   Canvas: cool porcelain (#f5f7fb); cards: white; text: slate (#0f172a).
+   Semantic: blue = active/available; amber = caution; rose = errors/destructive.
+   Use one dominant brand hue, one action hue and one warm accent; avoid green as a brand colour.
+*/
+:root {
+  --pb-brand: #172554;
+  --pb-primary: #2563eb;
+  --pb-primary-hover: #1d4ed8;
+  --pb-accent: #f6c744;
+  --pb-canvas: #f5f7fb;
+  --pb-surface: #ffffff;
+  --pb-text: #0f172a;
+  --pb-muted: #64748b;
+  --pb-border: #e2e8f0;
+}
+
+
 @layer base {
   :root {
     --font-sans: "Plus Jakarta Sans", "Noto Sans Bengali", -apple-system, BlinkMacSystemFont, sans-serif;
@@ -82,7 +103,7 @@
 @media (max-width: 640px) {
   body { padding-bottom: env(safe-area-inset-bottom); }
   .pb-product-grid { gap: 10px !important; padding-inline: 12px; }
-  .pb-product-card { border-radius: 16px !important; box-shadow: 0 3px 12px rgba(15, 55, 35, .07) !important; }
+  .pb-product-card { border-radius: 16px !important; box-shadow: 0 3px 12px rgba(30, 58, 138, .07) !important; }
   .pb-product-image { aspect-ratio: 1.12 / 1 !important; max-height: none !important; padding: 12px !important; }
   .pb-product-info { padding: 10px !important; gap: 9px !important; }
   .pb-product-name { font-size: 13px !important; line-height: 1.3 !important; min-height: 34px !important; }
@@ -100,7 +121,7 @@
 .pb-welcome-card { isolation: isolate; }
 .pb-welcome-glow {
   background:
-    radial-gradient(ellipse at 8% 0%, rgba(74,222,128,.18), transparent 38%),
+    radial-gradient(ellipse at 8% 0%, rgba(59,130,246,.18), transparent 38%),
     radial-gradient(ellipse at 100% 100%, rgba(250,204,21,.12), transparent 34%);
   animation: pbWelcomeGlow 9s ease-in-out infinite alternate;
 }
@@ -164,9 +185,9 @@
 @keyframes pbMarketPop { from { opacity:0; transform:translateY(10px) scale(.92); } to { opacity:1; transform:translateY(0) scale(1); } }
 
 /* Animated grocery conveyor for initial loading */
-.pb-loader-track { overflow:hidden; border-radius:18px; background:linear-gradient(90deg,#ecfdf5,#f7fee7); padding:10px 0; }
+.pb-loader-track { overflow:hidden; border-radius:18px; background:linear-gradient(90deg,#eff6ff,#e0e7ff); padding:10px 0; }
 .pb-loader-runner { display:flex; width:max-content; gap:12px; animation:pbGroceryRun 9s linear infinite; }
-.pb-loader-product { display:grid; width:52px; height:52px; flex:none; place-items:center; border:1px solid #d1fae5; border-radius:15px; background:#fff; font-size:27px; box-shadow:0 4px 12px rgba(6,95,70,.08); }
+.pb-loader-product { display:grid; width:52px; height:52px; flex:none; place-items:center; border:1px solid #bfdbfe; border-radius:15px; background:#fff; font-size:27px; box-shadow:0 4px 12px rgba(37,99,235,.08); }
 .pb-loader-progress { animation:pbLoadingProgress 2.4s ease-in-out infinite; }
 @keyframes pbGroceryRun { from { transform:translateX(0); } to { transform:translateX(-50%); } }
 @keyframes pbLoadingProgress { 0% { transform:translateX(-110%); } 55% { transform:translateX(100%); } 100% { transform:translateX(320%); } }
@@ -183,7 +204,7 @@
 
 
 /* Christmas hero banner */
-.pb-christmas-banner { isolation:isolate; background:#073b2b; }
+.pb-christmas-banner { isolation:isolate; background:#172554; }
 .pb-christmas-glow { animation:pbChristmasGlow 5s ease-in-out infinite alternate; }
 .pb-christmas-garland { z-index:2; filter:drop-shadow(0 2px 5px rgba(0,0,0,.25)); }
 .pb-christmas-sway { transform-origin:50% 90%; animation:pbChristmasSway 3.2s ease-in-out infinite; }
