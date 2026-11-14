@@ -19,6 +19,7 @@ import {
   getBestItems,
   assignBestItemRank,
   buildHeroSlides,
+  getAutomaticFestivalTheme,
   calculateMilestoneProgress,
 } from './storeLogic';
 
@@ -55,7 +56,7 @@ test('getBestItems, assignBestItemRank, and buildHeroSlides order Best 5 slides 
   const slidesWithoutFestive = buildHeroSlides(swapped, {
     ...DEFAULT_STORE_SETTINGS,
     showOccasionBanner: false,
-  });
+  }, new Date('2026-03-01T12:00:00'));
   assert.equal(slidesWithoutFestive.length, 5);
   assert.ok(slidesWithoutFestive.every((s) => s.type === 'product'));
 
@@ -224,4 +225,11 @@ test('generateQrMatrix produces a 21x21 boolean grid with finder patterns', () =
   assert.equal(matrix[0].length, 21);
   assert.equal(matrix[0][0], true);
   assert.equal(matrix[3][3], true);
+});
+
+
+test('automatic festival calendar selects Bengali and Indian festival themes by local date', () => {
+  assert.equal(getAutomaticFestivalTheme(new Date('2027-04-14T12:00:00'))?.id, 'poila-boishakh');
+  assert.equal(getAutomaticFestivalTheme(new Date('2027-08-15T12:00:00'))?.id, 'independence-day');
+  assert.equal(getAutomaticFestivalTheme(new Date('2027-06-10T12:00:00')), null);
 });
