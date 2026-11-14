@@ -61,7 +61,7 @@ export const onRequestPost: PagesFunction<Env> = async ({request,env}) => {
       matching.forEach(x=>x.stockRefunded=true);
     }
     const statements:any[]=[
-      env.DB.prepare("UPDATE customer_orders SET stock_deducted=3 WHERE id=? AND customer_id=? AND status IN ('new','processing') AND stock_deducted=1 AND items_json=?").bind(id,customer.id,order.items_json),
+      env.DB.prepare("UPDATE customer_orders SET stock_deducted=3 WHERE id=? AND customer_id=? AND status='new' AND stock_deducted=1 AND items_json=?").bind(id,customer.id,order.items_json),
       env.DB.prepare("INSERT INTO customer_order_action_guard(action_id,expected_count,actual_count) SELECT ?,1,changes()").bind(actionId+":lock")
     ];
     for(const [productId,quantity] of refundMap){
