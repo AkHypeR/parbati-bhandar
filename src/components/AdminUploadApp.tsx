@@ -761,7 +761,7 @@ export function AdminUploadApp({
                 <h2 className="text-lg font-extrabold text-slate-900">Customer Orders</h2>
                 <p className="text-xs text-slate-500">Pickup requests saved from the customer shopping list.</p>
               </div>
-              <button type="button" onClick={loadCustomerOrders} disabled={ordersLoading} className="inline-flex items-center gap-2 rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60">
+              <button type="button" onClick={() => void loadCustomerOrders()} disabled={ordersLoading} className="inline-flex items-center gap-2 rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60">
                 <RefreshCw className={`h-4 w-4 ${ordersLoading ? 'animate-spin' : ''}`} /> Refresh
               </button>
             </div>
