@@ -336,7 +336,7 @@ export function CustomerStorefront({
   const isChristmasSeason = /christmas|xmas/i.test(`${storeSettings.occasionTitle || ''} ${storeSettings.occasionTag || ''}`) || [10, 11].includes(new Date().getMonth());
 
   return (
-    <div className="flex-1 flex flex-col bg-[#f4f8f3] text-slate-900 pb-32 sm:pb-28">
+    <div className="flex-1 flex flex-col bg-[#f4f7fc] text-slate-900 pb-32 sm:pb-28">
       {isChristmasSeason && <div className="pb-christmas-sky fixed inset-0 z-[70] overflow-hidden pointer-events-none" aria-hidden="true">
         {Array.from({length:18},(_,i)=><span key={i} className="pb-snowflake" style={{left:`${(i*37)%100}%`,animationDelay:`${(i%7)*-1.8}s`,animationDuration:`${8+(i%5)*2}s`,fontSize:`${10+(i%4)*5}px`}}>❄</span>)}
         <span className="pb-christmas-twinkle absolute right-[8%] top-28 text-xl">✦</span><span className="pb-christmas-twinkle absolute left-[6%] top-[42%] text-sm">✧</span>
@@ -345,7 +345,7 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       {/* TOP MOBILE-FIRST APP BAR WITH SHOP NAME                               */}
       {/* ===================================================================== */}
-      <header className="bg-[#087a45] text-white border-b border-emerald-900/20 shadow-sm">
+      <header className="bg-[#1d4ed8] text-white border-b border-blue-900/20 shadow-sm">
         <div className="max-w-5xl mx-auto px-3.5 sm:px-6 pt-3 pb-2">
           {/* Row 1: Profile | Shop Name (5-tap secret owner access) | Quick Actions */}
           <div className="flex items-center justify-between gap-2">
@@ -371,18 +371,18 @@ export function CustomerStorefront({
               title={storeSettings.storeName || 'Parbati Bhandar (পার্বতী ভান্ডার)'}
             >
               <div className="flex items-center justify-center gap-1.5 min-w-0">
-                <Store className="w-4 h-4 sm:w-5 sm:h-5 text-[#0d647d] shrink-0" />
+                <Store className="w-4 h-4 sm:w-5 sm:h-5 text-[#1e40af] shrink-0" />
                 <span className="text-base sm:text-xl font-black tracking-tight text-white leading-tight">
                   {(storeSettings.storeName || 'Parbati Bhandar (পার্বতী ভান্ডার)')
                     .replace(/\s*\(.*\)\s*$/, '')}
                 </span>
               </div>
-              <span className="text-[11px] sm:text-xs font-extrabold text-emerald-100 leading-tight">
+              <span className="text-[11px] sm:text-xs font-extrabold text-blue-100 leading-tight">
                 {(storeSettings.storeName || 'Parbati Bhandar (পার্বতী ভান্ডার)').match(
                   /\((.*)\)/
                 )?.[1] || 'পার্বতী ভান্ডার'}
               </span>
-              <span className="block h-0.5 bg-lime-300 rounded-full w-20 sm:w-28 mt-0.5" />
+              <span className="block h-0.5 bg-sky-300 rounded-full w-20 sm:w-28 mt-0.5" />
               {!liveIsOpen && (
                 <span role="status" aria-live="polite" className="mt-1.5 inline-flex items-center gap-2 rounded-full border border-rose-200/70 bg-gradient-to-r from-[#7f1d1d] via-[#be123c] to-[#9f1239] px-3 py-1.5 text-[9px] sm:text-[10px] font-black tracking-[.12em] text-white shadow-[0_4px_16px_rgba(190,18,60,.35)] animate-[closedGlow_2.4s_ease-in-out_infinite]"><span className="relative flex h-2.5 w-2.5 shrink-0"><span className="absolute inset-0 rounded-full bg-white/80 animate-ping motion-reduce:animate-none"/><span className="relative m-auto h-2 w-2 rounded-full bg-amber-300 ring-2 ring-white/40"/></span><span>🌙 STORE CLOSED</span><span aria-hidden="true" className="text-amber-200 text-xs">✦</span><span className="font-semibold tracking-normal text-rose-100">We’ll welcome you soon</span></span>
               )}
@@ -405,7 +405,7 @@ export function CustomerStorefront({
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp Store"
-                className="w-9 h-9 rounded-full bg-[#f6c744] hover:bg-[#f0b91f] text-emerald-950 flex items-center justify-center shadow-2xs transition-colors"
+                className="w-9 h-9 rounded-full bg-[#f6c744] hover:bg-[#f0b91f] text-blue-950 flex items-center justify-center shadow-2xs transition-colors"
                 title="WhatsApp Parbati Bhandar"
               >
                 <MessageCircle className="w-4 h-4" />
@@ -436,20 +436,20 @@ export function CustomerStorefront({
                 <span
                   className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
                     liveIsOpen
-                      ? 'bg-lime-100 text-emerald-900'
+                      ? 'bg-sky-100 text-blue-900'
                       : 'bg-red-100 text-red-700'
                   }`}
                 >
                   <span
                     className={`w-1.5 h-1.5 rounded-full ${
-                      liveIsOpen ? 'bg-emerald-600' : 'bg-red-500'
+                      liveIsOpen ? 'bg-blue-600' : 'bg-red-500'
                     }`}
                   />
                   {liveIsOpen ? 'Open • খোলা আছে' : 'Closed'}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-1 mt-0.5">
-                <p className="text-xs sm:text-sm text-emerald-50 font-medium truncate">
+                <p className="text-xs sm:text-sm text-blue-50 font-medium truncate">
                   {storeSettings.address || 'Swasti Pally, Gangpur, Dis-Burdwan, 713103, BURD...'}
                 </p>
                 {isAddressExpanded ? (
@@ -466,7 +466,7 @@ export function CustomerStorefront({
             <div className="mt-2.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-2">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="font-extrabold text-slate-900 text-sm flex items-center gap-1.5">
-                  <Store className="w-4 h-4 text-emerald-700" />
+                  <Store className="w-4 h-4 text-blue-700" />
                   <span>{storeSettings.storeName}</span>
                 </div>
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-bold text-[11px]">
@@ -477,14 +477,14 @@ export function CustomerStorefront({
               <p className="text-slate-600">{storeSettings.tagline}</p>
               <div className="flex flex-wrap items-center gap-4 text-slate-700 font-medium pt-1">
                 <span className="flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-emerald-700" />
+                  <Clock className="w-3.5 h-3.5 text-blue-700" />
                   {storeSettings.timings}
                 </span>
                 <a
                   href={'https://maps.app.goo.gl/yrXRW4uuwWjaEzQi6?g_st=ac'}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-emerald-700 font-bold hover:underline"
+                  className="inline-flex items-center gap-1 text-blue-700 font-bold hover:underline"
                 >
                   <Navigation className="w-3.5 h-3.5" />
                   <span>Open in Google Maps</span>
@@ -499,43 +499,43 @@ export function CustomerStorefront({
       {(currentPage === 'track' || currentPage === 'history') && (
         <section id="customer-order-tools" className="mx-auto w-full max-w-4xl scroll-mt-4 px-3 py-4 sm:px-6" aria-label="My orders">
           <div className="overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-[0_18px_50px_rgba(15,23,42,.08)]">
-            <div className="relative overflow-hidden bg-[#073f2b] px-5 py-5 text-white sm:px-7 sm:py-6">
+            <div className="relative overflow-hidden bg-[#172554] px-5 py-5 text-white sm:px-7 sm:py-6">
               <div aria-hidden="true" className="absolute -right-12 -top-20 h-56 w-56 rounded-full border border-white/10" />
-              <div aria-hidden="true" className="absolute -right-2 -top-12 h-40 w-40 rounded-full bg-emerald-300/10 blur-2xl" />
+              <div aria-hidden="true" className="absolute -right-2 -top-12 h-40 w-40 rounded-full bg-blue-300/10 blur-2xl" />
               <div className="relative flex items-start justify-between gap-3">
                 <div>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[.16em] text-emerald-100"><Package className="h-3.5 w-3.5" /> Customer order centre</div>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[.16em] text-blue-100"><Package className="h-3.5 w-3.5" /> Customer order centre</div>
                   <h2 className="mt-3 text-2xl font-black tracking-tight sm:text-3xl">Your orders, in one place.</h2>
-                  <p className="mt-1.5 max-w-lg text-xs leading-5 text-emerald-50/80 sm:text-sm">Follow an order's progress or review your recent purchases from Parbati Bhandar.</p>
+                  <p className="mt-1.5 max-w-lg text-xs leading-5 text-blue-50/80 sm:text-sm">Follow an order's progress or review your recent purchases from Parbati Bhandar.</p>
                 </div>
                 <button type="button" onClick={() => onNavigate('/')} aria-label="Close orders" className="relative rounded-full border border-white/15 bg-white/10 p-2 text-white transition hover:bg-white/20"><X className="h-4 w-4" /></button>
               </div>
-              <div className="relative mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-semibold text-emerald-100/90">
-                <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-lime-300" /> Private order lookup</span>
-                <span className="inline-flex items-center gap-1.5"><Clock className="h-4 w-4 text-lime-300" /> History available for 7 days</span>
+              <div className="relative mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-semibold text-blue-100/90">
+                <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-sky-300" /> Private order lookup</span>
+                <span className="inline-flex items-center gap-1.5"><Clock className="h-4 w-4 text-sky-300" /> History available for 7 days</span>
               </div>
             </div>
 
             <div className="p-4 sm:p-6">
               {lastOrderCreatedAt > 0 && (
-                <div className="mb-4 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-3.5">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-100 text-emerald-800"><CheckCircle2 className="h-5 w-5" /></span>
-                  <div className="min-w-0"><p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800">Latest order received</p><p className="text-sm font-bold text-slate-900">{new Date(lastOrderCreatedAt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Kolkata'})}</p></div>
+                <div className="mb-4 flex items-center gap-3 rounded-2xl border border-blue-200 bg-blue-50/80 p-3.5">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-blue-100 text-blue-800"><CheckCircle2 className="h-5 w-5" /></span>
+                  <div className="min-w-0"><p className="text-[10px] font-extrabold uppercase tracking-wider text-blue-800">Latest order received</p><p className="text-sm font-bold text-slate-900">{new Date(lastOrderCreatedAt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Kolkata'})}</p></div>
                 </div>
               )}
 
               <div className="grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1.5" role="tablist" aria-label="Order options">
-                <button type="button" role="tab" aria-selected={ordersView === 'track'} onClick={() => onNavigate('/track-order')} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${ordersView === 'track' ? 'bg-white text-[#07543a] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}><Package className="h-4 w-4" /> Track order</button>
-                <button type="button" role="tab" aria-selected={ordersView === 'history'} onClick={() => { onNavigate('/previous-orders'); if (!historyLoaded && trackingPhone.replace(/\D/g, '').length >= 10) void loadOrderHistory(); }} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${ordersView === 'history' ? 'bg-white text-[#07543a] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}><ClipboardList className="h-4 w-4" /> Previous orders</button>
+                <button type="button" role="tab" aria-selected={ordersView === 'track'} onClick={() => onNavigate('/track-order')} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${ordersView === 'track' ? 'bg-white text-[#1e3a8a] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}><Package className="h-4 w-4" /> Track order</button>
+                <button type="button" role="tab" aria-selected={ordersView === 'history'} onClick={() => { onNavigate('/previous-orders'); if (!historyLoaded && trackingPhone.replace(/\D/g, '').length >= 10) void loadOrderHistory(); }} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${ordersView === 'history' ? 'bg-white text-[#1e3a8a] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}><ClipboardList className="h-4 w-4" /> Previous orders</button>
               </div>
 
               {ordersView === 'track' ? (
                 <div className="pt-5">
                   <div className="mb-4"><h3 className="text-lg font-black text-slate-900">Track your order</h3><p className="mt-1 text-xs leading-5 text-slate-500">Enter the order number and the same phone number you used at checkout.</p></div>
                   <form onSubmit={trackOrder} className="grid gap-3 sm:grid-cols-[1fr_1.2fr_auto]">
-                    <label className="block"><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Order number</span><input required inputMode="numeric" value={trackingOrderNumber} onChange={e=>setTrackingOrderNumber(e.target.value)} placeholder="e.g. 1024" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm font-semibold text-slate-900 outline-none transition placeholder:font-normal focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10" /></label>
-                    <label className="block"><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Checkout phone number</span><input required inputMode="tel" value={trackingPhone} onChange={e=>setTrackingPhone(e.target.value)} placeholder="10-digit mobile number" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm font-semibold text-slate-900 outline-none transition placeholder:font-normal focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10" /></label>
-                    <button disabled={trackingLoading} className="self-end inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl bg-[#087044] px-5 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#065b37] disabled:cursor-not-allowed disabled:opacity-60">{trackingLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : 'Track order'} <ArrowRight className="h-4 w-4" /></button>
+                    <label className="block"><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Order number</span><input required inputMode="numeric" value={trackingOrderNumber} onChange={e=>setTrackingOrderNumber(e.target.value)} placeholder="e.g. 1024" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm font-semibold text-slate-900 outline-none transition placeholder:font-normal focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10" /></label>
+                    <label className="block"><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Checkout phone number</span><input required inputMode="tel" value={trackingPhone} onChange={e=>setTrackingPhone(e.target.value)} placeholder="10-digit mobile number" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm font-semibold text-slate-900 outline-none transition placeholder:font-normal focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10" /></label>
+                    <button disabled={trackingLoading} className="self-end inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl bg-[#1d4ed8] px-5 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#1e40af] disabled:cursor-not-allowed disabled:opacity-60">{trackingLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : 'Track order'} <ArrowRight className="h-4 w-4" /></button>
                   </form>
                   {trackingError && <p role="alert" className="mt-3 flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />{trackingError}</p>}
 
@@ -543,16 +543,16 @@ export function CustomerStorefront({
                     <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">
                       <div className="flex flex-wrap items-start justify-between gap-3 bg-slate-50 px-4 py-4 sm:px-5">
                         <div><p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Order details</p><h4 className="mt-1 text-xl font-black text-slate-900">Order #{trackingResult.orderNumber}</h4><p className="mt-1 text-[11px] text-slate-500">Placed {new Date(trackingResult.createdAt).toLocaleString()}</p></div>
-                        <div className="text-right"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Order total</p><p className="mt-1 text-xl font-black tabular-nums text-[#07543a]">₹{Number(trackingResult.total || 0).toFixed(2)}</p><span className="mt-1 inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700"><RefreshCw className="h-3 w-3" /> Live status updates</span></div>
+                        <div className="text-right"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Order total</p><p className="mt-1 text-xl font-black tabular-nums text-[#1e3a8a]">₹{Number(trackingResult.total || 0).toFixed(2)}</p><span className="mt-1 inline-flex items-center gap-1 text-[10px] font-semibold text-blue-700"><RefreshCw className="h-3 w-3" /> Live status updates</span></div>
                       </div>
                       {trackingResult.status === 'cancelled' ? (
                         <div className="m-4 flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm font-semibold text-rose-700"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0" /> This order was cancelled. The items were not processed. Please contact the store if you need help.</div>
                       ) : (
                         <div className="px-4 pt-5 sm:px-5">
                           <div className="grid grid-cols-4 gap-1.5">
-                            {['Received','Preparing','Ready','Completed'].map((label,index)=>{const active=trackingStep>=index;return <div key={label} className="min-w-0 text-center"><div className={`mx-auto grid h-7 w-7 place-items-center rounded-full text-xs font-black ${active?'bg-emerald-700 text-white':'bg-slate-100 text-slate-400'}`}>{active?<CheckCircle2 className="h-4 w-4"/>:index+1}</div><p className={`mt-2 text-[9px] font-bold sm:text-[11px] ${active?'text-emerald-800':'text-slate-400'}`}>{label}</p></div>})}
+                            {['Received','Preparing','Ready','Completed'].map((label,index)=>{const active=trackingStep>=index;return <div key={label} className="min-w-0 text-center"><div className={`mx-auto grid h-7 w-7 place-items-center rounded-full text-xs font-black ${active?'bg-blue-700 text-white':'bg-slate-100 text-slate-400'}`}>{active?<CheckCircle2 className="h-4 w-4"/>:index+1}</div><p className={`mt-2 text-[9px] font-bold sm:text-[11px] ${active?'text-blue-800':'text-slate-400'}`}>{label}</p></div>})}
                           </div>
-                          <div className="relative mt-[-13px] mx-[12.5%] -z-0 h-1 rounded-full bg-slate-100"><div className="h-full rounded-full bg-emerald-600 transition-all" style={{width:`${Math.max(0,Math.min(100,trackingStep/3*100))}%`}} /></div>
+                          <div className="relative mt-[-13px] mx-[12.5%] -z-0 h-1 rounded-full bg-slate-100"><div className="h-full rounded-full bg-blue-600 transition-all" style={{width:`${Math.max(0,Math.min(100,trackingStep/3*100))}%`}} /></div>
                         </div>
                       )}
                       {trackingResult.status === 'unavailable' && <p className="mx-4 mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-semibold text-amber-800 sm:mx-5">There is an availability update for one or more items. Please review the item details below.</p>}
@@ -560,7 +560,7 @@ export function CustomerStorefront({
                       <div className="px-4 pb-4 pt-4 sm:px-5">
                         <div className="mb-2 flex items-center justify-between"><h5 className="text-sm font-extrabold text-slate-900">Items in this order</h5><span className="text-[10px] font-semibold text-slate-400">{trackingResult.items.length} item(s)</span></div>
                         <div className="divide-y divide-slate-100 rounded-xl border border-slate-100">
-                          {trackingResult.items.map((item:any,index:number)=><div key={index} className="flex items-center justify-between gap-3 px-3 py-3"><div className="min-w-0"><p className="truncate text-sm font-bold text-slate-800">{item.name}</p><p className="mt-0.5 text-[11px] text-slate-500">{item.quantity} {item.unit} × ₹{Number(item.price || 0).toFixed(2)}</p><span className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[9px] font-bold ${trackingResult.status==='cancelled'?'bg-slate-100 text-slate-500':item.unavailable?'bg-rose-50 text-rose-700':'bg-emerald-50 text-emerald-700'}`}>{trackingResult.status==='cancelled'?'Not processed':item.unavailable?'Unavailable':'Available'}</span></div><span className="shrink-0 text-sm font-extrabold tabular-nums text-slate-900">₹{Number(item.lineTotal ?? Number(item.price || 0)*Number(item.quantity || 0)).toFixed(2)}</span></div>)}
+                          {trackingResult.items.map((item:any,index:number)=><div key={index} className="flex items-center justify-between gap-3 px-3 py-3"><div className="min-w-0"><p className="truncate text-sm font-bold text-slate-800">{item.name}</p><p className="mt-0.5 text-[11px] text-slate-500">{item.quantity} {item.unit} × ₹{Number(item.price || 0).toFixed(2)}</p><span className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[9px] font-bold ${trackingResult.status==='cancelled'?'bg-slate-100 text-slate-500':item.unavailable?'bg-rose-50 text-rose-700':'bg-blue-50 text-blue-700'}`}>{trackingResult.status==='cancelled'?'Not processed':item.unavailable?'Unavailable':'Available'}</span></div><span className="shrink-0 text-sm font-extrabold tabular-nums text-slate-900">₹{Number(item.lineTotal ?? Number(item.price || 0)*Number(item.quantity || 0)).toFixed(2)}</span></div>)}
                         </div>
                         <p className="mt-3 text-center text-[10px] text-slate-400">Order status refreshes automatically every 15 seconds while in progress.</p>
                       </div>
@@ -571,15 +571,15 @@ export function CustomerStorefront({
                 <div className="pt-5">
                   <div className="mb-4 flex flex-wrap items-end justify-between gap-2"><div><h3 className="text-lg font-black text-slate-900">Your previous orders</h3><p className="mt-1 text-xs text-slate-500">Orders placed using this phone number.</p></div><span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-extrabold text-amber-800"><CalendarDays className="h-3.5 w-3.5" /> Last 7 days</span></div>
                   <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
-                    <label><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Checkout phone number</span><input inputMode="tel" value={trackingPhone} onChange={e=>setTrackingPhone(e.target.value)} placeholder="Enter your 10-digit phone number" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10" /></label>
-                    <button type="button" onClick={()=>void loadOrderHistory()} disabled={historyLoading || trackingPhone.replace(/\D/g,'').length<10} className="self-end inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-extrabold text-emerald-800 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50">{historyLoading?<RefreshCw className="h-4 w-4 animate-spin"/>:<RefreshCw className="h-4 w-4"/>} Refresh history</button>
+                    <label><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Checkout phone number</span><input inputMode="tel" value={trackingPhone} onChange={e=>setTrackingPhone(e.target.value)} placeholder="Enter your 10-digit phone number" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10" /></label>
+                    <button type="button" onClick={()=>void loadOrderHistory()} disabled={historyLoading || trackingPhone.replace(/\D/g,'').length<10} className="self-end inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-5 py-3 text-sm font-extrabold text-blue-800 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50">{historyLoading?<RefreshCw className="h-4 w-4 animate-spin"/>:<RefreshCw className="h-4 w-4"/>} Refresh history</button>
                   </div>
                   {historyError && <p role="alert" className="mt-3 flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0"/>{historyError}</p>}
                   {historyLoading && <div className="mt-5 flex items-center justify-center gap-2 rounded-xl bg-slate-50 py-8 text-sm font-semibold text-slate-500"><RefreshCw className="h-4 w-4 animate-spin"/> Loading your order history…</div>}
-                  {historyLoaded && !historyLoading && (orderHistory.length===0 ? <div className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center"><ClipboardList className="mx-auto h-8 w-8 text-slate-300"/><p className="mt-2 text-sm font-bold text-slate-700">No recent orders found</p><p className="mt-1 text-xs text-slate-500">There are no orders for this phone number in the last 7 days.</p></div> : <div className="mt-4 space-y-3">{orderHistory.map((order:any)=><article key={order.orderNumber} className="overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:border-emerald-200 hover:shadow-sm">
-                    <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50/80 px-4 py-3"><div><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Order reference</p><p className="text-base font-black text-slate-900">#{order.orderNumber}</p></div><span className={`rounded-full px-3 py-1.5 text-[10px] font-extrabold ${order.status==='completed'?'bg-emerald-100 text-emerald-800':order.status==='cancelled'?'bg-rose-100 text-rose-700':order.status==='ready'?'bg-sky-100 text-sky-800':'bg-amber-100 text-amber-800'}`}>{({new:'Order received',review:'Order received',ready:'Ready for pickup',completed:'Completed',unavailable:'Availability update',cancelled:'Cancelled'} as Record<string,string>)[order.status] || order.status}</span></div>
-                    <div className="px-4 py-3"><div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500"><span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5"/>{new Date(order.createdAt).toLocaleString()}</span><span className="text-base font-black tabular-nums text-[#07543a]">₹{Number(order.total||0).toFixed(2)}</span></div>
-                      <div className="mt-3 flex flex-wrap items-center justify-between gap-2"><span className="text-[11px] font-semibold text-slate-500">{order.items.length} item(s) · {order.items.reduce((sum:number,item:any)=>sum+Number(item.quantity||0),0)} total quantity</span><button type="button" onClick={async()=>{setTrackingOrderNumber(String(order.orderNumber));setOrdersView('track');setTrackingError('');setTrackingResult(null);setTrackingLoading(true);try{setTrackingResult(await fetchTrackedOrder(String(order.orderNumber),trackingPhone));}catch(error){setTrackingError((error as Error).message);}finally{setTrackingLoading(false);}}} className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-white px-3 py-2 text-xs font-extrabold text-emerald-800 transition hover:bg-emerald-50">Track this order <ArrowRight className="h-3.5 w-3.5"/></button></div>
+                  {historyLoaded && !historyLoading && (orderHistory.length===0 ? <div className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center"><ClipboardList className="mx-auto h-8 w-8 text-slate-300"/><p className="mt-2 text-sm font-bold text-slate-700">No recent orders found</p><p className="mt-1 text-xs text-slate-500">There are no orders for this phone number in the last 7 days.</p></div> : <div className="mt-4 space-y-3">{orderHistory.map((order:any)=><article key={order.orderNumber} className="overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:border-blue-200 hover:shadow-sm">
+                    <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50/80 px-4 py-3"><div><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Order reference</p><p className="text-base font-black text-slate-900">#{order.orderNumber}</p></div><span className={`rounded-full px-3 py-1.5 text-[10px] font-extrabold ${order.status==='completed'?'bg-blue-100 text-blue-800':order.status==='cancelled'?'bg-rose-100 text-rose-700':order.status==='ready'?'bg-sky-100 text-sky-800':'bg-amber-100 text-amber-800'}`}>{({new:'Order received',review:'Order received',ready:'Ready for pickup',completed:'Completed',unavailable:'Availability update',cancelled:'Cancelled'} as Record<string,string>)[order.status] || order.status}</span></div>
+                    <div className="px-4 py-3"><div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500"><span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5"/>{new Date(order.createdAt).toLocaleString()}</span><span className="text-base font-black tabular-nums text-[#1e3a8a]">₹{Number(order.total||0).toFixed(2)}</span></div>
+                      <div className="mt-3 flex flex-wrap items-center justify-between gap-2"><span className="text-[11px] font-semibold text-slate-500">{order.items.length} item(s) · {order.items.reduce((sum:number,item:any)=>sum+Number(item.quantity||0),0)} total quantity</span><button type="button" onClick={async()=>{setTrackingOrderNumber(String(order.orderNumber));setOrdersView('track');setTrackingError('');setTrackingResult(null);setTrackingLoading(true);try{setTrackingResult(await fetchTrackedOrder(String(order.orderNumber),trackingPhone));}catch(error){setTrackingError((error as Error).message);}finally{setTrackingLoading(false);}}} className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 bg-white px-3 py-2 text-xs font-extrabold text-blue-800 transition hover:bg-blue-50">Track this order <ArrowRight className="h-3.5 w-3.5"/></button></div>
                     </div>
                   </article>)}</div>)}
                   {!historyLoaded && !historyLoading && <div className="mt-4 rounded-xl bg-slate-50 p-4 text-center text-xs text-slate-500">Enter your checkout phone number and select <strong>Refresh history</strong> to find your recent purchases.</div>}
@@ -615,10 +615,10 @@ export function CustomerStorefront({
                   }
                 }}
                 placeholder='Search for "Miniket Rice", "Atta", "Mustard Oil", "Ghee"...'
-                className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white text-slate-900 placeholder-slate-400 text-xs sm:text-sm font-medium border border-emerald-200 shadow-sm focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+                className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white text-slate-900 placeholder-slate-400 text-xs sm:text-sm font-medium border border-blue-200 shadow-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
                 autoComplete="off"
               />
-              {searchSuggestions.length > 0 && <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl"><p className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Suggested products</p>{searchSuggestions.map(product => <button key={product.id} type="button" onClick={() => { setSearchQuery(product.name); setIsSearchSubmitted(true); setSelectedCategory("all"); setInStockOnly(false); setTimeout(() => catalogSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50); }} className="flex w-full items-center justify-between gap-3 border-t border-slate-100 px-4 py-3 text-left text-sm font-semibold text-slate-800 hover:bg-emerald-50 active:bg-emerald-100"><span className="min-w-0 truncate">{product.name}</span><span className="shrink-0 text-xs text-slate-400">{product.category}</span></button>)}</div>}
+              {searchSuggestions.length > 0 && <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl"><p className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Suggested products</p>{searchSuggestions.map(product => <button key={product.id} type="button" onClick={() => { setSearchQuery(product.name); setIsSearchSubmitted(true); setSelectedCategory("all"); setInStockOnly(false); setTimeout(() => catalogSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50); }} className="flex w-full items-center justify-between gap-3 border-t border-slate-100 px-4 py-3 text-left text-sm font-semibold text-slate-800 hover:bg-blue-50 active:bg-blue-100"><span className="min-w-0 truncate">{product.name}</span><span className="shrink-0 text-xs text-slate-400">{product.category}</span></button>)}</div>}
               {searchQuery && (
                 <button
                   type="button"
@@ -662,7 +662,7 @@ export function CustomerStorefront({
                   onClick={() => setSelectedCategory(cat.id)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-[#0d647d] text-white shadow-2xs'
+                      ? 'bg-[#1e40af] text-white shadow-2xs'
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
@@ -686,10 +686,10 @@ export function CustomerStorefront({
         return <div className="pb-promo-overlay fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-md" role="dialog" aria-modal="true" aria-label="Welcome to Parbati Bhandar" onMouseDown={event => { if (event.target === event.currentTarget) closeWelcomePromo(); }}>
           <div className="pb-promo-card relative mx-auto flex max-h-[88dvh] w-full max-w-[420px] flex-col overflow-hidden rounded-[30px] border border-white/70 bg-white shadow-[0_28px_90px_rgba(0,0,0,.38)]">
             <button type="button" onClick={closeWelcomePromo} aria-label="Close welcome promotion" className="absolute right-3 top-3 z-30 grid h-10 w-10 place-items-center rounded-full border border-white/50 bg-slate-950/65 text-white shadow-lg transition hover:rotate-90 hover:bg-slate-900"><X className="h-5 w-5"/></button>
-            <div className="relative min-h-[270px] overflow-hidden bg-[#123d2d] sm:min-h-[300px]">
+            <div className="relative min-h-[270px] overflow-hidden bg-[#172554] sm:min-h-[300px]">
               <img src="https://images.unsplash.com/photo-1775677073681-194049b1a7d3?auto=format&fit=crop&w=1200&q=85" alt="Colourful fresh vegetables displayed at a local market" className="absolute inset-0 h-full w-full object-cover" loading="eager"/>
-              <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#062d20]/95 via-[#073b2b]/55 to-black/10"/>
-              <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-amber-300 via-white to-emerald-300"/>
+              <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#0b1530]/95 via-[#172554]/55 to-black/10"/>
+              <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-amber-300 via-white to-blue-300"/>
               <div className="relative z-10 flex min-h-[270px] flex-col items-center justify-end px-5 pb-7 pt-12 text-center sm:min-h-[300px]">
                 <span className="inline-flex rounded-full border border-white/40 bg-black/25 px-3 py-1 text-[9px] font-black uppercase tracking-[.2em] text-white shadow-sm backdrop-blur-sm">Your neighbourhood store</span>
                 <h2 className="mt-3 text-[32px] font-black leading-[1.02] tracking-tight text-white drop-shadow-lg sm:text-4xl">Freshness for<br/><span className="text-amber-300">every home.</span></h2>
@@ -698,7 +698,7 @@ export function CustomerStorefront({
             </div>
             <div className="bg-white px-5 pb-5 pt-4">
               <p className="text-center text-xs leading-relaxed text-slate-600">Shop everyday groceries from your local store. Browse live availability, choose your pack size and place your order in a few taps.</p>
-              <button type="button" onClick={() => { closeWelcomePromo(); window.setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),100); }} className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#087a55] px-4 py-3 text-sm font-black text-white shadow-lg shadow-emerald-900/15 transition hover:-translate-y-0.5 hover:bg-[#066044] active:scale-[.98]">Start shopping <ChevronRight className="h-5 w-5"/></button>
+              <button type="button" onClick={() => { closeWelcomePromo(); window.setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),100); }} className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#2563eb] px-4 py-3 text-sm font-black text-white shadow-lg shadow-blue-900/15 transition hover:-translate-y-0.5 hover:bg-[#1d4ed8] active:scale-[.98]">Start shopping <ChevronRight className="h-5 w-5"/></button>
             </div>
           </div>
         </div>;
@@ -762,7 +762,7 @@ export function CustomerStorefront({
             </div>
 
             {/* Main Peek-Framed Slider Stage with Prev / Next Controls */}
-            <div className="relative flex items-center justify-center gap-2 sm:gap-3 overflow-hidden rounded-[28px] bg-gradient-to-br from-[#e3f5e7] via-white to-[#e6f6eb] p-1.5 sm:p-3 shadow-[0_14px_40px_rgba(5,90,48,0.12)]">
+            <div className="relative flex items-center justify-center gap-2 sm:gap-3 overflow-hidden rounded-[28px] bg-gradient-to-br from-[#eff6ff] via-white to-[#eaf1ff] p-1.5 sm:p-3 shadow-[0_14px_40px_rgba(5,90,48,0.12)]">
               {/* Left Peek Edge Card (Visual Framing like the mobile screenshot) */}
               <div
                 aria-hidden="true"
@@ -801,12 +801,12 @@ export function CustomerStorefront({
                   className="pb-christmas-banner relative w-full max-w-3xl mx-auto min-h-[390px] rounded-[28px] overflow-hidden shadow-[0_22px_55px_rgba(8,35,25,.28)] border border-amber-200/50 cursor-pointer group select-none"
                 >
                   <img src="https://images.unsplash.com/photo-1767005608325-0ff075fca106?auto=format&fit=crop&w=1600&q=85" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"/>
-                  <div className="absolute inset-0 bg-gradient-to-b from-[#081b17]/35 via-[#082d24]/65 to-[#061d17]/95"/>
+                  <div className="absolute inset-0 bg-gradient-to-b from-[#101a33]/35 via-[#172554]/65 to-[#0b1530]/95"/>
                   <div className="pb-christmas-glow absolute -right-12 -top-12 h-56 w-56 rounded-full bg-amber-300/25 blur-3xl"/>
-                  <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-red-500 via-amber-300 to-emerald-300"/>
+                  <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-red-500 via-amber-300 to-blue-300"/>
                   <div className="pb-christmas-garland absolute left-0 right-0 top-3 flex justify-around px-2 text-lg sm:text-xl" aria-hidden="true"><span>🔴</span><span>🟡</span><span>🟢</span><span>🔴</span><span>🟡</span><span>🟢</span><span>🔴</span><span>🟡</span></div>
                   <div className="relative z-10 flex min-h-[390px] flex-col items-center justify-center px-5 pb-7 pt-12 text-center">
-                    <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[9px] font-black uppercase tracking-[.22em] text-emerald-100 backdrop-blur-sm">🎄 {currentSlide.tag}</span>
+                    <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[9px] font-black uppercase tracking-[.22em] text-blue-100 backdrop-blur-sm">🎄 {currentSlide.tag}</span>
                     <div className="relative mt-3 flex h-28 w-full items-center justify-center gap-2 sm:h-32" aria-hidden="true">
                       <span className="pb-christmas-sway text-6xl drop-shadow-lg sm:text-7xl">🎄</span>
                       <span className="pb-christmas-gift text-4xl sm:text-5xl">🎁</span>
@@ -815,8 +815,8 @@ export function CustomerStorefront({
                     </div>
                     <p className="mt-1 text-[9px] font-black uppercase tracking-[.25em] text-amber-200">Parbati Bhandar wishes you</p>
                     <h3 className="mt-2 text-4xl font-black leading-tight tracking-tight text-white drop-shadow-[0_4px_14px_rgba(0,0,0,.65)] sm:text-5xl">{currentSlide.title}</h3>
-                    <p className="mt-2 max-w-[290px] text-xs font-semibold leading-relaxed text-emerald-50/90 sm:text-sm">{currentSlide.subtitle}</p>
-                    <button type="button" onClick={() => document.getElementById("christmas-special-products")?.scrollIntoView({behavior:"smooth",block:"start"})} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#facc15] px-5 py-2.5 text-xs font-black text-emerald-950 shadow-lg transition hover:-translate-y-0.5">Shop Christmas Specials <ChevronRight className="h-4 w-4"/></button>
+                    <p className="mt-2 max-w-[290px] text-xs font-semibold leading-relaxed text-blue-50/90 sm:text-sm">{currentSlide.subtitle}</p>
+                    <button type="button" onClick={() => document.getElementById("christmas-special-products")?.scrollIntoView({behavior:"smooth",block:"start"})} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#facc15] px-5 py-2.5 text-xs font-black text-blue-950 shadow-lg transition hover:-translate-y-0.5">Shop Christmas Specials <ChevronRight className="h-4 w-4"/></button>
                     <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-3 text-sm opacity-90" aria-hidden="true"><span>❄️</span><span>⭐</span><span>🎄</span><span>⭐</span><span>❄️</span></div>
                   </div>
                                 </div>
@@ -855,7 +855,7 @@ export function CustomerStorefront({
                         }));
 
                   return (
-                    <div className="group relative w-full max-w-[760px] mx-auto h-[min(520px,70vh)] min-h-[390px] sm:min-h-[460px] lg:min-h-[500px] rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-xl border-2 border-emerald-200 bg-gradient-to-br from-[#f0fff4] via-white to-[#dcfce7] select-none animate-[fadeIn_550ms_ease-out]">
+                    <div className="group relative w-full max-w-[760px] mx-auto h-[min(520px,70vh)] min-h-[390px] sm:min-h-[460px] lg:min-h-[500px] rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-xl border-2 border-blue-200 bg-gradient-to-br from-[#eff6ff] via-white to-[#dbeafe] select-none animate-[fadeIn_550ms_ease-out]">
                       {/* Large product artwork, styled like a storefront campaign banner */}
                       <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6 lg:p-8 pb-44 sm:pb-48 lg:pb-52">
                         {item.imageUrl ? (
@@ -877,14 +877,14 @@ export function CustomerStorefront({
                           <span>#{rankNum} Best Pick</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          {item.badge && <span className="px-3 py-1.5 rounded-full bg-emerald-700 text-white font-extrabold text-xs shadow-md">{item.badge}</span>}
+                          {item.badge && <span className="px-3 py-1.5 rounded-full bg-blue-700 text-white font-extrabold text-xs shadow-md">{item.badge}</span>}
                           {hasDiscount && <span className="px-3 py-1.5 rounded-full bg-amber-400 text-slate-950 font-black text-xs shadow-md">{discountPercent}% OFF</span>}
                         </div>
                       </div>
 
                       {/* Product details slide over the image on hover; remain visible on touch screens */}
                       <div className="absolute inset-x-0 bottom-0 z-10 p-4 sm:p-5 lg:p-7 bg-gradient-to-t from-slate-950 via-slate-950/95 to-slate-950/0 text-white sm:translate-y-2 sm:opacity-95 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 transition-all duration-300">
-                        <div className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-300">{item.category}</div>
+                        <div className="text-[11px] font-extrabold uppercase tracking-wider text-blue-300">{item.category}</div>
                         <h3 className="text-xl sm:text-2xl font-black leading-tight mt-1 line-clamp-2">{item.name}</h3>
 
                         {quickOptions.length > 0 && (
@@ -914,7 +914,7 @@ export function CustomerStorefront({
                             <div className="flex flex-wrap items-baseline gap-2">
                               <span className="text-2xl sm:text-3xl font-black text-white">₹{activeOpt.price}</span>
                               {hasDiscount && activeOpt.mrp && <span className="text-sm text-white/60 line-through font-semibold">₹{activeOpt.mrp}</span>}
-                              {hasDiscount && savedAmount > 0 && <span className="text-xs font-extrabold text-emerald-300">Save ₹{savedAmount}</span>}
+                              {hasDiscount && savedAmount > 0 && <span className="text-xs font-extrabold text-blue-300">Save ₹{savedAmount}</span>}
                             </div>
                           </div>
 
@@ -929,10 +929,10 @@ export function CustomerStorefront({
                               <span>Add to Order</span>
                             </button>
                           ) : (
-                            <div className="flex items-center bg-emerald-600 text-white rounded-2xl overflow-hidden text-sm font-black shadow-lg shrink-0">
-                              <button type="button" aria-label={`Decrease quantity of ${item.name}`} onClick={() => updateCartQty(item, -1, { selectedUnit: activeOpt.label, unitPrice: activeOpt.price, unitMrp: activeOpt.mrp })} className="px-3 py-2.5 hover:bg-emerald-700 cursor-pointer">-</button>
+                            <div className="flex items-center bg-blue-600 text-white rounded-2xl overflow-hidden text-sm font-black shadow-lg shrink-0">
+                              <button type="button" aria-label={`Decrease quantity of ${item.name}`} onClick={() => updateCartQty(item, -1, { selectedUnit: activeOpt.label, unitPrice: activeOpt.price, unitMrp: activeOpt.mrp })} className="px-3 py-2.5 hover:bg-blue-700 cursor-pointer">-</button>
                               <span className="px-2.5">{inCartQty}</span>
-                              <button type="button" aria-label={`Increase quantity of ${item.name}`} disabled={getRemainingStock(item) <= 0} onClick={() => updateCartQty(item, 1, { selectedUnit: activeOpt.label, unitPrice: activeOpt.price, unitMrp: activeOpt.mrp })} className="px-3 py-2.5 hover:bg-emerald-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">+</button>
+                              <button type="button" aria-label={`Increase quantity of ${item.name}`} disabled={getRemainingStock(item) <= 0} onClick={() => updateCartQty(item, 1, { selectedUnit: activeOpt.label, unitPrice: activeOpt.price, unitMrp: activeOpt.mrp })} className="px-3 py-2.5 hover:bg-blue-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">+</button>
                             </div>
                           )}
                         </div>
@@ -1032,7 +1032,7 @@ export function CustomerStorefront({
                       <span className="max-w-[115px] truncate">{shortName}</span>
                       <span
                         className={`text-[11px] font-extrabold ${
-                          isActive ? 'text-amber-300' : 'text-emerald-700'
+                          isActive ? 'text-amber-300' : 'text-blue-700'
                         }`}
                       >
                         ₹{slide.product.price}
@@ -1059,19 +1059,19 @@ export function CustomerStorefront({
           const discount = calculateDiscountDetails(product.price, product.mrp);
           const qty = Object.values(cart).find(item => item.product.id === product.id)?.qty || 0;
           return <article key={product.id} className="pb-deal-product-card w-[148px] shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm sm:w-[176px]">
-            <div className={`relative flex h-28 items-center justify-center overflow-hidden ${['bg-rose-50','bg-amber-50','bg-sky-50','bg-emerald-50'][index%4]}`}>
+            <div className={`relative flex h-28 items-center justify-center overflow-hidden ${['bg-rose-50','bg-amber-50','bg-sky-50','bg-blue-50'][index%4]}`}>
               {product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain p-2 transition-transform duration-500 hover:scale-110"/> : <span className="text-5xl">{product.emoji || '🛍️'}</span>}
               <span className="absolute left-2 top-2 rounded-full bg-[#e91e63] px-2 py-1 text-[9px] font-black text-white">{discount.hasDiscount ? `${discount.discountPercent}% OFF` : 'SPECIAL PICK'}</span>
             </div>
-            <div className="p-2.5"><h3 className="line-clamp-2 min-h-9 text-[11px] font-extrabold leading-4 text-slate-800">{product.name}</h3><p className="mt-1 text-[10px] text-slate-500">{product.unit}</p><div className="mt-1 flex items-baseline gap-1.5"><b className="text-sm text-slate-900">₹{product.price}</b>{discount.hasDiscount && <span className="text-[10px] text-slate-400 line-through">₹{product.mrp}</span>}</div><button type="button" disabled={!product.inStock} onClick={() => updateCartQty(product,1)} className="mt-2 flex min-h-9 w-full items-center justify-center gap-1 rounded-xl bg-[#087a55] px-2 py-2 text-[11px] font-black text-white transition hover:bg-[#065d42] active:scale-[.97] disabled:opacity-50"><Plus className="h-3.5 w-3.5"/>{qty ? `Add more · ${qty}` : 'Quick add'}</button></div>
+            <div className="p-2.5"><h3 className="line-clamp-2 min-h-9 text-[11px] font-extrabold leading-4 text-slate-800">{product.name}</h3><p className="mt-1 text-[10px] text-slate-500">{product.unit}</p><div className="mt-1 flex items-baseline gap-1.5"><b className="text-sm text-slate-900">₹{product.price}</b>{discount.hasDiscount && <span className="text-[10px] text-slate-400 line-through">₹{product.mrp}</span>}</div><button type="button" disabled={!product.inStock} onClick={() => updateCartQty(product,1)} className="mt-2 flex min-h-9 w-full items-center justify-center gap-1 rounded-xl bg-[#2563eb] px-2 py-2 text-[11px] font-black text-white transition hover:bg-[#1e40af] active:scale-[.97] disabled:opacity-50"><Plus className="h-3.5 w-3.5"/>{qty ? `Add more · ${qty}` : 'Quick add'}</button></div>
           </article>;
         };
         return <section aria-label="Deal Zone and featured products" className="mx-auto mb-5 w-full max-w-6xl overflow-hidden px-3.5 sm:px-6">
-          <div className="overflow-hidden rounded-[26px] bg-gradient-to-br from-[#c8f5fb] via-[#e5f9ff] to-[#f7efff] px-3.5 pb-4 pt-5 shadow-sm sm:px-5 sm:pt-6">
-            <div className="relative overflow-hidden rounded-[22px] bg-gradient-to-r from-[#c5f3f8] via-[#d8f6ff] to-[#e9e1ff] px-4 py-5 sm:px-7 sm:py-7">
+          <div className="overflow-hidden rounded-[26px] bg-gradient-to-br from-[#eaf2ff] via-[#f4f7ff] to-[#f1efff] px-3.5 pb-4 pt-5 shadow-sm sm:px-5 sm:pt-6">
+            <div className="relative overflow-hidden rounded-[22px] bg-gradient-to-r from-[#dbeafe] via-[#eff6ff] to-[#e9eaff] px-4 py-5 sm:px-7 sm:py-7">
               <div aria-hidden="true" className="absolute -right-8 -top-12 h-44 w-44 rounded-full border-[22px] border-white/35"/>
               <div className="relative z-10 flex items-center justify-between gap-3">
-                <div><p className="text-[10px] font-black uppercase tracking-[.2em] text-sky-800 sm:text-xs">Parbati Bhandar specials</p><h2 className="mt-1 text-3xl font-black leading-none tracking-tight text-[#075b78] sm:text-5xl">DEAL ZONE</h2><p className="mt-2 max-w-[230px] text-xs font-semibold text-sky-900/75 sm:text-sm">Real savings and handpicked grocery offers.</p></div>
+                <div><p className="text-[10px] font-black uppercase tracking-[.2em] text-sky-800 sm:text-xs">Parbati Bhandar specials</p><h2 className="mt-1 text-3xl font-black leading-none tracking-tight text-[#172554] sm:text-5xl">DEAL ZONE</h2><p className="mt-2 max-w-[230px] text-xs font-semibold text-sky-900/75 sm:text-sm">Real savings and handpicked grocery offers.</p></div>
                 <div className="pb-deal-burst grid h-20 w-20 shrink-0 place-items-center rounded-full border-4 border-white/70 bg-gradient-to-br from-amber-300 to-orange-400 text-4xl shadow-lg sm:h-28 sm:w-28 sm:text-6xl">🎁</div>
               </div>
             </div>
@@ -1079,7 +1079,7 @@ export function CustomerStorefront({
             {dealProducts.length > 0 ? <div className="mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2">{dealProducts.slice(0,10).map(productCard)}</div> : <p className="mt-3 rounded-2xl border border-dashed border-sky-200 bg-white/70 px-4 py-5 text-center text-xs font-semibold text-slate-600">New offers will appear here when products are discounted or selected in the owner portal.</p>}
             <div className="mt-5 border-t border-white/80 pt-4">
               <div className="mb-3 flex items-center gap-3"><h3 className="shrink-0 text-lg font-black text-slate-900">Featured</h3><div className="h-px flex-1 border-t border-dashed border-slate-300"/></div>
-              <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2">{featuredProducts.slice(0,8).map(product => <button type="button" key={product.id} onClick={() => {setSearchQuery(product.name);setIsSearchSubmitted(true);setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),60);}} className="w-[142px] shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-100 bg-white text-left shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:w-[165px]"><div className="flex h-28 items-center justify-center bg-slate-50 p-3">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/> : <span className="text-5xl">{product.emoji || '🛒'}</span>}</div><div className="p-2.5"><p className="line-clamp-2 min-h-9 text-[11px] font-extrabold text-slate-800">{product.name}</p><p className="mt-1 text-xs font-black text-emerald-800">₹{product.price} <span className="font-medium text-slate-400">/ {product.unit}</span></p></div></button>)}</div>
+              <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2">{featuredProducts.slice(0,8).map(product => <button type="button" key={product.id} onClick={() => {setSearchQuery(product.name);setIsSearchSubmitted(true);setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),60);}} className="w-[142px] shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-100 bg-white text-left shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:w-[165px]"><div className="flex h-28 items-center justify-center bg-slate-50 p-3">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/> : <span className="text-5xl">{product.emoji || '🛒'}</span>}</div><div className="p-2.5"><p className="line-clamp-2 min-h-9 text-[11px] font-extrabold text-slate-800">{product.name}</p><p className="mt-1 text-xs font-black text-blue-800">₹{product.price} <span className="font-medium text-slate-400">/ {product.unit}</span></p></div></button>)}</div>
             </div>
           </div>
         </section>;
@@ -1094,13 +1094,13 @@ export function CustomerStorefront({
         }
         const picks = shuffled.slice(0, 10);
         return picks.length ? <section aria-label="Popular groceries" className="mx-auto w-full max-w-6xl px-3.5 pb-4 sm:px-6">
-          <div className="mb-3 flex items-end justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[.16em] text-emerald-700">Picked for your home</p><h2 className="mt-1 text-lg font-black text-slate-900">Popular groceries</h2><p className="text-xs text-slate-500">Quickly add everyday favourites to your order</p></div><button type="button" onClick={() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'})} className="shrink-0 text-xs font-extrabold text-emerald-800">View all <ArrowRight className="ml-1 inline h-3.5 w-3.5"/></button></div>
+          <div className="mb-3 flex items-end justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[.16em] text-blue-700">Picked for your home</p><h2 className="mt-1 text-lg font-black text-slate-900">Popular groceries</h2><p className="text-xs text-slate-500">Quickly add everyday favourites to your order</p></div><button type="button" onClick={() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'})} className="shrink-0 text-xs font-extrabold text-blue-800">View all <ArrowRight className="ml-1 inline h-3.5 w-3.5"/></button></div>
           <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory">
             {picks.map(product => {
               const quantity = cart[makeCartKey(product.id, product.unit)]?.qty || 0;
-              return <article key={product.id} className="w-[148px] shrink-0 snap-start overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-sm sm:w-[176px]">
+              return <article key={product.id} className="w-[148px] shrink-0 snap-start overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm sm:w-[176px]">
                 <button type="button" onClick={() => {setSearchQuery(product.name);setIsSearchSubmitted(true);setSelectedCategory('all');setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),50);}} className="flex w-full flex-col items-center p-3 text-left">
-                  <div className="flex h-24 w-full items-center justify-center rounded-xl bg-emerald-50/70 p-2">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/> : <span className="text-4xl">{product.emoji || '🛒'}</span>}</div>
+                  <div className="flex h-24 w-full items-center justify-center rounded-xl bg-blue-50/70 p-2">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/> : <span className="text-4xl">{product.emoji || '🛒'}</span>}</div>
                   <p className="mt-2 line-clamp-2 min-h-9 w-full text-xs font-extrabold leading-4 text-slate-800">{product.name}</p>
                   <p className="mt-1 w-full text-sm font-black text-slate-900">₹{product.price}<span className="ml-1 text-[10px] font-medium text-slate-500">/ {product.unit}</span></p>
                 </button>
@@ -1116,9 +1116,9 @@ export function CustomerStorefront({
         const christmasProducts=(storeSettings.christmasSpecialProductIds || []).map(id=>products.find(p=>p.id===id)).filter((p): p is Product => Boolean(p && p.inStock));
         if(!christmasProducts.length) return null;
         return <section id="christmas-special-products" className="scroll-mt-24 mx-auto mb-7 w-full max-w-7xl px-4 sm:px-6">
-          <div className="overflow-hidden rounded-3xl border border-red-100 bg-gradient-to-br from-red-50 via-white to-emerald-50 p-4 shadow-sm sm:p-5">
-            <div className="mb-4 flex items-center justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-red-700">Seasonal picks</p><h2 className="text-xl font-black text-emerald-950 sm:text-2xl">🎄 Christmas Specials</h2><p className="mt-1 text-xs text-slate-600">Festive picks selected by Parbati Bhandar</p></div><span className="text-3xl">🎁</span></div>
-            <div className="flex gap-3 overflow-x-auto pb-2">{christmasProducts.map(product => {const qty=Object.values(cart).find(item=>item.product.id===product.id)?.qty||0;return <article key={product.id} className="w-36 shrink-0 overflow-hidden rounded-2xl border border-white bg-white shadow-sm sm:w-44"><div className="flex h-28 items-center justify-center bg-gradient-to-br from-red-50 to-emerald-50">{product.imageUrl?<img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/>:<span className="text-4xl">{product.emoji}</span>}</div><div className="p-3"><p className="line-clamp-2 min-h-9 text-xs font-extrabold text-slate-900">{product.name}</p><p className="mt-1 text-sm font-black text-emerald-800">₹{product.price}<span className="text-[10px] font-medium text-slate-500"> / {product.unit}</span></p><button type="button" onClick={()=>updateCartQty(product,1)} className="mt-2 w-full rounded-lg bg-emerald-700 px-2 py-2 text-xs font-bold text-white hover:bg-emerald-800">{qty>0?`Added · ${qty}`:'Add'}</button></div></article>})}</div>
+          <div className="overflow-hidden rounded-3xl border border-red-100 bg-gradient-to-br from-red-50 via-white to-blue-50 p-4 shadow-sm sm:p-5">
+            <div className="mb-4 flex items-center justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-red-700">Seasonal picks</p><h2 className="text-xl font-black text-blue-950 sm:text-2xl">🎄 Christmas Specials</h2><p className="mt-1 text-xs text-slate-600">Festive picks selected by Parbati Bhandar</p></div><span className="text-3xl">🎁</span></div>
+            <div className="flex gap-3 overflow-x-auto pb-2">{christmasProducts.map(product => {const qty=Object.values(cart).find(item=>item.product.id===product.id)?.qty||0;return <article key={product.id} className="w-36 shrink-0 overflow-hidden rounded-2xl border border-white bg-white shadow-sm sm:w-44"><div className="flex h-28 items-center justify-center bg-gradient-to-br from-red-50 to-blue-50">{product.imageUrl?<img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/>:<span className="text-4xl">{product.emoji}</span>}</div><div className="p-3"><p className="line-clamp-2 min-h-9 text-xs font-extrabold text-slate-900">{product.name}</p><p className="mt-1 text-sm font-black text-blue-800">₹{product.price}<span className="text-[10px] font-medium text-slate-500"> / {product.unit}</span></p><button type="button" onClick={()=>updateCartQty(product,1)} className="mt-2 w-full rounded-lg bg-blue-700 px-2 py-2 text-xs font-bold text-white hover:bg-blue-800">{qty>0?`Added · ${qty}`:'Add'}</button></div></article>})}</div>
           </div>
         </section>;
       })()}
@@ -1150,7 +1150,7 @@ export function CustomerStorefront({
               onClick={() => setInStockOnly(!inStockOnly)}
               className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
                 inStockOnly
-                  ? 'bg-[#0d647d] text-white'
+                  ? 'bg-[#1e40af] text-white'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
               }`}
             >
@@ -1177,7 +1177,7 @@ export function CustomerStorefront({
 
         {loading ? (
           <div className="py-20 text-center space-y-3">
-            <RefreshCw className="w-8 h-8 text-emerald-600 animate-spin mx-auto" />
+            <RefreshCw className="w-8 h-8 text-blue-600 animate-spin mx-auto" />
             <p className="text-slate-600 font-medium">Loading fresh store catalog...</p>
           </div>
         ) : filteredCustomerProducts.length === 0 ? (
@@ -1197,7 +1197,7 @@ export function CustomerStorefront({
                 setSelectedCategory('all');
                 setInStockOnly(false);
               }}
-              className="mt-4 px-4 py-2 rounded-xl bg-[#0d647d] text-white text-xs font-bold hover:bg-sky-900 cursor-pointer"
+              className="mt-4 px-4 py-2 rounded-xl bg-[#1e40af] text-white text-xs font-bold hover:bg-sky-900 cursor-pointer"
             >
               Show All Store Items
             </button>
@@ -1225,15 +1225,15 @@ export function CustomerStorefront({
               return (
                 <div
                   key={product.id}
-                  className={`pb-product-card group bg-white rounded-xl sm:rounded-2xl border border-emerald-100 shadow-[0_2px_10px_rgba(16,80,45,0.05)] transition-all flex flex-col justify-between overflow-hidden min-w-0 hover:shadow-lg hover:-translate-y-0.5 ${
+                  className={`pb-product-card group bg-white rounded-xl sm:rounded-2xl border border-blue-100 shadow-[0_2px_10px_rgba(16,80,45,0.05)] transition-all flex flex-col justify-between overflow-hidden min-w-0 hover:shadow-lg hover:-translate-y-0.5 ${
                     product.inStock
-                      ? 'border-emerald-100 hover:border-emerald-400 hover:shadow-md'
+                      ? 'border-blue-100 hover:border-blue-400 hover:shadow-md'
                       : 'border-slate-200 opacity-70 bg-slate-50'
                   }`}
                 >
                   <div>
                     {/* Product Visual Box */}
-                    <div className="pb-product-image relative aspect-square w-full max-h-44 bg-gradient-to-br from-[#f6fbf5] to-[#edf6ec] flex items-center justify-center p-2.5 sm:p-4 border-b border-emerald-50">
+                    <div className="pb-product-image relative aspect-square w-full max-h-44 bg-gradient-to-br from-[#f5f8ff] to-[#eaf1ff] flex items-center justify-center p-2.5 sm:p-4 border-b border-blue-50">
                       {product.imageUrl ? (
                         <img
                           src={product.imageUrl}
@@ -1255,7 +1255,7 @@ export function CustomerStorefront({
                           </span>
                         )}
                         {product.badge && (
-                          <span className="max-w-full px-2 py-1 rounded-md bg-[#0d647d] text-white font-semibold text-[10px] leading-tight shadow-2xs whitespace-normal break-words">
+                          <span className="max-w-full px-2 py-1 rounded-md bg-[#1e40af] text-white font-semibold text-[10px] leading-tight shadow-2xs whitespace-normal break-words">
                             {product.badge}
                           </span>
                         )}
@@ -1270,8 +1270,8 @@ export function CustomerStorefront({
                       {/* Top-Right Availability Badge — reserved space keeps it clear of offer labels */}
                       <div className="absolute top-2.5 right-2.5 max-w-[4.5rem]">
                         {canAddMore ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-300">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
                             Available
                           </span>
                         ) : (
@@ -1285,7 +1285,7 @@ export function CustomerStorefront({
                     {/* Product Info */}
                     <div className="pb-product-info p-2.5 sm:p-3.5 space-y-2 sm:space-y-2.5">
                       <div>
-                        <div className="text-[9px] sm:text-[11px] font-semibold text-[#0d647d] uppercase tracking-wider truncate">
+                        <div className="text-[9px] sm:text-[11px] font-semibold text-[#1e40af] uppercase tracking-wider truncate">
                           {product.category}
                         </div>
                         <h3 className="pb-product-name font-bold text-slate-900 text-xs sm:text-base line-clamp-2 mt-0.5 min-h-[2.25rem] sm:min-h-[2.5rem]">
@@ -1324,7 +1324,7 @@ export function CustomerStorefront({
                                   }
                                   className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer tabular-nums ${
                                     isSelected
-                                      ? 'bg-[#0d647d] text-white shadow-2xs'
+                                      ? 'bg-[#1e40af] text-white shadow-2xs'
                                       : v.inStock
                                       ? 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                                       : 'bg-slate-100 text-slate-400 line-through'
@@ -1343,7 +1343,7 @@ export function CustomerStorefront({
                         <div className="space-y-1.5">
                           <div className="flex items-center justify-between">
                             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
-                              <Scale className="w-3 h-3 text-[#0d647d]" />
+                              <Scale className="w-3 h-3 text-[#1e40af]" />
                               Select Weight / Qty:
                             </span>
                             <button
@@ -1354,7 +1354,7 @@ export function CustomerStorefront({
                                   [product.id]: !prev[product.id],
                                 }))
                               }
-                              className="text-[11px] font-bold text-[#0d647d] hover:underline cursor-pointer"
+                              className="text-[11px] font-bold text-[#1e40af] hover:underline cursor-pointer"
                             >
                               {isCustomOpen ? 'Close Custom' : '+ Custom Weight'}
                             </button>
@@ -1381,7 +1381,7 @@ export function CustomerStorefront({
                                   }
                                   className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer tabular-nums ${
                                     isSelected
-                                      ? 'bg-[#0d647d] text-white shadow-2xs'
+                                      ? 'bg-[#1e40af] text-white shadow-2xs'
                                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                                   }`}
                                 >
@@ -1428,7 +1428,7 @@ export function CustomerStorefront({
                               <button
                                 type="button"
                                 onClick={() => handleApplyCustomWeight(product)}
-                                className="px-2.5 py-1 rounded-lg bg-[#0d647d] text-white text-xs font-bold hover:bg-sky-900 cursor-pointer ml-auto"
+                                className="px-2.5 py-1 rounded-lg bg-[#1e40af] text-white text-xs font-bold hover:bg-sky-900 cursor-pointer ml-auto"
                               >
                                 Set
                               </button>
@@ -1457,7 +1457,7 @@ export function CustomerStorefront({
                         )}
                       </div>
                       {hasDiscount && (
-                        <div className="text-[11px] font-bold text-emerald-700 tabular-nums">
+                        <div className="text-[11px] font-bold text-blue-700 tabular-nums">
                           Save ₹{savedAmount} ({discountPercent}% OFF)
                         </div>
                       )}
@@ -1476,13 +1476,13 @@ export function CustomerStorefront({
                               unitMrp: activeOpt.mrp,
                             })
                           }
-                          className="px-2.5 sm:px-4 py-2 rounded-lg border border-emerald-600 bg-white hover:bg-emerald-50 text-emerald-700 font-extrabold text-xs sm:text-sm flex items-center gap-1 shadow-2xs transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                          className="px-2.5 sm:px-4 py-2 rounded-lg border border-blue-600 bg-white hover:bg-blue-50 text-blue-700 font-extrabold text-xs sm:text-sm flex items-center gap-1 shadow-2xs transition-colors cursor-pointer whitespace-nowrap shrink-0"
                         >
                           <Plus className="w-4 h-4" />
                           <span>Add</span>
                         </button>
                       ) : (
-                        <div className="flex items-center bg-emerald-600 text-white rounded-xl overflow-hidden shadow-xs shrink-0">
+                        <div className="flex items-center bg-blue-600 text-white rounded-xl overflow-hidden shadow-xs shrink-0">
                           <button
                             type="button"
                             aria-label={`Decrease quantity of ${product.name}`}
@@ -1493,7 +1493,7 @@ export function CustomerStorefront({
                                 unitMrp: activeOpt.mrp,
                               })
                             }
-                            className="p-2 hover:bg-emerald-700 transition-colors cursor-pointer"
+                            className="p-2 hover:bg-blue-700 transition-colors cursor-pointer"
                           >
                             <Minus className="w-3.5 h-3.5" />
                           </button>
@@ -1511,7 +1511,7 @@ export function CustomerStorefront({
                                 unitMrp: activeOpt.mrp,
                               })
                             }
-                            className="p-2 hover:bg-emerald-700 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                            className="p-2 hover:bg-blue-700 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                           >
                             <Plus className="w-3.5 h-3.5" />
                           </button>
@@ -1538,7 +1538,7 @@ export function CustomerStorefront({
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left space-y-1">
             <div className="flex items-center justify-center sm:justify-start gap-2 font-extrabold text-slate-900 text-sm">
-              <Store className="w-4 h-4 text-[#0d647d]" />
+              <Store className="w-4 h-4 text-[#1e40af]" />
               <span>{storeSettings.storeName}</span>
             </div>
             <p className="text-xs text-slate-500">
@@ -1553,7 +1553,7 @@ export function CustomerStorefront({
               rel="noopener noreferrer"
               className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-200 font-semibold flex items-center gap-1.5 whitespace-nowrap shrink-0"
             >
-              <MapPin className="w-4 h-4 text-[#0d647d]" />
+              <MapPin className="w-4 h-4 text-[#1e40af]" />
               <span>Find on Google Maps</span>
             </a>
             <button
@@ -1561,7 +1561,7 @@ export function CustomerStorefront({
               onClick={() => setIsQrModalOpen(true)}
               className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-200 font-semibold flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0"
             >
-              <QrCode className="w-4 h-4 text-[#0d647d]" />
+              <QrCode className="w-4 h-4 text-[#1e40af]" />
               <span>Store QR Code</span>
             </button>
           </div>
@@ -1618,7 +1618,7 @@ export function CustomerStorefront({
                     ₹{cartTotalPrice}
                   </span>
                   {cartTotalSaved > 0 && (
-                    <span className="text-xs font-extrabold text-emerald-700">
+                    <span className="text-xs font-extrabold text-blue-700">
                       ₹{cartTotalSaved} saved
                     </span>
                   )}
