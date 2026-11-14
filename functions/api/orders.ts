@@ -324,19 +324,23 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   if (shouldRefundNow) {
     const refunds = new Map<string, number>();
     for (const item of refundLines) {
-      if (item.productId) {
-        const row = await env.DB.prepare("SELECT data FROM products WHERE id=?").bind(item.productId).first<any>();
-        if (row) {
-          const product = JSON.parse(row.data);
-          if (typeof product.stockQuantity === "number") {
-            const units = stockUnitsForOrder(item, product);
-            if (units === null || !Number.isFinite(units) || units <= 0) {
-              return json({error:"Could not calculate the stock refund for " + item.name + ". Please review its inventory unit."},409);
-            }
-            refunds.set(item.productId, (refunds.get(item.productId) || 0) + units);
-          }
-        }
+      if (!item.productId) {
+        return json({error:"Could not restore " + item.name + " because its inventory product link is missing. The order was not cancelled; refresh and try again."},409);
       }
+      const row = await env.DB.prepare("SELECT data FROM products WHERE id=?").bind(item.productId).first<any>();
+      if (!row) {
+        return json({error:"Could not restore " + item.name + " because its inventory record was not found. The order was not cancelled; contact support."},409);
+      }
+      const product = JSON.parse(row.data);
+      if (typeof product.stockQuantity !== "number" || !Number.isFinite(product.stockQuantity)) {
+        return json({error:"Inventory quantity is not configured for " + item.name + ". The order was not cancelled; check its stock settings."},409);
+      }
+      const units = stockUnitsForOrder(item, product);
+      if (units === null || !Number.isFinite(units) || units <= 0) {
+        return json({error:"Could not calculate the stock refund for " + item.name + ". The order was not cancelled; review its inventory unit."},409);
+      }
+      refunds.set(item.productId, (refunds.get(item.productId) || 0) + units);
+      // Mark refunded only after the product and quantity have been validated.
       item.stockRefunded = true;
     }
     const now = Date.now();
