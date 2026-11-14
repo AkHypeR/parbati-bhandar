@@ -826,6 +826,20 @@ export function assignBestItemRank(
   });
 }
 
+export interface AutomaticFestivalTheme { id: string; title: string; subtitle: string; tag: string; emoji: string; }
+export function getAutomaticFestivalTheme(date = new Date()): AutomaticFestivalTheme | null {
+  const month = date.getMonth() + 1, day = date.getDate();
+  const inRange = (m: number, a: number, b: number) => month === m && day >= a && day <= b;
+  if (inRange(1,13,15)) return { id:'makar-sankranti', title:'শুভ মকর সংক্রান্তি', subtitle:'নতুন ফসল, পিঠে-পুলি আর আনন্দের উৎসব', tag:'Makar Sankranti • Poush Parbon', emoji:'🌾' };
+  if (inRange(1,24,26)) return { id:'republic-day', title:'Happy Republic Day', subtitle:'Celebrating the spirit of India', tag:'Republic Day', emoji:'🇮🇳' };
+  if (inRange(4,14,15)) return { id:'poila-boishakh', title:'শুভ নববর্ষ', subtitle:'নতুন বছর শুরু হোক আনন্দ আর সমৃদ্ধিতে', tag:'Poila Boishakh • Bengali New Year', emoji:'🌼' };
+  if (inRange(8,13,15)) return { id:'independence-day', title:'Happy Independence Day', subtitle:'স্বাধীনতার আনন্দে সবাইকে শুভেচ্ছা', tag:'Independence Day', emoji:'🇮🇳' };
+  if (inRange(10,1,2)) return { id:'gandhi-jayanti', title:'Gandhi Jayanti', subtitle:'Remembering peace and kindness', tag:'Gandhi Jayanti', emoji:'🕊️' };
+  if (inRange(11,13,16) && date.getFullYear() === 2026) return { id:'chhath-puja', title:'শুভ ছট পূজা', subtitle:'সূর্য অর্ঘ্য • উৎসবের আনন্দে Parbati Bhandar', tag:'Chhath Puja Celebration', emoji:'🪔' };
+  if (inRange(12,20,26)) return { id:'christmas', title:'Merry Christmas', subtitle:'শুভ বড়দিন • Wishing you joy and happiness', tag:'Christmas Celebration', emoji:'🎄' };
+  if ((month === 12 && day >= 27) || (month === 1 && day <= 2)) return { id:'new-year', title:'শুভ নববর্ষ • Happy New Year', subtitle:'Fresh essentials and fresh hopes', tag:'New Year Celebration', emoji:'🎉' };
+  return null;
+}
 export type HeroSlide =
   | {
       type: 'festive';
@@ -857,25 +871,14 @@ export function buildHeroSlides(
 ): HeroSlide[] {
   const slides: HeroSlide[] = [];
   const occasionImage = settings.occasionImageUrl || '';
-  // Chhath 2026 runs 13–16 November. Force the campaign during these dates,
-  // even when older cloud settings contain a different occasion or hide the banner.
-  const localDate = new Date();
-  const isChhathCalendarWindow = localDate.getFullYear() === 2026 && localDate.getMonth() === 10 && localDate.getDate() >= 13 && localDate.getDate() <= 16;
-  const isChhathOccasion = isChhathCalendarWindow || /chhath|ছট\\s*(পূজা|পুজো)?/i.test(`${settings.occasionTitle || ''} ${settings.occasionSubtitle || ''} ${settings.occasionTag || ''} ${occasionImage}`);
+  const autoFestival = getAutomaticFestivalTheme();
+  const settingsText = [settings.occasionTitle, settings.occasionSubtitle, settings.occasionTag, occasionImage].join(' ');
+  const isChhathOccasion = autoFestival?.id === 'chhath-puja' || /chhath|ছট\s*(পূজা|পুজো)?/i.test(settingsText);
   const hasCustomOccasion = Boolean(settings.occasionTitle?.trim() || occasionImage.trim());
-  // Chhath is a dedicated seasonal campaign: keep its hero visible even if an
-  // older saved setting has the generic occasion-banner switch turned off.
-  // Other owner-selected occasions continue to respect the normal switch.
-  const shouldShowOccasion = isChhathOccasion || settings.showOccasionBanner === true || !hasCustomOccasion;
+  const shouldShowOccasion = isChhathOccasion || settings.showOccasionBanner === true || !hasCustomOccasion || Boolean(autoFestival);
   if (shouldShowOccasion) {
-    slides.push({
-      type: 'festive',
-      id: 'festive-banner',
-      title: isChhathOccasion ? (settings.occasionTitle?.trim() && /chhath|ছট/i.test(settings.occasionTitle) ? settings.occasionTitle.trim() : 'শুভ ছট পূজা') : (settings.occasionTitle?.trim() || 'Merry Christmas'),
-      subtitle: isChhathOccasion ? (settings.occasionSubtitle?.trim() && /chhath|ছট/i.test(settings.occasionSubtitle) ? settings.occasionSubtitle.trim() : 'সূর্য অর্ঘ্য • উৎসবের আনন্দে Parbati Bhandar') : (settings.occasionSubtitle?.trim() || 'শুভ বড়দিন • Wishing you joy, warmth and happiness'),
-      tag: isChhathOccasion ? 'Chhath Puja Celebration' : (settings.occasionTag?.trim() || 'Christmas Celebration'),
-      imageUrl: occasionImage,
-    });
+    const fallback = autoFestival || { title:'Welcome to Parbati Bhandar', subtitle:'Your neighbourhood grocery store • Everyday essentials with care', tag:'Fresh essentials, friendly service', emoji:'🛍️' };
+    slides.push({ type:'festive', id:'festive-banner', title:autoFestival?.title || settings.occasionTitle?.trim() || fallback.title, subtitle:autoFestival?.subtitle || settings.occasionSubtitle?.trim() || fallback.subtitle, tag:autoFestival?.tag || settings.occasionTag?.trim() || fallback.tag, imageUrl:occasionImage });
   }
   const orderedBest = getBestItems(products, 5);
   orderedBest.forEach((product, idx) => {
