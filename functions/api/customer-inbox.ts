@@ -14,8 +14,6 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const customer = await getCustomer(request, env);
   if (!customer) return json({ error: "Please sign in to view your notifications." }, 401, { "cache-control": "no-store" });
   await ensureInboxTable(env);
-  const expiry = Date.now() - 24 * 60 * 60 * 1000;
-  await env.DB.prepare("DELETE FROM customer_inbox_notifications WHERE customer_id=? AND created_at<=?").bind(customer.id, expiry).run();
   const result = await env.DB.prepare("SELECT id,title,body,created_at AS createdAt,read_at AS readAt FROM customer_inbox_notifications WHERE customer_id=? ORDER BY created_at DESC LIMIT 50").bind(customer.id).all<any>();
   const notifications = result.results || [];
   return json({ notifications, unreadCount: notifications.filter((item: any) => !item.readAt).length }, 200, { "cache-control": "no-store" });
