@@ -1070,6 +1070,7 @@ export default function App() {
             customerAccount ? (
               <CustomerOrders
                 orderNumber={currentPath.startsWith('/orders/') ? Number(currentPath.split('/')[2]) : undefined}
+                phone={customerAccount.phone}
                 onNavigate={navigateToPath}
                 onBack={() => navigateToPath('/')}
               />
