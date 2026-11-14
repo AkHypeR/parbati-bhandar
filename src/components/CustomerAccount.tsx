@@ -268,8 +268,8 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
                   <div className="flex items-start gap-3">
                     <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-50 text-emerald-800"><BellRing className="h-5 w-5"/></span>
                     <div className="min-w-0 flex-1">
-                      <h3 className="font-extrabold text-slate-900">Order notifications</h3>
-                      <p className="mt-1 text-xs leading-5 text-slate-500">Get an alert on this device when your order is being prepared, ready, or updated.</p>
+                      <h3 className="font-extrabold text-slate-900">Push notifications</h3>
+                      <p className="mt-1 text-xs leading-5 text-slate-500">Receive order updates and store announcements from Parbati Bhandar on this device.</p>
                     </div>
                   </div>
                   <button type="button" onClick={notificationState === 'on' ? disableProfileNotifications : enableProfileNotifications} disabled={notificationState === 'working' || notificationState === 'unsupported'} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3 text-sm font-extrabold text-white hover:bg-emerald-800 disabled:opacity-60">
