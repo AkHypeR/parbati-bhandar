@@ -177,13 +177,13 @@ export default function App() {
         }
       }).catch(() => {});
   }, []);
-  const handleCustomerAuthenticated = (customer: {id:string;name:string;phone:string}) => {
+  const handleCustomerAuthenticated = (customer: {id:string;name:string;phone:string}, created = false) => {
     setCustomerAccount(customer);
     setCustomerName(customer.name);
     setCustomerPhone(customer.phone);
-    navigateToPath(accountReturnPath);
+    navigateToPath(created ? '/' : accountReturnPath);
     setAccountReturnPath('/account');
-    showToast('Signed in successfully. Your details are ready for checkout.');
+    showToast(created ? 'Your account is ready. Welcome to Parbati Bhandar!' : 'Signed in successfully. Your details are ready for checkout.');
   };
   const handleCustomerLogout = () => {
     setCustomerAccount(null);
@@ -609,17 +609,12 @@ export default function App() {
     [storeSettings.whatsappNumber, storeSettings.phone, orderText]
   );
 
-  const handleSaveCustomerOrder = async (turnstileToken: string, pushSubscription?: PushSubscriptionJSON | null): Promise<number | null> => {
+  const handleSaveCustomerOrder = async (turnstileToken: string): Promise<number | null> => {
     if (!checkIsStoreOpenIST(storeSettings)) { showToast('The store is closed. Orders cannot be placed right now.', 'error'); return null; }
     try {
-      const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerName, customerPhone, turnstileToken, pushSubscription, cartReservationId: cartReservationId.current, note: customerNote, items: cartItemsList.map(item => ({ productId: item.product.id, name: item.product.name, quantity: item.qty, unit: item.selectedUnit, price: item.unitPrice })) }) });
+      const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerName, customerPhone, turnstileToken, cartReservationId: cartReservationId.current, note: customerNote, items: cartItemsList.map(item => ({ productId: item.product.id, name: item.product.name, quantity: item.qty, unit: item.selectedUnit, price: item.unitPrice })) }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || 'Could not save order');
-      if (!customerAccount && rememberCustomerDetails) {
-        try { localStorage.setItem('parbati_bhandar_customer_details_v1', JSON.stringify({ name: customerName.trim(), phone: customerPhone.trim() })); } catch { /* Saving details is optional. */ }
-      } else {
-        try { localStorage.removeItem('parbati_bhandar_customer_details_v1'); } catch { /* Ignore unavailable storage. */ }
-      }
       const orderNumber = Number(result.orderNumber);
       if (!Number.isInteger(orderNumber) || orderNumber < 1) throw new Error('Order was saved, but its tracking number could not be confirmed.');
       setLastSavedOrderNumber(String(orderNumber));
@@ -1093,14 +1088,8 @@ export default function App() {
             cartTotalItems={cartTotalItems}
             cartTotalPrice={cartTotalPrice}
             cartTotalSaved={cartTotalSaved}
-            customerName={customerName}
-            customerPhone={customerPhone}
-            setCustomerPhone={setCustomerPhone}
-            rememberCustomerDetails={rememberCustomerDetails}
-            setRememberCustomerDetails={setRememberCustomerDetails}
             onSaveOrder={handleSaveCustomerOrder}
-            onOrderPlaced={(orderNumber) => navigateToPath('/orders/' + orderNumber)}
-            setCustomerName={setCustomerName}
+            onOrderPlaced={() => navigateToPath('/')}
             customerNote={customerNote}
             setCustomerNote={setCustomerNote}
             updateCartQty={updateCartQty}
