@@ -48,6 +48,8 @@ import {
 
 interface CustomerStorefrontProps {
   storeSettings: StoreSettings;
+  currentPage: 'home' | 'track' | 'history' | 'cart';
+  onNavigate: (path: string) => void;
   liveIsOpen: boolean;
   inStockCount: number;
   products: Product[];
@@ -80,6 +82,8 @@ interface CustomerStorefrontProps {
 
 export function CustomerStorefront({
   storeSettings,
+  currentPage,
+  onNavigate,
   liveIsOpen,
   inStockCount,
   products,
@@ -115,6 +119,10 @@ export function CustomerStorefront({
   const [historyError, setHistoryError] = useState('');
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const [ordersView, setOrdersView] = useState<'track' | 'history'>('track');
+  useEffect(() => {
+    if (currentPage === 'track') setOrdersView('track');
+    if (currentPage === 'history') setOrdersView('history');
+  }, [currentPage]);
   useEffect(() => {
     if (lastOrderNumber) {
       setTrackingOrderNumber(lastOrderNumber);
@@ -323,9 +331,9 @@ export function CustomerStorefront({
             <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
-                onClick={() => setIsProfileOpen((open) => !open)}
+                onClick={() => onNavigate('/previous-orders')}
                 aria-label="My profile and orders"
-                aria-expanded={isProfileOpen}
+                aria-expanded={currentPage === 'history'}
                 className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 border border-white/20 flex items-center justify-center text-white cursor-pointer shrink-0 transition-colors"
               >
                 <User className="w-4 h-4" />
@@ -466,7 +474,7 @@ export function CustomerStorefront({
       </header>
 
       {/* Customer order centre */}
-      {isProfileOpen && (
+      {(currentPage === 'track' || currentPage === 'history') && (
         <section id="customer-order-tools" className="mx-auto w-full max-w-4xl scroll-mt-4 px-3 py-4 sm:px-6" aria-label="My orders">
           <div className="overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-[0_18px_50px_rgba(15,23,42,.08)]">
             <div className="relative overflow-hidden bg-[#073f2b] px-5 py-5 text-white sm:px-7 sm:py-6">
@@ -478,7 +486,7 @@ export function CustomerStorefront({
                   <h2 className="mt-3 text-2xl font-black tracking-tight sm:text-3xl">Your orders, in one place.</h2>
                   <p className="mt-1.5 max-w-lg text-xs leading-5 text-emerald-50/80 sm:text-sm">Follow an order's progress or review your recent purchases from Parbati Bhandar.</p>
                 </div>
-                <button type="button" onClick={() => setIsProfileOpen(false)} aria-label="Close orders" className="relative rounded-full border border-white/15 bg-white/10 p-2 text-white transition hover:bg-white/20"><X className="h-4 w-4" /></button>
+                <button type="button" onClick={() => onNavigate('/')} aria-label="Close orders" className="relative rounded-full border border-white/15 bg-white/10 p-2 text-white transition hover:bg-white/20"><X className="h-4 w-4" /></button>
               </div>
               <div className="relative mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-semibold text-emerald-100/90">
                 <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-lime-300" /> Private order lookup</span>
@@ -498,8 +506,8 @@ export function CustomerStorefront({
               )}
 
               <div className="grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1.5" role="tablist" aria-label="Order options">
-                <button type="button" role="tab" aria-selected={ordersView === 'track'} onClick={() => setOrdersView('track')} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${ordersView === 'track' ? 'bg-white text-[#07543a] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}><Package className="h-4 w-4" /> Track order</button>
-                <button type="button" role="tab" aria-selected={ordersView === 'history'} onClick={() => { setOrdersView('history'); if (!historyLoaded && trackingPhone.replace(/\D/g, '').length >= 10) void loadOrderHistory(); }} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${ordersView === 'history' ? 'bg-white text-[#07543a] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}><ClipboardList className="h-4 w-4" /> Previous orders</button>
+                <button type="button" role="tab" aria-selected={ordersView === 'track'} onClick={() => onNavigate('/track-order')} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${ordersView === 'track' ? 'bg-white text-[#07543a] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}><Package className="h-4 w-4" /> Track order</button>
+                <button type="button" role="tab" aria-selected={ordersView === 'history'} onClick={() => { onNavigate('/previous-orders'); if (!historyLoaded && trackingPhone.replace(/\D/g, '').length >= 10) void loadOrderHistory(); }} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${ordersView === 'history' ? 'bg-white text-[#07543a] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}><ClipboardList className="h-4 w-4" /> Previous orders</button>
               </div>
 
               {ordersView === 'track' ? (
@@ -563,7 +571,7 @@ export function CustomerStorefront({
           </div>
         </section>
       )}
-      {/* ===================================================================== */}
+      {currentPage === 'home' && (<>\n      {/* ===================================================================== */}
       {/* STICKY SEARCH BAR & CATEGORY RIBBON (Follows User on Scroll)          */}
       {/* ===================================================================== */}
       <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-2xs">
@@ -606,7 +614,7 @@ export function CustomerStorefront({
             {/* Compact My Order Button in Sticky Header */}
             <button
               type="button"
-              onClick={() => setIsCartOpen(true)}
+              onClick={() => onNavigate('/cart')}
               aria-label="Open My Order List"
               className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-[#ffd814] hover:bg-[#f7ca00] text-slate-950 font-extrabold text-xs shadow-2xs cursor-pointer shrink-0 tabular-nums"
             >
@@ -1587,7 +1595,7 @@ export function CustomerStorefront({
           <div className="px-3.5 sm:px-5 py-2.5 flex items-center justify-between gap-3 tabular-nums">
             <button
               type="button"
-              onClick={() => setIsCartOpen(true)}
+              onClick={() => onNavigate('/cart')}
               aria-label="Review items in order list"
               className="flex items-center gap-3 text-left cursor-pointer group min-w-0"
             >
@@ -1642,7 +1650,7 @@ export function CustomerStorefront({
             {/* Bright Yellow Pill "Proceed" Button (Matches Screenshot) */}
             <button
               type="button"
-              onClick={() => setIsCartOpen(true)}
+              onClick={() => onNavigate('/cart')}
               aria-label="Proceed to Order List"
               className="px-7 sm:px-9 py-3 rounded-full bg-[#ffd814] hover:bg-[#f7ca00] active:scale-98 text-slate-950 font-black text-sm sm:text-base shadow-sm transition-all cursor-pointer shrink-0"
             >
@@ -1651,6 +1659,7 @@ export function CustomerStorefront({
           </div>
         </div>
       </div>
+      </>)}
     </div>
   );
 }
