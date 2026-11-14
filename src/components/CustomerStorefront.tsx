@@ -1592,14 +1592,44 @@ export function CustomerStorefront({
               </div>
               <span className="text-xs font-semibold text-slate-500">{sameCategorySuggestions.length} suggestions</span>
             </div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
-              {sameCategorySuggestions.map(product => (
-                <button key={product.id} type="button" onClick={() => submitSearch(product.name)}
-                  className="flex min-h-[76px] flex-col items-start justify-center rounded-xl border border-slate-200 bg-white px-3 py-3 text-left shadow-sm transition-colors hover:border-blue-300 hover:bg-blue-50">
-                  <span className="line-clamp-2 text-xs font-bold text-slate-800">{product.name}</span>
-                  <span className="mt-1 text-xs font-extrabold text-blue-700">₹{product.price} <span className="font-medium text-slate-500">· {product.unit}</span></span>
-                </button>
-              ))}
+            <div className="-mx-3 overflow-x-auto px-3 pb-3 sm:mx-0 sm:px-0">
+              <div className="flex snap-x snap-mandatory gap-3 sm:grid sm:grid-cols-3 lg:grid-cols-4">
+                {sameCategorySuggestions.map(product => {
+                  const option = getActiveOptionForProduct(product);
+                  const cartKey = makeCartKey(product.id, option.label);
+                  const quantity = cart[cartKey]?.qty || (option.label === product.unit ? cart[product.id]?.qty || 0 : 0);
+                  const available = option.inStock && product.inStock && getRemainingStock(product) > 0;
+                  return (
+                    <article key={product.id} className="w-[156px] shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm sm:w-auto">
+                      <button type="button" onClick={() => submitSearch(product.name)} className="block w-full text-left" aria-label={`View ${product.name}`}>
+                        <div className="flex h-28 items-center justify-center bg-[#f8fafc] p-3">
+                          {product.imageUrl
+                            ? <img src={product.imageUrl} alt={product.name} loading="lazy" referrerPolicy="no-referrer" className="h-full w-full object-contain" />
+                            : <span className="text-5xl" aria-hidden="true">{product.emoji || '🛍️'}</span>}
+                        </div>
+                        <div className="px-3 pt-2.5">
+                          <h4 className="line-clamp-2 min-h-9 text-xs font-bold leading-4 text-slate-800">{product.name}</h4>
+                          <p className="mt-1 text-[11px] text-slate-500">{option.label}</p>
+                        </div>
+                      </button>
+                      <div className="flex items-center justify-between gap-1 px-3 pb-3 pt-2">
+                        <span className="text-sm font-extrabold tabular-nums text-slate-900">₹{option.price}</span>
+                        {quantity > 0 ? (
+                          <div className="flex h-8 items-center overflow-hidden rounded-lg border border-blue-600 bg-white text-blue-700">
+                            <button type="button" aria-label={`Remove one ${product.name}`} onClick={() => updateCartQty(product, -1, { selectedUnit: option.label, unitPrice: option.price, unitMrp: option.mrp })} className="grid h-8 w-7 place-items-center font-bold">−</button>
+                            <span className="min-w-5 text-center text-xs font-extrabold">{quantity}</span>
+                            <button type="button" aria-label={`Add one more ${product.name}`} disabled={!available} onClick={() => updateCartQty(product, 1, { selectedUnit: option.label, unitPrice: option.price, unitMrp: option.mrp })} className="grid h-8 w-7 place-items-center font-bold disabled:opacity-40">+</button>
+                          </div>
+                        ) : (
+                          <button type="button" disabled={!available} onClick={() => updateCartQty(product, 1, { selectedUnit: option.label, unitPrice: option.price, unitMrp: option.mrp })} className="min-w-[58px] rounded-lg border border-blue-600 bg-blue-50 px-3 py-1.5 text-xs font-extrabold uppercase text-blue-700 hover:bg-blue-100 disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400">
+                            {available ? 'ADD' : 'Sold out'}
+                          </button>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
             </div>
           </section>
         )}
