@@ -249,6 +249,7 @@ export function AdminUploadApp({
   type CustomerOrder = { id: string; orderNumber: number; customerName: string; customerPhone: string; note?: string; items: { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean }[]; total: number; status: 'new' | 'processing' | 'review' | 'ready' | 'unavailable' | 'completed' | 'cancelled'; createdAt: number; estimatedReadyAt?: number | null };
   const [customerOrders, setCustomerOrders] = useState<CustomerOrder[]>([]);
   const knownOrderIdsRef = useRef<Set<string>>(new Set());
+  const knownOrderStatusesRef = useRef<Map<string, string>>(new Map());
   const hasOrderSnapshotRef = useRef(false);
   const newOrdersCount = customerOrders.filter(order => order.status === 'new').length;
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
@@ -274,6 +275,20 @@ export function AdminUploadApp({
       if (!response.ok) throw new Error(data.error || 'Could not load orders.');
       const incoming: CustomerOrder[] = Array.isArray(data.orders) ? data.orders : [];
       if (hasOrderSnapshotRef.current) {
+        const cancelledOrders = incoming.filter(order => order.status === 'cancelled' && knownOrderStatusesRef.current.get(order.id) !== 'cancelled');
+        if (cancelledOrders.length) {
+          const latestCancelled = cancelledOrders.sort((a, b) => b.createdAt - a.createdAt)[0];
+          showToast(`Customer cancelled order #${latestCancelled.orderNumber} · ${latestCancelled.customerName}`);
+          if ('Notification' in window && Notification.permission === 'granted') {
+            try {
+              new Notification('Customer cancelled an order', {
+                body: `Order #${latestCancelled.orderNumber} · ${latestCancelled.customerName}`,
+                icon: '/favicon.svg',
+                tag: `cancelled-order-${latestCancelled.id}`
+              });
+            } catch { /* In-app alert remains available if browser notifications are blocked. */ }
+          }
+        }
         const freshOrders = incoming.filter(order => !knownOrderIdsRef.current.has(order.id));
         if (freshOrders.length) {
           const latest = freshOrders.sort((a, b) => b.createdAt - a.createdAt)[0];
@@ -292,6 +307,7 @@ export function AdminUploadApp({
         hasOrderSnapshotRef.current = true;
       }
       knownOrderIdsRef.current = new Set(incoming.map(order => order.id));
+      knownOrderStatusesRef.current = new Map(incoming.map(order => [order.id, order.status]));
       setCustomerOrders(incoming);
     } catch (error) {
       if (!silent) showToast((error as Error).message, 'error');
@@ -811,7 +827,7 @@ export function AdminUploadApp({
                   <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
                     <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 pb-4">
                       <div><p className="text-xs font-bold uppercase tracking-wide text-slate-400">Order details</p><h2 className="mt-1 text-2xl font-black text-slate-900">Order #{order.orderNumber}</h2><p className="mt-1 text-sm text-slate-500">{new Date(order.createdAt).toLocaleString('en-IN')}</p></div>
-                      <span className={`rounded-full px-3 py-1.5 text-xs font-extrabold uppercase ${order.status === 'new' ? 'bg-blue-100 text-blue-800' : order.status === 'processing' ? 'bg-amber-100 text-amber-800' : order.status === 'ready' ? 'bg-blue-100 text-blue-800' : order.status === 'unavailable' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}`}>{order.status === 'new' ? 'Order received' : order.status === 'processing' ? 'Processing' : order.status === 'ready' ? 'Ready for pickup' : order.status}</span>
+                      <span className={`rounded-full px-3 py-1.5 text-xs font-extrabold uppercase ${order.status === 'new' ? 'bg-blue-100 text-blue-800' : order.status === 'processing' ? 'bg-amber-100 text-amber-800' : order.status === 'ready' ? 'bg-blue-100 text-blue-800' : order.status === 'unavailable' ? 'bg-amber-100 text-amber-900' : order.status === 'cancelled' ? 'bg-rose-100 text-rose-800' : 'bg-slate-100 text-slate-600'}`}>{order.status === 'new' ? 'Order received' : order.status === 'processing' ? 'Processing' : order.status === 'ready' ? 'Ready for pickup' : order.status === 'cancelled' ? 'Cancelled by customer' : order.status}</span>
                     </div>
                     <div className="grid gap-4 py-5 sm:grid-cols-2">
                       <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-bold uppercase text-slate-400">Customer</p><p className="mt-1 text-lg font-extrabold text-slate-900">{order.customerName}</p><a onClick={event => event.stopPropagation()} href={`tel:${order.customerPhone}`} className="mt-1 inline-flex items-center gap-2 text-sm font-semibold text-blue-700"><Phone className="h-4 w-4" />{order.customerPhone}</a></div>
@@ -866,7 +882,7 @@ export function AdminUploadApp({
               </label>
               <label className="text-xs font-bold text-slate-700">Filter by status
                 <select value={orderStatusFilter} onChange={e => setOrderStatusFilter(e.target.value)} className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-medium">
-                  <option value="all">All statuses</option><option value="new">Order received</option><option value="processing">Processing</option><option value="ready">Ready for pickup</option><option value="unavailable">Unavailable (legacy)</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option>
+                  <option value="all">All statuses</option><option value="new">Order received</option><option value="processing">Processing</option><option value="ready">Ready for pickup</option><option value="unavailable">Unavailable (legacy)</option><option value="completed">Completed</option><option value="cancelled">Cancelled by customer</option><option value="cancelled">Cancelled</option>
                 </select>
               </label>
             </div>
