@@ -202,8 +202,8 @@ export default function App() {
   const [copiedNotice, setCopiedNotice] = useState(false);
 
   // Admin View States
-  const [adminTab, setAdminTabState] = useState<'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders' | 'reviews'>(() => getAdminTabFromPath());
-  const adminTabRoutes = { dashboard: '/owner/dashboard', inventory: '/owner/inventory', add: '/owner/add-product', orders: '/owner/orders', settings: '/owner/settings', quickReplies: '/owner/whatsapp-replies', reviews: '/owner/reviews' } as const;
+  const [adminTab, setAdminTabState] = useState<'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders'>(() => getAdminTabFromPath());
+  const adminTabRoutes = { dashboard: '/owner/dashboard', inventory: '/owner/inventory', add: '/owner/add-product', orders: '/owner/orders', settings: '/owner/settings', quickReplies: '/owner/whatsapp-replies' } as const;
   const setAdminTab = (tab: 'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders' | 'reviews') => {
     navigateToPath(adminTabRoutes[tab]);
   };
