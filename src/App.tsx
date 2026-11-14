@@ -708,10 +708,10 @@ export default function App() {
     [storeSettings.whatsappNumber, storeSettings.phone, orderText]
   );
 
-  const handleSaveCustomerOrder = async (turnstileToken: string): Promise<number | null> => {
+  const handleSaveCustomerOrder = async (): Promise<number | null> => {
     if (!checkIsStoreOpenIST(storeSettings)) { showToast('The store is closed. Orders cannot be placed right now.', 'error'); return null; }
     try {
-      const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerName, customerPhone, turnstileToken, note: customerNote, items: cartItemsList.map(item => ({ productId: item.product.id, name: item.product.name, quantity: item.qty, unit: item.selectedUnit, price: item.unitPrice })) }) });
+      const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerName, customerPhone, note: customerNote, items: cartItemsList.map(item => ({ productId: item.product.id, name: item.product.name, quantity: item.qty, unit: item.selectedUnit, price: item.unitPrice })) }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || 'Could not save order');
       const orderNumber = Number(result.orderNumber);
