@@ -416,8 +416,8 @@ export function CustomerStorefront({
   const deliveryEtaMins = storeSettings.deliveryEtaMins || '10';
   const seasonalThemeText = `${storeSettings.occasionTitle || ''} ${storeSettings.occasionSubtitle || ''} ${storeSettings.occasionTag || ''} ${storeSettings.occasionImageUrl || ''} ${currentSlide?.title || ''} ${currentSlide?.subtitle || ''} ${currentSlide?.tag || ''}`;
   const automaticFestivalTheme = getAutomaticFestivalTheme();
-  const isChhathSeason = automaticFestivalTheme?.id === 'chhath-puja' || /chhath|ছট\\s*(পূজা|পুজো)?/i.test(seasonalThemeText);
-  const isChristmasSeason = /christmas|xmas/i.test(seasonalThemeText);
+  const isChhathSeason = automaticFestivalTheme ? automaticFestivalTheme.id === 'chhath-puja' : /chhath|ছট\\s*(পূজা|পুজো)?/i.test(seasonalThemeText);
+  const isChristmasSeason = automaticFestivalTheme ? automaticFestivalTheme.id === 'christmas' : /christmas|xmas/i.test(seasonalThemeText);
   const isAutomaticFestivalSeason = Boolean(automaticFestivalTheme) && !isChhathSeason && !isChristmasSeason;
 
   return (
