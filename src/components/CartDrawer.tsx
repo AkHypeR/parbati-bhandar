@@ -58,8 +58,6 @@ interface CartDrawerProps {
     option?: { selectedUnit?: string; unitPrice?: number; unitMrp?: number | null }
   ) => void;
   clearCart: () => void;
-  whatsAppUrl: string;
-  orderText: string;
 }
 
 export function CartDrawer({
@@ -78,8 +76,6 @@ export function CartDrawer({
   setCustomerNote,
   updateCartQty,
   clearCart,
-  whatsAppUrl,
-  orderText,
 }: CartDrawerProps) {
   const [checkoutStep, setCheckoutStep] = useState<'review' | 'checkout'>('review');
   const [savingOrder, setSavingOrder] = useState(false);
@@ -370,22 +366,13 @@ export function CartDrawer({
                 {!liveIsOpen && <div role="status" className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-semibold text-red-800">The store is currently closed. Online orders are paused and will be available when the store opens.</div>}
                 <button type="button" disabled={savingOrder || !liveIsOpen} onClick={async () => {
                   if (savingOrder) return;
-                  const popup = window.open('about:blank', '_blank');
                   setSavingOrder(true);
                   try {
                     const orderNumber = await onSaveOrder();
                     if (orderNumber !== null) {
-                      // Navigate the pre-opened tab as soon as Cloudflare confirms the order.
-                      if (popup) {
-                        try {
-                          const whatsapp = new URL(whatsAppUrl);
-                          whatsapp.searchParams.set('text', orderText + '\n\nYour order has been received by Parbati Bhandar. Please check My Account on the store website for the order date, time and live status.');
-                          popup.location.replace(whatsapp.toString());
-                        } catch { popup.location.replace(whatsAppUrl); }
-                      }
                       clearCart();
                       onOrderPlaced(orderNumber);
-                    } else if (popup) popup.close();
+                    }
                   } finally { setSavingOrder(false); }
                 }} className="w-full flex items-center justify-center gap-2 py-3.5 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm shadow-sm disabled:opacity-60">
                   <MessageCircle className="w-4 h-4" />
