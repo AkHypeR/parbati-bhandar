@@ -110,7 +110,7 @@ export function CustomerNotifications({ customer, onBack, onSignIn }: {
             <h2 className="mt-3 text-lg font-black text-slate-900">Sign in to see notifications</h2>
             <p className="mt-1 text-sm text-slate-500">Your store announcements will be saved to your account.</p>
             <button type="button" onClick={onSignIn} className="mt-5 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-extrabold text-white hover:bg-emerald-800">Sign in / Create account</button>
-          </div> : loading && !loaded ? <div className="px-6 py-12 text-center text-sm text-slate-500">Loading your notifications…</div> : items.length === 0 ? <div className="px-6 py-14 text-center">
+          </div> : loading && !loaded ? <div className="px-6 py-12 text-center text-sm text-slate-500"><span className="mx-auto mb-3 block h-7 w-7 animate-spin rounded-full border-[3px] border-blue-700 border-t-transparent" aria-hidden="true"/><span>Loading your notifications…</span></div> : items.length === 0 ? <div className="px-6 py-14 text-center">
             <Bell className="mx-auto h-9 w-9 text-slate-300" />
             <h2 className="mt-3 text-lg font-black text-slate-900">You’re all caught up</h2>
             <p className="mt-1 text-sm text-slate-500">New store announcements will appear here.</p>
