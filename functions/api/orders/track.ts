@@ -15,7 +15,6 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       "SELECT order_number,items_json,status,total,created_at,updated_at,confirmed_at FROM customer_orders WHERE customer_id=? AND created_at>=? ORDER BY created_at DESC LIMIT 50"
     ).bind(customer.id, Date.now() - 7 * 24 * 60 * 60 * 1000).all<any>();
     const orders = (rows.results || []).map((row: any) => ({
-      orderNumber: row.order_number,
       status: row.status,
       total: Number(row.total || 0),
       confirmedAt: row.confirmed_at || null,
