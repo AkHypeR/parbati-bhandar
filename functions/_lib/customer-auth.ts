@@ -17,14 +17,7 @@ async function passwordHash(password: string, salt: Uint8Array) {
   return Array.from(new Uint8Array(bits), b => b.toString(16).padStart(2, "0")).join("");
 }
 export async function ensureCustomerTables(env: Env) {
-  // Create tables individually so a partial/older D1 schema can be repaired
-  // without an all-or-nothing batch failing before the missing pieces exist.
-  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS customer_orders (
-    id TEXT PRIMARY KEY, customer_name TEXT NOT NULL, customer_phone TEXT NOT NULL,
-    note TEXT, items_json TEXT NOT NULL, total REAL NOT NULL, status TEXT NOT NULL DEFAULT 'new',
-    created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, order_number INTEGER,
-    customer_id TEXT, stock_deducted INTEGER NOT NULL DEFAULT 0, confirmed_at INTEGER
-  )`).run();
+  // Account creation and sign-in must not depend on the legacy orders schema.
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS customer_accounts (
     id TEXT PRIMARY KEY, name TEXT NOT NULL, phone TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL, password_salt TEXT NOT NULL,
@@ -40,20 +33,27 @@ export async function ensureCustomerTables(env: Env) {
     window_started INTEGER NOT NULL, blocked_until INTEGER NOT NULL DEFAULT 0
   )`).run();
 
-  // Upgrade existing order tables created by older versions of the storefront.
-  const columns = await env.DB.prepare("PRAGMA table_info(customer_orders)").all<any>();
-  const existing = new Set((columns.results || []).map((column: any) => String(column.name)));
-  const upgrades: Array<[string, string]> = [
-    ["customer_id", "ALTER TABLE customer_orders ADD COLUMN customer_id TEXT"],
-    ["order_number", "ALTER TABLE customer_orders ADD COLUMN order_number INTEGER"],
-    ["stock_deducted", "ALTER TABLE customer_orders ADD COLUMN stock_deducted INTEGER NOT NULL DEFAULT 0"],
-    ["confirmed_at", "ALTER TABLE customer_orders ADD COLUMN confirmed_at INTEGER"]
-  ];
-  for (const [column, sql] of upgrades) {
-    if (!existing.has(column)) await env.DB.prepare(sql).run();
+  // Upgrade order history independently. A legacy order-table problem must
+  // never block registration or login.
+  try {
+    const columns = await env.DB.prepare("PRAGMA table_info(customer_orders)").all<any>();
+    const existing = new Set((columns.results || []).map((column: any) => String(column.name)));
+    if (existing.size) {
+      const upgrades: Array<[string, string]> = [
+        ["customer_id", "ALTER TABLE customer_orders ADD COLUMN customer_id TEXT"],
+        ["order_number", "ALTER TABLE customer_orders ADD COLUMN order_number INTEGER"],
+        ["stock_deducted", "ALTER TABLE customer_orders ADD COLUMN stock_deducted INTEGER NOT NULL DEFAULT 0"],
+        ["confirmed_at", "ALTER TABLE customer_orders ADD COLUMN confirmed_at INTEGER"]
+      ];
+      for (const [column, sql] of upgrades) {
+        if (!existing.has(column)) await env.DB.prepare(sql).run();
+      }
+      await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_customer_orders_customer ON customer_orders(customer_id, created_at DESC)").run();
+    }
+  } catch (error) {
+    console.error("Customer order-history schema upgrade deferred", error);
   }
   await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_customer_sessions_expiry ON customer_sessions(expires_at)").run();
-  await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_customer_orders_customer ON customer_orders(customer_id, created_at DESC)").run();
 }
 export async function getCustomer(request: Request, env: Env): Promise<Customer | null> {
   const token = cookieValue(request, "pb_customer");
