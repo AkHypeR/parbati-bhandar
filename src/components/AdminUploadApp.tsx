@@ -175,7 +175,7 @@ export function AdminUploadApp({
   const [replyCustomerPhone, setReplyCustomerPhone] = useState('');
   const [missingProducts, setMissingProducts] = useState('');
   const [replyNote, setReplyNote] = useState('');
-  type CustomerOrder = { id: string; orderNumber: number; customerName: string; customerPhone: string; note?: string; items: { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean }[]; total: number; status: 'new' | 'review' | 'ready' | 'unavailable' | 'completed' | 'cancelled'; createdAt: number };
+  type CustomerOrder = { id: string; orderNumber: number; customerName: string; customerPhone: string; note?: string; items: { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean }[]; total: number; status: 'new' | 'processing' | 'review' | 'ready' | 'unavailable' | 'completed' | 'cancelled'; createdAt: number };
   const [customerOrders, setCustomerOrders] = useState<CustomerOrder[]>([]);
   const knownOrderIdsRef = useRef<Set<string>>(new Set());
   const hasOrderSnapshotRef = useRef(false);
@@ -183,6 +183,7 @@ export function AdminUploadApp({
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [orderSearch, setOrderSearch] = useState('');
   const [orderStatusFilter, setOrderStatusFilter] = useState('all');
+  const [dealSearch, setDealSearch] = useState('');
   const visibleCustomerOrders = customerOrders.filter(order => {
     const term = orderSearch.trim().toLowerCase();
     const matchesSearch = !term || [order.customerName, order.customerPhone, String(order.orderNumber)].some(value => value.toLowerCase().includes(term));
@@ -765,7 +766,7 @@ export function AdminUploadApp({
                   <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
                     <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 pb-4">
                       <div><p className="text-xs font-bold uppercase tracking-wide text-slate-400">Order details</p><h2 className="mt-1 text-2xl font-black text-slate-900">Order #{order.orderNumber}</h2><p className="mt-1 text-sm text-slate-500">{new Date(order.createdAt).toLocaleString('en-IN')}</p></div>
-                      <span className={`rounded-full px-3 py-1.5 text-xs font-extrabold uppercase ${order.status === 'new' ? 'bg-blue-100 text-blue-800' : order.status === 'ready' ? 'bg-emerald-100 text-emerald-800' : order.status === 'unavailable' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}`}>{order.status === 'new' ? 'Received' : order.status === 'ready' ? 'Ready for pickup' : order.status}</span>
+                      <span className={`rounded-full px-3 py-1.5 text-xs font-extrabold uppercase ${order.status === 'new' ? 'bg-blue-100 text-blue-800' : order.status === 'processing' ? 'bg-amber-100 text-amber-800' : order.status === 'ready' ? 'bg-emerald-100 text-emerald-800' : order.status === 'unavailable' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}`}>{order.status === 'new' ? 'Order received' : order.status === 'processing' ? 'Processing' : order.status === 'ready' ? 'Ready for pickup' : order.status}</span>
                     </div>
                     <div className="grid gap-4 py-5 sm:grid-cols-2">
                       <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-bold uppercase text-slate-400">Customer</p><p className="mt-1 text-lg font-extrabold text-slate-900">{order.customerName}</p><a onClick={event => event.stopPropagation()} href={`tel:${order.customerPhone}`} className="mt-1 inline-flex items-center gap-2 text-sm font-semibold text-emerald-700"><Phone className="h-4 w-4" />{order.customerPhone}</a></div>
@@ -776,12 +777,13 @@ export function AdminUploadApp({
                         <h3 className="text-sm font-extrabold uppercase tracking-wide text-slate-500">Items ordered · Set item availability</h3>
                         
                       </div>
-                      <div className="divide-y divide-slate-100">{order.items.map((item,index) => <div key={index} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm"><div className="min-w-0"><p className={`font-bold ${item.unavailable ? 'text-amber-800 line-through' : 'text-slate-800'}`}>{item.name}</p><p className="text-xs text-slate-500">{item.unit} · Quantity {item.quantity}</p>{item.unavailable && <span className="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-extrabold uppercase text-amber-900">Unavailable</span>}</div><div className="flex items-center gap-3"><strong className="shrink-0 text-slate-900">₹{(Number(item.price || 0) * Number(item.quantity || 0)).toFixed(2)}</strong><button type="button" disabled={updatingOrderId === order.id || order.status !== 'new'} onClick={() => updateCustomerOrder(order.id, order.status, order.items.map((entry,itemIndex) => itemIndex === index ? { ...entry, unavailable: !entry.unavailable } : entry))} className={`rounded-lg border px-3 py-2 text-xs font-bold disabled:opacity-50 ${item.unavailable ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>{item.unavailable ? 'Mark available' : 'Mark unavailable'}</button></div></div>)}</div>
+                      <div className="divide-y divide-slate-100">{order.items.map((item,index) => <div key={index} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm"><div className="min-w-0"><p className={`font-bold ${item.unavailable ? 'text-amber-800 line-through' : 'text-slate-800'}`}>{item.name}</p><p className="text-xs text-slate-500">{item.unit} · Quantity {item.quantity}</p>{item.unavailable && <span className="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-extrabold uppercase text-amber-900">Unavailable</span>}</div><div className="flex items-center gap-3"><strong className="shrink-0 text-slate-900">₹{(Number(item.price || 0) * Number(item.quantity || 0)).toFixed(2)}</strong><button type="button" disabled={updatingOrderId === order.id || !['new','processing','review'].includes(order.status)} onClick={() => updateCustomerOrder(order.id, order.status, order.items.map((entry,itemIndex) => itemIndex === index ? { ...entry, unavailable: !entry.unavailable } : entry))} className={`rounded-lg border px-3 py-2 text-xs font-bold disabled:opacity-50 ${item.unavailable ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>{item.unavailable ? 'Mark available' : 'Mark unavailable'}</button></div></div>)}</div>
                       <div className="mt-3 flex justify-between border-t border-slate-200 pt-3 font-extrabold"><span>Estimated total</span><span>₹{Number(order.total || 0).toFixed(2)}</span></div>
                     </div>
                     {order.note && <div className="mt-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-900"><strong>Customer note</strong><p className="mt-1">{order.note}</p></div>}
                     <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                      <button type="button" disabled={updatingOrderId === order.id || !['new','review'].includes(order.status)} onClick={() => void updateCustomerOrder(order.id,'ready')} className="rounded-lg bg-emerald-600 px-3 py-3 text-sm font-bold text-white disabled:opacity-50">Confirm Ready</button>
+                      <button type="button" disabled={updatingOrderId === order.id || order.status !== 'new'} onClick={() => void updateCustomerOrder(order.id,'processing')} className="rounded-lg bg-amber-500 px-3 py-3 text-sm font-bold text-white disabled:opacity-50">Start processing</button>
+                      <button type="button" disabled={updatingOrderId === order.id || !['new','processing','review'].includes(order.status)} onClick={() => void updateCustomerOrder(order.id,'ready')} className="rounded-lg bg-emerald-600 px-3 py-3 text-sm font-bold text-white disabled:opacity-50">Confirm Ready</button>
                       <button type="button" disabled={updatingOrderId === order.id || order.status !== 'ready'} onClick={() => updateCustomerOrder(order.id,'completed')} className="rounded-lg bg-slate-200 px-3 py-3 text-sm font-bold text-slate-800 disabled:opacity-50">Completed</button>
                       <button type="button" disabled={updatingOrderId === order.id || ['ready','completed','cancelled'].includes(order.status)} onClick={() => updateCustomerOrder(order.id,'cancelled')} className="rounded-lg bg-red-50 px-3 py-3 text-sm font-bold text-red-700 disabled:opacity-50">Cancel</button>
                     </div>
@@ -811,7 +813,7 @@ export function AdminUploadApp({
               </label>
               <label className="text-xs font-bold text-slate-700">Filter by status
                 <select value={orderStatusFilter} onChange={e => setOrderStatusFilter(e.target.value)} className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-medium">
-                  <option value="all">All statuses</option><option value="new">Received</option><option value="ready">Ready for pickup</option><option value="unavailable">Unavailable (legacy)</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option>
+                  <option value="all">All statuses</option><option value="new">Order received</option><option value="processing">Processing</option><option value="ready">Ready for pickup</option><option value="unavailable">Unavailable (legacy)</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option>
                 </select>
               </label>
             </div>
@@ -1693,8 +1695,11 @@ export function AdminUploadApp({
                   <button type="button" onClick={() => onSaveSettings({ ...storeSettings, dealProductIds: [] })} className="text-rose-700 font-bold hover:underline">Clear all</button>
                 </div>
               </div>
+              <label className="block text-xs font-bold text-slate-700">Find a product
+                <input type="search" value={dealSearch} onChange={e => setDealSearch(e.target.value)} placeholder="Search product name or category…" className="mt-1.5 w-full rounded-xl border border-rose-200 bg-white px-3 py-2.5 text-sm font-medium outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-100" />
+              </label>
               <div className="max-h-64 overflow-y-auto rounded-xl border border-rose-100 bg-white divide-y divide-slate-100">
-                {products.map(product => {
+                {products.filter(product => !dealSearch.trim() || [product.name, product.category].some(value => String(value || "").toLowerCase().includes(dealSearch.trim().toLowerCase()))).map(product => {
                   const selected = (storeSettings.dealProductIds || []).includes(product.id);
                   return (
                     <label key={product.id} className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-rose-50">
