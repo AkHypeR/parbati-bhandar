@@ -127,6 +127,9 @@ export default function App() {
   const navigateToPath = (path: string) => {
     if (getAppPath() !== path) window.history.pushState({}, '', path);
     setCurrentPath(path);
+    // SPA route changes keep the previous scroll offset unless we reset it.
+    // Start every newly opened page at the top (including Terms & Conditions).
+    window.scrollTo(0, 0);
     if (path.startsWith('/owner')) {
       setActiveModeState('admin');
       setAdminTabState(adminRouteTabs[path as keyof typeof adminRouteTabs] || 'inventory');
