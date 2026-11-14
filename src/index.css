@@ -180,3 +180,15 @@
 @media (prefers-reduced-motion: reduce) {
   .pb-market-item, .pb-loader-runner, .pb-loader-progress, .pb-snowflake, .pb-christmas-twinkle { animation:none !important; }
 }
+
+
+/* Christmas hero banner */
+.pb-christmas-banner { isolation:isolate; background:#073b2b; }
+.pb-christmas-glow { animation:pbChristmasGlow 5s ease-in-out infinite alternate; }
+.pb-christmas-garland { z-index:2; filter:drop-shadow(0 2px 5px rgba(0,0,0,.25)); }
+.pb-christmas-sway { transform-origin:50% 90%; animation:pbChristmasSway 3.2s ease-in-out infinite; }
+.pb-christmas-gift { animation:pbChristmasGift 2.8s ease-in-out infinite; }
+@keyframes pbChristmasGlow { from { opacity:.45; transform:scale(.85); } to { opacity:1; transform:scale(1.12); } }
+@keyframes pbChristmasSway { 0%,100% { transform:rotate(-4deg) translateY(0); } 50% { transform:rotate(4deg) translateY(-5px); } }
+@keyframes pbChristmasGift { 0%,100% { transform:translateY(0) rotate(-3deg); } 50% { transform:translateY(-7px) rotate(4deg); } }
+@media (prefers-reduced-motion: reduce) { .pb-christmas-glow,.pb-christmas-sway,.pb-christmas-gift { animation:none !important; } }
