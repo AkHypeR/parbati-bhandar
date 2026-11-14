@@ -296,3 +296,20 @@ html.pb-dark .bg-blue-50,
 html.pb-dark .bg-indigo-50 { background-color:#172b49 !important; }
 html.pb-dark .text-blue-900,
 html.pb-dark .text-blue-950 { color:#dbeafe !important; }
+
+
+/* Chhath campaign banner: a distinct sunrise over the river, ghat silhouette and animated offerings. */
+.pb-chhath-banner { background:linear-gradient(180deg,#fbbf24 0%,#f97316 36%,#9a3412 63%,#082f49 100%) !important; border-color:rgba(253,230,138,.9) !important; }
+.pb-chhath-banner > img { display:none !important; }
+.pb-chhath-banner > .pb-chhath-sunrise { overflow:hidden; background:linear-gradient(180deg,#fbbf24 0%,#fb923c 35%,#c2410c 62%,#082f49 100%); }
+.pb-chhath-sun { position:absolute; width:clamp(110px,24vw,190px); aspect-ratio:1; border-radius:50%; left:50%; top:17%; transform:translateX(-50%); background:radial-gradient(circle,#fff7ae 0%,#fde047 42%,rgba(251,146,60,.12) 72%); box-shadow:0 0 45px 18px rgba(253,186,116,.45); animation:pbChhathSunPulse 5s ease-in-out infinite alternate; }
+.pb-chhath-horizon { position:absolute; left:-8%; right:-8%; bottom:25%; height:22%; border-radius:50% 50% 0 0; background:linear-gradient(180deg,rgba(124,45,18,.1),rgba(67,20,7,.7)); }
+.pb-chhath-ghat { position:absolute; left:0; right:0; bottom:24%; text-align:center; font-size:clamp(24px,5vw,42px); filter:drop-shadow(0 3px 3px rgba(0,0,0,.35)); }
+.pb-chhath-water { position:absolute; left:-10%; right:-10%; bottom:-8%; height:34%; background:repeating-linear-gradient(180deg,rgba(186,230,253,.38) 0 2px,transparent 2px 13px),linear-gradient(180deg,#0e7490,#082f49); border-radius:48% 48% 0 0 / 12% 12% 0 0; animation:pbChhathWater 4s ease-in-out infinite alternate; }
+.pb-chhath-toran { z-index:3; color:#fffbeb; text-shadow:0 2px 8px rgba(67,20,7,.55); animation:pbChhathToran 4s ease-in-out infinite alternate; }
+.pb-chhath-banner .pb-christmas-glow { background:rgba(253,186,116,.32) !important; }
+.pb-chhath-banner .pb-chhath-float { position:relative; z-index:2; }
+@keyframes pbChhathSunPulse { from { transform:translateX(-50%) scale(.96); opacity:.86; } to { transform:translateX(-50%) scale(1.05); opacity:1; } }
+@keyframes pbChhathWater { from { transform:translateX(-1.5%); } to { transform:translateX(1.5%); } }
+@keyframes pbChhathToran { from { transform:translateY(-2px); } to { transform:translateY(3px); } }
+@media (prefers-reduced-motion: reduce) { .pb-chhath-sun,.pb-chhath-water,.pb-chhath-toran { animation:none !important; } }
