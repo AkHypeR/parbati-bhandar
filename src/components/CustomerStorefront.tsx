@@ -766,9 +766,7 @@ export function CustomerStorefront({
                 </span>
                 <div className="min-w-0">
                   <h2 className="text-xs sm:text-sm font-extrabold text-slate-900 truncate">
-                    {storeSettings.showOccasionBanner !== false
-                      ? 'Festive & Best 5 Spotlight Slider • উৎসব ও সেরা ৫ পণ্য'
-                      : 'Best 5 Products Spotlight Slider • সেরা ৫ পছন্দের পণ্য'}
+                    Best 5 Products Spotlight Slider • সেরা ৫ পছন্দের পণ্য
                   </h2>
                 </div>
               </div>
@@ -877,11 +875,7 @@ export function CustomerStorefront({
                         src={currentSlide.imageUrl}
                         alt={currentSlide.title}
                         referrerPolicy="no-referrer"
-                        className={`relative z-10 w-full h-full object-cover transition-transform duration-300 ${
-                          currentSlide.imageUrl.includes('photo_2026-11-12_10-31-46_ee14c399.jpg')
-                            ? 'object-[50%_50%] scale-[1.45] group-hover:scale-[1.5]'
-                            : 'object-center group-hover:scale-105'
-                        }`}
+                        className={`relative z-10 w-full h-full object-cover transition-transform duration-300 $'object-center group-hover:scale-105'`}
                       />
                     ) : (
                       <div className="relative z-10 flex flex-col items-center justify-center pb-8 text-center px-4">
