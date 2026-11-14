@@ -571,7 +571,7 @@ export function CustomerStorefront({
           </div>
         </section>
       )}
-      {currentPage === 'home' && (<>(
+      {currentPage === 'home' && (<>
       {/* ===================================================================== */}
       {/* STICKY SEARCH BAR & CATEGORY RIBBON (Follows User on Scroll)          */}
       {/* ===================================================================== */}
