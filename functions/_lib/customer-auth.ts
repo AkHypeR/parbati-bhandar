@@ -65,8 +65,8 @@ export async function clearCustomerSession(request: Request, env: Env) {
   if (token) await env.DB.prepare("DELETE FROM customer_sessions WHERE token_hash=?").bind(await sha256(token)).run();
 }
 export function normalizeCustomerInput(body: any) {
-  const name = String(body?.name || "").trim().replace(/\\s+/g, " ").slice(0, 80);
-  const phone = String(body?.phone || "").replace(/\\D/g, "").slice(-10);
+  const name = String(body?.name || "").trim().replace(/\s+/g, " ").slice(0, 80);
+  const phone = String(body?.phone || "").replace(/\D/g, "").slice(-10);
   const password = String(body?.password || "");
   return { name, phone, password };
 }
