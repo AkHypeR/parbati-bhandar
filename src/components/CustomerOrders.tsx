@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, PackageCheck, ShoppingBag, Clock3, CheckCircle2, ChefHat, Truck, ReceiptText, RefreshCw, ShieldCheck } from 'lucide-react';
 
 type OrderItem = { name: string; quantity: number; unit: string; price?: number; lineTotal?: number; unavailable?: boolean };
@@ -22,34 +22,33 @@ export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumbe
   const [selected, setSelected] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+  const requestInFlight = useRef(false);
+
+  const load = async (initial = false) => {
+    if (requestInFlight.current) return;
+    requestInFlight.current = true;
+    if (initial) setLoading(true);
+    else setRefreshing(true);
+    try {
+      const url = orderNumber ? '/api/orders/track?orderNumber=' + encodeURIComponent(String(orderNumber)) : '/api/orders/track?history=1';
+      const response = await fetch(url, { credentials: 'same-origin', cache: 'no-store' });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'Could not load your order.');
+      if (orderNumber) setSelected({ ...data, orderNumber: Number(data.orderNumber || orderNumber) });
+      else setOrders(Array.isArray(data.orders) ? data.orders : []);
+      setError('');
+    } catch (e) {
+      setError((e as Error).message || 'Could not load your order.');
+    } finally {
+      requestInFlight.current = false;
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
-    let active = true;
-    let requestInFlight = false;
-    const load = async () => {
-      if (requestInFlight || document.visibilityState !== 'visible') return;
-      requestInFlight = true;
-      try {
-        const url = orderNumber ? '/api/orders/track?orderNumber=' + encodeURIComponent(String(orderNumber)) : '/api/orders/track?history=1';
-        const response = await fetch(url, { credentials: 'same-origin', cache: 'no-store' });
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(data.error || 'Could not load your order.');
-        if (!active) return;
-        if (orderNumber) setSelected({ ...data, orderNumber: Number(data.orderNumber || orderNumber) });
-        else setOrders(Array.isArray(data.orders) ? data.orders : []);
-        setError('');
-      } catch (e) {
-        if (active) setError((e as Error).message || 'Could not load your order.');
-      } finally {
-        requestInFlight = false;
-        if (active) setLoading(false);
-      }
-    };
-    const refreshWhenVisible = () => { if (document.visibilityState === 'visible') void load(); };
-    void load();
-    const timer = window.setInterval(refreshWhenVisible, 30000);
-    document.addEventListener('visibilitychange', refreshWhenVisible);
-    return () => { active = false; window.clearInterval(timer); document.removeEventListener('visibilitychange', refreshWhenVisible); };
+    void load(true);
   }, [orderNumber]);
 
   const currentIndex = selected ? steps.findIndex(step => step.key === selected.status) : -1;
@@ -73,12 +72,15 @@ export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumbe
               <span className="hidden h-14 w-14 shrink-0 place-items-center rounded-2xl border border-white/20 bg-white/10 text-amber-200 sm:grid"><PackageCheck className="h-7 w-7"/></span>
             </div>
             <div className="relative mt-6 flex flex-wrap gap-2 text-xs font-bold text-emerald-50">
-              <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><RefreshCw className="mr-1.5 inline h-3.5 w-3.5"/> Auto-refreshes every 30 sec</span>
+              <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><CheckCircle2 className="mr-1.5 inline h-3.5 w-3.5"/> Loads once when opened</span>
               <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><ShieldCheck className="mr-1.5 inline h-3.5 w-3.5"/> Private to your account</span>
             </div>
           </header>
 
           <div className="min-w-0 p-3 sm:p-8">
+            <div className="mb-4 flex justify-end">
+              <button type="button" onClick={() => void load()} disabled={loading || refreshing} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2.5 text-sm font-extrabold text-emerald-800 shadow-sm transition hover:bg-emerald-50 disabled:opacity-60"><RefreshCw className={'h-4 w-4 ' + (refreshing ? 'animate-spin' : '')}/>{refreshing ? 'Refreshing…' : 'Refresh order details'}</button>
+            </div>
             {loading && <div className="py-16 text-center text-sm font-semibold text-slate-500"><span className="mx-auto mb-3 block h-8 w-8 animate-spin rounded-full border-4 border-emerald-600 border-t-transparent"/>Loading your orders…</div>}
             {!loading && error && <div role="alert" className="rounded-2xl border border-rose-200 bg-rose-50 p-5 text-sm font-semibold text-rose-700">{error}<button type="button" onClick={() => onNavigate('/account')} className="mt-3 block font-extrabold underline">Go to sign in</button></div>}
 
@@ -154,7 +156,7 @@ export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumbe
                   </div>
                   <div className="flex items-center justify-between border-t border-slate-200 bg-emerald-50/70 px-5 py-4"><span className="font-extrabold text-slate-800">Total payable</span><span className="text-xl font-black text-emerald-800">₹{selected.total}</span></div>
                 </section>
-                <p className="text-center text-xs text-slate-400">Last updated {formatDate(selected.updatedAt || selected.createdAt)} · Updates automatically every 30 seconds</p>
+                <p className="text-center text-xs text-slate-400">Last updated {formatDate(selected.updatedAt || selected.createdAt)} · Refresh whenever you need the latest status</p>
               </div>
             )}
           </div>
