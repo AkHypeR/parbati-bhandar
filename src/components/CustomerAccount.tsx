@@ -200,18 +200,6 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
           </aside>
 
           <div className="min-w-0 p-4 sm:p-8 md:p-10">
-            <section className="mb-6 flex flex-col gap-3 rounded-2xl border border-emerald-200 bg-gradient-to-r from-emerald-50 to-lime-50 p-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-start gap-3">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white text-emerald-800 shadow-sm"><ShoppingBasket className="h-5 w-5"/></span>
-                <div>
-                  <h3 className="font-extrabold text-slate-900">Get the Parbati Bhandar Android app</h3>
-                  <p className="mt-1 text-xs leading-5 text-slate-600">Install the app for convenient access to our grocery store. Version 1.0.0</p>
-                </div>
-              </div>
-              <a href="https://expo.dev/artifacts/eas/Ygu8qZWb165XkroJ4GTELlXIdaK91YVxbeTbMvxDzeI.apk" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-600/20">
-                Download Android app <ArrowRight className="h-4 w-4"/>
-              </a>
-            </section>
             {customer ? (
               <div className="space-y-6">
                 <div className="flex items-start justify-between gap-4">
