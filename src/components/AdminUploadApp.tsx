@@ -858,7 +858,7 @@ export function AdminUploadApp({
         {/* TAB 1: UPLOAD / EDIT PRODUCT FORM          */}
         {/* ========================================== */}
         {adminTab === 'add' && (
-          <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-5 sm:p-7 max-w-2xl mx-auto">
+          <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-5 sm:p-7 max-w-4xl mx-auto">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
               <div>
                 <h2 className="text-lg font-extrabold text-slate-900">
@@ -2180,6 +2180,11 @@ export function AdminUploadApp({
               </div>
             </div>
             <form onSubmit={handleSaveSettingsSubmit} className="space-y-4">
+              <details open className="group rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-extrabold text-slate-900">
+                  <span>Store profile & homepage text</span><span className="text-xs font-semibold text-slate-500 group-open:hidden">Show</span><span className="hidden text-xs font-semibold text-slate-500 group-open:inline">Hide</span>
+                </summary>
+                <div className="mt-4 space-y-4">
               <div>
                 <label
                   htmlFor="settings-store-name"
@@ -2236,7 +2241,14 @@ export function AdminUploadApp({
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              </div>
+              </details>
+              <details className="group rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-extrabold text-slate-900">
+                  <span>Contact details & opening hours</span><span className="text-xs font-semibold text-slate-500 group-open:hidden">Show</span><span className="hidden text-xs font-semibold text-slate-500 group-open:inline">Hide</span>
+                </summary>
+                <div className="mt-4 space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label
                     htmlFor="settings-phone"
@@ -2357,7 +2369,14 @@ export function AdminUploadApp({
               {/* ======================================================== */}
               {/* SPECIAL OCCASION BANNER & "NOMOSHKAR GRAHOK" SETTINGS    */}
               {/* ======================================================== */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-4">
+              </div>
+              </details>
+              <details className="group rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-extrabold text-slate-900">
+                  <span>Homepage greeting & special occasion banner</span><span className="text-xs font-semibold text-slate-500 group-open:hidden">Show</span><span className="hidden text-xs font-semibold text-slate-500 group-open:inline">Hide</span>
+                </summary>
+                <div className="mt-4 space-y-4">
+                <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <div>
                     <h3 className="text-sm font-extrabold text-slate-900">
@@ -2536,7 +2555,14 @@ export function AdminUploadApp({
               </div>
 
               {/* Store Scanner (QR Code) Settings — Upload Scanner Pic OR Convert Website Link */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-blue-50/70 border-2 border-blue-200 space-y-4">
+              </div>
+              </details>
+              <details className="group rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-extrabold text-slate-900">
+                  <span>Store QR code & scanner</span><span className="text-xs font-semibold text-slate-500 group-open:hidden">Show</span><span className="hidden text-xs font-semibold text-slate-500 group-open:inline">Hide</span>
+                </summary>
+                <div className="mt-4 space-y-4">
+                <div className="p-4 sm:p-5 rounded-2xl bg-blue-50/70 border-2 border-blue-200 space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
                     <h3 className="font-extrabold text-sm text-blue-950 flex items-center gap-1.5">
@@ -2766,6 +2792,8 @@ export function AdminUploadApp({
                 </div>
               </div>
 
+              </div>
+              </details>
               {/* Owner-Only Secret Access Explanation Card */}
               <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-xs text-blue-950 space-y-1">
                 <div className="font-extrabold flex items-center gap-1.5">
