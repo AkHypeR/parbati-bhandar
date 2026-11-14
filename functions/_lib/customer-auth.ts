@@ -18,6 +18,12 @@ async function passwordHash(password: string, salt: Uint8Array) {
 }
 export async function ensureCustomerTables(env: Env) {
   await env.DB.batch([
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS customer_orders (
+      id TEXT PRIMARY KEY, customer_name TEXT NOT NULL, customer_phone TEXT NOT NULL,
+      note TEXT, items_json TEXT NOT NULL, total REAL NOT NULL, status TEXT NOT NULL DEFAULT 'new',
+      created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, order_number INTEGER,
+      stock_deducted INTEGER NOT NULL DEFAULT 0, confirmed_at INTEGER
+    )`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS customer_accounts (
       id TEXT PRIMARY KEY, name TEXT NOT NULL, phone TEXT NOT NULL UNIQUE,
       password_hash TEXT NOT NULL, password_salt TEXT NOT NULL,
