@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ArrowLeft, ArrowRight, PackageCheck, ShoppingBag, Clock3, CheckCircle2, ChefHat, Truck, ReceiptText, RefreshCw, ShieldCheck } from 'lucide-react';
 
 type OrderItem = { name: string; quantity: number; unit: string; price?: number; lineTotal?: number; unavailable?: boolean };
-type Order = { orderNumber: number; status: string; total: number; createdAt: number; updatedAt?: number; items: OrderItem[] };
+type Order = { orderNumber: number; status: string; total: number; createdAt: number; updatedAt?: number; readyAt?: number | null; items: OrderItem[] };
 
 const statusLabel = (status: string) => {
   const labels: Record<string, string> = { new: 'Received', processing: 'Being prepared', ready: 'Ready for pickup', completed: 'Completed', cancelled: 'Cancelled', unavailable: 'Availability update' };
@@ -15,6 +15,7 @@ const steps = [
   { key: 'completed', title: 'Completed', detail: 'Your order has been completed. Thank you!', icon: Truck },
 ];
 const formatDate = (value: number) => new Date(value).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' });
+const formatTime = (value: number) => new Date(value).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Kolkata' });
 
 export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumber?: number; onNavigate: (path: string) => void; onBack: () => void }) {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -94,7 +95,7 @@ export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumbe
                       <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-emerald-50 text-emerald-800"><ShoppingBag className="h-5 w-5"/></span>
                       <span className="min-w-0">
                         <span className="flex flex-wrap items-center gap-2">
-                          <strong className="text-base text-slate-900">Order #{order.orderNumber}</strong>
+                          <strong className="text-base text-slate-900">Your grocery order</strong>
                           <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-extrabold text-emerald-800">{statusLabel(order.status)}</span>
                         </span>
                         <span className="mt-1 block truncate text-xs text-slate-500">{order.items.slice(0,3).map(item => item.name + ' × ' + item.quantity).join(' · ')}{order.items.length > 3 ? ' · + ' + (order.items.length - 3) + ' more' : ''}</span>
@@ -113,7 +114,7 @@ export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumbe
             {!loading && !error && orderNumber && selected && (
               <div className="space-y-6">
                 <div className="flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-50 to-lime-50 p-5">
-                  <div><p className="text-xs font-black uppercase tracking-widest text-emerald-700">Order number</p><p className="mt-1 text-3xl font-black tracking-tight text-slate-900">#{selected.orderNumber}</p><p className="mt-2 text-xs text-slate-500">Placed {formatDate(selected.createdAt)}</p></div>
+                  <div><p className="text-xs font-black uppercase tracking-widest text-emerald-700">Order placed</p><p className="mt-1 text-xl font-black tracking-tight text-slate-900">{formatDate(selected.createdAt)}</p><p className="mt-2 text-xs text-slate-500">{selected.readyAt ? `Ready at ${formatTime(selected.readyAt)}` : selected.status === "ready" || selected.status === "completed" ? "Ready time is being updated" : "We’ll show the ready time here once your order is ready."}</p></div>
                   <div className="rounded-2xl bg-white px-4 py-3 text-right shadow-sm"><p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Order total</p><p className="mt-1 text-2xl font-black text-emerald-800">₹{selected.total}</p><span className="mt-1 inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-extrabold text-emerald-800">{statusLabel(selected.status)}</span></div>
                 </div>
 
@@ -129,7 +130,7 @@ export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumbe
                         return <div key={step.key}>
                           <div className={'mb-3 grid h-11 w-11 place-items-center rounded-2xl ' + (done ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-400')}><Icon className="h-5 w-5"/></div>
                           <p className={'text-sm font-extrabold ' + (done ? 'text-emerald-900' : 'text-slate-400')}>{step.title}</p>
-                          <p className="mt-1 text-xs leading-5 text-slate-500">{step.detail}</p>
+                          <p className="mt-1 text-xs leading-5 text-slate-500">{step.key === "ready" && selected.readyAt ? `Ready at ${formatTime(selected.readyAt)}` : step.detail}</p>
                           <div className={'mt-3 h-1.5 rounded-full ' + (done ? 'bg-emerald-500' : 'bg-slate-100')}/>
                         </div>;
                       })}
