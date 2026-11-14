@@ -121,47 +121,67 @@ export function CustomerOrders({ orderNumber, phone, onNavigate, onBack }: { ord
             )}
 
             {!loading && !error && orderNumber && selected && (
-              <div className="space-y-6">
-                <div className="flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-50 to-lime-50 p-5">
-                  <div><p className="text-xs font-black uppercase tracking-widest text-emerald-700">Order placed</p><p className="mt-1 text-xl font-black tracking-tight text-slate-900">{formatDate(selected.createdAt)}</p><p className="mt-2 text-xs text-slate-500">{selected.readyAt ? `Ready at ${formatTime(selected.readyAt)}` : selected.estimatedReadyAt ? `Estimated ready by ${formatTime(selected.estimatedReadyAt)} · This is an estimate and may change.` : selected.status === "ready" || selected.status === "completed" ? "Ready time is being updated" : "We’ll show the ready time here once your order is ready."}</p></div>
-                  <div className="rounded-2xl bg-white px-4 py-3 text-right shadow-sm"><p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Order total</p><p className="mt-1 text-2xl font-black text-emerald-800">₹{selected.total}</p><span className="mt-1 inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-extrabold text-emerald-800">{statusLabel(selected.status)}</span></div>
+              <div className="space-y-5 text-slate-900">
+                <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <span className="grid h-9 w-9 place-items-center rounded-full bg-blue-50 text-blue-700"><PackageCheck className="h-5 w-5"/></span>
+                      <div>
+                        <p className="text-sm font-extrabold">{selected.status === 'completed' ? 'Your order was delivered!' : selected.status === 'ready' ? 'Your order is ready!' : selected.status === 'cancelled' ? 'This order was cancelled' : 'Your order is confirmed'}</p>
+                        <p className="mt-0.5 text-xs text-slate-500">{statusLabel(selected.status)}</p>
+                      </div>
+                    </div>
+                    <span className="rounded-lg bg-blue-600 px-2.5 py-1.5 text-center text-xs font-black leading-tight text-white">#{selected.orderNumber}</span>
+                  </div>
                 </div>
 
-                {selected.estimatedReadyAt && !selected.readyAt && !["ready","completed","cancelled"].includes(selected.status) && <div className="rounded-xl border border-amber-200 bg-amber-50 p-4"><p className="text-sm font-extrabold text-amber-950">Your order is taking a little longer</p><p className="mt-1 text-sm text-amber-900">We expect it to be ready around {formatTime(selected.estimatedReadyAt)}. Thank you for your patience.</p></div>}
+                {selected.estimatedReadyAt && !selected.readyAt && !["ready","completed","cancelled"].includes(selected.status) && (
+                  <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                    <Clock3 className="mt-0.5 h-5 w-5 shrink-0 text-amber-700"/>
+                    <div><p className="text-sm font-extrabold text-amber-950">A little more time needed?</p><p className="mt-1 text-sm text-amber-900">The store estimates your order will be ready around {formatTime(selected.estimatedReadyAt)}.</p></div>
+                  </div>
+                )}
 
-                <section className="rounded-2xl border border-slate-200 p-5">
-                  <div className="mb-5 flex items-center justify-between gap-2"><h2 className="font-black text-slate-900">Order journey</h2><span className="text-xs text-slate-400">Live status</span></div>
-                  {exceptional ? (
-                    <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">{selected.status === 'cancelled' ? 'This order has been cancelled. Please contact the store if you need help.' : 'The store has an availability update for this order. Please check with the store for details.'}</div>
-                  ) : (
-                    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-                      {steps.map((step,index) => {
-                        const Icon = step.icon;
-                        const done = index <= currentIndex;
-                        return <div key={step.key}>
-                          <div className={'mb-3 grid h-11 w-11 place-items-center rounded-2xl ' + (done ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-400')}><Icon className="h-5 w-5"/></div>
-                          <p className={'text-sm font-extrabold ' + (done ? 'text-emerald-900' : 'text-slate-400')}>{step.title}</p>
-                          <p className="mt-1 text-xs leading-5 text-slate-500">{step.key === "ready" && selected.readyAt ? `Ready at ${formatTime(selected.readyAt)}` : step.detail}</p>
-                          <div className={'mt-3 h-1.5 rounded-full ' + (done ? 'bg-emerald-500' : 'bg-slate-100')}/>
-                        </div>;
-                      })}
-                    </div>
-                  )}
-                </section>
-
-                <section className="overflow-hidden rounded-2xl border border-slate-200">
-                  <div className="flex items-center justify-between bg-slate-50 px-5 py-4"><h2 className="font-black text-slate-900">Items in this order</h2><span className="text-xs font-bold text-slate-500">{selected.items.length} product lines</span></div>
-                  <div className="divide-y divide-slate-100">
+                <section className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                  <div className="flex flex-wrap items-start justify-between gap-2 border-b border-slate-100 px-4 py-4 sm:px-5">
+                    <div><h2 className="text-sm font-black">Order summary</h2><p className="mt-1 text-xs text-slate-500">Order #{selected.orderNumber}</p></div>
+                    <div className="text-right"><p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Placed at</p><p className="mt-0.5 text-xs font-bold text-slate-700">{formatTime(selected.createdAt)}</p><p className="text-[11px] text-slate-500">{new Date(selected.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric',timeZone:'Asia/Kolkata'})}</p></div>
+                  </div>
+                  <div className="flex gap-3 overflow-x-auto p-4 sm:p-5">
                     {selected.items.map((item,index) => (
-                      <div key={index} className="flex items-center justify-between gap-4 px-5 py-4">
-                        <div className="min-w-0"><p className="text-sm font-bold text-slate-900">{item.name}</p><p className="mt-1 text-xs text-slate-500">{item.unit} × {item.quantity}{item.unavailable ? ' · Availability issue' : ''}</p></div>
-                        <p className="shrink-0 text-sm font-extrabold text-slate-800">{item.lineTotal !== undefined ? '₹' + item.lineTotal : ''}</p>
+                      <div key={index} className={'w-40 shrink-0 rounded-lg border p-3 ' + (item.unavailable ? 'border-amber-200 bg-amber-50/60' : 'border-slate-200 bg-white')}>
+                        <div className="mx-auto grid h-16 w-16 place-items-center rounded-lg bg-slate-50 text-blue-700"><ShoppingBag className="h-8 w-8"/></div>
+                        <p className="mt-2 line-clamp-2 min-h-8 text-center text-xs font-bold">{item.name}</p>
+                        <p className="mt-1 text-center text-[11px] text-slate-500">{item.unit} · {item.quantity} {Number(item.quantity) === 1 ? 'unit' : 'units'}</p>
+                        {item.unavailable ? <p className="mt-1 text-center text-[11px] font-extrabold text-amber-700">Unavailable · Deducted</p> : <p className="mt-1 text-center text-xs font-extrabold text-slate-800">₹{item.lineTotal ?? Number(item.price || 0) * Number(item.quantity || 0)}</p>}
                       </div>
                     ))}
                   </div>
-                  <div className="flex items-center justify-between border-t border-slate-200 bg-emerald-50/70 px-5 py-4"><span className="font-extrabold text-slate-800">Total payable</span><span className="text-xl font-black text-emerald-800">₹{selected.total}</span></div>
+                  <div className="border-t border-slate-100 bg-slate-50/70 px-4 py-4 sm:px-5">
+                    {selected.items.some(item => item.unavailable) && (
+                      <div className="mb-3 space-y-1.5 text-xs">
+                        <div className="flex justify-between text-slate-500"><span>Original order amount</span><span>₹{selected.total + selected.items.filter(item=>item.unavailable).reduce((sum,item)=>sum+Number(item.price||0)*Number(item.quantity||0),0)}</span></div>
+                        <div className="flex justify-between font-semibold text-amber-700"><span>Unavailable item deduction</span><span>−₹{selected.items.filter(item=>item.unavailable).reduce((sum,item)=>sum+Number(item.price||0)*Number(item.quantity||0),0)}</span></div>
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between"><span className="text-sm font-extrabold">Final amount payable</span><span className="text-xl font-black text-blue-800">₹{selected.total}</span></div>
+                  </div>
                 </section>
-                <p className="text-center text-xs text-slate-400">Last updated {formatDate(selected.updatedAt || selected.createdAt)} · Refresh whenever you need the latest status</p>
+
+                <section className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+                  <h2 className="text-sm font-black">Delivery details</h2>
+                  <div className="mt-3 flex items-center gap-3">
+                    <span className="grid h-9 w-9 place-items-center rounded-lg bg-blue-50 text-blue-700"><Truck className="h-5 w-5"/></span>
+                    <div><p className="text-xs font-bold">Checkout details verified</p><p className="mt-0.5 text-xs text-slate-500">Your order is linked to the phone number used at checkout.</p></div>
+                  </div>
+                </section>
+
+                <section className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                  <h2 className="px-4 pb-2 pt-4 text-sm font-black sm:px-5">Need help with your order?</h2>
+                  <button type="button" onClick={() => onNavigate('/account')} className="flex w-full items-center justify-between border-t border-slate-100 px-4 py-3 text-left hover:bg-slate-50 sm:px-5"><span><span className="block text-xs font-bold">Contact Parbati Bhandar</span><span className="mt-0.5 block text-[11px] text-slate-500">Ask about an item, delivery or order update</span></span><ArrowRight className="h-4 w-4 text-slate-400"/></button>
+                  <button type="button" onClick={() => onNavigate('/')} className="flex w-full items-center justify-between border-t border-slate-100 px-4 py-3 text-left hover:bg-slate-50 sm:px-5"><span><span className="block text-xs font-bold">Continue shopping</span><span className="mt-0.5 block text-[11px] text-slate-500">Browse everyday grocery essentials</span></span><ArrowRight className="h-4 w-4 text-slate-400"/></button>
+                </section>
+                <p className="text-center text-[11px] text-slate-400">Last updated {formatDate(selected.updatedAt || selected.createdAt)}</p>
               </div>
             )}
           </div>
