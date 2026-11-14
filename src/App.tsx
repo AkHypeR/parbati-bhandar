@@ -195,6 +195,7 @@ export default function App() {
     try { return localStorage.getItem('parbati_bhandar_last_order_number_v1') || ''; }
     catch { return ''; }
   });
+  const [lastOrderCreatedAt, setLastOrderCreatedAt] = useState<number>(() => { try { return Number(localStorage.getItem('parbati_bhandar_last_order_created_at_v1')) || 0; } catch { return 0; } });
   const [customerNote, setCustomerNote] = useState('');
   const [rememberCustomerDetails, setRememberCustomerDetails] = useState(false);
 
@@ -621,6 +622,9 @@ export default function App() {
       const orderNumber = Number(result.orderNumber);
       if (!Number.isInteger(orderNumber) || orderNumber < 1) throw new Error('Order was saved, but its tracking number could not be confirmed.');
       setLastSavedOrderNumber(String(orderNumber));
+      const placedAt = Number(result.createdAt) || Date.now();
+      setLastOrderCreatedAt(placedAt);
+      try { localStorage.setItem('parbati_bhandar_last_order_created_at_v1', String(placedAt)); } catch { /* Timestamp is optional UI convenience. */ }
       try { localStorage.setItem('parbati_bhandar_last_order_number_v1', String(orderNumber)); } catch { /* Tracking number can still be copied from WhatsApp. */ }
       showToast('Your order has been received by Parbati Bhandar. You can check its progress in My Account.');
       return orderNumber;
@@ -1053,6 +1057,7 @@ export default function App() {
             updateCartQty={updateCartQty}
             setIsQrModalOpen={setIsQrModalOpen}
             lastOrderNumber={lastSavedOrderNumber}
+            lastOrderCreatedAt={lastOrderCreatedAt}
             lastOrderPhone={customerPhone}
             onSecretOwnerAccess={() => {
               setActiveMode('admin');
