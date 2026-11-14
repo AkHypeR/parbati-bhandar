@@ -299,13 +299,17 @@ export function CustomerStorefront({
   const directSearchMatches = searchQuery.trim().length > 0
     ? products.map(product => ({ product, score: rankSearchMatch(product, searchQuery) })).filter(item => item.score > 0).sort((a, b) => b.score - a.score || a.product.name.localeCompare(b.product.name)).map(item => item.product)
     : [];
-  // Once a product/category matches, also recommend other products from that
-  // same store category so customers can discover related grocery items.
-  const matchedCategoryIds = Array.from(new Set(directSearchMatches.map(product => product.category).filter(Boolean)));
-  const sameCategorySuggestions = products
-    .filter(product => matchedCategoryIds.includes(product.category) && !directSearchMatches.some(match => match.id === product.id))
-    .slice(0, 6);
-  const searchSuggestions = [...directSearchMatches.slice(0, 4), ...sameCategorySuggestions].slice(0, 6);
+  // Use the best direct match to identify the category. Compare normalized
+  // category labels so casing/spacing differences do not hide related products.
+  const matchedCategory = directSearchMatches[0]?.category || '';
+  const normalizedMatchedCategory = normalizeSearchText(matchedCategory);
+  const sameCategorySuggestions = normalizedMatchedCategory
+    ? products.filter(product =>
+        normalizeSearchText(product.category || '') === normalizedMatchedCategory &&
+        !directSearchMatches.some(match => match.id === product.id)
+      ).slice(0, 8)
+    : [];
+  const searchSuggestions = [...directSearchMatches.slice(0, 4), ...sameCategorySuggestions].slice(0, 8);
 
   // Stock is tracked per product, so all selected sizes/varieties share the same stock limit.
   const getRemainingStock = (product: Product) => {
@@ -1578,6 +1582,26 @@ export function CustomerStorefront({
               );
             })}
           </div>
+        )}
+        {searchQuery.trim() && sameCategorySuggestions.length > 0 && (
+          <section className="mx-auto mt-7 w-full max-w-5xl" aria-label={`More products in ${matchedCategory} category`}>
+            <div className="mb-3 flex flex-wrap items-end justify-between gap-2 border-b border-slate-200 pb-2">
+              <div>
+                <h3 className="text-base font-extrabold text-slate-900">More from {matchedCategory}</h3>
+                <p className="mt-0.5 text-xs text-slate-500">Explore other products in the same category</p>
+              </div>
+              <span className="text-xs font-semibold text-slate-500">{sameCategorySuggestions.length} suggestions</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+              {sameCategorySuggestions.map(product => (
+                <button key={product.id} type="button" onClick={() => submitSearch(product.name)}
+                  className="flex min-h-[76px] flex-col items-start justify-center rounded-xl border border-slate-200 bg-white px-3 py-3 text-left shadow-sm transition-colors hover:border-blue-300 hover:bg-blue-50">
+                  <span className="line-clamp-2 text-xs font-bold text-slate-800">{product.name}</span>
+                  <span className="mt-1 text-xs font-extrabold text-blue-700">₹{product.price} <span className="font-medium text-slate-500">· {product.unit}</span></span>
+                </button>
+              ))}
+            </div>
+          </section>
         )}
       </main>
 
