@@ -9,8 +9,6 @@ import {
   Copy,
   MessageCircle,
   AlertCircle,
-  FileText,
-  UserCheck,
   ShieldCheck,
 } from 'lucide-react';
 import { CartItem, Product } from '../utils/storeLogic';
@@ -31,7 +29,7 @@ interface CartDrawerProps {
   setCustomerPhone: (v: string) => void;
   rememberCustomerDetails: boolean;
   setRememberCustomerDetails: (v: boolean) => void;
-  onSaveOrder: (turnstileToken: string, pushSubscription?: PushSubscriptionJSON | null) => Promise<number | null>;
+  onSaveOrder: (turnstileToken: string) => Promise<number | null>;
   onOrderPlaced: (orderNumber: number) => void;
   setCustomerName: (v: string) => void;
   customerNote: string;
@@ -76,15 +74,10 @@ export function CartDrawer({
   orderText,
 }: CartDrawerProps) {
   const [checkoutStep, setCheckoutStep] = useState<'review' | 'checkout'>('review');
-  const [nameError, setNameError] = useState(false);
-  const [phoneError, setPhoneError] = useState(false);
   const [savingOrder, setSavingOrder] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState('');
   const [captchaError, setCaptchaError] = useState('');
-  const [pushSubscription, setPushSubscription] = useState<PushSubscriptionJSON | null>(null);
-  const [pushState, setPushState] = useState<'off' | 'working' | 'on' | 'unsupported' | 'error'>('off');
   const [timerNow, setTimerNow] = useState(Date.now());
-  const nameInputRef = useRef<HTMLInputElement | null>(null);
 
   // Refresh the visible low-stock countdown once per second while the cart is open.
   useEffect(() => {
@@ -128,39 +121,6 @@ export function CartDrawer({
     } catch {
       return '05:00';
     }
-  };
-
-  const enableOrderNotifications = async () => {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
-      setPushState('unsupported');
-      return;
-    }
-    if (!hasCustomerPhone) { setPhoneError(true); return; }
-    setPushState('working');
-    try {
-      const permission = await Notification.requestPermission();
-      if (permission !== 'granted') { setPushState('error'); return; }
-      const keyResponse = await fetch('/api/push-key', { cache: 'no-store' });
-      const keyData = await keyResponse.json();
-      if (!keyResponse.ok || !keyData.publicKey) throw new Error('Notifications are not configured yet.');
-      const registration = await navigator.serviceWorker.register('/sw.js');
-      const existing = await registration.pushManager.getSubscription();
-      const subscription = existing || await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(keyData.publicKey)
-      });
-      setPushSubscription(subscription.toJSON());
-      setPushState('on');
-    } catch (error) {
-      console.error('Push subscription failed', error);
-      setPushState('error');
-    }
-  };
-
-  const urlBase64ToUint8Array = (value: string) => {
-    const padding = '='.repeat((4 - value.length % 4) % 4);
-    const base64 = (value + padding).replace(/-/g, '+').replace(/_/g, '/');
-    return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
   };
 
   const recommendationProducts = useMemo(() => {
@@ -214,8 +174,6 @@ export function CartDrawer({
     return Math.max(0, Number(product.stockQuantity) - inCart);
   };
 
-  const hasCustomerName = customerName.trim().length > 0;
-  const hasCustomerPhone = customerPhone.replace(/\D/g, '').length >= 10;
 
   return (
     <div
@@ -263,100 +221,9 @@ export function CartDrawer({
             </div>
           ) : (
             <>
-              {checkoutStep === 'checkout' && <div className="pb-3.5 space-y-2.5">
-                <div
-                  className={`p-3 rounded-2xl border ${
-                    nameError && !hasCustomerName
-                      ? 'bg-red-50/90 border-red-300'
-                      : hasCustomerName
-                      ? 'bg-emerald-50/70 border-emerald-200'
-                      : 'bg-amber-50/70 border-amber-200'
-                  } space-y-2`}
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <label
-                      htmlFor="cart-customer-name-input"
-                      className="text-xs font-extrabold text-slate-900 flex items-center gap-1.5"
-                    >
-                      <UserCheck className="w-4 h-4 text-emerald-700 shrink-0" />
-                      <span>Customer Name (আপনার নাম) *</span>
-                    </label>
-                    <span
-                      className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md ${
-                        hasCustomerName
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-amber-400 text-slate-950'
-                      }`}
-                    >
-                      {hasCustomerName ? 'Ready for WhatsApp' : 'Required'}
-                    </span>
-                  </div>
-
-                  <input
-                    ref={nameInputRef}
-                    id="cart-customer-name-input"
-                    type="text"
-                    required
-                    aria-label="Customer Name (Required)"
-                    value={customerName}
-                    readOnly={customerAuthenticated}
-                    onChange={(e) => {
-                      setCustomerName(e.target.value);
-                      if (e.target.value.trim()) {
-                        setNameError(false);
-                      }
-                    }}
-                    placeholder="Enter your full name to proceed to WhatsApp *"
-                    className={`w-full px-3.5 py-2.5 rounded-xl border bg-white text-xs sm:text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 ${
-                      nameError && !hasCustomerName
-                        ? 'border-red-400 focus:ring-red-500'
-                        : 'border-slate-300 focus:ring-emerald-500'
-                    }`}
-                  />
-
-                  {nameError && !hasCustomerName && (
-                    <div
-                      role="alert"
-                      className="flex items-center gap-1.5 text-xs font-bold text-red-700"
-                    >
-                      <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
-                      <span>Please enter your Name above before proceeding to WhatsApp.</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-1">
-                  <label htmlFor="cart-customer-phone" className="text-xs font-extrabold text-slate-800">Phone number (WhatsApp) *</label>
-                  <input id="cart-customer-phone" type="tel" inputMode="tel" value={customerPhone} readOnly={customerAuthenticated} onChange={e => { setCustomerPhone(e.target.value); setPhoneError(false); }} placeholder="Enter 10-digit mobile number" className={"w-full px-3.5 py-2.5 rounded-xl border bg-white text-xs sm:text-sm font-bold " + (phoneError ? "border-red-400" : "border-slate-300")} />
-                  {phoneError && <p className="text-xs font-bold text-red-600">Enter a valid phone number (at least 10 digits).</p>}
-                </div>
-                {!customerAuthenticated && <label className="flex items-start gap-2 text-[11px] text-slate-600">
-                                  <input
-                                    type="checkbox"
-                                    checked={rememberCustomerDetails}
-                                    onChange={(e) => setRememberCustomerDetails(e.target.checked)}
-                                    className="mt-0.5 accent-emerald-700"
-                                  />
-                                  <span><strong>Remember my name and phone on this device</strong><br />Optional. Saved only in this browser to make your next checkout faster. You can untick this anytime.</span>
-                                </label>}
-                {customerAuthenticated && <p className="rounded-lg bg-emerald-50 px-3 py-2 text-[11px] font-semibold text-emerald-800">Signed-in account details are being used for this order.</p>}
-                <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 space-y-2">
-                  <div className="text-xs font-bold text-emerald-900">Order status notifications (optional)</div>
-                  <p className="text-[11px] text-emerald-800">Get an alert when your order is ready, unavailable, cancelled or completed. Allow notifications on this device.</p>
-                  <button type="button" onClick={enableOrderNotifications} disabled={pushState === 'working' || pushState === 'on'} className="w-full rounded-lg bg-emerald-700 px-3 py-2 text-xs font-bold text-white disabled:opacity-60">
-                    {pushState === 'working' ? 'Enabling…' : pushState === 'on' ? '✓ Notifications enabled for this order' : 'Enable order notifications'}
-                  </button>
-                  {pushState === 'unsupported' && <p className="text-[11px] text-amber-800">This browser or device does not support web push notifications.</p>}
-                  {pushState === 'error' && <p className="text-[11px] text-red-700">Could not enable notifications. Check browser permission and try again.</p>}
-                </div>
-                <input
-                  type="text"
-                  aria-label="Order Note"
-                  value={customerNote}
-                  onChange={(e) => setCustomerNote(e.target.value)}
-                  placeholder="Optional note: e.g. Will pick up at 6 PM / Home delivery"
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                />
+              {checkoutStep === 'checkout' && <div className="pb-3.5">
+                <p className="mb-2 text-xs font-semibold text-slate-500">Your name and WhatsApp number are taken securely from your customer profile.</p>
+                <input type="text" aria-label="Order Note" value={customerNote} onChange={(e) => setCustomerNote(e.target.value)} placeholder="Optional note: e.g. Will pick up at 6 PM / Home delivery" className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
               </div>}
 
               {/* Order review list — Step 1 */}
@@ -479,23 +346,7 @@ export function CartDrawer({
                   {recommendationProducts.length === 0 && <p className="text-xs text-slate-500">No other in-stock products are available right now.</p>}
                 </section>
               )}
-              {checkoutStep === 'checkout' && <>
-                {/* Text-Format WhatsApp Bill Preview (Name & Quantity Only) */}
-                <div className="pt-3">
-                  <div className="p-3 rounded-2xl bg-slate-900 text-slate-100 space-y-1.5">
-                    <div className="flex items-center justify-between text-[11px] font-bold text-emerald-300">
-                      <span className="flex items-center gap-1.5">
-                        <FileText className="w-3.5 h-3.5" />
-                        <span>WhatsApp Text Bill Preview (Name &amp; Quantity)</span>
-                      </span>
-                      <span className="tabular-nums">{cartTotalItems} items</span>
-                    </div>
-                    <pre className="text-[11px] font-mono text-slate-200 whitespace-pre-wrap leading-relaxed bg-slate-950/70 p-2.5 rounded-xl border border-slate-800 max-h-36 overflow-y-auto">
-                      {orderText}
-                    </pre>
-                  </div>
-                </div>
-              </>}
+              
             </>
           )}
           {checkoutStep === 'checkout' && <div className="mt-4 rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-4 shadow-sm">
@@ -535,14 +386,12 @@ export function CartDrawer({
                 </div>
                 {!liveIsOpen && <div role="status" className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-semibold text-red-800">The store is currently closed. Online orders are paused and will be available when the store opens.</div>}
                 <button type="button" disabled={savingOrder || !liveIsOpen} onClick={async () => {
-                  if (!hasCustomerName) { setNameError(true); nameInputRef.current?.focus(); return; }
-                  if (!hasCustomerPhone) { setPhoneError(true); return; }
-                  if (!turnstileToken) { setCaptchaError('Please complete the security verification before placing your order.'); return; }
+                                    if (!turnstileToken) { setCaptchaError('Please complete the security verification before placing your order.'); return; }
                   if (savingOrder) return;
                   const popup = window.open('about:blank', '_blank');
                   setSavingOrder(true);
                   try {
-                    const orderNumber = await onSaveOrder(turnstileToken, pushSubscription);
+                    const orderNumber = await onSaveOrder(turnstileToken);
                     if (orderNumber !== null) {
                       clearCart();
                       setTurnstileToken('');
