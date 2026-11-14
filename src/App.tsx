@@ -107,6 +107,11 @@ function loadInitialCart(): CartMap {
 }
 
 export default function App() {
+  const [darkMode, setDarkMode] = useState(() => { try { return localStorage.getItem('pb_site_theme') === 'dark'; } catch { return false; } });
+  useEffect(() => {
+    document.documentElement.classList.toggle('pb-dark', darkMode);
+    try { localStorage.setItem('pb_site_theme', darkMode ? 'dark' : 'light'); } catch { /* storage may be unavailable */ }
+  }, [darkMode]);
   const [products, setProducts] = useState<Product[]>(loadInitialProducts);
   const [storeSettings, setStoreSettings] = useState<StoreSettings>(loadInitialSettings);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
