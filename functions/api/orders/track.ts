@@ -13,9 +13,9 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
 
   if (url.searchParams.get("history") === "1") {
     const rows = await env.DB.prepare(
-      "SELECT order_number,customer_phone,items_json,status,total,created_at,updated_at,confirmed_at,ready_at,estimated_ready_at FROM customer_orders WHERE created_at>=? ORDER BY created_at DESC LIMIT 200"
-    ).bind(Date.now() - 7 * 24 * 60 * 60 * 1000).all<any>();
-    const orders = (rows.results || []).filter((row: any) => String(row.customer_phone || "").replace(/\D/g, "") === phone).slice(0,50).map((row: any) => ({
+      "SELECT order_number,customer_phone,items_json,status,total,created_at,updated_at,confirmed_at,ready_at,estimated_ready_at FROM customer_orders WHERE customer_phone=? ORDER BY created_at DESC LIMIT 100"
+    ).bind(phone).all<any>();
+    const orders = (rows.results || []).map((row: any) => ({
       orderNumber: Number(row.order_number),
       status: row.status,
       total: (JSON.parse(row.items_json || "[]") as any[]).filter(item => !item.unavailable).reduce((sum,item) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0),
@@ -29,7 +29,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       createdAt: row.created_at,
       updatedAt: row.updated_at
     }));
-    return json({orders,retentionDays:7},200,{"cache-control":"no-store"});
+    return json({orders,retentionDays:365},200,{"cache-control":"no-store"});
   }
 
   const orderNumber = Number(url.searchParams.get("orderNumber"));
