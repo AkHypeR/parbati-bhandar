@@ -1026,7 +1026,7 @@ export default function App() {
           </div>
         ) : (
         <>
-          {currentPath === '/orders' || /^\\/orders\\/\\d+$/.test(currentPath) ? (
+          {currentPath === '/orders' || (currentPath.startsWith('/orders/') && Number.isInteger(Number(currentPath.split('/')[2]))) ? (
             customerAccount ? (
               <CustomerOrders
                 orderNumber={currentPath.startsWith('/orders/') ? Number(currentPath.split('/')[2]) : undefined}
