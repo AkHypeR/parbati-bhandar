@@ -2,9 +2,10 @@ import React, { useEffect, useRef } from 'react';
 
 interface TurnstileWidgetProps {
   onVerify: (token: string) => void;
+  action?: string;
 }
 
-export function TurnstileWidget({ onVerify }: TurnstileWidgetProps) {
+export function TurnstileWidget({ onVerify, action = 'order' }: TurnstileWidgetProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const callbackRef = useRef(onVerify);
   callbackRef.current = onVerify;
@@ -19,7 +20,7 @@ export function TurnstileWidget({ onVerify }: TurnstileWidgetProps) {
       if (cancelled || !turnstile || !containerRef.current) return;
       widgetId = turnstile.render(containerRef.current, {
         sitekey: siteKey,
-        action: 'order',
+        action,
         theme: 'light',
         callback: (token: string) => callbackRef.current(token),
         'expired-callback': () => callbackRef.current(''),
@@ -42,7 +43,7 @@ export function TurnstileWidget({ onVerify }: TurnstileWidgetProps) {
       cancelled = true;
       if (widgetId && (window as any).turnstile) (window as any).turnstile.remove(widgetId);
     };
-  }, []);
+  }, [action]);
 
   if (!import.meta.env.VITE_TURNSTILE_SITE_KEY) {
     return <p className="text-xs text-amber-700">Security verification is being configured. Ordering is temporarily unavailable.</p>;
