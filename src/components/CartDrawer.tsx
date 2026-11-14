@@ -3,6 +3,7 @@ import { TurnstileWidget } from './TurnstileWidget';
 import {
   ShoppingCart,
   ShoppingBag,
+  ArrowLeft,
   X,
   Minus,
   Plus,
@@ -174,24 +175,34 @@ export function CartDrawer({
       className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end"
     >
       <div className="bg-white w-full max-w-md h-full flex flex-col shadow-2xl">
-        <div className="p-4 sm:p-5 bg-emerald-800 text-white flex items-center justify-between">
+        <div className="p-3.5 sm:p-5 bg-emerald-800 text-white">
+          <div className="mb-3 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => checkoutStep === 'checkout' ? (setCheckoutStep('review'), setTurnstileToken(''), setCaptchaError('')) : onClose()}
+              className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-600 bg-emerald-700 px-3 py-2 text-xs font-bold text-white shadow-sm transition-colors hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-amber-300"
+            >
+              <ArrowLeft className="h-4 w-4 shrink-0" />
+              <span>{checkoutStep === 'checkout' ? 'Back to cart' : 'Back to shopping'}</span>
+            </button>
+            <button
+              type="button"
+              aria-label="Close order list drawer"
+              onClick={onClose}
+              className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-700 text-white transition-colors hover:bg-emerald-600"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
           <div className="flex items-center gap-2.5">
-            <ShoppingCart className="w-5 h-5 text-amber-300" />
-            <div>
+            <ShoppingCart className="w-5 h-5 shrink-0 text-amber-300" />
+            <div className="min-w-0">
               <h3 className="font-bold text-base">Parbati Bhandar Final Cart (ফর্দ)</h3>
               <p className="text-xs text-emerald-200">
                 {checkoutStep === 'review' ? 'Review your basket before checkout' : 'Confirm details · Verify · Place order'}
               </p>
             </div>
           </div>
-          <button
-            type="button"
-            aria-label="Close order list drawer"
-            onClick={onClose}
-            className="p-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white cursor-pointer"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 divide-y divide-slate-100">
