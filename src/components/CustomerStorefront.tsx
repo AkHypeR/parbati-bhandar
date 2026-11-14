@@ -806,7 +806,7 @@ export function CustomerStorefront({
               </div>
             </div>
             <div className="bg-white px-5 pb-5 pt-4">
-              <p className="text-center text-xs leading-relaxed text-slate-600">Shop everyday groceries from your local store. Browse live availability, choose your pack size and place your order in a few taps.</p>
+              <p className="text-center text-xs leading-relaxed text-slate-600">Order directly on this website—your order is placed and managed right here, with no WhatsApp redirection. We built Parbati Bhandar online to make grocery ordering simple, smooth and convenient. Browse live availability, choose your pack size and order in a few taps.</p>
               <button type="button" onClick={() => { closeWelcomePromo(); window.setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),100); }} className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#2563eb] px-4 py-3 text-sm font-black text-white shadow-lg shadow-blue-900/15 transition hover:-translate-y-0.5 hover:bg-[#1d4ed8] active:scale-[.98]">Start shopping <ChevronRight className="h-5 w-5"/></button>
             </div>
           </div>
