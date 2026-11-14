@@ -42,12 +42,18 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   if (!productId || !Number.isInteger(rating) || rating < 1 || rating > 5) return json({ error: "Choose a product and a rating from 1 to 5 stars." }, 400);
   const product = await env.DB.prepare("SELECT id FROM products WHERE id=?").bind(productId).first<any>();
   if (!product) return json({ error: "This product is no longer in the catalogue." }, 404);
+  // Match the signed-in account first. For older orders created before account
+  // linking was introduced, safely fall back to the same verified checkout phone.
   const purchase = await env.DB.prepare(`SELECT id FROM customer_orders
-    WHERE customer_id=? AND status IN ('ready','completed')
+    WHERE (customer_id=? OR (
+        customer_id IS NULL AND
+        substr(replace(replace(replace(replace(customer_phone,' ',''),'-',''),'+',''),'(',''),-10)=?
+      ))
+      AND status IN ('ready','completed')
       AND EXISTS (SELECT 1 FROM json_each(customer_orders.items_json) item
         WHERE json_extract(item.value,'$.productId')=?)
-    LIMIT 1`).bind(customer.id, productId).first<any>();
-  if (!purchase) return json({ error: "You can review this item after it has been included in a confirmed order." }, 403);
+    LIMIT 1`).bind(customer.id, customer.phone, productId).first<any>();
+  if (!purchase) return json({ error: "To rate this product, sign in with the same phone number used for checkout. The order must first be marked Ready or Completed by the store." }, 403);
   const now = Date.now();
   await env.DB.prepare(`INSERT INTO product_reviews
     (id,product_id,customer_id,customer_name,rating,comment,status,created_at,updated_at)
