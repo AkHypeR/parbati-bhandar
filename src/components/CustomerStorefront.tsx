@@ -683,25 +683,18 @@ export function CustomerStorefront({
       </div>
 
       {showWelcomePromo && currentPage === 'home' && !isSearchSubmitted && (() => {
-        const marketItems = [
-          {icon:'🥬',label:'Fresh greens',tone:'bg-emerald-100'},
-          {icon:'🍊',label:'Seasonal fruits',tone:'bg-orange-100'},
-          {icon:'🥕',label:'Daily essentials',tone:'bg-amber-100'},
-          {icon:'🍅',label:'Kitchen staples',tone:'bg-rose-100'},
-          {icon:'🫑',label:'Fresh picks',tone:'bg-lime-100'},
-          {icon:'🧺',label:'Local groceries',tone:'bg-sky-100'}
-        ];
         return <div className="pb-promo-overlay fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-md" role="dialog" aria-modal="true" aria-label="Welcome to Parbati Bhandar" onMouseDown={event => { if (event.target === event.currentTarget) closeWelcomePromo(); }}>
           <div className="pb-promo-card relative mx-auto flex max-h-[88dvh] w-full max-w-[420px] flex-col overflow-hidden rounded-[30px] border border-white/70 bg-white shadow-[0_28px_90px_rgba(0,0,0,.38)]">
             <button type="button" onClick={closeWelcomePromo} aria-label="Close welcome promotion" className="absolute right-3 top-3 z-30 grid h-10 w-10 place-items-center rounded-full border border-white/50 bg-slate-950/65 text-white shadow-lg transition hover:rotate-90 hover:bg-slate-900"><X className="h-5 w-5"/></button>
-            <div className="relative min-h-[270px] overflow-hidden bg-gradient-to-br from-[#dff7e9] via-[#fff4d8] to-[#ffe4d5] px-5 pb-5 pt-7 sm:min-h-[300px]">
-              <div aria-hidden="true" className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/65 blur-2xl"/>
-              <div aria-hidden="true" className="absolute -bottom-16 -left-10 h-48 w-48 rounded-full bg-emerald-200/60 blur-2xl"/>
-              <div className="relative z-10 text-center"><span className="inline-flex rounded-full border border-emerald-200 bg-white/80 px-3 py-1 text-[9px] font-black uppercase tracking-[.2em] text-emerald-800 shadow-sm">Your neighbourhood store</span><h2 className="mt-3 text-[30px] font-black leading-[1.05] tracking-tight text-[#07543b] sm:text-4xl">A little freshness<br/><span className="text-[#e17a25]">for every day.</span></h2><p className="mt-2 text-xs font-semibold text-emerald-950/70">Parbati Bhandar · Swasti Pally, Burdwan</p></div>
-              <div className="relative z-10 mx-auto mt-5 grid max-w-[330px] grid-cols-3 gap-2">
-                {marketItems.map((item,index) => <div key={item.label} className={`pb-market-item ${item.tone} flex min-h-[78px] flex-col items-center justify-center rounded-2xl border border-white/80 shadow-sm`} style={{animationDelay:`${index*90}ms`}}><span className="text-[32px] leading-none drop-shadow-sm">{item.icon}</span><span className="mt-1 text-[9px] font-extrabold text-slate-700">{item.label}</span></div>)}
+            <div className="relative min-h-[270px] overflow-hidden bg-[#123d2d] sm:min-h-[300px]">
+              <img src="https://images.unsplash.com/photo-1775677073681-194049b1a7d3?auto=format&fit=crop&w=1200&q=85" alt="Colourful fresh vegetables displayed at a local market" className="absolute inset-0 h-full w-full object-cover" loading="eager"/>
+              <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#062d20]/95 via-[#073b2b]/55 to-black/10"/>
+              <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-amber-300 via-white to-emerald-300"/>
+              <div className="relative z-10 flex min-h-[270px] flex-col items-center justify-end px-5 pb-7 pt-12 text-center sm:min-h-[300px]">
+                <span className="inline-flex rounded-full border border-white/40 bg-black/25 px-3 py-1 text-[9px] font-black uppercase tracking-[.2em] text-white shadow-sm backdrop-blur-sm">Your neighbourhood store</span>
+                <h2 className="mt-3 text-[32px] font-black leading-[1.02] tracking-tight text-white drop-shadow-lg sm:text-4xl">Freshness for<br/><span className="text-amber-300">every home.</span></h2>
+                <p className="mt-2 text-xs font-bold text-white/95 drop-shadow">Parbati Bhandar · Swasti Pally, Burdwan</p>
               </div>
-              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white/35 to-transparent"/>
             </div>
             <div className="bg-white px-5 pb-5 pt-4">
               <p className="text-center text-xs leading-relaxed text-slate-600">Shop everyday groceries from your local store. Browse live availability, choose your pack size and place your order in a few taps.</p>
@@ -805,13 +798,14 @@ export function CustomerStorefront({
                       catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  className="pb-christmas-banner relative w-full max-w-md mx-auto min-h-[360px] rounded-[28px] overflow-hidden shadow-xl border border-emerald-200/50 cursor-pointer group select-none"
+                  className="pb-christmas-banner relative w-full max-w-3xl mx-auto min-h-[390px] rounded-[28px] overflow-hidden shadow-[0_22px_55px_rgba(8,35,25,.28)] border border-amber-200/50 cursor-pointer group select-none"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#073b2b] via-[#0b6848] to-[#092e27]"/>
+                  <img src="https://images.unsplash.com/photo-1767005608325-0ff075fca106?auto=format&fit=crop&w=1600&q=85" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"/>
+                  <div className="absolute inset-0 bg-gradient-to-b from-[#081b17]/35 via-[#082d24]/65 to-[#061d17]/95"/>
                   <div className="pb-christmas-glow absolute -right-12 -top-12 h-56 w-56 rounded-full bg-amber-300/25 blur-3xl"/>
                   <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-red-500 via-amber-300 to-emerald-300"/>
                   <div className="pb-christmas-garland absolute left-0 right-0 top-3 flex justify-around px-2 text-lg sm:text-xl" aria-hidden="true"><span>🔴</span><span>🟡</span><span>🟢</span><span>🔴</span><span>🟡</span><span>🟢</span><span>🔴</span><span>🟡</span></div>
-                  <div className="relative z-10 flex min-h-[360px] flex-col items-center justify-center px-5 pb-6 pt-12 text-center">
+                  <div className="relative z-10 flex min-h-[390px] flex-col items-center justify-center px-5 pb-7 pt-12 text-center">
                     <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[9px] font-black uppercase tracking-[.22em] text-emerald-100 backdrop-blur-sm">🎄 {currentSlide.tag}</span>
                     <div className="relative mt-3 flex h-28 w-full items-center justify-center gap-2 sm:h-32" aria-hidden="true">
                       <span className="pb-christmas-sway text-6xl drop-shadow-lg sm:text-7xl">🎄</span>
@@ -820,7 +814,7 @@ export function CustomerStorefront({
                       <span className="absolute left-[18%] top-1 text-xl">❄️</span><span className="absolute right-[17%] bottom-0 text-xl">✨</span>
                     </div>
                     <p className="mt-1 text-[9px] font-black uppercase tracking-[.25em] text-amber-200">Parbati Bhandar wishes you</p>
-                    <h3 className="mt-2 text-3xl font-black leading-tight tracking-tight text-white drop-shadow sm:text-4xl">{currentSlide.title}</h3>
+                    <h3 className="mt-2 text-4xl font-black leading-tight tracking-tight text-white drop-shadow-[0_4px_14px_rgba(0,0,0,.65)] sm:text-5xl">{currentSlide.title}</h3>
                     <p className="mt-2 max-w-[290px] text-xs font-semibold leading-relaxed text-emerald-50/90 sm:text-sm">{currentSlide.subtitle}</p>
                     <button type="button" onClick={() => document.getElementById("christmas-special-products")?.scrollIntoView({behavior:"smooth",block:"start"})} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#facc15] px-5 py-2.5 text-xs font-black text-emerald-950 shadow-lg transition hover:-translate-y-0.5">Shop Christmas Specials <ChevronRight className="h-4 w-4"/></button>
                     <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-3 text-sm opacity-90" aria-hidden="true"><span>❄️</span><span>⭐</span><span>🎄</span><span>⭐</span><span>❄️</span></div>
@@ -1086,64 +1080,6 @@ export function CustomerStorefront({
             <div className="mt-5 border-t border-white/80 pt-4">
               <div className="mb-3 flex items-center gap-3"><h3 className="shrink-0 text-lg font-black text-slate-900">Featured</h3><div className="h-px flex-1 border-t border-dashed border-slate-300"/></div>
               <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2">{featuredProducts.slice(0,8).map(product => <button type="button" key={product.id} onClick={() => {setSearchQuery(product.name);setIsSearchSubmitted(true);setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),60);}} className="w-[142px] shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-100 bg-white text-left shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:w-[165px]"><div className="flex h-28 items-center justify-center bg-slate-50 p-3">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/> : <span className="text-5xl">{product.emoji || '🛒'}</span>}</div><div className="p-2.5"><p className="line-clamp-2 min-h-9 text-[11px] font-extrabold text-slate-800">{product.name}</p><p className="mt-1 text-xs font-black text-emerald-800">₹{product.price} <span className="font-medium text-slate-400">/ {product.unit}</span></p></div></button>)}</div>
-            </div>
-          </div>
-        </section>;
-      })()}
-
-      {!isSearchSubmitted && !searchQuery && selectedCategory === 'all' && (() => {
-        const curated = (storeSettings.dealProductIds || []).map(id => products.find(product => product.id === id)).filter((product): product is Product => Boolean(product && product.inStock));
-        const discounted = products.filter(product => product.inStock && Number(product.mrp) > Number(product.price));
-        const dealProducts = storeSettings.dealsOfDayEnabled === true ? curated : discounted;
-        const featuredProducts = products.filter(product => product.inStock).sort((a,b) => {
-          if (Boolean(a.isBestItem) !== Boolean(b.isBestItem)) return a.isBestItem ? -1 : 1;
-          return Number(a.bestItemRank || 99) - Number(b.bestItemRank || 99);
-        }).slice(0,8);
-        const categoryTiles = [
-          {id:'Rice & Atta',title:'Rice & Atta',emoji:'🌾',tone:'from-amber-100 to-orange-50'},
-          {id:'Dal & Pulses',title:'Dal & Pulses',emoji:'🥣',tone:'from-lime-100 to-emerald-50'},
-          {id:'Tea & Biscuits',title:'Tea & Snacks',emoji:'🍪',tone:'from-rose-100 to-pink-50'},
-          {id:'Daily Essentials',title:'Home Needs',emoji:'🧺',tone:'from-sky-100 to-cyan-50'}
-        ];
-        const productCard = (product: Product, index: number) => {
-          const discount = calculateDiscountDetails(product.price, product.mrp);
-          const qty = cart[makeCartKey(product.id, product.unit || '1 unit')]?.qty || cart[product.id]?.qty || 0;
-          return <article key={product.id} className="pb-deal-product-card w-[148px] shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm sm:w-[176px]">
-            <div className={`relative flex h-28 items-center justify-center overflow-hidden ${['bg-rose-50','bg-amber-50','bg-sky-50','bg-emerald-50'][index%4]}`}>
-              {product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain p-2 transition-transform duration-500 hover:scale-110"/> : <span className="text-5xl">{product.emoji || '🛍️'}</span>}
-              {discount.hasDiscount && <span className="absolute left-2 top-2 rounded-full bg-[#e91e63] px-2 py-1 text-[9px] font-black text-white">{discount.discountPercent}% OFF</span>}
-            </div>
-            <div className="p-2.5"><h3 className="line-clamp-2 min-h-9 text-[11px] font-extrabold leading-4 text-slate-800">{product.name}</h3><p className="mt-1 text-[10px] text-slate-500">{product.unit}</p><div className="mt-1 flex items-baseline gap-1.5"><b className="text-sm text-slate-900">₹{product.price}</b>{discount.hasDiscount && <span className="text-[10px] text-slate-400 line-through">₹{product.mrp}</span>}</div><button type="button" disabled={!product.inStock} onClick={() => updateCartQty(product,1)} className="mt-2 flex min-h-9 w-full items-center justify-center gap-1 rounded-xl bg-[#087a55] px-2 py-2 text-[11px] font-black text-white transition hover:bg-[#065d42] active:scale-[.97] disabled:opacity-50"><Plus className="h-3.5 w-3.5"/>{qty ? `Add more · ${qty}` : 'Quick add'}</button></div>
-          </article>;
-        };
-        return <section aria-label="Deal Zone and featured products" className="mx-auto mb-5 w-full max-w-6xl overflow-hidden sm:px-6">
-          <div className="overflow-hidden rounded-none bg-[#c8f5fb] px-3.5 pb-4 pt-5 sm:rounded-[26px] sm:px-5 sm:pt-6">
-            <div className="relative overflow-hidden rounded-[22px] bg-gradient-to-br from-[#b9f1fa] via-[#c9f7fb] to-[#e3f9ff] px-4 py-5 sm:px-7 sm:py-7">
-              <div aria-hidden="true" className="absolute -right-8 -top-12 h-44 w-44 rounded-full border-[22px] border-white/25"/>
-              <div className="relative z-10 flex items-center justify-between gap-3">
-                <div><p className="text-[10px] font-black uppercase tracking-[.2em] text-sky-800 sm:text-xs">Parbati Bhandar specials</p><h2 className="mt-1 text-3xl font-black leading-none tracking-tight text-[#075b78] sm:text-5xl">DEAL ZONE</h2><p className="mt-2 max-w-[230px] text-xs font-semibold text-sky-900/75 sm:text-sm">Little savings on the things your home needs every day.</p></div>
-                <div className="pb-deal-burst grid h-20 w-20 shrink-0 place-items-center rounded-full border-4 border-white/70 bg-gradient-to-br from-amber-300 to-orange-400 text-4xl shadow-lg sm:h-28 sm:w-28 sm:text-6xl">🛍️</div>
-              </div>
-              <div className="relative z-10 mt-4 grid grid-cols-4 gap-2 sm:mt-6 sm:gap-3">
-                {categoryTiles.map(tile => {
-                  const sample = products.find(product => product.category === tile.id && product.imageUrl);
-                  return <button type="button" key={tile.id} onClick={() => {setSelectedCategory(tile.id);setIsSearchSubmitted(false);setSearchQuery('');setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),60);}} className={`pb-deal-category flex min-w-0 flex-col items-center justify-between rounded-2xl border border-white/80 bg-gradient-to-b ${tile.tone} p-2 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:p-3`}>
-                    <div className="grid h-12 w-full place-items-center sm:h-16">{sample ? <img src={sample.imageUrl} alt="" loading="lazy" className="h-full max-w-full object-contain"/> : <span className="text-3xl sm:text-4xl">{tile.emoji}</span>}</div><span className="mt-1 line-clamp-2 text-[9px] font-black leading-tight text-slate-800 sm:text-xs">{tile.title}</span>
-                  </button>;
-                })}
-              </div>
-            </div>
-            <div className="mt-4 flex items-center justify-between gap-2 px-1"><div><p className="text-[9px] font-black uppercase tracking-[.18em] text-sky-800">Handpicked for you</p><h3 className="text-lg font-black text-slate-900 sm:text-xl">{dealProducts.length ? 'Today’s Deals' : 'Featured groceries'}</h3></div><span className="rounded-full bg-white/80 px-3 py-1 text-[10px] font-extrabold text-sky-900">{dealProducts.length ? `${dealProducts.length} offers` : 'Popular picks'}</span></div>
-            <div className="mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2">
-              {(dealProducts.length ? dealProducts : featuredProducts).slice(0,10).map(productCard)}
-              {!dealProducts.length && !featuredProducts.length && <p className="w-full rounded-xl bg-white/70 p-5 text-center text-xs font-semibold text-slate-600">New offers and featured products will appear here.</p>}
-            </div>
-            {dealProducts.length > 0 && <p className="px-1 pt-1 text-[10px] font-medium text-sky-900/70">Offer prices are based on the live product catalogue. Availability may change.</p>}
-          </div>
-          <div className="mt-5 px-3.5 sm:px-0">
-            <div className="mb-3 flex items-center gap-3"><h3 className="shrink-0 text-lg font-black text-slate-900">Featured</h3><div className="h-px flex-1 border-t border-dashed border-slate-300"/></div>
-            <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2">
-              {featuredProducts.slice(0,8).map(product => <button type="button" key={product.id} onClick={() => {setSearchQuery(product.name);setIsSearchSubmitted(true);setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),60);}} className="w-[142px] shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-100 bg-white text-left shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:w-[165px]"><div className="flex h-28 items-center justify-center bg-slate-50 p-3">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/> : <span className="text-5xl">{product.emoji || '🛒'}</span>}</div><div className="p-2.5"><p className="line-clamp-2 min-h-9 text-[11px] font-extrabold text-slate-800">{product.name}</p><p className="mt-1 text-xs font-black text-emerald-800">₹{product.price} <span className="font-medium text-slate-400">/ {product.unit}</span></p></div></button>)}
             </div>
           </div>
         </section>;
