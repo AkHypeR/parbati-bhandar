@@ -86,6 +86,22 @@ export const onRequestPost: PagesFunction<Env> = async ({request,env}) => {
   const quantities=body.quantities.map((v:any)=>Number(v));
   if(quantities.some(v=>!Number.isInteger(v)||v<0||v>999)||quantities.every(v=>v===0))return json({error:"Keep at least one item and use quantities from 1 to 999."},400);
   const revised:Item[]=original.filter((_,i)=>quantities[i]>0).map((item)=>({...item,quantity:quantities[original.indexOf(item)]}));
+  const additions=Array.isArray(body.additions)?body.additions:[];
+  if(additions.length>30)return json({error:"You can add up to 30 new products per edit."},400);
+  for(const addition of additions){
+    const productId=String(addition?.productId||"").trim().slice(0,100);
+    const quantity=Number(addition?.quantity);
+    if(!productId||!Number.isInteger(quantity)||quantity<1||quantity>999)return json({error:"One of the new product quantities is invalid."},400);
+    const row=await env.DB.prepare("SELECT data FROM products WHERE id=?").bind(productId).first<any>();
+    if(!row)return json({error:"A selected product is no longer in the catalogue."},409);
+    let product:any;try{product=JSON.parse(row.data);}catch{return json({error:"A selected product could not be verified."},409);}
+    if(!product||product.inStock===false||typeof product.name!=="string"||typeof product.unit!=="string"||!Number.isFinite(Number(product.price))||Number(product.price)<0)
+      return json({error:(product?.name||"A selected product")+" is not currently available to add."},409);
+    if(typeof product.stockQuantity!=="number"||!Number.isFinite(product.stockQuantity))
+      return json({error:"Live inventory is unavailable for "+product.name+". Please choose another item."},409);
+    revised.push({productId,name:product.name.slice(0,120),quantity,unit:product.unit.slice(0,30),price:Number(product.price)});
+  }
+  if(!revised.length)return json({error:"Keep at least one item in your order."},400);
   const desired=new Map<string,number>();
   for(const item of revised){
     if(!item.productId)continue;
