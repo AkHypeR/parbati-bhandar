@@ -6,7 +6,7 @@ type OrderItem = { name: string; quantity: number; unit: string; price?: number;
 type Order = { id?: string; orderNumber: number; status: string; total: number; originalTotal?: number; unavailableDeduction?: number; createdAt: number; updatedAt?: number; readyAt?: number | null; estimatedReadyAt?: number | null; items: OrderItem[] };
 
 const statusLabel = (status: string) => {
-  const labels: Record<string, string> = { new: 'Received', processing: 'Being prepared', ready: 'Ready for pickup', completed: 'Completed', cancelled: 'Cancelled', unavailable: 'Availability update' };
+  const labels: Record<string, string> = { new: 'Received', review: 'Received', processing: 'Being prepared', ready: 'Ready for pickup', completed: 'Completed', cancelled: 'Cancelled', unavailable: 'Availability update' };
   return labels[status] || status;
 };
 const steps = [
@@ -187,9 +187,9 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
                 </section>}
                 {selected.status === 'cancelled' && <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm font-bold text-rose-800">This order was cancelled. Any inventory deducted for it has been restored.</div>}
                 {actionMessage && <p role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs font-bold text-emerald-800">{actionMessage}</p>}
-                {['new','processing'].includes(selected.status) && <section className="rounded-2xl border border-blue-200 bg-blue-50 p-4">
-                  <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-sm font-black text-slate-900">Change your order</h2><p className="mt-1 text-xs text-slate-600">You can edit until the order is ready. Cancellation is available only before processing starts.</p></div>
-                    {!editing ? <div className="flex gap-2"><button type="button" onClick={()=>{setEditQuantities(selected.items.map(item=>Number(item.quantity)||1));setEditAdditions([]);setSelectedAddProductId('');setEditing(true);setActionMessage('');}} className="rounded-xl border border-blue-200 bg-white px-4 py-2.5 text-xs font-extrabold text-blue-800">Edit order</button>{selected.status === 'new' && <button type="button" onClick={()=>void cancelOrder()} disabled={savingAction} className="rounded-xl bg-rose-600 px-4 py-2.5 text-xs font-extrabold text-white disabled:opacity-60">{savingAction?'Please wait…':'Cancel order'}</button>}</div> : <button type="button" onClick={()=>setEditing(false)} className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700">Close editor</button>}
+                {['new','review','processing'].includes(selected.status) && <section className="rounded-2xl border border-blue-200 bg-blue-50 p-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-sm font-black text-slate-900">Change your order</h2><p className="mt-1 text-xs text-slate-600">You can edit until the order is ready. You can edit until the order is ready. Cancellation is available before processing starts.</p></div>
+                    {!editing ? <div className="flex gap-2"><button type="button" onClick={()=>{setEditQuantities(selected.items.map(item=>Number(item.quantity)||1));setEditAdditions([]);setSelectedAddProductId('');setEditing(true);setActionMessage('');}} className="rounded-xl border border-blue-200 bg-white px-4 py-2.5 text-xs font-extrabold text-blue-800">Edit order</button>{['new','review'].includes(selected.status) && <button type="button" onClick={()=>void cancelOrder()} disabled={savingAction} className="rounded-xl bg-rose-600 px-4 py-2.5 text-xs font-extrabold text-white disabled:opacity-60">{savingAction?'Please wait…':'Cancel order'}</button>}</div> : <button type="button" onClick={()=>setEditing(false)} className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700">Close editor</button>}
                   </div>
                   {editing && <div className="mt-4 space-y-3">
                     {selected.items.map((item,index)=><div key={index} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3">
@@ -222,7 +222,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
                     <button type="button" onClick={()=>void saveOrderEdit()} disabled={savingAction||(editQuantities.every(q=>q===0)&&editAdditions.length===0)} className="w-full rounded-xl bg-blue-800 px-4 py-3 text-sm font-extrabold text-white disabled:opacity-50">{savingAction?'Saving changes…':'Save order changes'}</button>
                   </div>}
                 </section>}
-                {selected.status === 'processing' && <p className="rounded-xl bg-amber-50 p-3 text-[11px] font-semibold text-amber-800">Processing has started, so cancellation is locked. You can still edit quantities until the order is marked ready.</p>}{['ready','completed','cancelled','unavailable'].includes(selected.status) && <p className="rounded-xl bg-slate-50 p-3 text-[11px] font-semibold text-slate-500">Order editing and cancellation are locked at this stage.</p>}
+                {['processing'].includes(selected.status) && <p className="rounded-xl bg-amber-50 p-3 text-[11px] font-semibold text-amber-800">Processing has started, so cancellation is locked. You can still edit quantities until the order is marked ready.</p>}{['ready','completed','cancelled','unavailable'].includes(selected.status) && <p className="rounded-xl bg-slate-50 p-3 text-[11px] font-semibold text-slate-500">Order editing and cancellation are locked at this stage.</p>}
                 <section className="rounded-lg border border-slate-200 bg-white px-3 py-3 sm:px-4">
                   <div className="mb-3 flex items-center justify-between gap-2">
                     <h2 className="text-sm font-black">{selected.items.reduce((sum,item)=>sum+Number(item.quantity||0),0)} items in your order</h2>
