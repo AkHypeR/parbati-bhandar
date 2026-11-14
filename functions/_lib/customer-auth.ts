@@ -33,6 +33,52 @@ export async function ensureCustomerTables(env: Env) {
     window_started INTEGER NOT NULL, blocked_until INTEGER NOT NULL DEFAULT 0
   )`).run();
 
+  // Earlier versions of the account feature may have left partial tables behind.
+  // CREATE TABLE IF NOT EXISTS does not add missing columns, so upgrade the
+  // account tables explicitly before any registration/login query uses them.
+  const accountInfo = await env.DB.prepare("PRAGMA table_info(customer_accounts)").all<any>();
+  const accountColumns = new Set((accountInfo.results || []).map((column: any) => String(column.name)));
+  if (!accountColumns.has("id") || !accountColumns.has("phone")) {
+    throw new Error("Customer account table has an incompatible legacy schema.");
+  }
+  const accountUpgrades: Array<[string, string]> = [
+    ["name", "ALTER TABLE customer_accounts ADD COLUMN name TEXT NOT NULL DEFAULT ''"],
+    ["password_hash", "ALTER TABLE customer_accounts ADD COLUMN password_hash TEXT NOT NULL DEFAULT ''"],
+    ["password_salt", "ALTER TABLE customer_accounts ADD COLUMN password_salt TEXT NOT NULL DEFAULT ''"],
+    ["created_at", "ALTER TABLE customer_accounts ADD COLUMN created_at INTEGER NOT NULL DEFAULT 0"],
+    ["updated_at", "ALTER TABLE customer_accounts ADD COLUMN updated_at INTEGER NOT NULL DEFAULT 0"]
+  ];
+  for (const [column, sql] of accountUpgrades) {
+    if (!accountColumns.has(column)) await env.DB.prepare(sql).run();
+  }
+  await env.DB.prepare("CREATE UNIQUE INDEX IF NOT EXISTS idx_customer_accounts_phone ON customer_accounts(phone)").run();
+
+  const sessionInfo = await env.DB.prepare("PRAGMA table_info(customer_sessions)").all<any>();
+  const sessionColumns = new Set((sessionInfo.results || []).map((column: any) => String(column.name)));
+  const sessionUpgrades: Array<[string, string]> = [
+    ["token_hash", "ALTER TABLE customer_sessions ADD COLUMN token_hash TEXT"],
+    ["customer_id", "ALTER TABLE customer_sessions ADD COLUMN customer_id TEXT"],
+    ["expires_at", "ALTER TABLE customer_sessions ADD COLUMN expires_at INTEGER NOT NULL DEFAULT 0"],
+    ["created_at", "ALTER TABLE customer_sessions ADD COLUMN created_at INTEGER NOT NULL DEFAULT 0"]
+  ];
+  for (const [column, sql] of sessionUpgrades) {
+    if (!sessionColumns.has(column)) await env.DB.prepare(sql).run();
+  }
+  await env.DB.prepare("CREATE UNIQUE INDEX IF NOT EXISTS idx_customer_sessions_token ON customer_sessions(token_hash)").run();
+
+  const attemptsInfo = await env.DB.prepare("PRAGMA table_info(customer_login_attempts)").all<any>();
+  const attemptsColumns = new Set((attemptsInfo.results || []).map((column: any) => String(column.name)));
+  const attemptsUpgrades: Array<[string, string]> = [
+    ["attempt_key", "ALTER TABLE customer_login_attempts ADD COLUMN attempt_key TEXT"],
+    ["failures", "ALTER TABLE customer_login_attempts ADD COLUMN failures INTEGER NOT NULL DEFAULT 0"],
+    ["window_started", "ALTER TABLE customer_login_attempts ADD COLUMN window_started INTEGER NOT NULL DEFAULT 0"],
+    ["blocked_until", "ALTER TABLE customer_login_attempts ADD COLUMN blocked_until INTEGER NOT NULL DEFAULT 0"]
+  ];
+  for (const [column, sql] of attemptsUpgrades) {
+    if (!attemptsColumns.has(column)) await env.DB.prepare(sql).run();
+  }
+  await env.DB.prepare("CREATE UNIQUE INDEX IF NOT EXISTS idx_customer_login_attempts_key ON customer_login_attempts(attempt_key)").run();
+
   // Upgrade order history independently. A legacy order-table problem must
   // never block registration or login.
   try {
