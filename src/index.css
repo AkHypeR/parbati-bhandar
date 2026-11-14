@@ -286,8 +286,8 @@ html.pb-dark .shadow-md,
 html.pb-dark .shadow-lg { --tw-shadow-color:rgba(0,0,0,.25); }
 html.pb-dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
 html.pb-dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-color:#2b3a50 !important; }
-html.pb-dark .hover\\:bg-slate-50:hover,
-html.pb-dark .hover\\:bg-gray-50:hover { background-color:#1b2a40 !important; }
+html.pb-dark [class~="hover:bg-slate-50"]:hover,
+html.pb-dark [class~="hover:bg-gray-50"]:hover { background-color:#1b2a40 !important; }
 html.pb-dark .bg-blue-50,
 html.pb-dark .bg-indigo-50 { background-color:#172b49 !important; }
 html.pb-dark .text-blue-900,
