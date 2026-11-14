@@ -32,7 +32,10 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
   useEffect(() => {
     if (!customer) return;
     let active = true;
+    let requestInFlight = false;
     const loadOrders = async (showLoading = false) => {
+      if (requestInFlight || document.visibilityState !== 'visible') return;
+      requestInFlight = true;
       if (showLoading) setOrdersLoading(true);
       try {
         const response = await fetch('/api/orders/track?history=1',{credentials:'same-origin',cache:'no-store'});
@@ -40,11 +43,16 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
         if (!response.ok) throw new Error(data.error || 'Could not load order history');
         if (active) { setOrders(Array.isArray(data.orders)?data.orders:[]); setError(''); }
       } catch (e) { if (active) setError((e as Error).message || 'Could not load order history'); }
-      finally { if (active && showLoading) setOrdersLoading(false); }
+      finally {
+        requestInFlight = false;
+        if (active && showLoading) setOrdersLoading(false);
+      }
     };
+    const refreshWhenVisible = () => { if (document.visibilityState === 'visible') void loadOrders(); };
     void loadOrders(true);
-    const timer = window.setInterval(() => { if (document.visibilityState === 'visible') void loadOrders(); }, 15000);
-    return () => { active = false; window.clearInterval(timer); };
+    const timer = window.setInterval(refreshWhenVisible, 30000);
+    document.addEventListener('visibilitychange', refreshWhenVisible);
+    return () => { active = false; window.clearInterval(timer); document.removeEventListener('visibilitychange', refreshWhenVisible); };
   },[customer?.id]);
 
   const submit = async (event: React.FormEvent) => {
@@ -154,15 +162,15 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
   };
 
   return (
-    <main className="relative min-h-[78vh] flex-1 overflow-hidden bg-[#f5f8f2] px-4 py-7 sm:py-12">
-      <div aria-hidden="true" className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-emerald-200/50 blur-3xl" />
-      <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 -right-16 h-80 w-80 rounded-full bg-amber-100/80 blur-3xl" />
-      <div className="relative mx-auto max-w-5xl">
+    <main className="relative min-h-dvh w-full flex-1 overflow-x-clip bg-[#f5f8f2] px-3 py-4 sm:px-4 sm:py-10">
+      <div aria-hidden="true" className="pointer-events-none absolute -left-24 -top-24 hidden h-72 w-72 rounded-full bg-emerald-200/50 blur-3xl md:block" />
+      <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 -right-16 hidden h-80 w-80 rounded-full bg-amber-100/80 blur-3xl md:block" />
+      <div className="relative mx-auto w-full min-w-0 max-w-5xl">
         <button onClick={onBack} className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-900/10 bg-white/80 px-4 py-2 text-sm font-bold text-emerald-900 shadow-sm transition hover:bg-white">
           <ArrowLeft className="h-4 w-4"/> Back to store
         </button>
 
-        <section className="grid overflow-hidden rounded-[2rem] border border-white bg-white shadow-[0_24px_80px_-32px_rgba(6,78,59,0.28)] md:grid-cols-[0.92fr_1.08fr]">
+        <section className="grid min-w-0 overflow-hidden rounded-2xl border border-white bg-white shadow-[0_12px_36px_-24px_rgba(6,78,59,0.22)] sm:rounded-[2rem] md:grid-cols-[0.92fr_1.08fr]">
           <aside className="relative hidden min-h-[590px] flex-col justify-between overflow-hidden bg-gradient-to-br from-[#064e3b] via-[#08634b] to-[#0d7660] p-9 text-white md:flex">
             <div aria-hidden="true" className="absolute -right-24 -top-20 h-72 w-72 rounded-full border-[36px] border-white/[0.06]"/>
             <div aria-hidden="true" className="absolute -bottom-28 -left-20 h-80 w-80 rounded-full border-[42px] border-amber-200/[0.09]"/>
@@ -185,7 +193,7 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
             </div>
           </aside>
 
-          <div className="p-5 sm:p-8 md:p-10">
+          <div className="min-w-0 p-4 sm:p-8 md:p-10">
             {customer ? (
               <div className="space-y-6">
                 <div className="flex items-start justify-between gap-4">
