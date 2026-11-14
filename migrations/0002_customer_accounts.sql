@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS customer_orders (
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL,
   order_number INTEGER,
+  customer_id TEXT,
   stock_deducted INTEGER NOT NULL DEFAULT 0,
   confirmed_at INTEGER
 );
@@ -36,5 +37,4 @@ CREATE TABLE IF NOT EXISTS customer_login_attempts (
   window_started INTEGER NOT NULL,
   blocked_until INTEGER NOT NULL DEFAULT 0
 );
-ALTER TABLE customer_orders ADD COLUMN customer_id TEXT;
-CREATE INDEX IF NOT EXISTS idx_customer_orders_customer ON customer_orders(customer_id, created_at DESC);
+-- Existing customer_orders tables receive customer_id from the idempotent runtime schema bootstrap.\n
