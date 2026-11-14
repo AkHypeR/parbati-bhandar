@@ -11,6 +11,33 @@ import {
 } from 'lucide-react';
 import { CartItem, Product } from '../utils/storeLogic';
 
+type LowStockNoticeProps = { productId: string; startedAt: number | null };
+
+function LowStockNotice({ productId, startedAt }: LowStockNoticeProps) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (startedAt === null) return;
+    const interval = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(interval);
+  }, [startedAt, productId]);
+
+  const remaining = startedAt === null ? 5 * 60 * 1000 : Math.max(0, 5 * 60 * 1000 - (now - startedAt));
+  const minutes = Math.floor(remaining / 60000);
+  const seconds = Math.floor((remaining % 60000) / 1000);
+  const countdown = startedAt === null ? '05:00' : `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+  return (
+    <div className="mt-1 flex flex-col items-start gap-1">
+      <span className="inline-flex items-center gap-1 rounded-md bg-amber-100 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-amber-900">
+        ⚠️ Order soon — low stock!
+      </span>
+      <span className="inline-flex items-center gap-1 rounded-md bg-red-50 px-2 py-1 text-[10px] font-extrabold text-red-700">
+        ⏳ Cart timer: {countdown}
+      </span>
+    </div>
+  );
+}
+
 interface CartDrawerProps {
   isOpen: boolean;
   customerAuthenticated: boolean;
@@ -59,51 +86,34 @@ export function CartDrawer({
   const [savingOrder, setSavingOrder] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState('');
   const [captchaError, setCaptchaError] = useState('');
-  const [timerNow, setTimerNow] = useState(Date.now());
-
-  // Refresh the visible low-stock countdown once per second while the cart is open.
-  useEffect(() => {
-    if (!isOpen) return;
-    const refresh = () => setTimerNow(Date.now());
-    refresh();
-    const interval = window.setInterval(refresh, 1000);
-    return () => window.clearInterval(interval);
-  }, [isOpen]);
-
-  const getLowStockCountdown = (product: Product): string | null => {
-    // Cart items can contain an older product snapshot. Always read the latest stock
-    // and threshold from the live catalog so the countdown appears consistently.
+  // Keep countdown updates isolated from the whole cart to avoid mobile UI re-renders.
+  const getLowStockStart = (product: Product): number | null => {
     const currentProduct = products.find(item => item.id === product.id) || product;
-    const stock = Number(currentProduct.stockQuantity);
-    const configuredThreshold = Number(currentProduct.lowStockThreshold);
-    // Customer catalog hides exact inventory counts and sends only a safe lowStock flag.
-    // Owner catalog can continue calculating the flag from its private stock quantity.
-    const threshold = Number.isFinite(configuredThreshold) && configuredThreshold > 0
-      ? configuredThreshold
-      : 5;
     let startedAt: unknown;
     try {
       const saved = JSON.parse(localStorage.getItem('parbati_bhandar_low_stock_cart_timers_v1') || '{}');
       startedAt = saved?.[currentProduct.id];
     } catch { startedAt = undefined; }
-    // Keep the cart warning visible even if the catalogue's lowStock flag changes
-    // after this customer's own stock reservation is counted.
-    const hasActiveLowStockTimer = typeof startedAt === 'number' && Number.isFinite(startedAt);
-    const isLowStock = currentProduct.lowStock === true ||
+    return typeof startedAt === 'number' && Number.isFinite(startedAt) ? startedAt : null;
+  };
+
+  const isLowStockItem = (product: Product): boolean => {
+    const currentProduct = products.find(item => item.id === product.id) || product;
+    const stock = Number(currentProduct.stockQuantity);
+    const configuredThreshold = Number(currentProduct.lowStockThreshold);
+    const threshold = Number.isFinite(configuredThreshold) && configuredThreshold > 0 ? configuredThreshold : 5;
+    return currentProduct.inStock && (
+      currentProduct.lowStock === true ||
       product.lowStock === true ||
       (Number.isFinite(stock) && stock > 0 && stock <= threshold) ||
-      hasActiveLowStockTimer;
-    if (!currentProduct.inStock || !isLowStock) return null;
-    try {
-      if (!hasActiveLowStockTimer) return '05:00';
-      const remaining = Math.max(0, 5 * 60 * 1000 - (timerNow - startedAt));
-      const minutes = Math.floor(remaining / 60000);
-      const seconds = Math.floor((remaining % 60000) / 1000);
-      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    } catch {
-      return '05:00';
-    }
+      getLowStockStart(product) !== null
+    );
   };
+
+  const lowStockItems = useMemo(
+    () => cartItemsList.filter(item => isLowStockItem(item.product)),
+    [cartItemsList, products]
+  );
 
   const recommendationProducts = useMemo(() => {
     const cartProductIds = new Set(cartItemsList.map(item => item.product.id));
@@ -209,9 +219,9 @@ export function CartDrawer({
 
               {/* Order review list — Step 1 */}
               <div className="py-2">
-                {cartItemsList.some(item => getLowStockCountdown(item.product) !== null) && (
-                  <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-semibold text-amber-900">
-                    ⚠️ Order soon: {cartItemsList.filter(item => getLowStockCountdown(item.product) !== null).map(item => item.product.name).join(', ')} {cartItemsList.filter(item => getLowStockCountdown(item.product) !== null).length === 1 ? 'is' : 'are'} low in stock. Check the countdown beside {cartItemsList.filter(item => getLowStockCountdown(item.product) !== null).length === 1 ? 'this item' : 'these items'}.
+                {lowStockItems.length > 0 && (
+                  <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-semibold leading-5 text-amber-900">
+                    ⚠️ Order soon: {lowStockItems.map(item => item.product.name).join(', ')} {lowStockItems.length === 1 ? 'is' : 'are'} running low. The countdown is shown beside {lowStockItems.length === 1 ? 'this item' : 'each item'}.
                   </div>
                 )}
                 <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-slate-400 pb-1.5">
@@ -245,15 +255,8 @@ export function CartDrawer({
                             <p className="text-xs font-bold text-emerald-800 tabular-nums">
                               Qty: {selectedUnit} &times; {qty}
                             </p>
-                            {getLowStockCountdown(product) !== null && (
-                              <div className="mt-1 flex flex-col items-start gap-1">
-                                <span className="inline-flex items-center gap-1 rounded-md bg-amber-100 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-amber-900">
-                                  ⚠️ Order soon — low stock!
-                                </span>
-                                <span className="inline-flex items-center gap-1 rounded-md bg-red-50 px-2 py-1 text-[10px] font-extrabold text-red-700">
-                                  ⏳ Item leaves your cart in {getLowStockCountdown(product)}
-                                </span>
-                              </div>
+                            {isLowStockItem(product) && (
+                              <LowStockNotice productId={product.id} startedAt={getLowStockStart(product)} />
                             )}
                           </div>
                         </div>
