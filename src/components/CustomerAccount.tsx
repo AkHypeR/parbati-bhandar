@@ -21,11 +21,20 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack }:
 
   useEffect(() => {
     if (!customer) return;
-    setOrdersLoading(true);
-    fetch('/api/orders/track?history=1',{credentials:'same-origin',cache:'no-store'})
-      .then(async r => { const data=await r.json(); if(!r.ok) throw new Error(data.error || 'Could not load order history'); setOrders(Array.isArray(data.orders)?data.orders:[]); })
-      .catch(e => setError(e.message || 'Could not load order history'))
-      .finally(()=>setOrdersLoading(false));
+    let active = true;
+    const loadOrders = async (showLoading = false) => {
+      if (showLoading) setOrdersLoading(true);
+      try {
+        const response = await fetch('/api/orders/track?history=1',{credentials:'same-origin',cache:'no-store'});
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Could not load order history');
+        if (active) { setOrders(Array.isArray(data.orders)?data.orders:[]); setError(''); }
+      } catch (e) { if (active) setError((e as Error).message || 'Could not load order history'); }
+      finally { if (active && showLoading) setOrdersLoading(false); }
+    };
+    void loadOrders(true);
+    const timer = window.setInterval(() => { if (document.visibilityState === 'visible') void loadOrders(); }, 15000);
+    return () => { active = false; window.clearInterval(timer); };
   },[customer?.id]);
 
   const submit = async (event: React.FormEvent) => {
