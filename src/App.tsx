@@ -176,6 +176,9 @@ export default function App() {
   const [authLoading, setAuthLoading] = useState(false);
   const [ownerCatalogReady, setOwnerCatalogReady] = useState(false);
   const [cloudReady, setCloudReady] = useState(false);
+  const [initialAuthReady, setInitialAuthReady] = useState(false);
+  const [initialSettingsReady, setInitialSettingsReady] = useState(false);
+  const [pageModulesReady, setPageModulesReady] = useState(false);
   const [minimumLoaderTimeElapsed, setMinimumLoaderTimeElapsed] = useState(false);
   const [productSyncStatus, setProductSyncStatus] = useState<'loading' | 'saving' | 'saved' | 'error'>('loading');
   const productSyncRequest = useRef(0);
@@ -186,6 +189,27 @@ export default function App() {
   useEffect(() => {
     const timer = window.setTimeout(() => setMinimumLoaderTimeElapsed(true), 2500);
     return () => window.clearTimeout(timer);
+  }, []);
+
+  // Preload every lazy page module while the branded opening screen is visible.
+  // This prevents the first navigation to account, orders, notifications, terms,
+  // or the owner portal from revealing an unfinished page.
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([
+      import('./components/CustomerStorefront'),
+      import('./components/CustomerAccount'),
+      import('./components/CustomerNotifications'),
+      import('./components/CustomerOrders'),
+      import('./components/TermsAndConditions'),
+      import('./components/AdminUploadApp'),
+    ]).then(() => {
+      if (!cancelled) setPageModulesReady(true);
+    }).catch((error) => {
+      console.error('Initial page module preload failed', error);
+      if (!cancelled) setPageModulesReady(true);
+    });
+    return () => { cancelled = true; };
   }, []);
 
   // Modals: QR Poster & Free Hosting Guide
@@ -215,7 +239,7 @@ export default function App() {
           setCustomerName(data.customer.name);
           setCustomerPhone(data.customer.phone);
         }
-      }).catch(() => {});
+      }).catch(() => {}).finally(() => setInitialAuthReady(true));
   }, []);
   const handleCustomerAuthenticated = (customer: {id:string;name:string;phone:string}, created = false) => {
     setCustomerAccount(customer);
@@ -271,7 +295,7 @@ export default function App() {
   useEffect(() => {
     let cancelled = false;
     const refreshMaintenance = () => fetch('/api/settings', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : Promise.reject()).then(data => { if (!cancelled) { setMaintenanceMode(data?.settings?.maintenanceMode === true); setMaintenanceUntil(typeof data?.settings?.maintenanceUntil === 'number' ? data.settings.maintenanceUntil : null); } }).catch(() => {});
-    void refreshMaintenance();
+    void refreshMaintenance().finally(() => { if (!cancelled) setInitialSettingsReady(true); });
     const timer = window.setInterval(refreshMaintenance, 30000);
     return () => { cancelled = true; window.clearInterval(timer); };
   }, []);
@@ -957,7 +981,7 @@ export default function App() {
   return (
     <Suspense fallback={<InitialLoadingScreen />}>
     <div className="min-h-screen bg-[#f7faf8] text-slate-900 flex flex-col font-sans">
-      {(!cloudReady || !minimumLoaderTimeElapsed) && <InitialLoadingScreen />}
+      {(!cloudReady || !initialAuthReady || !initialSettingsReady || !pageModulesReady || !minimumLoaderTimeElapsed) && <InitialLoadingScreen />}
 
       {currentPath !== '/' && (
         <div className="sticky top-0 z-[60] border-b border-emerald-100 bg-white/95 shadow-sm backdrop-blur-sm">
