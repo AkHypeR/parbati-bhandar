@@ -94,3 +94,35 @@
   .pb-product-grid { gap: 8px !important; padding-inline: 9px; }
   .pb-product-name { font-size: 12px !important; }
 }
+
+
+/* Refined mobile storefront welcome and restrained motion */
+.pb-welcome-card { isolation: isolate; }
+.pb-welcome-glow {
+  background:
+    radial-gradient(ellipse at 8% 0%, rgba(74,222,128,.18), transparent 38%),
+    radial-gradient(ellipse at 100% 100%, rgba(250,204,21,.12), transparent 34%);
+  animation: pbWelcomeGlow 9s ease-in-out infinite alternate;
+}
+.pb-welcome-enter { animation: pbWelcomeEnter .65s cubic-bezier(.2,.8,.2,1) both; }
+.pb-welcome-basket { animation: pbBasketFloat 4.5s ease-in-out infinite; }
+@keyframes pbWelcomeGlow {
+  from { opacity: .72; transform: scale(1); }
+  to { opacity: 1; transform: scale(1.04); }
+}
+@keyframes pbWelcomeEnter {
+  from { opacity: 0; transform: translateY(9px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pbBasketFloat {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-5px) rotate(2deg); }
+}
+@media (max-width: 640px) {
+  .pb-welcome { padding-top: 10px; padding-bottom: 12px; }
+  .pb-welcome-card { border-radius: 22px; }
+  .pb-mobile-bottom-cart { padding-bottom: max(12px, env(safe-area-inset-bottom)) !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pb-welcome-glow, .pb-welcome-enter, .pb-welcome-basket { animation: none !important; }
+}
