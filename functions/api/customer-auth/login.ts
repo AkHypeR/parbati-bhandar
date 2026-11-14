@@ -10,7 +10,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     attempt_key TEXT PRIMARY KEY, failures INTEGER NOT NULL DEFAULT 0,
     window_started INTEGER NOT NULL, blocked_until INTEGER NOT NULL DEFAULT 0
   )`).run();
-  const attemptKey = (await crypto.subtle.digest("SHA-256",new TextEncoder().encode(ip+"|"+phone))).reduce((s,b)=>s+b.toString(16).padStart(2,"0"),"");
+  const attemptDigest = new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(ip+"|"+phone)));
+  const attemptKey = Array.from(attemptDigest,b=>b.toString(16).padStart(2,"0")).join("");
   const attempt = await env.DB.prepare("SELECT failures,window_started,blocked_until FROM customer_login_attempts WHERE attempt_key=?").bind(attemptKey).first<any>();
   if (Number(attempt?.blocked_until || 0) > now) return json({error:"Too many attempts. Please wait 15 minutes and try again."},429,{"cache-control":"no-store"});
   const row = await env.DB.prepare("SELECT id,name,phone,password_hash,password_salt FROM customer_accounts WHERE phone=?").bind(phone).first<any>();
