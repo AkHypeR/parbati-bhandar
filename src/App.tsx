@@ -1165,6 +1165,8 @@ export default function App() {
               onViewOrders={() => navigateToPath('/orders')}
             />
           ) : <CustomerStorefront
+            darkMode={darkMode}
+            onToggleDarkMode={() => setDarkMode((current) => !current)}
             storeSettings={storeSettings}
             currentPage={currentPath === '/track-order' ? 'track' : currentPath === '/previous-orders' ? 'history' : currentPath === '/cart' ? 'cart' : 'home'}
             onNavigate={navigateToPath}
