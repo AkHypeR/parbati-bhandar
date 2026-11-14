@@ -361,7 +361,8 @@ export default function App() {
   useEffect(() => {
     try { localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(cart)); } catch { /* ignore */ }
   }, [cart]);
-\n  // Persist the signed-in customer's cart in D1 so the same account shares
+
+  // Persist the signed-in customer's cart in D1 so the same account shares
   // one cart across phones, tablets and browsers.
   useEffect(() => {
     if (!customerAccount?.id || !cloudReady) {
