@@ -305,7 +305,9 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   // product names, IDs, quantities, units and prices stored with the original order.
   const items: OrderItem[] = savedItems.map((item, index) => ({
     ...item,
-    unavailable: Array.isArray(body.items) ? !!body.items[index]?.unavailable : !!item.unavailable
+    // Once an item has been refunded to inventory, it stays unavailable on
+    // this order so a repeated owner update cannot accidentally re-charge it.
+    unavailable: item.stockRefunded ? true : (Array.isArray(body.items) ? !!body.items[index]?.unavailable : !!item.unavailable)
   }));
   let changes = 0;
   if (status === "unavailable") {
