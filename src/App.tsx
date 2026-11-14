@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { lazy, Suspense, useState, useEffect, useMemo, useRef } from 'react';
 import {
   QrCode,
   HelpCircle,
@@ -24,14 +24,14 @@ import {
   isProductLowStock,
   assignBestItemRank,
 } from './utils/storeLogic';
-import { CustomerStorefront } from './components/CustomerStorefront';
+const CustomerStorefront = lazy(() => import('./components/CustomerStorefront').then(module => ({ default: module.CustomerStorefront })));
 import { CartDrawer } from './components/CartDrawer';
-import { CustomerAccount } from './components/CustomerAccount';
-import { CustomerNotifications } from './components/CustomerNotifications';
-import { CustomerOrders } from './components/CustomerOrders';
-import { TermsAndConditions } from './components/TermsAndConditions';
+const CustomerAccount = lazy(() => import('./components/CustomerAccount').then(module => ({ default: module.CustomerAccount })));
+const CustomerNotifications = lazy(() => import('./components/CustomerNotifications').then(module => ({ default: module.CustomerNotifications })));
+const CustomerOrders = lazy(() => import('./components/CustomerOrders').then(module => ({ default: module.CustomerOrders })));
+const TermsAndConditions = lazy(() => import('./components/TermsAndConditions').then(module => ({ default: module.TermsAndConditions })));
 import { OwnerPinGate } from './components/OwnerPinGate';
-import { AdminUploadApp } from './components/AdminUploadApp';
+const AdminUploadApp = lazy(() => import('./components/AdminUploadApp').then(module => ({ default: module.AdminUploadApp })));
 import { QrPosterModal, SetupGuideModal } from './components/Modals';
 import { fetchCloudCatalog, saveCloudProducts, deleteCloudProducts, saveCloudSettings } from './lib/cloudStore';
 
@@ -927,6 +927,7 @@ export default function App() {
   const liveIsOpen = checkIsStoreOpenIST(storeSettings);
 
   return (
+    <Suspense fallback={<div className="flex min-h-[50vh] items-center justify-center text-sm font-semibold text-slate-500">Loading Parbati Bhandar…</div>}>
     <div className="min-h-screen bg-[#f7faf8] text-slate-900 flex flex-col font-sans">
       {!cloudReady && (
         <div className="fixed inset-0 z-[200] flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[#f8fbf8] px-6" role="status" aria-live="polite">
@@ -1300,5 +1301,6 @@ export default function App() {
         onClose={() => setIsGuideModalOpen(false)}
       />
     </div>
+    </Suspense>
   );
 }

@@ -125,7 +125,7 @@ export function CustomerNotifications({ customer, onBack, onSignIn }: {
                 </div>
                 <div className="flex shrink-0 flex-col gap-2">
                   {!item.readAt && <button type="button" onClick={() => void markRead(item.id)} disabled={!!busyId} aria-label="Mark as read" title="Mark as read" className="rounded-lg p-2 text-blue-700 hover:bg-blue-100 disabled:opacity-50"><CheckCheck className="h-4 w-4" /></button>}
-                  <button type="button" onClick={() => void remove(item.id)} disabled={!!busyId} aria-label="Delete notification" title="Delete notification" className="rounded-lg p-2 text-rose-600 hover:bg-rose-50 disabled:opacity-50"><Trash2 className="h-4 w-4" /></button>
+                  <button type="button" onClick={() => void remove(item.id)} disabled={!!busyId} aria-label="Delete notification" title="Delete notification" className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-rose-200 bg-white px-3 py-2 text-xs font-extrabold text-rose-700 shadow-sm hover:bg-rose-50 disabled:opacity-50"><Trash2 className="h-4 w-4" /><span>Delete</span></button>
                 </div>
               </div>
             </article>)}
