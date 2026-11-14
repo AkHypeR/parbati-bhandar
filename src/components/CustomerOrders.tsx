@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, PackageCheck, ShoppingBag, Clock3, CheckCircle2, ChefHat, Truck, ReceiptText, RefreshCw, ShieldCheck } from 'lucide-react';
 
 type OrderItem = { name: string; quantity: number; unit: string; price?: number; lineTotal?: number; unavailable?: boolean };
-type Order = { orderNumber: number; status: string; total: number; originalTotal?: number; unavailableDeduction?: number; createdAt: number; updatedAt?: number; readyAt?: number | null; estimatedReadyAt?: number | null; items: OrderItem[] };
+type Order = { id?: string; orderNumber: number; status: string; total: number; originalTotal?: number; unavailableDeduction?: number; createdAt: number; updatedAt?: number; readyAt?: number | null; estimatedReadyAt?: number | null; items: OrderItem[] };
 
 const statusLabel = (status: string) => {
   const labels: Record<string, string> = { new: 'Received', processing: 'Being prepared', ready: 'Ready for pickup', completed: 'Completed', cancelled: 'Cancelled', unavailable: 'Availability update' };
@@ -23,6 +23,10 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, onNavigate,
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editQuantities, setEditQuantities] = useState<number[]>([]);
+  const [savingAction, setSavingAction] = useState(false);
+  const [actionMessage, setActionMessage] = useState('');
   const requestInFlight = useRef(false);
 
   const load = useCallback(async (initial = false) => {
@@ -69,6 +73,30 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, onNavigate,
 
   const currentIndex = selected ? steps.findIndex(step => step.key === selected.status) : -1;
   const exceptional = selected?.status === 'cancelled' || selected?.status === 'unavailable';
+  const cancelOrder = async () => {
+    if (!selected || savingAction || !window.confirm('Cancel this order? It can only be cancelled before processing starts.')) return;
+    setSavingAction(true); setActionMessage('');
+    try {
+      const response = await fetch('/api/orders/manage', { method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:selected.id,action:'cancel'}) });
+      const data = await response.json().catch(()=>({}));
+      if (!response.ok) throw new Error(data.error || 'Could not cancel this order.');
+      setEditing(false); await load(true);
+      setActionMessage('Your order has been cancelled. Inventory has been updated.');
+    } catch(error) { setActionMessage((error as Error).message || 'Could not cancel this order.'); }
+    finally { setSavingAction(false); }
+  };
+  const saveOrderEdit = async () => {
+    if (!selected || savingAction) return;
+    setSavingAction(true); setActionMessage('');
+    try {
+      const response = await fetch('/api/orders/manage', { method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:selected.id,action:'edit',quantities:editQuantities}) });
+      const data = await response.json().catch(()=>({}));
+      if (!response.ok) throw new Error(data.error || 'Could not update this order.');
+      setEditing(false); await load(true);
+      setActionMessage('Your order has been updated successfully.');
+    } catch(error) { setActionMessage((error as Error).message || 'Could not update this order.'); }
+    finally { setSavingAction(false); }
+  };
 
   return (
     <main className="min-h-dvh w-full overflow-x-clip bg-[#f5f8f2] px-3 py-4 sm:px-4 sm:py-10">
@@ -144,6 +172,32 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, onNavigate,
                   <span className="shrink-0 rounded-md bg-blue-600 px-2.5 py-1.5 text-xs font-black text-white">#{selected.orderNumber}</span>
                 </section>
 
+                {!exceptional && <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+                  <div className="mb-4 flex items-center justify-between gap-3"><h2 className="text-sm font-black">Order progress</h2><span className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-extrabold text-emerald-800">{statusLabel(selected.status)}</span></div>
+                  <ol className="grid grid-cols-4 gap-1">
+                    {steps.map((step,index)=>{const Icon=step.icon;const done=currentIndex>=index;return <li key={step.key} className="min-w-0 text-center">
+                      <span className={'mx-auto grid h-9 w-9 place-items-center rounded-full '+(done?'bg-emerald-700 text-white':'bg-slate-100 text-slate-400')}><Icon className="h-4 w-4"/></span>
+                      <span className={'mt-2 block text-[10px] font-extrabold leading-4 '+(done?'text-emerald-800':'text-slate-400')}>{step.title}</span>
+                    </li>;})}
+                  </ol>
+                  <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-emerald-600 transition-all" style={{width:((Math.max(0,currentIndex)/3)*100)+'%'}}/></div>
+                </section>}
+                {selected.status === 'cancelled' && <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm font-bold text-rose-800">This order was cancelled. Any inventory deducted for it has been restored.</div>}
+                {actionMessage && <p role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs font-bold text-emerald-800">{actionMessage}</p>}
+                {selected.status === 'new' && <section className="rounded-2xl border border-blue-200 bg-blue-50 p-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-sm font-black text-slate-900">Change your order</h2><p className="mt-1 text-xs text-slate-600">You can edit or cancel until the store starts processing.</p></div>
+                    {!editing ? <div className="flex gap-2"><button type="button" onClick={()=>{setEditQuantities(selected.items.map(item=>Number(item.quantity)||1));setEditing(true);setActionMessage('');}} className="rounded-xl border border-blue-200 bg-white px-4 py-2.5 text-xs font-extrabold text-blue-800">Edit order</button><button type="button" onClick={()=>void cancelOrder()} disabled={savingAction} className="rounded-xl bg-rose-600 px-4 py-2.5 text-xs font-extrabold text-white disabled:opacity-60">{savingAction?'Please wait…':'Cancel order'}</button></div> : <button type="button" onClick={()=>setEditing(false)} className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700">Close editor</button>}
+                  </div>
+                  {editing && <div className="mt-4 space-y-3">
+                    {selected.items.map((item,index)=><div key={index} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3">
+                      <div className="min-w-0 flex-1"><p className="truncate text-xs font-bold text-slate-900">{item.name}</p><p className="text-[10px] text-slate-500">{item.unit} · ₹{item.price||0} each</p></div>
+                      <div className="flex items-center gap-2"><button type="button" aria-label={'Decrease '+item.name} onClick={()=>setEditQuantities(q=>q.map((v,i)=>i===index?Math.max(0,v-1):v))} className="h-8 w-8 rounded-lg border border-slate-200 font-black">−</button><span className="w-5 text-center text-sm font-black">{editQuantities[index]||0}</span><button type="button" aria-label={'Increase '+item.name} onClick={()=>setEditQuantities(q=>q.map((v,i)=>i===index?Math.min(999,v+1):v))} className="h-8 w-8 rounded-lg border border-slate-200 font-black">+</button></div>
+                    </div>)}
+                    <div className="flex items-center justify-between gap-3 border-t border-blue-100 pt-3"><span className="text-xs font-bold text-slate-600">Revised estimate</span><strong className="text-lg font-black text-slate-900">₹{selected.items.reduce((sum,item,index)=>sum+(Number(item.price)||0)*(editQuantities[index]||0),0)}</strong></div>
+                    <button type="button" onClick={()=>void saveOrderEdit()} disabled={savingAction||editQuantities.every(q=>q===0)} className="w-full rounded-xl bg-blue-800 px-4 py-3 text-sm font-extrabold text-white disabled:opacity-50">{savingAction?'Saving changes…':'Save order changes'}</button>
+                  </div>}
+                </section>}
+                {selected.status !== 'new' && <p className="rounded-xl bg-slate-50 p-3 text-[11px] font-semibold text-slate-500">Order changes and cancellation are locked after processing starts.</p>}
                 <section className="rounded-lg border border-slate-200 bg-white px-3 py-3 sm:px-4">
                   <div className="mb-3 flex items-center justify-between gap-2">
                     <h2 className="text-sm font-black">{selected.items.reduce((sum,item)=>sum+Number(item.quantity||0),0)} items in your order</h2>
