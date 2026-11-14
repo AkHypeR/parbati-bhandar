@@ -1,99 +1,75 @@
-# Production backend migration — Node.js
+# Parbati Bhandar — production backend architecture
 
-## Status
+## Decision
 
-**Phase 1 foundation implemented in a separate, non-production Node.js service.** The current live API remains Cloudflare Pages Functions + D1. No production routes or data have been switched.
+**Use Cloudflare Pages + Pages Functions + D1 as the production API and database. Target spend: ₹0 in additional hosting/database fees, subject to staying within the existing Cloudflare Free and other provider free allowances.**
 
-## Current production architecture
+Do not deploy a separate always-on Express server or provision another PostgreSQL database for the current scale target of approximately 100 customer visits/orders per day. It would add operational complexity, create a second source of truth for stock, and likely require paid hosting for reliable always-on service.
 
-- React + Vite storefront; Cloudflare Pages Functions under `functions/api/`.
-- Cloudflare D1 through the `DB` binding; several order/account tables are also upgraded idempotently at runtime.
-- Cloudinary images, customer/owner HttpOnly sessions, customer inbox and optional Web Push.
-- Both Expo Android apps use the same existing website/backend.
-- The Node API is a separate staging service, not a production replacement.
+## Why this is the right fit
 
-## Target architecture
+- The storefront and current API are already deployed together on Cloudflare Pages.
+- Pages Functions run on Cloudflare's Workers runtime, which supports a documented subset of Node.js APIs.
+- The existing D1 database is already the authoritative product/order/inventory store.
+- The free Workers allowance currently lists 100,000 requests/day.
+- The D1 free allowance currently lists 5 million rows read/day, 100,000 rows written/day and 5 GB total storage.
+- Static site asset requests are served separately from Functions requests and do not consume the Functions request allowance.
+- No second database migration, customer-data export, new server credentials, or inventory cutover is required.
 
-Use a modular Node.js service (modular monolith, not microservices):
-- Node.js 22 LTS, Express 4 (reusing the existing dependency).
-- PostgreSQL with explicit versioned SQL migrations.
-- `pg` connection pool with parameterised queries.
-- Strict request validation before any domain API is exposed.
-- Secure HttpOnly sessions, CSRF protection for cookie-authenticated mutations, login rate limits.
-- Structured logs, request IDs, safe errors, health/readiness endpoints.
-- Cloudinary retained for media.
-- Redis/queues added only when measured background-job requirements justify them.
+These are published plan quotas, not a guarantee of throughput or uptime. They are account-wide. The site can exceed them if query patterns are inefficient or other projects consume the same allowance. D1 daily quota exhaustion can cause database queries to fail until the reset. Check the current official limits before making future architecture decisions:
+- https://developers.cloudflare.com/workers/platform/limits/
+- https://developers.cloudflare.com/d1/platform/pricing/
+- https://developers.cloudflare.com/workers/runtime-apis/nodejs/
 
-## Phase 1 implementation
+## Current production data flow
 
-The isolated service lives in `server/`:
-- `config.js`: validates PostgreSQL URL, port, exact CORS allowlist and production TLS.
-- `db.js`: bounded PostgreSQL connection pool and timeouts.
-- `app.js`: request IDs, structured request logs, security headers, strict CORS, 1 MB JSON limit, live/readiness checks, safe 404/error responses.
-- `index.js`: startup DB check and graceful SIGTERM/SIGINT shutdown.
-- `migrate.js`: ordered SQL migrations, transaction boundaries, PostgreSQL advisory lock and SHA-256 migration checksums.
-- `migrations/`: migration ledger and idempotency-key foundation table; does not import or modify D1.
-- `Dockerfile`: portable Node 22 container.
-- Commands: `npm run dev:api`, `npm run start:api`, `npm run migrate:api`.
-- Node built-in tests validate configuration safety.
+`Customer / Owner / Android WebView`
+→ `Cloudflare Pages CDN`
+→ `Pages Functions API (functions/api/*)`
+→ `Cloudflare D1 (DB binding)`
 
-Only `/health/live` and `/health/ready` are exposed. Catalogue, customer, owner, order and inventory endpoints are intentionally not exposed yet. This prevents a second inventory writer before data migration and transaction parity are complete.
+Cloudinary remains the product-image provider. Customer inbox and Web Push remain on the existing notification routes. The existing Cloudflare API is the only inventory writer.
 
-## Non-negotiable data and behaviour invariants
+## Node.js requirement
 
-1. One authoritative inventory writer only. Old and new order APIs must never write stock simultaneously.
-2. Order creation, stock deduction, cancellation/refund and edits must be transactional and idempotent.
-3. Customers may access only their own accounts, carts, inboxes and orders. Owner routes remain owner-protected.
-4. Verify prices, product IDs, availability, customer identity and totals server-side.
-5. Payment status must come from verified provider webhooks/signatures, not browser success screens.
-6. Preserve order history, order numbers, accounts, inbox, push subscriptions, catalogue, settings and backup/restore.
-7. Never commit credentials, customer exports or database dumps.
-8. Keep Cloudflare as rollback target until the replacement is verified.
+The current Pages Functions are server-side JavaScript/TypeScript running in Cloudflare's Worker runtime, not a traditional long-running Node process. Cloudflare documents Node.js API compatibility for supported built-in APIs. Use those supported Node APIs only when needed; continue using Cloudflare bindings such as `env.DB` for D1. Do not try to run Express or the PostgreSQL `pg` driver inside the Pages Functions runtime as a drop-in replacement.
 
-## Migration phases
+A separate Express + PostgreSQL prototype exists under `server/` from the prior exploration. It exposes only health/readiness endpoints. It is not deployed and must remain disconnected from production. It is not part of the selected free architecture.
 
-### Phase 0 — Audit and baseline (partially complete)
-- Inventory API routes, environment bindings, schema and external integrations.
-- Establish repeatable build, type-check and integration tests.
-- Convert runtime-created D1 schema into reviewed PostgreSQL migrations.
+## Capacity and cost guardrails
 
-### Phase 1 — Node service foundation (implemented; staging deployment pending)
-- Separate Node API, configuration validation, request IDs, safe errors, health/readiness and graceful shutdown.
-- PostgreSQL pool and migration runner.
-- CI tests.
-- Staging deploy only.
+For approximately 100 daily customers, this is a sensible starting architecture if API usage and database scans stay within free quotas. The real limit is not simply number of customers; it is the number of Function requests and D1 rows read/written per day.
 
-### Phase 2 — Data migration (not started)
-- Export D1 from the correct production account and verify it.
-- Create separate PostgreSQL staging database.
-- Map every D1 table and JSON-backed product/settings record.
-- Compare row counts, order totals/statuses, stock quantities, customer IDs and notification records.
-- Test restore to a fresh database. Never test against production.
+- Keep public catalogue queries bounded and indexed.
+- Use indexed lookups for customer phone/session, customer_id, order id/status and reservation expiry/product id.
+- Avoid repeated schema creation or table scans in hot request paths; move schema setup to reviewed migrations where safe.
+- Avoid polling more frequently than necessary.
+- Use bounded result sets and pagination for order history and owner lists.
+- Cache static files and images; never publicly cache private account/order responses.
+- Do not store product images in D1.
+- Track Workers requests, D1 row reads/writes and database size.
+- If free limits are approached, optimize first. Do not silently upgrade or enable billing.
 
-### Phase 3 — Domain migration (not started)
-1. Catalogue/settings reads.
-2. Owner authentication and product/settings writes.
-3. Customer authentication/profile.
-4. Carts and reservations.
-5. Order placement and stock deductions.
-6. Tracking, edits, cancellation and refunds.
-7. Inbox and Web Push.
-8. Uploads, backups and owner reporting.
+## Reliability and safety rules
 
-Each domain requires contract tests, ownership/permission tests and rollback checks.
+1. Exactly one inventory writer in production.
+2. Checkout validates live catalogue prices, product IDs, stock and customer identity server-side.
+3. Stock deduction, cancellation/refund and order edits must be atomic and idempotent.
+4. Customers can read/change only their own records; owner APIs remain owner-protected.
+5. Payment state must be based on verified payment-provider callbacks if payment integration is added.
+6. Backups must be created and restore-tested before risky schema changes.
+7. Never use the unused PostgreSQL prototype against production D1 data.
+8. Do not introduce Redis, queues, a second database or microservices until measured need justifies the cost and complexity.
 
-### Phase 4 — Staging and cutover (not started)
-- Test concurrent low-stock checkouts, duplicate requests, cancellation/refund, edits, push delivery, session expiry and backup restore.
-- Freeze writes briefly for final sync.
-- Switch all clients together so inventory has exactly one writer.
-- Keep the old D1 database untouched as rollback until stable.
+## Next engineering priorities
 
-### Phase 5 — Operate and optimise (not started)
-- Monitor errors, latency, DB connections and resource usage.
-- Add caching/Redis only when measurements justify it.
-- Schedule backups and perform restore drills.
+1. Audit hot D1 queries and add appropriate indexes through safe, versioned migrations.
+2. Add pagination to customer order history and owner order lists if missing.
+3. Add request-level rate limiting for login and other abuse-sensitive endpoints using Cloudflare-native facilities.
+4. Add tests for concurrent checkout, stock contention, cancellation/refund, order edits and customer ownership.
+5. Add lightweight operational checks for Workers/D1 quota usage and backup restore readiness.
 
-## Existing Cloudflare API inventory
+## Existing API route inventory
 
 - Catalogue/settings: `GET /api/catalog`, `GET/PUT /api/settings`
 - Owner auth: `/api/auth/login`, `/api/auth/logout`
@@ -107,7 +83,3 @@ Each domain requires contract tests, ownership/permission tests and rollback che
 - Backup/restore: `/api/backup`
 
 This list is based on repository inspection, not a live API probe.
-
-## Infrastructure and access boundary
-
-A managed Node host, separate PostgreSQL instance, secrets and staging hostname are required. The repository contains no credentials or authorised account connection for provisioning these. Do not point the Node service at production or switch clients until a separate staging database exists and data migration is verified.
