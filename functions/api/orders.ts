@@ -377,7 +377,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
     if (saved?.subscription_json) {
       const messages: Record<string,{title:string;body:string}> = {
         processing:{title:"Your order is being processed",body:"Parbati Bhandar has started preparing your order."},
-        ready:{title:"Your order is ready!",body:"Your order is ready for pickup at Parbati Bhandar."},
+        ready:{title:"Your order is ready!",body:"Your order is ready for pickup or delivery from Parbati Bhandar."},
         unavailable:{title:"Order update from Parbati Bhandar",body:"There is an availability update for your Parbati Bhandar order. Please contact the store."},
         completed:{title:"Order completed",body:"Your Parbati Bhandar order has been marked completed. Thank you!"},
         cancelled:{title:"Order cancelled",body:"Your Parbati Bhandar order has been cancelled. Please contact the store if you have questions."}
