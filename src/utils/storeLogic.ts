@@ -849,8 +849,18 @@ export function buildHeroSlides(
   >
 ): HeroSlide[] {
   const slides: HeroSlide[] = [];
-  // Seasonal artwork is intentionally disabled. Keep the product spotlight
-  // carousel, but never render an old festival image from saved store settings.
+  const occasionImage = settings.occasionImageUrl || '';
+  const isOldChhathArtwork = occasionImage.includes('photo_2026-11-12_10-31-46_ee14c399.jpg');
+  if (settings.showOccasionBanner === true) {
+    slides.push({
+      type: 'festive',
+      id: 'festive-banner',
+      title: settings.occasionTitle?.trim() || 'Seasonal Greetings',
+      subtitle: settings.occasionSubtitle?.trim() || 'Warm wishes from Parbati Bhandar',
+      tag: settings.occasionTag?.trim() || 'Festival Special',
+      imageUrl: isOldChhathArtwork ? '' : occasionImage,
+    });
+  }
   const orderedBest = getBestItems(products, 5);
   orderedBest.forEach((product, idx) => {
     slides.push({
