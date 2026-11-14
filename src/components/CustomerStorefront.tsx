@@ -109,6 +109,29 @@ export function CustomerStorefront({
   lastOrderCreatedAt = 0,
   lastOrderPhone = '',
 }: CustomerStorefrontProps) {
+  const [productRatings, setProductRatings] = useState<Record<string, { average: number; count: number }>>({});
+  const [reviewProduct, setReviewProduct] = useState<Product | null>(null);
+  const [reviewStars, setReviewStars] = useState(5);
+  const [reviewText, setReviewText] = useState('');
+  const [reviewMessage, setReviewMessage] = useState('');
+  const [reviewSaving, setReviewSaving] = useState(false);
+  useEffect(() => {
+    fetch('/api/reviews', { cache: 'no-store' }).then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.ratings) setProductRatings(data.ratings); }).catch(() => {});
+  }, []);
+  const submitProductReview = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!reviewProduct || reviewSaving) return;
+    setReviewSaving(true); setReviewMessage('');
+    try {
+      const response = await fetch('/api/reviews', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ productId: reviewProduct.id, rating: reviewStars, comment: reviewText }) });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'Could not submit review.');
+      setReviewMessage('Thanks! Your review has been submitted for approval.');
+      setReviewText('');
+    } catch (error) { setReviewMessage((error as Error).message); }
+    finally { setReviewSaving(false); }
+  };
   const [trackingOrderNumber, setTrackingOrderNumber] = useState(lastOrderNumber);
   const [dealsSearch, setDealsSearch] = useState('');
   const [trackingPhone, setTrackingPhone] = useState(lastOrderPhone);
@@ -567,6 +590,26 @@ export function CustomerStorefront({
             </div>
           </div>
         </section>
+      )}
+      {reviewProduct && (
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-slate-950/55 p-0 sm:p-4" role="dialog" aria-modal="true" aria-label="Rate product">
+          <form onSubmit={submitProductReview} className="w-full max-w-md rounded-t-3xl sm:rounded-3xl bg-white p-5 shadow-2xl">
+            <div className="flex items-start justify-between gap-3">
+              <div><p className="text-[10px] font-black uppercase tracking-widest text-emerald-700">Customer review</p><h3 className="mt-1 text-lg font-black text-slate-900">{reviewProduct.name}</h3></div>
+              <button type="button" onClick={() => setReviewProduct(null)} aria-label="Close review" className="rounded-full bg-slate-100 p-2"><X className="h-4 w-4"/></button>
+            </div>
+            <p className="mt-4 text-xs font-bold text-slate-600">Your rating</p>
+            <div className="mt-2 flex gap-2" role="group" aria-label="Choose star rating">
+              {[1,2,3,4,5].map(value => <button key={value} type="button" onClick={() => setReviewStars(value)} aria-label={value + ' stars'} className="p-1"><Star className={`h-8 w-8 ${value <= reviewStars ? 'fill-amber-400 text-amber-500' : 'text-slate-300'}`}/></button>)}
+            </div>
+            <label className="mt-4 block text-xs font-bold text-slate-600">Your review (optional)
+              <textarea value={reviewText} onChange={e => setReviewText(e.target.value)} maxLength={500} rows={3} placeholder="Share your experience with this product…" className="mt-1.5 w-full rounded-xl border border-slate-200 p-3 text-sm outline-none focus:border-emerald-500"/>
+            </label>
+            {reviewMessage && <p role="status" className="mt-3 rounded-xl bg-emerald-50 p-3 text-xs font-semibold text-emerald-800">{reviewMessage}</p>}
+            <button disabled={reviewSaving} className="mt-4 w-full rounded-xl bg-emerald-700 px-4 py-3 text-sm font-extrabold text-white disabled:opacity-60">{reviewSaving ? 'Submitting…' : 'Submit review'}</button>
+            <p className="mt-2 text-center text-[10px] text-slate-400">Only customers who purchased this item can review it. Reviews appear after store approval.</p>
+          </form>
+        </div>
       )}
       {currentPage === 'home' && (<>
       {/* ===================================================================== */}
@@ -1322,6 +1365,13 @@ export function CustomerStorefront({
                         <h3 className="pb-product-name font-bold text-slate-900 text-xs sm:text-base line-clamp-2 mt-0.5 min-h-[2.25rem] sm:min-h-[2.5rem]">
                           {product.name}
                         </h3>
+                        <div className="mt-1 flex items-center justify-between gap-2">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-600">
+                            <Star className="h-3 w-3 fill-amber-400 text-amber-500" />
+                            {productRatings[product.id]?.count ? productRatings[product.id].average.toFixed(1) + ' · ' + productRatings[product.id].count + ' reviews' : 'No reviews yet'}
+                          </span>
+                          <button type="button" onClick={() => { setReviewProduct(product); setReviewStars(5); setReviewText(''); setReviewMessage(''); }} className="text-[10px] font-bold text-emerald-800 underline underline-offset-2">Rate product</button>
+                        </div>
                       </div>
 
                       {/* 1. Product Varieties Selector (e.g. Aashirvaad Atta 5 kg & 1 kg) */}
