@@ -5,7 +5,6 @@ import {
   BackHandler,
   Linking,
   Platform,
-  RefreshControl,
   SafeAreaView,
   StatusBar,
   StyleSheet,
@@ -87,6 +86,7 @@ export default function App() {
           <Text style={styles.brandCaption}>OWNER MANAGEMENT</Text>
         </View>
         <View style={styles.ownerPill}><Text style={styles.ownerPillText}>OWNER</Text></View>
+        <TouchableOpacity accessibilityRole="button" accessibilityLabel="Refresh page" onPress={onRefresh} style={styles.refreshButton}><Text style={styles.refreshText}>Refresh</Text></TouchableOpacity>
       </View>
 
       <View style={styles.webArea}>
@@ -116,7 +116,6 @@ export default function App() {
           setSupportMultipleWindows={false}
           allowsBackForwardNavigationGestures
           pullToRefreshEnabled={Platform.OS === 'ios'}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1d4ed8" colors={['#1d4ed8']} />}
           mixedContentMode="never"
           javaScriptCanOpenWindowsAutomatically={false}
           setBuiltInZoomControls={false}
@@ -155,6 +154,8 @@ const styles = StyleSheet.create({
   brandCaption: { marginTop: 2, color: '#64748b', fontSize: 8, fontWeight: '800', letterSpacing: 1.2 },
   ownerPill: { borderRadius: 8, backgroundColor: '#eff6ff', paddingHorizontal: 10, paddingVertical: 7 },
   ownerPillText: { color: '#1d4ed8', fontSize: 9, fontWeight: '900', letterSpacing: 1 },
+  refreshButton: { marginLeft: 8, borderRadius: 9, borderWidth: 1, borderColor: '#e2e8f0', paddingHorizontal: 9, paddingVertical: 7 },
+  refreshText: { color: '#475569', fontSize: 10, fontWeight: '800' },
   webArea: { flex: 1, backgroundColor: '#f8fafc' },
   webView: { flex: 1, backgroundColor: '#ffffff' },
   loadingOverlay: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', backgroundColor: '#ffffff' },
