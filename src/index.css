@@ -228,7 +228,6 @@
 .pb-cart-recommendation { border-radius: 16px !important; box-shadow: 0 2px 8px rgba(15,23,42,.05) !important; }
 .pb-cart-summary { padding-bottom: max(12px, env(safe-area-inset-bottom)) !important; box-shadow: 0 -5px 18px rgba(15,23,42,.06); }
 .pb-cart-summary button { min-height: 48px; }
-.pb-christmas-sky { display: none !important; }
 @media (max-width: 640px) {
   .pb-cart-panel { max-width: none; }
   .pb-cart-content { padding: 12px 14px 22px; }
