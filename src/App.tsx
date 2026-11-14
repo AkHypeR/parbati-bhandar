@@ -126,7 +126,7 @@ export default function App() {
 
   // Mode Switcher: 'customer' | 'admin'
   const getAppPath = () => window.location.pathname.replace(/\/+$/, '') || '/';
-  const adminRouteTabs = { '/owner': 'inventory', '/owner/inventory': 'inventory', '/owner/add-product': 'add', '/owner/orders': 'orders', '/owner/settings': 'settings', '/owner/whatsapp-replies': 'quickReplies' } as const;
+  const adminRouteTabs = { '/owner': 'dashboard', '/owner/dashboard': 'dashboard', '/owner/inventory': 'inventory', '/owner/add-product': 'add', '/owner/orders': 'orders', '/owner/settings': 'settings', '/owner/whatsapp-replies': 'quickReplies' } as const;
   const getAdminTabFromPath = () => adminRouteTabs[getAppPath() as keyof typeof adminRouteTabs] || 'inventory';
   const [currentPath, setCurrentPath] = useState(() => getAppPath());
   const navigateToPath = (path: string) => {
@@ -140,7 +140,7 @@ export default function App() {
     }
   };
   const [activeMode, setActiveModeState] = useState<'customer' | 'admin'>(() => getAppPath().startsWith('/owner') ? 'admin' : 'customer');
-  const setActiveMode = (mode: 'customer' | 'admin') => navigateToPath(mode === 'admin' ? '/owner/inventory' : '/');
+  const setActiveMode = (mode: 'customer' | 'admin') => navigateToPath(mode === 'admin' ? '/owner/dashboard' : '/');
   const [isOwnerUnlocked, setIsOwnerUnlocked] = useState(false);
   const [ownerPassword, setOwnerPassword] = useState('');
   const [pinError, setPinError] = useState('');
@@ -215,9 +215,9 @@ export default function App() {
   const [copiedNotice, setCopiedNotice] = useState(false);
 
   // Admin View States
-  const [adminTab, setAdminTabState] = useState<'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders'>(() => getAdminTabFromPath());
-  const adminTabRoutes = { inventory: '/owner/inventory', add: '/owner/add-product', orders: '/owner/orders', settings: '/owner/settings', quickReplies: '/owner/whatsapp-replies' } as const;
-  const setAdminTab = (tab: 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders') => {
+  const [adminTab, setAdminTabState] = useState<'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders'>(() => getAdminTabFromPath());
+  const adminTabRoutes = { dashboard: '/owner/dashboard', inventory: '/owner/inventory', add: '/owner/add-product', orders: '/owner/orders', settings: '/owner/settings', quickReplies: '/owner/whatsapp-replies' } as const;
+  const setAdminTab = (tab: 'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders') => {
     navigateToPath(adminTabRoutes[tab]);
   };
   const [adminSearch, setAdminSearch] = useState('');
