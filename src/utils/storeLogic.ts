@@ -49,6 +49,8 @@ export interface StoreSettings {
   dealsOfDayEnabled?: boolean;
   dealProductIds?: string[];
   christmasSpecialProductIds?: string[];
+  /** Owner-editable heading for the customer-facing seasonal product shelf. */
+  seasonalCollectionTitle?: string;
   occasionTitle?: string;
   occasionSubtitle?: string;
   occasionTag?: string;
@@ -469,6 +471,7 @@ export const DEFAULT_STORE_SETTINGS: StoreSettings = {
   greetingBengali: 'নমস্কার গ্রাহক • স্বস্তি পল্লী, বর্ধমান',
   deliveryEtaMins: '10',
   showOccasionBanner: true,
+  seasonalCollectionTitle: 'Christmas Specials',
   occasionTitle: 'Merry Christmas',
   occasionSubtitle: 'শুভ বড়দিন • Wishing you joy, warmth and happiness',
   occasionTag: 'Christmas Celebration',
