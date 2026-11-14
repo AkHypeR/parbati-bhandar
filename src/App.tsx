@@ -26,6 +26,7 @@ import {
 } from './utils/storeLogic';
 import { CustomerStorefront } from './components/CustomerStorefront';
 import { CartDrawer } from './components/CartDrawer';
+import { CustomerAccount } from './components/CustomerAccount';
 import { OwnerPinGate } from './components/OwnerPinGate';
 import { AdminUploadApp } from './components/AdminUploadApp';
 import { QrPosterModal, SetupGuideModal } from './components/Modals';
@@ -163,6 +164,32 @@ export default function App() {
   // Customer Shopping List / Inquiry Drawer
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
+  const [customerAccount, setCustomerAccount] = useState<{id:string;name:string;phone:string} | null>(null);
+  const [customerAccountChecked, setCustomerAccountChecked] = useState(false);
+  useEffect(() => {
+    fetch('/api/customer-auth/me', { credentials: 'same-origin', cache: 'no-store' })
+      .then(r => r.json()).then(data => {
+        if (data?.authenticated && data.customer) {
+          setCustomerAccount(data.customer);
+          setCustomerName(data.customer.name);
+          setCustomerPhone(data.customer.phone);
+        }
+      }).catch(() => {}).finally(() => setCustomerAccountChecked(true));
+  }, []);
+  const handleCustomerAuthenticated = (customer: {id:string;name:string;phone:string}) => {
+    setCustomerAccount(customer);
+    setCustomerName(customer.name);
+    setCustomerPhone(customer.phone);
+    navigateToPath('/cart');
+    showToast('Signed in successfully. Your details are ready for checkout.');
+  };
+  const handleCustomerLogout = () => {
+    setCustomerAccount(null);
+    setCustomerName('');
+    setCustomerPhone('');
+    navigateToPath('/');
+    showToast('You have signed out.');
+  };
   const [lastSavedOrderNumber, setLastSavedOrderNumber] = useState(() => {
     try { return localStorage.getItem('parbati_bhandar_last_order_number_v1') || ''; }
     catch { return ''; }
@@ -993,7 +1020,14 @@ export default function App() {
           </div>
         ) : (
         <>
-          <CustomerStorefront
+          {currentPath === '/account' ? (
+            <CustomerAccount
+              customer={customerAccount}
+              onAuthenticated={handleCustomerAuthenticated}
+              onLogout={handleCustomerLogout}
+              onBack={() => navigateToPath('/')}
+            />
+          ) : <CustomerStorefront
             storeSettings={storeSettings}
             currentPage={currentPath === '/track-order' ? 'track' : currentPath === '/previous-orders' ? 'history' : currentPath === '/cart' ? 'cart' : 'home'}
             onNavigate={navigateToPath}
@@ -1023,9 +1057,11 @@ export default function App() {
               setActiveMode('admin');
               showToast('Owner Portal Access Triggered');
             }}
-          />
+          />}
           <CartDrawer
             isOpen={currentPath === '/cart'}
+            customerAuthenticated={!!customerAccount}
+            onRequireLogin={() => navigateToPath('/account')}
             liveIsOpen={liveIsOpen}
             products={products}
             onClose={() => navigateToPath('/')}
