@@ -1667,6 +1667,60 @@ export function AdminUploadApp({
               </div>
             </div>
 
+            {/* Deals of the Day Manager */}
+            <div className="rounded-2xl border border-rose-200 bg-gradient-to-br from-rose-50 via-white to-orange-50 p-4 shadow-sm space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="w-9 h-9 rounded-xl bg-rose-500 text-white flex items-center justify-center text-lg shadow-sm">🔥</span>
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-black text-slate-900">Deals of the Day • Zepto-style offers</h3>
+                    <p className="text-[11px] text-slate-600">Choose one or multiple products. Only selected, in-stock products appear to customers.</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  aria-pressed={storeSettings.dealsOfDayEnabled === true}
+                  onClick={() => onSaveSettings({ ...storeSettings, dealsOfDayEnabled: storeSettings.dealsOfDayEnabled !== true })}
+                  className={`px-4 py-2 rounded-xl text-xs font-black shadow-sm transition-colors ${storeSettings.dealsOfDayEnabled === true ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'}`}
+                >
+                  Deals section: {storeSettings.dealsOfDayEnabled === true ? 'ON' : 'OFF'}
+                </button>
+              </div>
+              <div className="flex items-center justify-between gap-2 text-xs">
+                <span className="font-bold text-slate-700">{(storeSettings.dealProductIds || []).length} product(s) selected</span>
+                <div className="flex gap-2">
+                  <button type="button" onClick={() => onSaveSettings({ ...storeSettings, dealProductIds: products.filter(p => p.inStock).map(p => p.id) })} className="text-emerald-700 font-bold hover:underline">Select in-stock</button>
+                  <button type="button" onClick={() => onSaveSettings({ ...storeSettings, dealProductIds: [] })} className="text-rose-700 font-bold hover:underline">Clear all</button>
+                </div>
+              </div>
+              <div className="max-h-64 overflow-y-auto rounded-xl border border-rose-100 bg-white divide-y divide-slate-100">
+                {products.map(product => {
+                  const selected = (storeSettings.dealProductIds || []).includes(product.id);
+                  return (
+                    <label key={product.id} className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-rose-50">
+                      <input
+                        type="checkbox"
+                        checked={selected}
+                        onChange={(e) => {
+                          const current = storeSettings.dealProductIds || [];
+                          const nextIds = e.target.checked
+                            ? [...current.filter(id => id !== product.id), product.id]
+                            : current.filter(id => id !== product.id);
+                          onSaveSettings({ ...storeSettings, dealProductIds: nextIds });
+                        }}
+                        className="w-4 h-4 accent-rose-600 shrink-0"
+                      />
+                      <span className="text-lg">{product.emoji || '🛍️'}</span>
+                      <span className="min-w-0 flex-1 text-xs font-bold text-slate-800 truncate">{product.name}</span>
+                      <span className="text-xs font-extrabold text-slate-900">₹{product.price}</span>
+                      {!product.inStock && <span className="text-[9px] font-bold text-rose-600">OUT OF STOCK</span>}
+                    </label>
+                  );
+                })}
+              </div>
+              <p className="text-[10px] text-slate-500">Turn the section ON when ready. Your selected products stay saved when you turn it OFF.</p>
+            </div>
+
             {/* Search & Quick Add Bar */}
             <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <div className="relative flex-1">
