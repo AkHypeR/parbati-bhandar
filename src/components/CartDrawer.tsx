@@ -31,6 +31,7 @@ interface CartDrawerProps {
   rememberCustomerDetails: boolean;
   setRememberCustomerDetails: (v: boolean) => void;
   onSaveOrder: (turnstileToken: string, pushSubscription?: PushSubscriptionJSON | null) => Promise<number | null>;
+  onOrderPlaced: (orderNumber: number) => void;
   setCustomerName: (v: string) => void;
   customerNote: string;
   setCustomerNote: (v: string) => void;
@@ -62,6 +63,7 @@ export function CartDrawer({
   rememberCustomerDetails,
   setRememberCustomerDetails,
   onSaveOrder,
+  onOrderPlaced,
   setCustomerName,
   customerNote,
   setCustomerNote,
@@ -227,7 +229,7 @@ export function CartDrawer({
             <div>
               <h3 className="font-bold text-base">Parbati Bhandar Final Cart (ফর্দ)</h3>
               <p className="text-xs text-emerald-200">
-                {checkoutStep === 'review' ? 'Step 1 · Review items and recommendations' : 'Step 2 · Customer details, captcha and order placement'}
+                {checkoutStep === 'review' ? 'Review your basket before checkout' : 'Confirm details · Verify · Place order'}
               </p>
             </div>
           </div>
@@ -494,9 +496,15 @@ export function CartDrawer({
               </>}
             </>
           )}
-          {checkoutStep === 'checkout' && <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-            <p className="mb-2 text-xs font-bold text-slate-700">Security check</p>
-            <TurnstileWidget onVerify={setTurnstileToken} />
+          {checkoutStep === 'checkout' && <div className="mt-4 rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-4 shadow-sm">
+            <div className="mb-2 flex items-center gap-2.5">
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-emerald-700 text-white"><ShieldCheck className="h-5 w-5"/></span>
+              <div><p className="text-sm font-extrabold text-slate-900">Secure order verification</p><p className="text-[11px] text-slate-500">A quick check to keep automated orders away</p></div>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-white p-3">
+              <TurnstileWidget action="order" onVerify={setTurnstileToken} />
+              {turnstileToken ? <p className="mt-2 text-xs font-bold text-emerald-700">✓ Security check completed</p> : <p className="mt-2 text-[11px] text-slate-500">Complete the verification above to securely place your order.</p>}
+            </div>
           </div>}
         </div>
 
@@ -519,14 +527,14 @@ export function CartDrawer({
             ) : (
               <>
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-extrabold text-slate-900">Step 2 of 2 · Place your order</p>
+                  <p className="text-sm font-extrabold text-slate-900">Final step · Secure checkout</p>
                   <button type="button" onClick={() => { setCheckoutStep('review'); setTurnstileToken(''); }} className="text-xs font-bold text-emerald-700">← Edit order</button>
                 </div>
                 {!liveIsOpen && <div role="status" className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-semibold text-red-800">The store is currently closed. Online orders are paused and will be available when the store opens.</div>}
                 <button type="button" disabled={savingOrder || !liveIsOpen} onClick={async () => {
                   if (!hasCustomerName) { setNameError(true); nameInputRef.current?.focus(); return; }
                   if (!hasCustomerPhone) { setPhoneError(true); return; }
-                  if (!turnstileToken) { window.alert('Please complete the security check first.'); return; }
+                  if (!turnstileToken) { showCaptchaHint(); return; }
                   if (savingOrder) return;
                   const popup = window.open('about:blank', '_blank');
                   setSavingOrder(true);
@@ -542,12 +550,12 @@ export function CartDrawer({
                           popup.location.href = whatsapp.toString();
                         } catch { popup.location.href = whatsAppUrl; }
                       }
-                      onClose();
+                      onOrderPlaced(orderNumber);
                     } else if (popup) popup.close();
                   } finally { setSavingOrder(false); }
                 }} className="w-full flex items-center justify-center gap-2 py-3.5 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm shadow-sm disabled:opacity-60">
                   <MessageCircle className="w-4 h-4" />
-                  <span>{savingOrder ? 'Placing order…' : liveIsOpen ? 'Place Order & Proceed' : 'Store is closed'}</span>
+                  <span>{savingOrder ? 'Placing order…' : liveIsOpen ? 'Place order securely' : 'Store is closed'}</span>
                 </button>
                 <button type="button" onClick={handleCopyShoppingList} className="w-full py-2 text-xs font-bold text-slate-600">{copiedNotice ? 'Copied Bill!' : 'Copy Text Bill'}</button>
               </>
