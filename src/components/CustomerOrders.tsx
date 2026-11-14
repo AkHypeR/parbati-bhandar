@@ -17,7 +17,7 @@ const steps = [
 const formatDate = (value: number) => new Date(value).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' });
 const formatTime = (value: number) => new Date(value).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Kolkata' });
 
-export function CustomerOrders({ orderNumber, phone, onNavigate, onBack }: { orderNumber?: number; phone: string; onNavigate: (path: string) => void; onBack: () => void }) {
+export function CustomerOrders({ orderNumber, phone, whatsappNumber, onNavigate, onBack }: { orderNumber?: number; phone: string; whatsappNumber?: string; onNavigate: (path: string) => void; onBack: () => void }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selected, setSelected] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
@@ -174,7 +174,12 @@ export function CustomerOrders({ orderNumber, phone, onNavigate, onBack }: { ord
                 </section>
                 <section className="rounded-lg border border-slate-200 bg-white p-4">
                   <h2 className="text-xs font-black">Need help with your order?</h2>
-                  <button type="button" onClick={() => onNavigate('/account')} className="mt-3 flex w-full items-center justify-between border-t border-slate-100 pt-3 text-left"><span><span className="block text-xs font-bold">Contact Parbati Bhandar</span><span className="mt-0.5 block text-[10px] text-slate-500">Ask about an item or order update</span></span><ArrowRight className="h-4 w-4 text-slate-400"/></button>
+                  <a
+                    href={`https://wa.me/${String(whatsappNumber || '919734765207').replace(/\\D/g, '').replace(/^0+/, '')}?text=${encodeURIComponent(`নমস্কার Parbati Bhandar, আমার অর্ডার #${selected.orderNumber} সম্পর্কে সাহায্য দরকার।\\nCheckout phone: ${phone}\\nঅনুগ্রহ করে আমার সঙ্গে যোগাযোগ করুন।`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 flex w-full items-center justify-between border-t border-slate-100 pt-3 text-left"
+                  ><span><span className="block text-xs font-bold">Message us on WhatsApp</span><span className="mt-0.5 block text-[10px] text-slate-500">Ask about an item or order update · Order #{selected.orderNumber}</span></span><ArrowRight className="h-4 w-4 text-slate-400"/></a>
                 </section>
               </div>
             )}
