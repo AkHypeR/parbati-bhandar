@@ -53,6 +53,8 @@ function stockUnitsForOrder(item: { quantity: number; unit: string }, product: a
 }
 const ensureTable = async (env: Env) => {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS push_subscriptions (order_id TEXT PRIMARY KEY, subscription_json TEXT NOT NULL, created_at INTEGER NOT NULL)`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS customer_push_subscriptions (customer_id TEXT PRIMARY KEY, subscription_json TEXT NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)`).run();
+  await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN ready_at INTEGER").run().catch(() => {});
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS customer_orders (
    id TEXT PRIMARY KEY, customer_name TEXT NOT NULL, customer_phone TEXT NOT NULL,
    note TEXT, items_json TEXT NOT NULL, total REAL NOT NULL, status TEXT NOT NULL DEFAULT 'new',
@@ -258,7 +260,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   const status = String(body?.status || "");
   if (!["new","processing","review","ready","unavailable","completed","cancelled"].includes(status) || !body?.id) return json({error:"Invalid order status."},400);
   const id = String(body.id);
-  const order = await env.DB.prepare("SELECT status,customer_name,order_number,items_json,stock_deducted FROM customer_orders WHERE id=?").bind(id).first<any>();
+  const order = await env.DB.prepare("SELECT status,customer_id,customer_name,order_number,items_json,stock_deducted FROM customer_orders WHERE id=?").bind(id).first<any>();
   if (!order) return json({error:"Order not found."},404);
   if (Array.isArray(body.items) && !["new","processing","review"].includes(order.status)) {
     return json({error:"Item availability can only be changed before the order is ready."},409);
@@ -345,8 +347,8 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
       env.DB.prepare(`INSERT INTO order_stock_deduction_guard (order_id,expected_count,actual_count)
         SELECT ?,?,(SELECT COUNT(*) FROM order_stock_deductions WHERE order_id=?)`)
         .bind(id, deductions.size, id),
-      env.DB.prepare("UPDATE customer_orders SET stock_deducted=1,status='ready',items_json=?,updated_at=?,confirmed_at=COALESCE(confirmed_at,?) WHERE id=? AND stock_deducted=2")
-        .bind(JSON.stringify(items), Date.now(), Date.now(), id)
+      env.DB.prepare("UPDATE customer_orders SET stock_deducted=1,status='ready',items_json=?,updated_at=?,confirmed_at=COALESCE(confirmed_at,?),ready_at=COALESCE(ready_at,?) WHERE id=? AND stock_deducted=2")
+        .bind(JSON.stringify(items), Date.now(), Date.now(), Date.now(), id)
     );
     try {
       const results = await env.DB.batch(statements);
@@ -358,8 +360,8 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
       return json({error:"Stock changed while this order was being confirmed. Refresh the order, review availability, and try again."},409);
     }
   } else {
-    const updateStatement = env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,updated_at=?,confirmed_at=CASE WHEN ?='ready' THEN COALESCE(confirmed_at,?) ELSE confirmed_at END WHERE id=?")
-      .bind(status,JSON.stringify(items),Date.now(),status,Date.now(),id);
+    const updateStatement = env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,updated_at=?,confirmed_at=CASE WHEN ?='ready' THEN COALESCE(confirmed_at,?) ELSE confirmed_at END,ready_at=CASE WHEN ?='ready' THEN COALESCE(ready_at,?) ELSE ready_at END WHERE id=?")
+      .bind(status,JSON.stringify(items),Date.now(),status,Date.now(),status,Date.now(),id);
     if (["cancelled","unavailable"].includes(status)) {
       const results = await env.DB.batch([updateStatement,env.DB.prepare("DELETE FROM order_stock_reservations WHERE order_id=?").bind(id)]);
       changes = Number(results[0]?.meta.changes || 0);
@@ -370,7 +372,8 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   }
   let notification = "not-configured";
   if (["processing","ready","unavailable","completed","cancelled"].includes(status) && env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.VAPID_SUBJECT) {
-    const saved = await env.DB.prepare("SELECT subscription_json FROM push_subscriptions WHERE order_id=?").bind(id).first<any>();
+    const profileSaved = order.customer_id ? await env.DB.prepare("SELECT subscription_json FROM customer_push_subscriptions WHERE customer_id=?").bind(order.customer_id).first<any>() : null;
+    const saved = profileSaved || await env.DB.prepare("SELECT subscription_json FROM push_subscriptions WHERE order_id=?").bind(id).first<any>();
     if (saved?.subscription_json) {
       const messages: Record<string,{title:string;body:string}> = {
         processing:{title:"Your order is being processed",body:"Parbati Bhandar has started preparing your order."},
