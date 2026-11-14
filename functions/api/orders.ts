@@ -207,7 +207,12 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     item.price = trustedPrice;
 
     if (typeof product.stockQuantity === "number") {
-      if (product.inStock === false || product.stockQuantity <= 0) {
+      if (product.stockQuantity <= 0) {
+        await env.DB.prepare("UPDATE products SET data=json_set(data,'$.inStock',json('false'),'$.updatedAt',?),updated_at=? WHERE id=?")
+          .bind(now,now,item.productId).run();
+        return json({ error: item.name + " is now out of stock. Please remove it from your cart." }, 409);
+      }
+      if (product.inStock === false) {
         return json({ error: item.name + " is now out of stock. Please remove it from your cart." }, 409);
       }
       const units = stockUnitsForOrder(item, product);
