@@ -346,7 +346,16 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
     }
     const now = Date.now();
     const refundCheckId = crypto.randomUUID();
-    const refundStatements: any[] = [];
+    const refundStatements: any[] = [
+      // Compare-and-swap the exact order snapshot before touching inventory.
+      // This prevents two owner tabs (or a retry) from refunding the same lines twice.
+      env.DB.prepare("UPDATE customer_orders SET stock_deducted=3 WHERE id=? AND stock_deducted=1 AND items_json=?")
+        .bind(id, order.items_json),
+      // CHECK(expected_count=actual_count) aborts the whole D1 batch if the
+      // order was already changed/refunded by another request.
+      env.DB.prepare("INSERT INTO order_stock_refund_guard_v2(check_id,expected_count,actual_count) SELECT ?,1,changes()")
+        .bind(refundCheckId + ":lock")
+    ];
     for (const [productId, quantity] of refunds) {
       refundStatements.push(
         env.DB.prepare(`UPDATE products SET data=json_set(
@@ -354,8 +363,9 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
           '$.stockQuantity',ROUND(json_extract(data,'$.stockQuantity')+?,4),
           '$.inStock',json('true'),
           '$.updatedAt',?
-        ),updated_at=? WHERE id=? AND json_type(data,'$.stockQuantity') IN ('integer','real')`)
-          .bind(quantity,now,now,productId),
+        ),updated_at=? WHERE id=? AND json_type(data,'$.stockQuantity') IN ('integer','real')
+          AND EXISTS (SELECT 1 FROM customer_orders WHERE id=? AND stock_deducted=3)`)
+          .bind(quantity,now,now,productId,id),
         env.DB.prepare(`INSERT INTO order_stock_refunds(order_id,product_id,quantity)
           SELECT ?,?,? WHERE changes()=1
           ON CONFLICT(order_id,product_id) DO UPDATE SET quantity=order_stock_refunds.quantity+excluded.quantity`)
@@ -371,7 +381,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
     }
     const revisedTotal = status === "cancelled" ? 0 : items.reduce((sum, item) => sum + (item.unavailable ? 0 : item.price * item.quantity), 0);
     refundStatements.push(
-      env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,total=?,updated_at=?,estimated_ready_at=CASE WHEN ? IN ('cancelled','unavailable') THEN NULL ELSE estimated_ready_at END WHERE id=? AND stock_deducted=1")
+      env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,total=?,updated_at=?,estimated_ready_at=CASE WHEN ? IN ('cancelled','unavailable') THEN NULL ELSE estimated_ready_at END,stock_deducted=1 WHERE id=? AND stock_deducted=3")
         .bind(status,JSON.stringify(items),revisedTotal,now,status,id),
       env.DB.prepare("DELETE FROM order_stock_reservations WHERE order_id=?").bind(id)
     );
