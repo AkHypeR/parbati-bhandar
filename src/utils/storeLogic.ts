@@ -467,11 +467,11 @@ export const DEFAULT_STORE_SETTINGS: StoreSettings = {
   greetingMain: 'Grahok',
   greetingBengali: 'নমস্কার গ্রাহক • স্বস্তি পল্লী, বর্ধমান',
   deliveryEtaMins: '10',
-  showOccasionBanner: true,
-  occasionTitle: 'Chhath Puja',
-  occasionSubtitle: 'A sacred celebration • উৎসবের বিশেষ সম্ভার',
-  occasionTag: 'Festival Special',
-  occasionImageUrl: '/assets/aistudio/photo_2026-11-12_10-31-46_ee14c399.jpg',
+  showOccasionBanner: false,
+  occasionTitle: '',
+  occasionSubtitle: '',
+  occasionTag: '',
+  occasionImageUrl: '',
   storeWebsiteUrl: '',
   scannerImageUrl: '',
   scannerMode: 'link',
@@ -849,18 +849,8 @@ export function buildHeroSlides(
   >
 ): HeroSlide[] {
   const slides: HeroSlide[] = [];
-
-  if (settings.showOccasionBanner !== false) {
-    slides.push({
-      type: 'festive',
-      id: 'festive-banner',
-      title: settings.occasionTitle || 'Chhath Puja',
-      subtitle: settings.occasionSubtitle || 'A sacred celebration • উৎসবের বিশেষ সম্ভার',
-      tag: settings.occasionTag || 'Festival Special',
-      imageUrl: settings.occasionImageUrl || '',
-    });
-  }
-
+  // Seasonal artwork is intentionally disabled. Keep the product spotlight
+  // carousel, but never render an old festival image from saved store settings.
   const orderedBest = getBestItems(products, 5);
   orderedBest.forEach((product, idx) => {
     slides.push({
