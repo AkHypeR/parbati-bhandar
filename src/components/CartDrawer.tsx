@@ -537,7 +537,7 @@ export function CartDrawer({
                 <button type="button" disabled={savingOrder || !liveIsOpen} onClick={async () => {
                   if (!hasCustomerName) { setNameError(true); nameInputRef.current?.focus(); return; }
                   if (!hasCustomerPhone) { setPhoneError(true); return; }
-                  if (!turnstileToken) { showCaptchaHint(); return; }
+                  if (!turnstileToken) { setCaptchaError('Please complete the security verification before placing your order.'); return; }
                   if (savingOrder) return;
                   const popup = window.open('about:blank', '_blank');
                   setSavingOrder(true);
