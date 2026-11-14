@@ -374,10 +374,10 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
     if (saved?.subscription_json) {
       const messages: Record<string,{title:string;body:string}> = {
         processing:{title:"Your order is being processed",body:"Parbati Bhandar has started preparing your order."},
-        ready:{title:"Your order is ready!",body:"Order #" + order.order_number + " is ready for pickup at Parbati Bhandar."},
-        unavailable:{title:"Order update from Parbati Bhandar",body:"There is an availability update for order #" + order.order_number + ". Please contact the store."},
-        completed:{title:"Order completed",body:"Order #" + order.order_number + " has been marked completed. Thank you!"},
-        cancelled:{title:"Order cancelled",body:"Order #" + order.order_number + " has been cancelled. Please contact the store if you have questions."}
+        ready:{title:"Your order is ready!",body:"Your order is ready for pickup at Parbati Bhandar."},
+        unavailable:{title:"Order update from Parbati Bhandar",body:"There is an availability update for your Parbati Bhandar order. Please contact the store."},
+        completed:{title:"Order completed",body:"Your Parbati Bhandar order has been marked completed. Thank you!"},
+        cancelled:{title:"Order cancelled",body:"Your Parbati Bhandar order has been cancelled. Please contact the store if you have questions."}
       };
       try {
         const delivered = await sendPushNotification(JSON.parse(saved.subscription_json),{...messages[status],url:"/",tag:"order-" + id},{publicKey:env.VAPID_PUBLIC_KEY,privateKey:env.VAPID_PRIVATE_KEY,subject:env.VAPID_SUBJECT},{ttl:3600,urgency:"high"});
