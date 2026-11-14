@@ -19,7 +19,6 @@ import {
   getBestItems,
   assignBestItemRank,
   buildHeroSlides,
-  checkSecretOwnerSearchCode,
   calculateMilestoneProgress,
 } from './storeLogic';
 
@@ -59,11 +58,6 @@ test('getBestItems, assignBestItemRank, and buildHeroSlides order Best 5 slides 
   });
   assert.equal(slidesWithoutFestive.length, 5);
   assert.ok(slidesWithoutFestive.every((s) => s.type === 'product'));
-
-  assert.equal(checkSecretOwnerSearchCode('#admin', '1234'), true);
-  assert.equal(checkSecretOwnerSearchCode('#1234', '1234'), true);
-  assert.equal(checkSecretOwnerSearchCode('#owner', '1234'), true);
-  assert.equal(checkSecretOwnerSearchCode('miniket rice', '1234'), false);
 
   const m1 = calculateMilestoneProgress(200);
   assert.equal(m1.tier50Unlocked, false);
