@@ -1122,6 +1122,7 @@ export function CustomerStorefront({
         ref={catalogSectionRef}
         className="max-w-6xl mx-auto px-3.5 sm:px-6 py-5 flex-1 w-full"
       >
+        {searchQuery.trim() && <div className="mb-4 border-b border-slate-100 pb-3"><h2 className="text-base font-extrabold text-slate-900">Search results <span className="ml-1 text-xs font-semibold text-slate-500">· {filteredCustomerProducts.length} products</span></h2></div>}
         {/* Search mode shows only the matching product list, without extra filters. */}
         {!searchQuery.trim() && <div className="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
           <div>
