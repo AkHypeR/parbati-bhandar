@@ -24,7 +24,7 @@ try {
     await client.query("SELECT pg_advisory_lock($1)", [LOCK_ID]);
     lockAcquired = true;
     const files = (await readdir(path.join(here, "migrations")))
-      .filter(name => /^\\d+_[a-z0-9_-]+\\.sql$/i.test(name)).sort();
+      .filter(name => /^[0-9]+_[a-z0-9_-]+[.]sql$/i.test(name)).sort();
     for (const filename of files) {
       const sql = await readFile(path.join(here, "migrations", filename), "utf8");
       const { rows } = await client.query("SELECT checksum FROM schema_migrations WHERE filename=$1", [filename]);
