@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "Parbati Bhandar Owner",
+    "slug": "parbati-bhandar-owner",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "parbatibhandar-owner",
+    "android": {
+      "package": "com.parbatibhandar.owner",
+      "versionCode": 1,
+      "permissions": ["INTERNET", "CAMERA"]
+    },
+    "plugins": [
+      [
+        "react-native-webview",
+        {
+          "androidCameraPermission": "Allow Parbati Bhandar Owner to use the camera when you choose to upload a store image."
+        }
+      ]
+    ],
+    "extra": {
+      "storeOrigin": "https://parbati-bhandar.pages.dev",
+      "appRole": "owner"
+    }
+  }
+}
