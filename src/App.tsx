@@ -848,7 +848,24 @@ export default function App() {
   const liveIsOpen = checkIsStoreOpenIST(storeSettings);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#f7faf8] text-slate-900 flex flex-col font-sans">
+      {!cloudReady && (
+        <div className="fixed inset-0 z-[200] flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[#f8fbf8] px-6" role="status" aria-live="polite">
+          <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-emerald-100/70 blur-3xl" />
+          <div className="absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-amber-100/70 blur-3xl" />
+          <div className="relative flex flex-col items-center">
+            <div className="pb-loader-mark grid h-20 w-20 place-items-center rounded-[26px] bg-[#087a55] text-3xl font-black text-white shadow-xl shadow-emerald-900/15">PB</div>
+            <h1 className="mt-4 text-xl font-black tracking-tight text-[#07543b]">Parbati Bhandar</h1>
+            <p className="mt-1 text-xs font-semibold text-slate-500">Fresh essentials, closer to home</p>
+            <div className="mt-8 flex items-center gap-2"><span className="pb-loader-dot h-2 w-2 rounded-full bg-emerald-600"/><span className="pb-loader-dot h-2 w-2 rounded-full bg-emerald-600"/><span className="pb-loader-dot h-2 w-2 rounded-full bg-emerald-600"/></div>
+            <p className="mt-3 text-[11px] font-bold tracking-wide text-emerald-800">Preparing your store…</p>
+          </div>
+          <div className="relative mt-12 grid w-full max-w-sm grid-cols-2 gap-3">
+            {[0,1,2,3].map(item => <div key={item} className="overflow-hidden rounded-2xl border border-emerald-100 bg-white p-3 shadow-sm"><div className="pb-loader-shimmer h-24 rounded-xl bg-slate-100"/><div className="pb-loader-shimmer mt-3 h-3 w-4/5 rounded-full bg-slate-100"/><div className="pb-loader-shimmer mt-2 h-3 w-2/5 rounded-full bg-slate-100"/></div>)}
+          </div>
+        </div>
+      )}
+
       {currentPath !== '/' && (
         <div className="sticky top-0 z-[60] border-b border-emerald-100 bg-white/95 shadow-sm backdrop-blur-sm">
           <div className="mx-auto flex w-full max-w-7xl items-center px-3 py-2 sm:px-6">
