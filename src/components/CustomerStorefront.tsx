@@ -1195,6 +1195,32 @@ export function CustomerStorefront({
         );
       })()}
 
+      {!isSearchSubmitted && !searchQuery && selectedCategory === 'all' && (() => {
+        const picks = products.filter(product => product.inStock !== false).sort((a,b) => {
+          const ar = Number(a.bestItemRank || 99), br = Number(b.bestItemRank || 99);
+          if (Boolean(a.isBestItem) !== Boolean(b.isBestItem)) return a.isBestItem ? -1 : 1;
+          return ar - br;
+        }).slice(0, 10);
+        return picks.length ? <section aria-label="Popular groceries" className="mx-auto w-full max-w-6xl px-3.5 pb-4 sm:px-6">
+          <div className="mb-3 flex items-end justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[.16em] text-emerald-700">Picked for your home</p><h2 className="mt-1 text-lg font-black text-slate-900">Popular groceries</h2><p className="text-xs text-slate-500">Quickly add everyday favourites to your order</p></div><button type="button" onClick={() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'})} className="shrink-0 text-xs font-extrabold text-emerald-800">View all <ArrowRight className="ml-1 inline h-3.5 w-3.5"/></button></div>
+          <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory">
+            {picks.map(product => {
+              const rating = productRatings[product.id];
+              const quantity = cart[makeCartKey(product.id, product.unit)]?.qty || 0;
+              return <article key={product.id} className="w-[148px] shrink-0 snap-start overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-sm sm:w-[176px]">
+                <button type="button" onClick={() => {setSearchQuery(product.name);setIsSearchSubmitted(true);setSelectedCategory('all');setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),50);}} className="flex w-full flex-col items-center p-3 text-left">
+                  <div className="flex h-24 w-full items-center justify-center rounded-xl bg-emerald-50/70 p-2">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/> : <span className="text-4xl">{product.emoji || '🛒'}</span>}</div>
+                  <p className="mt-2 line-clamp-2 min-h-9 w-full text-xs font-extrabold leading-4 text-slate-800">{product.name}</p>
+                  <div className="mt-1 flex w-full items-center gap-1 text-[10px] text-amber-600"><Star className="h-3 w-3 fill-current"/><span className="font-bold">{rating?.count ? rating.average.toFixed(1) : 'New'}</span><span className="text-slate-400">{rating?.count ? `(${rating.count})` : '· No ratings'}</span></div>
+                  <p className="mt-1 w-full text-sm font-black text-slate-900">₹{product.price}<span className="ml-1 text-[10px] font-medium text-slate-500">/ {product.unit}</span></p>
+                </button>
+                <button type="button" disabled={product.inStock === false} onClick={() => updateCartQty(product,1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp ?? null})} className="m-2 mt-0 flex w-[calc(100%-1rem)] items-center justify-center gap-1 rounded-xl bg-[#ffd814] py-2 text-xs font-black text-slate-900 disabled:opacity-50"><Plus className="h-3.5 w-3.5"/>{quantity ? `Add more · ${quantity}` : 'Quick add'}</button>
+              </article>;
+            })}
+          </div>
+        </section> : null;
+      })()}
+
       {/* ===================================================================== */}
       {/* MAIN GROCERY CATALOG GRID                                             */}
       {/* ===================================================================== */}
