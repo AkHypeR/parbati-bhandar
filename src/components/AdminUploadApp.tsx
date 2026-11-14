@@ -175,7 +175,7 @@ export function AdminUploadApp({
   const [replyCustomerPhone, setReplyCustomerPhone] = useState('');
   const [missingProducts, setMissingProducts] = useState('');
   const [replyNote, setReplyNote] = useState('');
-  type CustomerOrder = { id: string; orderNumber: number; customerName: string; customerPhone: string; note?: string; items: { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean }[]; total: number; status: 'new' | 'processing' | 'review' | 'ready' | 'unavailable' | 'completed' | 'cancelled'; createdAt: number };
+  type CustomerOrder = { id: string; orderNumber: number; customerName: string; customerPhone: string; note?: string; items: { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean }[]; total: number; status: 'new' | 'processing' | 'review' | 'ready' | 'unavailable' | 'completed' | 'cancelled'; createdAt: number; estimatedReadyAt?: number | null };
   const [customerOrders, setCustomerOrders] = useState<CustomerOrder[]>([]);
   const knownOrderIdsRef = useRef<Set<string>>(new Set());
   const hasOrderSnapshotRef = useRef(false);
@@ -194,6 +194,7 @@ export function AdminUploadApp({
   const todaysEstimatedSales = todaysOrders.filter(order => !['cancelled', 'unavailable'].includes(order.status)).reduce((sum, order) => sum + Number(order.total || 0), 0);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
+  const [delayMinutes, setDelayMinutes] = useState('30');
   const loadCustomerOrders = async (silent = false) => {
     if (!silent) setOrdersLoading(true);
     try {
@@ -237,13 +238,13 @@ export function AdminUploadApp({
     const timer = window.setInterval(pollOrders, 15000);
     return () => window.clearInterval(timer);
   }, []);
-  const updateCustomerOrder = async (id: string, status: CustomerOrder['status'], items?: CustomerOrder['items']) => {
+  const updateCustomerOrder = async (id: string, status: CustomerOrder['status'], items?: CustomerOrder['items'], estimatedReadyAt?: number | null) => {
     setUpdatingOrderId(id);
     try {
-      const response = await fetch('/api/orders', { method: 'PATCH', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status, ...(items ? { items } : {}) }) });
+      const response = await fetch('/api/orders', { method: 'PATCH', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status, ...(items ? { items } : {}), ...(estimatedReadyAt !== undefined ? { estimatedReadyAt } : {}) }) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not update order.');
-      setCustomerOrders(prev => prev.map(order => order.id === id ? { ...order, status, ...(items ? { items } : {}) } : order));
+      setCustomerOrders(prev => prev.map(order => order.id === id ? { ...order, status, ...(items ? { items } : {}), ...(estimatedReadyAt !== undefined ? { estimatedReadyAt } : status === 'ready' ? { estimatedReadyAt: null } : {}) } : order));
       let inventoryRefreshFailed = false;
       if (status === 'ready') {
         try { await onRefreshProducts(); }
@@ -257,7 +258,7 @@ export function AdminUploadApp({
       } as Record<string, string>)[data.notification] || '';
       showToast(inventoryRefreshFailed
         ? 'Order is ready, but inventory could not refresh. Reload the inventory tab.'
-        : (items ? 'Item availability saved.' : 'Order status updated.') + notificationNote, inventoryRefreshFailed ? 'error' : (notificationNote ? 'error' : 'success'));
+        : (estimatedReadyAt !== undefined ? (estimatedReadyAt ? 'Estimated ready time sent to customer.' : 'Estimated ready time cleared.') : items ? 'Item availability saved.' : 'Order status updated.') + notificationNote, inventoryRefreshFailed ? 'error' : (notificationNote ? 'error' : 'success'));
     } catch (error) { showToast((error as Error).message, 'error'); }
     finally { setUpdatingOrderId(null); }
   };
@@ -725,6 +726,14 @@ export function AdminUploadApp({
                     <div className="grid gap-4 py-5 sm:grid-cols-2">
                       <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-bold uppercase text-slate-400">Customer</p><p className="mt-1 text-lg font-extrabold text-slate-900">{order.customerName}</p><a onClick={event => event.stopPropagation()} href={`tel:${order.customerPhone}`} className="mt-1 inline-flex items-center gap-2 text-sm font-semibold text-emerald-700"><Phone className="h-4 w-4" />{order.customerPhone}</a></div>
                       <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-bold uppercase text-slate-400">Order value</p><p className="mt-1 text-2xl font-black text-slate-900">₹{Number(order.total || 0).toFixed(2)}</p><p className="text-xs text-slate-500">Estimated total; confirm at pickup</p></div>
+                    </div>
+                    {order.estimatedReadyAt && <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4"><p className="text-xs font-black uppercase tracking-wide text-amber-800">Customer has been told</p><p className="mt-1 text-sm font-extrabold text-amber-950">Estimated ready by {new Date(order.estimatedReadyAt).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Kolkata' })}</p></div>}
+                    <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50/60 p-4">
+                      <div className="flex flex-wrap items-center justify-between gap-3"><div><h3 className="text-sm font-extrabold text-amber-950">Delay / preparation estimate</h3><p className="mt-1 text-xs text-amber-800">Send the customer an updated ready-time estimate.</p></div><span className="rounded-full bg-white px-3 py-1 text-[11px] font-bold text-amber-800">Customer update</span></div>
+                      <div className="mt-3 flex flex-wrap gap-2"><select aria-label="Estimated preparation time" value={delayMinutes} onChange={event => setDelayMinutes(event.target.value)} className="min-h-11 flex-1 rounded-lg border border-amber-200 bg-white px-3 text-sm font-semibold text-slate-800"><option value="15">About 15 minutes</option><option value="30">About 30 minutes</option><option value="45">About 45 minutes</option><option value="60">About 1 hour</option><option value="90">About 1 hour 30 minutes</option><option value="120">About 2 hours</option></select><button type="button" disabled={updatingOrderId === order.id || !['new','processing'].includes(order.status)} onClick={() => void updateCustomerOrder(order.id, order.status, undefined, Date.now() + Number(delayMinutes) * 60000)} className="min-h-11 rounded-lg bg-amber-600 px-4 py-2 text-sm font-extrabold text-white disabled:opacity-50">Send estimate</button></div>
+                      {order.estimatedReadyAt && <button type="button" disabled={updatingOrderId === order.id} onClick={() => void updateCustomerOrder(order.id, order.status, undefined, null)} className="mt-2 text-xs font-bold text-amber-900 underline disabled:opacity-50">Clear estimate</button>}
+                      {!['new','processing'].includes(order.status) && <p className="mt-2 text-[11px] text-slate-500">Estimates can be changed while an order is received or being prepared.</p>}
+                    </div>
                     </div>
                     <div className="rounded-xl border border-slate-200 p-4">
                       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
