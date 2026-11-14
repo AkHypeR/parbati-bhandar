@@ -5,6 +5,7 @@ import { ensureCustomerTables, getCustomer } from "../../_lib/customer-auth";
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const url = new URL(request.url);
   await ensureCustomerTables(env);
+  await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN ready_at INTEGER").run().catch(() => {});
   const customer = await getCustomer(request, env);
   if (!customer) return json({error:"Please sign in to view your orders."},401,{"cache-control":"no-store"});
   const phone = customer.phone;
