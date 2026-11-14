@@ -52,7 +52,10 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack }:
         body:JSON.stringify({name,phone,password})
       });
       const data=await response.json().catch(()=>({}));
-      if(!response.ok) throw new Error(data.error || 'We couldn’t complete that. Please try again.');
+      if(!response.ok) {
+        const diagnostic = mode === 'register' && typeof data.code === 'string' ? ` (Reference: ${data.code})` : '';
+        throw new Error((data.error || 'We couldn’t complete that. Please try again.') + diagnostic);
+      }
       if (!data.customer?.id || !data.customer?.name || !data.customer?.phone) {
         throw new Error('Your account response was incomplete. Please try signing in again.');
       }
