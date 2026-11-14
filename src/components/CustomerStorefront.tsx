@@ -244,7 +244,14 @@ export function CustomerStorefront({
   };
 
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
-  const normalizeSearchText = (value: string) => value.toLocaleLowerCase().normalize('NFKD').replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9\\s]/g, ' ').replace(/\\s+/g, ' ').trim();
+  const normalizeSearchText = (value: unknown) =>
+    String(value ?? '')
+      .toLocaleLowerCase()
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
   const editDistance = (a: string, b: string) => {
     const row = Array.from({ length: b.length + 1 }, (_, i) => i);
     for (let i = 1; i <= a.length; i++) {
@@ -257,12 +264,23 @@ export function CustomerStorefront({
     }
     return row[b.length];
   };
-  const searchFields = (product: Product) => normalizeSearchText([product.name, product.category, product.unit, (product as any).brand, (product as any).description, ...((product as any).keywords || [])].filter(Boolean).join(' '));
+  const searchFields = (product: Product) => {
+    const rawKeywords = (product as any)?.keywords;
+    const keywords = Array.isArray(rawKeywords) ? rawKeywords : [];
+    return normalizeSearchText([
+      (product as any)?.name,
+      (product as any)?.category,
+      (product as any)?.unit,
+      (product as any)?.brand,
+      (product as any)?.description,
+      ...keywords,
+    ].filter(Boolean).join(' '));
+  };
   const rankSearchMatch = (product: Product, query: string) => {
     const q = normalizeSearchText(query);
     if (!q) return 0;
     const fields = searchFields(product);
-    const name = normalizeSearchText(product.name);
+    const name = normalizeSearchText((product as any)?.name);
     if (name === q) return 100;
     if (name.startsWith(q)) return 90;
     if (name.includes(q)) return 80;
@@ -285,7 +303,7 @@ export function CustomerStorefront({
     return matched.length === queryWords.length ? 55 : matched.length === 1 && queryWords.length === 1 ? 20 : 0;
   };
   const searchResultsProducts = searchQuery.trim()
-    ? products.map(product => ({ product, score: rankSearchMatch(product, searchQuery) })).filter(item => item.score > 0).sort((a, b) => b.score - a.score || a.product.name.localeCompare(b.product.name)).map(item => item.product)
+    ? (Array.isArray(products) ? products : []).filter(Boolean).map(product => ({ product, score: rankSearchMatch(product, searchQuery) })).filter(item => item.score > 0).sort((a, b) => b.score - a.score || String(a.product.name || '').localeCompare(String(b.product.name || ''))).map(item => item.product)
     : filteredCustomerProducts;
   const handleSearchInputChange = (val: string) => { setSearchQuery(val); setIsSearchSubmitted(false); setShowSearchSuggestions(Boolean(val.trim())); };
   const submitSearch = (query = searchQuery) => {
@@ -297,7 +315,7 @@ export function CustomerStorefront({
     window.setTimeout(() => catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   };
   const directSearchMatches = searchQuery.trim().length > 0
-    ? products.map(product => ({ product, score: rankSearchMatch(product, searchQuery) })).filter(item => item.score > 0).sort((a, b) => b.score - a.score || a.product.name.localeCompare(b.product.name)).map(item => item.product)
+    ? (Array.isArray(products) ? products : []).filter(Boolean).map(product => ({ product, score: rankSearchMatch(product, searchQuery) })).filter(item => item.score > 0).sort((a, b) => b.score - a.score || String(a.product.name || '').localeCompare(String(b.product.name || ''))).map(item => item.product)
     : [];
   // Use the best direct match to identify the category. Compare normalized
   // category labels so casing/spacing differences do not hide related products.
