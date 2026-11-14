@@ -27,8 +27,6 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   if (!customers.length) return json({ ok: true, recipientCount: 0, pushSent: 0, pushFailed: 0, pushConfigured: Boolean(env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.VAPID_SUBJECT) }, 200, { "cache-control": "no-store" });
 
   const now = Date.now();
-  // Opportunistically purge expired inbox rows whenever a new broadcast is sent.
-  await env.DB.prepare("DELETE FROM customer_inbox_notifications WHERE created_at<=?").bind(now - 24 * 60 * 60 * 1000).run();
   const insertStatements = customers.map((customer: any) => env.DB.prepare(
     "INSERT INTO customer_inbox_notifications (id,customer_id,title,body,created_at,read_at) VALUES (?,?,?,?,?,NULL)"
   ).bind(crypto.randomUUID(), customer.id, title, message, now));
