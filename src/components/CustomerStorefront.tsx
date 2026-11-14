@@ -822,7 +822,7 @@ export function CustomerStorefront({
                     <p className="mt-1 text-[9px] font-black uppercase tracking-[.25em] text-amber-200">Parbati Bhandar wishes you</p>
                     <h3 className="mt-2 text-3xl font-black leading-tight tracking-tight text-white drop-shadow sm:text-4xl">{currentSlide.title}</h3>
                     <p className="mt-2 max-w-[290px] text-xs font-semibold leading-relaxed text-emerald-50/90 sm:text-sm">{currentSlide.subtitle}</p>
-                    <span className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#facc15] px-5 py-2.5 text-xs font-black text-emerald-950 shadow-lg transition group-hover:-translate-y-0.5">Shop Christmas Specials <ChevronRight className="h-4 w-4"/></span>
+                    <button type="button" onClick={() => document.getElementById("christmas-special-products")?.scrollIntoView({behavior:"smooth",block:"start"})} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#facc15] px-5 py-2.5 text-xs font-black text-emerald-950 shadow-lg transition hover:-translate-y-0.5">Shop Christmas Specials <ChevronRight className="h-4 w-4"/></button>
                     <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-3 text-sm opacity-90" aria-hidden="true"><span>❄️</span><span>⭐</span><span>🎄</span><span>⭐</span><span>❄️</span></div>
                   </div>
                                 </div>
@@ -1176,6 +1176,16 @@ export function CustomerStorefront({
       })()}
 
       {/* ===================================================================== */}
+      {!isSearchSubmitted && !searchQuery && (() => {
+        const christmasProducts=(storeSettings.christmasSpecialProductIds || []).map(id=>products.find(p=>p.id===id)).filter((p): p is Product => Boolean(p && p.inStock));
+        if(!christmasProducts.length) return null;
+        return <section id="christmas-special-products" className="scroll-mt-24 mx-auto mb-7 w-full max-w-7xl px-4 sm:px-6">
+          <div className="overflow-hidden rounded-3xl border border-red-100 bg-gradient-to-br from-red-50 via-white to-emerald-50 p-4 shadow-sm sm:p-5">
+            <div className="mb-4 flex items-center justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-red-700">Seasonal picks</p><h2 className="text-xl font-black text-emerald-950 sm:text-2xl">🎄 Christmas Specials</h2><p className="mt-1 text-xs text-slate-600">Festive picks selected by Parbati Bhandar</p></div><span className="text-3xl">🎁</span></div>
+            <div className="flex gap-3 overflow-x-auto pb-2">{christmasProducts.map(product => {const qty=Object.values(cart).find(item=>item.product.id===product.id)?.qty||0;return <article key={product.id} className="w-36 shrink-0 overflow-hidden rounded-2xl border border-white bg-white shadow-sm sm:w-44"><div className="flex h-28 items-center justify-center bg-gradient-to-br from-red-50 to-emerald-50">{product.imageUrl?<img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/>:<span className="text-4xl">{product.emoji}</span>}</div><div className="p-3"><p className="line-clamp-2 min-h-9 text-xs font-extrabold text-slate-900">{product.name}</p><p className="mt-1 text-sm font-black text-emerald-800">₹{product.price}<span className="text-[10px] font-medium text-slate-500"> / {product.unit}</span></p><button type="button" onClick={()=>addToCart(product)} className="mt-2 w-full rounded-lg bg-emerald-700 px-2 py-2 text-xs font-bold text-white hover:bg-emerald-800">{qty>0?`Added · ${qty}`:'Add'}</button></div></article>})}</div>
+          </div>
+        </section>;
+      })()}
       {/* MAIN GROCERY CATALOG GRID                                             */}
       {/* ===================================================================== */}
       <main
