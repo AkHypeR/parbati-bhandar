@@ -669,108 +669,17 @@ export function AdminUploadApp({
           </div>
 
           {/* Owner workspace navigation */}
-          <div className="mt-5 grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-2 sm:grid-cols-3 lg:grid-cols-6">
-            <button type="button" onClick={() => setAdminTab('dashboard')} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'dashboard' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><Layers className="h-4 w-4" /> Overview</button>
-            <button type="button" onClick={() => setAdminTab('orders')} className={`relative flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'orders' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><BellRing className="h-4 w-4" /> Orders {newOrdersCount > 0 && <span className="rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] text-white">{newOrdersCount}</span>}</button>
-            <button type="button" onClick={() => setAdminTab('inventory')} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'inventory' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><Package className="h-4 w-4" /> Inventory</button>
-            <button type="button" onClick={() => { setEditingProduct(null); setAdminTab('add'); }} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'add' ? 'bg-emerald-700 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><Plus className="h-4 w-4" /> Add product</button>
-            <button type="button" onClick={() => setAdminTab('settings')} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'settings' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><Settings className="h-4 w-4" /> Store settings</button>
-            <button type="button" onClick={() => setAdminTab('quickReplies')} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'quickReplies' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><MessageCircle className="h-4 w-4" /> WhatsApp replies</button>
-          </div>
+          <nav aria-label="Owner workspace sections" className="mt-5 grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-2 sm:grid-cols-3 lg:grid-cols-6">
+            <button type="button" onClick={() => setAdminTab('dashboard')} aria-current={adminTab === 'dashboard' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'dashboard' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><Layers className="h-4 w-4" /> Overview</button>
+            <button type="button" onClick={() => setAdminTab('orders')} aria-current={adminTab === 'orders' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'orders' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><BellRing className="h-4 w-4" /> Orders {newOrdersCount > 0 && <span className="rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] text-white">{newOrdersCount}</span>}</button>
+            <button type="button" onClick={() => setAdminTab('inventory')} aria-current={adminTab === 'inventory' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'inventory' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><Package className="h-4 w-4" /> Inventory</button>
+            <button type="button" onClick={() => { setEditingProduct(null); setAdminTab('add'); }} aria-current={adminTab === 'add' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'add' ? 'bg-emerald-700 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><Plus className="h-4 w-4" /> Add product</button>
+            <button type="button" onClick={() => setAdminTab('settings')} aria-current={adminTab === 'settings' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'settings' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><Settings className="h-4 w-4" /> Store settings</button>
+            <button type="button" onClick={() => setAdminTab('quickReplies')} aria-current={adminTab === 'quickReplies' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'quickReplies' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><MessageCircle className="h-4 w-4" /> WhatsApp replies</button>
+          </nav>
           <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500">
             <span>Choose a section to manage your store. Changes sync to the customer website.</span>
             <button type="button" onClick={() => setIsQrModalOpen(true)} className="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 font-bold text-amber-900 hover:bg-amber-100"><QrCode className="h-3.5 w-3.5" /> Print shop QR</button>
-          </div>
-          {/* Legacy navigation retained below only as hidden fallback for existing controls. */}
-          <div className="hidden">
-            <button type="button" onClick={() => setAdminTab('add')}>Add</button>
-            <button type="button" onClick={() => setAdminTab('inventory')}>Inventory</button>
-            <button type="button" onClick={() => setAdminTab('settings')}>Settings</button>
-            <button type="button" onClick={() => setAdminTab('orders')}>Orders</button>
-            <button type="button" onClick={() => setAdminTab('quickReplies')}>Replies</button>
-          </div>
-          <div className="hidden">
-            {/* legacy tab bar intentionally removed from visual navigation */}
-          </div>
-            <button
-              type="button"
-              onClick={() => {
-                setEditingProduct(null);
-                setAdminTab('add');
-              }}
-              className={`flex w-full sm:w-auto justify-center items-center gap-2 px-3 sm:px-4 py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-150 cursor-pointer whitespace-normal sm:whitespace-nowrap min-h-11 ${
-                adminTab === 'add'
-                  ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-              }`}
-            >
-              <Plus className="w-4 h-4" />
-              <span>
-                {editingProduct ? 'Edit Product' : 'Upload New Product (নতুন পণ্য যোগ করুন)'}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setAdminTab('inventory')}
-              className={`flex w-full sm:w-auto justify-center items-center gap-2 px-3 sm:px-4 py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-150 cursor-pointer whitespace-normal sm:whitespace-nowrap min-h-11 tabular-nums ${
-                adminTab === 'inventory'
-                  ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-              }`}
-            >
-              <Package className="w-4 h-4" />
-              <span>Daily Price &amp; Stock List ({totalProductsCount})</span>
-              {lowStockCount > 0 && (
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[11px] font-black">
-                  <AlertTriangle className="w-3 h-3" />
-                  {lowStockCount}
-                </span>
-              )}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setAdminTab('settings')}
-              className={`flex w-full sm:w-auto justify-center items-center gap-2 px-3 sm:px-4 py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-150 cursor-pointer whitespace-normal sm:whitespace-nowrap min-h-11 ${
-                adminTab === 'settings'
-                  ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-              }`}
-            >
-              <Settings className="w-4 h-4" />
-              <span>Store Settings</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setAdminTab('orders')}
-              className={`flex w-full sm:w-auto justify-center items-center gap-2 px-3 sm:px-4 py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-150 cursor-pointer whitespace-normal sm:whitespace-nowrap min-h-11 ${adminTab === 'orders' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
-            >
-              <span className="relative inline-flex">
-                <BellRing className="w-4 h-4" />
-                {newOrdersCount > 0 && <span className="absolute -right-2 -top-2 grid h-4 min-w-4 place-items-center rounded-full bg-red-600 px-1 text-[9px] font-black leading-none text-white ring-2 ring-white">{newOrdersCount > 99 ? '99+' : newOrdersCount}</span>}
-              </span>
-              <span>Orders</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setAdminTab('quickReplies')}
-              className={`flex w-full sm:w-auto justify-center items-center gap-2 px-3 sm:px-4 py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-150 cursor-pointer whitespace-normal sm:whitespace-nowrap min-h-11 ${adminTab === 'quickReplies' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span>Customer WhatsApp Replies</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setIsQrModalOpen(true)}
-              className="flex w-full sm:w-auto justify-center items-center gap-2 px-3 sm:px-4 py-3 rounded-xl font-semibold text-xs sm:text-sm bg-amber-50 border border-amber-200 text-amber-900 hover:bg-amber-100 transition-all cursor-pointer whitespace-normal sm:whitespace-nowrap min-h-11"
-            >
-              <QrCode className="w-4 h-4" />
-              <span>Print Shop QR Poster</span>
-            </button>
           </div>
         </div>
       </div>
