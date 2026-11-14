@@ -676,7 +676,7 @@ export function CustomerStorefront({
         </div>
       </div>
 
-      {showWelcomePromo && currentPage === 'home' && !isSearchSubmitted && (() => {
+      {showWelcomePromo && currentPage === 'home' && !isSearchSubmitted && !searchQuery.trim() && (() => {
         return <div className="pb-promo-overlay fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-md" role="dialog" aria-modal="true" aria-label="Welcome to Parbati Bhandar" onMouseDown={event => { if (event.target === event.currentTarget) closeWelcomePromo(); }}>
           <div className="pb-promo-card relative mx-auto flex max-h-[88dvh] w-full max-w-[420px] flex-col overflow-hidden rounded-[30px] border border-white/70 bg-white shadow-[0_28px_90px_rgba(0,0,0,.38)]">
             <button type="button" onClick={closeWelcomePromo} aria-label="Close welcome promotion" className="absolute right-3 top-3 z-30 grid h-10 w-10 place-items-center rounded-full border border-white/50 bg-slate-950/65 text-white shadow-lg transition hover:rotate-90 hover:bg-slate-900"><X className="h-5 w-5"/></button>
@@ -1523,7 +1523,7 @@ export function CustomerStorefront({
       {/* STOREFRONT FOOTER (Clean Customer Footer — NO Owner Login Button!)    */}
       {/* ===================================================================== */}
 
-<footer className="bg-slate-50 border-t border-slate-200 mt-10 py-6 px-4 text-xs text-slate-600">
+{!searchQuery.trim() && <footer className="bg-slate-50 border-t border-slate-200 mt-10 py-6 px-4 text-xs text-slate-600">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left space-y-1">
             <div className="flex items-center justify-center sm:justify-start gap-2 font-extrabold text-slate-900 text-sm">
@@ -1556,7 +1556,7 @@ export function CustomerStorefront({
             </button>
           </div>
         </div>
-      </footer>
+      </footer>}
 
       {/* ===================================================================== */}
       {/* STICKY BOTTOM CART BAR (Product Thumbnails + Total + Yellow Proceed)  */}
