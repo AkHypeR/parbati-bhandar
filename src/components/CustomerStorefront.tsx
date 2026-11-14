@@ -612,7 +612,7 @@ export function CustomerStorefront({
                 className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white text-slate-900 placeholder-slate-400 text-xs sm:text-sm font-medium border border-blue-200 shadow-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
                 autoComplete="off"
               />
-              {searchSuggestions.length > 0 && <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl"><p className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Suggested products</p>{searchSuggestions.map(product => <button key={product.id} type="button" onClick={() => { setSearchQuery(product.name); setIsSearchSubmitted(true); setSelectedCategory("all"); setInStockOnly(false); setTimeout(() => catalogSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50); }} className="flex w-full items-center justify-between gap-3 border-t border-slate-100 px-4 py-3 text-left text-sm font-semibold text-slate-800 hover:bg-blue-50 active:bg-blue-100"><span className="min-w-0 truncate">{product.name}</span><span className="shrink-0 text-xs text-slate-400">{product.category}</span></button>)}</div>}
+              {searchSuggestions.length > 0 && <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl"><p className="px-4 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Suggested products</p>{searchSuggestions.map(product => <button key={product.id} type="button" onClick={() => { setSearchQuery(product.name); setIsSearchSubmitted(true); setSelectedCategory("all"); setInStockOnly(false); setTimeout(() => catalogSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50); }} className="flex min-h-12 w-full items-center gap-3 border-t border-slate-100 px-4 py-3 text-left text-sm font-semibold text-slate-800 hover:bg-blue-50 active:bg-blue-100"><span className="min-w-0 truncate">{product.name}</span></button>)}</div>}
               {searchQuery && (
                 <button
                   type="button"
@@ -640,8 +640,8 @@ export function CustomerStorefront({
             </button>
           </div>
 
-          {/* Horizontal Category Filter Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
+          {/* Keep the category ribbon out of focused search results. */}
+          {!searchQuery.trim() && !isSearchSubmitted && <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
             {CATEGORIES.map((cat) => {
               const isActive = selectedCategory === cat.id;
               const count =
@@ -672,7 +672,7 @@ export function CustomerStorefront({
                 </button>
               );
             })}
-          </div>
+          </div>}
         </div>
       </div>
 
@@ -701,7 +701,7 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       {/* SPECIAL OCCASION BANNER + ADMIN "BEST ITEMS" HOVER / PEEK SHOWCASE    */}
       {/* ===================================================================== */}
-      <section
+      {!searchQuery.trim() && !isSearchSubmitted && <section
         ref={bestItemsSectionRef}
         aria-label="Special Occasion and Best Items Showcase"
         className="max-w-5xl mx-auto w-full px-3.5 sm:px-6 pt-3 pb-4 space-y-3"
@@ -1038,7 +1038,7 @@ export function CustomerStorefront({
             </div>
           </div>
         )}
-      </section>
+      </section>}
 
       {/* Deal Zone: owner picks or real catalogue discounts; no category shortcuts here */}
       {!isSearchSubmitted && !searchQuery && selectedCategory === 'all' && (() => {
@@ -1122,20 +1122,14 @@ export function CustomerStorefront({
         ref={catalogSectionRef}
         className="max-w-6xl mx-auto px-3.5 sm:px-6 py-5 flex-1 w-full"
       >
-        {/* Filter Bar: In Stock Only + Sort Dropdown */}
-        <div className="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
+        {/* Search mode shows only the matching product list, without extra filters. */}
+        {!searchQuery.trim() && <div className="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
           <div>
             <h2 className="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2">
-              <span>
-                {selectedCategory === 'all' ? 'All Store Products' : selectedCategory}
-              </span>
-              <span className="text-xs font-semibold text-slate-500 tabular-nums">
-                · {filteredCustomerProducts.length} items
-              </span>
+              <span>{searchQuery.trim() ? 'Search results' : selectedCategory === 'all' ? 'All Store Products' : selectedCategory}</span>
+              <span className="text-xs font-semibold text-slate-500 tabular-nums">· {filteredCustomerProducts.length} items</span>
             </h2>
-            <p className="text-xs text-slate-500">
-              Select pack varieties (e.g. 1 kg / 5 kg) or custom weights (200g, 500g, 2 kg) on any card
-            </p>
+            {!searchQuery.trim() && <p className="text-xs text-slate-500">Select pack varieties (e.g. 1 kg / 5 kg) or custom weights (200g, 500g, 2 kg) on any card</p>}
           </div>
 
           <div className="flex items-center gap-2">
@@ -1167,7 +1161,7 @@ export function CustomerStorefront({
               <ArrowUpDown className="w-3.5 h-3.5 text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
-        </div>
+        </div>}
 
         {loading ? (
           <div className="py-20 text-center space-y-3">
@@ -1434,7 +1428,7 @@ export function CustomerStorefront({
                   </div>
 
                   {/* Price, Auto Discount Summary & Add to List Footer */}
-                  <div className="px-2.5 sm:px-3.5 pb-3 sm:pb-3.5 pt-2 flex items-end justify-between gap-1.5 sm:gap-2 border-t border-slate-100/80">
+                  <div className="px-2.5 sm:px-3.5 pb-3 sm:pb-3.5 pt-2 flex flex-wrap sm:flex-nowrap items-end justify-between gap-2 border-t border-slate-100/80">
                     <div>
                       <div className="text-[11px] text-slate-500 font-medium flex items-center gap-1.5">
                         <span>Selected:</span>
@@ -1476,7 +1470,7 @@ export function CustomerStorefront({
                           <span>Add</span>
                         </button>
                       ) : (
-                        <div className="flex items-center bg-blue-600 text-white rounded-xl overflow-hidden shadow-xs shrink-0">
+                        <div className="flex w-[116px] max-w-full items-center justify-between bg-blue-600 text-white rounded-xl overflow-hidden shadow-xs shrink-0">
                           <button
                             type="button"
                             aria-label={`Decrease quantity of ${product.name}`}
@@ -1487,11 +1481,11 @@ export function CustomerStorefront({
                                 unitMrp: activeOpt.mrp,
                               })
                             }
-                            className="p-2 hover:bg-blue-700 transition-colors cursor-pointer"
+                            className="grid min-h-11 min-w-11 place-items-center hover:bg-blue-700 transition-colors cursor-pointer"
                           >
-                            <Minus className="w-3.5 h-3.5" />
+                            <Minus className="w-4 h-4 stroke-[2.8]" />
                           </button>
-                          <span className="px-2.5 text-xs font-extrabold tabular-nums">
+                          <span className="min-w-0 flex-1 text-center text-sm font-extrabold tabular-nums">
                             {inCartQty}
                           </span>
                           <button
@@ -1505,9 +1499,9 @@ export function CustomerStorefront({
                                 unitMrp: activeOpt.mrp,
                               })
                             }
-                            className="p-2 hover:bg-blue-700 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                            className="grid min-h-11 min-w-11 place-items-center hover:bg-blue-700 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                           >
-                            <Plus className="w-3.5 h-3.5" />
+                            <Plus className="w-5 h-5 stroke-[3]" />
                           </button>
                         </div>
                       )
