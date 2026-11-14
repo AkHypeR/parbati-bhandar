@@ -160,7 +160,7 @@ export function CustomerStorefront({
   };
 
   const fetchTrackedOrder = async (orderNumber: string, phone: string) => {
-    const response = await fetch('/api/orders/track?orderNumber=' + encodeURIComponent(orderNumber) + '&phone=' + encodeURIComponent(phone), { cache: 'no-store' });
+    const response = await fetch('/api/orders/track?orderNumber=' + encodeURIComponent(orderNumber) + '&phone=' + encodeURIComponent(phone), { credentials: 'same-origin', cache: 'no-store', headers: { Accept: 'application/json' } });
     const data = await readOrderApiResponse(response);
     if (!response.ok) throw new Error(data.error || 'Unable to find order');
     return data;
@@ -170,7 +170,7 @@ export function CustomerStorefront({
     if (cleanPhone.length < 10) { setHistoryError('Enter the phone number used at checkout to view your orders.'); return; }
     setHistoryLoading(true); setHistoryError(''); setHistoryLoaded(false);
     try {
-      const response = await fetch('/api/orders/track?history=1&phone=' + encodeURIComponent(cleanPhone), { cache: 'no-store' });
+      const response = await fetch('/api/orders/track?history=1&phone=' + encodeURIComponent(cleanPhone), { credentials: 'same-origin', cache: 'no-store', headers: { Accept: 'application/json' } });
       const data = await readOrderApiResponse(response);
       if (!response.ok) throw new Error(data.error || 'Unable to load order history');
       setOrderHistory(Array.isArray(data.orders) ? data.orders : []);
