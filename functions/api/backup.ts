@@ -68,6 +68,15 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   );
   if (!validProducts || !validOrders) return json({ error: "Backup contains invalid product or order records." }, 400);
 
+  // Version 1 backups contain order summaries only. They do not preserve
+  // customer ownership, stock deduction state, or the stock refund ledger.
+  // Restoring them with orders could silently reset inventory history.
+  if (backup.orders.length > 0) {
+    return json({
+      error: "This older backup contains orders but does not include the inventory and refund history required for a safe restore. Your live data has not been changed. Download a fresh backup and contact support before restoring this file."
+    }, 409);
+  }
+
   await ensureOrders(env);
   const statements = [
     env.DB.prepare("DELETE FROM products"),
