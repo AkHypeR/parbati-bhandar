@@ -10,11 +10,17 @@
     "android": {
       "package": "com.parbatibhandar.customer",
       "versionCode": 1,
-      "permissions": ["INTERNET", "CAMERA"]
+      "permissions": [
+        "INTERNET",
+        "CAMERA"
+      ]
     },
     "extra": {
       "storeOrigin": "https://parbati-bhandar.pages.dev",
-      "appRole": "customer"
+      "appRole": "customer",
+      "eas": {
+        "projectId": "ebb17358-5725-46fa-8b55-105db8b5e020"
+      }
     }
   }
 }
