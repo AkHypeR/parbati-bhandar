@@ -249,3 +249,50 @@
 @keyframes pbChhathFloat { 0%,100% { transform:translateY(0) rotate(-3deg); } 50% { transform:translateY(-8px) rotate(3deg); } }
 @keyframes pbChhathTwinkle { 0%,100% { opacity:.55; transform:scale(.9); } 50% { opacity:1; transform:scale(1.15); } }
 @media (prefers-reduced-motion: reduce) { .pb-chhath-diya,.pb-chhath-petal,.pb-chhath-float { animation:none !important; } }
+
+/* Site-wide dark theme. The owner can switch back at any time; preference is stored locally. */
+html.pb-dark { color-scheme:dark; background:#0b1220; }
+html.pb-dark body { background:#0b1220 !important; color:#e2e8f0; }
+html.pb-dark #root { background:#0b1220; color:#e2e8f0; }
+html.pb-dark #root > div { background-color:#0b1220 !important; color:#e2e8f0; }
+html.pb-dark .bg-white,
+html.pb-dark .bg-slate-50,
+html.pb-dark .bg-slate-100,
+html.pb-dark .bg-gray-50,
+html.pb-dark .bg-gray-100,
+html.pb-dark [class~="bg-[#f4f7fc]"],
+html.pb-dark [class~="bg-[#f7faf8]"] { background-color:#111c2e !important; }
+html.pb-dark .bg-slate-200,
+html.pb-dark .bg-gray-200 { background-color:#243247 !important; }
+html.pb-dark .text-slate-900,
+html.pb-dark .text-slate-800,
+html.pb-dark .text-gray-900,
+html.pb-dark .text-gray-800 { color:#f1f5f9 !important; }
+html.pb-dark .text-slate-700,
+html.pb-dark .text-gray-700 { color:#d5deea !important; }
+html.pb-dark .text-slate-600,
+html.pb-dark .text-slate-500,
+html.pb-dark .text-gray-600,
+html.pb-dark .text-gray-500 { color:#aab8ca !important; }
+html.pb-dark .border-slate-100,
+html.pb-dark .border-slate-200,
+html.pb-dark .border-gray-100,
+html.pb-dark .border-gray-200,
+html.pb-dark .border-slate-300 { border-color:#2b3a50 !important; }
+html.pb-dark input:not([type="checkbox"]):not([type="radio"]),
+html.pb-dark textarea,
+html.pb-dark select { background-color:#111c2e !important; color:#f1f5f9 !important; border-color:#3a4b63 !important; }
+html.pb-dark input::placeholder,
+html.pb-dark textarea::placeholder { color:#8292a8 !important; }
+html.pb-dark .shadow-sm,
+html.pb-dark .shadow,
+html.pb-dark .shadow-md,
+html.pb-dark .shadow-lg { --tw-shadow-color:rgba(0,0,0,.25); }
+html.pb-dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+html.pb-dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-color:#2b3a50 !important; }
+html.pb-dark .hover\\:bg-slate-50:hover,
+html.pb-dark .hover\\:bg-gray-50:hover { background-color:#1b2a40 !important; }
+html.pb-dark .bg-blue-50,
+html.pb-dark .bg-indigo-50 { background-color:#172b49 !important; }
+html.pb-dark .text-blue-900,
+html.pb-dark .text-blue-950 { color:#dbeafe !important; }
