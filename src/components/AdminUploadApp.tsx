@@ -637,10 +637,10 @@ export function AdminUploadApp({
                 </button>
               </div>
               <h1 className="text-xl sm:text-2xl lg:text-[1.7rem] font-extrabold tracking-tight text-slate-950 leading-tight">
-                Upload Products &amp; Manage Daily Prices (পণ্য ও দাম আপডেট)
+                Owner workspace &amp; store operations
               </h1>
               <p className="text-xs sm:text-sm text-slate-500">
-                Swasti Pally, Gangpur • Changes immediately update the Customer Website.
+                Manage orders, catalogue, stock and customer updates from one place.
               </p>
             </div>
 
