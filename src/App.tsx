@@ -613,7 +613,7 @@ export default function App() {
       const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerName, customerPhone, turnstileToken, pushSubscription, cartReservationId: cartReservationId.current, note: customerNote, items: cartItemsList.map(item => ({ productId: item.product.id, name: item.product.name, quantity: item.qty, unit: item.selectedUnit, price: item.unitPrice })) }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || 'Could not save order');
-      if (rememberCustomerDetails) {
+      if (!customerAccount && rememberCustomerDetails) {
         try { localStorage.setItem('parbati_bhandar_customer_details_v1', JSON.stringify({ name: customerName.trim(), phone: customerPhone.trim() })); } catch { /* Saving details is optional. */ }
       } else {
         try { localStorage.removeItem('parbati_bhandar_customer_details_v1'); } catch { /* Ignore unavailable storage. */ }
