@@ -137,14 +137,57 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   // Reserve inventory at checkout, not only when the owner later confirms.
   // This prevents two pending orders from both claiming the final unit.
   const requestedByProduct = new Map<string, { quantity: number; name: string }>();
+  const parsePriceMeasure = (value: unknown): { dimension: string; amount: number } | null => {
+    const match = String(value || "").trim().toLowerCase().match(/(\d+(?:\.\d+)?)\s*(kg|kgs|kilograms?|g|gm|grams?|l|litres?|liters?|ml|millilitres?|milliliters?)\b/i);
+    if (!match) return null;
+    const amount = Number(match[1]);
+    const unit = match[2].toLowerCase();
+    if (["kg", "kgs", "kilogram", "kilograms"].includes(unit)) return { dimension: "mass", amount: amount * 1000 };
+    if (["g", "gm", "gram", "grams"].includes(unit)) return { dimension: "mass", amount };
+    if (["l", "litre", "litres", "liter", "liters"].includes(unit)) return { dimension: "volume", amount: amount * 1000 };
+    return { dimension: "volume", amount };
+  };
+
   for (const item of items) {
-    if (!item.productId) continue;
+    if (!item.productId) return json({ error: "A cart item could not be matched to the live catalogue. Refresh your cart and try again." }, 409);
     const productRow = await env.DB.prepare("SELECT data FROM products WHERE id=?").bind(item.productId).first<any>();
     if (!productRow) return json({ error: item.name + " is no longer available. Please refresh your cart." }, 409);
     const product = JSON.parse(productRow.data);
     if (product.inStock === false || (typeof product.stockQuantity === "number" && product.stockQuantity <= 0)) {
       return json({ error: item.name + " is now out of stock. Please remove it from your cart." }, 409);
     }
+
+    // Never trust prices or product names sent by the browser. Resolve the
+    // selected base unit, fixed variety, or allowed custom weight from D1.
+    const selectedUnit = String(item.unit || "").trim().toLowerCase();
+    const baseUnit = String(product.unit || "").trim().toLowerCase();
+    let trustedPrice: number | null = null;
+    if (selectedUnit === baseUnit) {
+      trustedPrice = Number(product.price);
+    } else {
+      const variety = Array.isArray(product.varieties)
+        ? product.varieties.find((entry: any) => String(entry.label || "").trim().toLowerCase() === selectedUnit)
+        : undefined;
+      if (variety) {
+        if (variety.inStock === false) return json({ error: item.name + " is no longer available in the selected size." }, 409);
+        trustedPrice = Number(variety.price);
+      } else {
+        const baseMeasure = parsePriceMeasure(product.unit);
+        const selectedMeasure = parsePriceMeasure(item.unit);
+        const customWeightsAllowed = product.allowCustomWeights === true ||
+          (product.allowCustomWeights === undefined && (!Array.isArray(product.varieties) || product.varieties.length === 0));
+        if (customWeightsAllowed && baseMeasure && selectedMeasure &&
+            baseMeasure.dimension === selectedMeasure.dimension && baseMeasure.amount > 0) {
+          trustedPrice = Math.max(1, Math.round(Number(product.price) * selectedMeasure.amount / baseMeasure.amount));
+        }
+      }
+    }
+    if (trustedPrice === null || !Number.isFinite(trustedPrice) || trustedPrice < 0) {
+      return json({ error: "The selected size or price for " + product.name + " has changed. Refresh your cart and try again." }, 409);
+    }
+    item.name = String(product.name || item.name).slice(0, 120);
+    item.price = trustedPrice;
+
     if (typeof product.stockQuantity === "number") {
       const units = stockUnitsForOrder(item, product);
       if (units === null || !Number.isFinite(units) || units <= 0) {
