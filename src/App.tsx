@@ -277,6 +277,10 @@ export default function App() {
         quantity: Number(item.qty || 0),
         unit: item.selectedUnit || item.product.unit || '1 unit'
       }));
+      // Do not call the reservation endpoint for an empty cart. This effect
+      // runs when the storefront first loads, and an empty cart has nothing
+      // to reserve; calling the API here can surface a needless 404 toast.
+      if (items.length === 0) return;
       reservationQueueRef.current = reservationQueueRef.current.catch(() => {}).then(async () => {
         const response = await fetch('/api/cart-reservations', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
