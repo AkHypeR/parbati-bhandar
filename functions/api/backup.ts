@@ -30,6 +30,13 @@ async function ensureBackupSchema(env: Env) {
     status TEXT NOT NULL DEFAULT 'new', created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL, order_number INTEGER
   )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS cart_stock_reservations (
+    reservation_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL,
+    expires_at INTEGER NOT NULL, PRIMARY KEY(reservation_id,product_id)
+  )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS push_subscriptions (
+    order_id TEXT PRIMARY KEY, subscription_json TEXT NOT NULL, created_at INTEGER NOT NULL
+  )`).run();
 
   const columns = await env.DB.prepare("PRAGMA table_info(customer_orders)").all<any>();
   const existing = new Set((columns.results || []).map((column: any) => String(column.name)));
@@ -208,6 +215,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     const rows = backup.tables[table] as any[];
     for (const row of rows) {
       if (!row || typeof row !== "object" || Array.isArray(row) ||
+          Object.keys(row).length !== columns.length ||
+          columns.some(column => !Object.prototype.hasOwnProperty.call(row, column)) ||
           Object.keys(row).some(key => !columns.includes(key))) {
         return json({ error: `The ${table} section does not match this store's database schema. No live data was changed.` }, 400);
       }
