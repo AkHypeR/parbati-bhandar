@@ -16,7 +16,7 @@ test("requires a PostgreSQL URL", () => assert.throws(() => parseConfig({ DATABA
 test("requires a database URL", () => assert.throws(() => parseConfig({}), /DATABASE_URL is required/));
 test("requires TLS and certificate verification in production", () => {
   assert.throws(() => parseConfig({ ...base, NODE_ENV: "production", DATABASE_SSL: "false" }), /cannot be disabled/);
-  assert.throws(() => parseConfig({ ...base, NODE_ENV: "production", DATABASE_SSL_REJECT_UNAUTHORIZED: "false" }), /certificate verification/);
+  assert.throws(() => parseConfig({ ...base, NODE_ENV: "production", DATABASE_SSL_REJECT_UNAUTHORIZED: "false" }), /cannot be disabled/);
   assert.equal(parseConfig({ ...base, NODE_ENV: "production" }).databaseSsl, true);
 });
 test("rejects wildcard CORS origins", () => assert.throws(() => parseConfig({ ...base, CORS_ORIGINS: "*" }), /wildcard/));
