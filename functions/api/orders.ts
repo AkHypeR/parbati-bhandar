@@ -60,6 +60,7 @@ const ensureTable = async (env: Env) => {
    created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, order_number INTEGER
   )`).run();
   await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN ready_at INTEGER").run().catch(() => {});
+  await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN archived_at INTEGER").run().catch(() => {});
   await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN estimated_ready_at INTEGER").run().catch(() => {});
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS cart_stock_reservations (
     reservation_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL,
@@ -506,6 +507,12 @@ export const onRequestDelete: PagesFunction<Env> = async ({ request, env }) => {
   let body: any; try { body = await request.json(); } catch { return json({ error: "Invalid delete request." }, 400); }
   const id = String(body?.id || "").trim();
   if (!id) return json({ error: "Order ID is required." }, 400);
-  const results = await env.DB.batch([env.DB.prepare("DELETE FROM customer_orders WHERE id=?").bind(id),env.DB.prepare("DELETE FROM order_stock_reservations WHERE order_id=?").bind(id)]);
-  return json({ ok: true, changes: results[0]?.meta.changes || 0 }, 200, { "cache-control": "no-store" });
+  const order = await env.DB.prepare("SELECT status,stock_deducted FROM customer_orders WHERE id=? AND archived_at IS NULL").bind(id).first<any>();
+  if (!order) return json({ error: "Order not found or already archived." }, 404, { "cache-control": "no-store" });
+  if (Number(order.stock_deducted || 0) === 1 && !["cancelled","completed","unavailable"].includes(String(order.status))) {
+    return json({ error: "This order still affects inventory. Cancel or complete it before archiving." }, 409, { "cache-control": "no-store" });
+  }
+  const archivedAt = Date.now();
+  const result = await env.DB.prepare("UPDATE customer_orders SET archived_at=?,updated_at=? WHERE id=? AND archived_at IS NULL").bind(archivedAt,archivedAt,id).run();
+  return json({ ok: true, archived: Number(result.meta.changes || 0) === 1 }, 200, { "cache-control": "no-store" });
 };
