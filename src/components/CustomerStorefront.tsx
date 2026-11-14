@@ -73,7 +73,6 @@ interface CustomerStorefrontProps {
     delta: number,
     option?: { selectedUnit?: string; unitPrice?: number; unitMrp?: number | null }
   ) => void;
-  setIsCartOpen: (open: boolean) => void;
   setIsQrModalOpen: (open: boolean) => void;
   onSecretOwnerAccess: () => void;
   lastOrderNumber?: string;
@@ -103,7 +102,6 @@ export function CustomerStorefront({
   cartTotalPrice,
   cartTotalSaved = 0,
   updateCartQty,
-  setIsCartOpen,
   setIsQrModalOpen,
   onSecretOwnerAccess,
   lastOrderNumber = '',
@@ -206,7 +204,6 @@ export function CustomerStorefront({
 
   // Location / Store Info Expandable Pill
   const [isAddressExpanded, setIsAddressExpanded] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isSearchSubmitted, setIsSearchSubmitted] = useState(false);
 
   // Active slide index and auto-play state for the Merged Festive + Best 5 Hero Slider
