@@ -864,7 +864,7 @@ export default function App() {
             <div className="flex items-center justify-between"><span className="text-[10px] font-black uppercase tracking-[.18em] text-emerald-800">Getting your basket ready</span><span className="text-lg">🛒</span></div>
             <div className="pb-loader-track mt-4">
               <div className="pb-loader-runner">
-                {['🍎','🥛','🍞','🥬','🍊','🧃','🥕','🛍️'].map((item,index)=><span key={index} className="pb-loader-product">{item}</span>)}
+                {['🍎','🥛','🍞','🥬','🍊','🧃','🥕','🛍️','🍎','🥛','🍞','🥬','🍊','🧃','🥕','🛍️'].map((item,index)=><span key={index} className="pb-loader-product">{item}</span>)}
               </div>
             </div>
             <div className="mt-3 flex items-center justify-between text-[10px] font-bold text-slate-500"><span>Fresh groceries</span><span>Almost there…</span></div>
