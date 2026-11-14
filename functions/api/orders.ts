@@ -89,6 +89,14 @@ const ensureTable = async (env: Env) => {
     order_id TEXT PRIMARY KEY, expected_count INTEGER NOT NULL, actual_count INTEGER NOT NULL,
     CHECK (expected_count = actual_count)
   )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS order_stock_refund_checks (
+    check_id TEXT NOT NULL, order_id TEXT NOT NULL, product_id TEXT NOT NULL,
+    PRIMARY KEY (check_id, product_id)
+  )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS order_stock_refund_guard_v2 (
+    check_id TEXT PRIMARY KEY, expected_count INTEGER NOT NULL, actual_count INTEGER NOT NULL,
+    CHECK (expected_count = actual_count)
+  )`).run();
   const columns = await env.DB.prepare("PRAGMA table_info(customer_orders)").all<any>();
   if (!(columns.results || []).some((column: any) => column.name === "order_number")) {
     await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN order_number INTEGER").run();
@@ -325,6 +333,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
       item.stockRefunded = true;
     }
     const now = Date.now();
+    const refundCheckId = crypto.randomUUID();
     const refundStatements: any[] = [];
     for (const [productId, quantity] of refunds) {
       refundStatements.push(
@@ -338,13 +347,15 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
         env.DB.prepare(`INSERT INTO order_stock_refunds(order_id,product_id,quantity)
           SELECT ?,?,? WHERE changes()=1
           ON CONFLICT(order_id,product_id) DO UPDATE SET quantity=order_stock_refunds.quantity+excluded.quantity`)
-          .bind(id,productId,quantity)
+          .bind(id,productId,quantity),
+        env.DB.prepare(`INSERT INTO order_stock_refund_checks(check_id,order_id,product_id)
+          SELECT ?,?,? WHERE changes()=1`).bind(refundCheckId,id,productId)
       );
     }
     if (refunds.size) {
-      refundStatements.push(env.DB.prepare(`INSERT INTO order_stock_refund_guard(order_id,expected_count,actual_count)
-        SELECT ?,?,(SELECT COUNT(*) FROM order_stock_refunds WHERE order_id=?)`)
-        .bind(id,refunds.size,id));
+      refundStatements.push(env.DB.prepare(`INSERT INTO order_stock_refund_guard_v2(check_id,expected_count,actual_count)
+        SELECT ?,?,(SELECT COUNT(*) FROM order_stock_refund_checks WHERE check_id=?)`)
+        .bind(refundCheckId,refunds.size,refundCheckId));
     }
     const revisedTotal = status === "cancelled" ? 0 : items.reduce((sum, item) => sum + (item.unavailable ? 0 : item.price * item.quantity), 0);
     refundStatements.push(
