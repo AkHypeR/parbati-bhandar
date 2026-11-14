@@ -782,6 +782,7 @@ export function AdminUploadApp({
                     </div>
                     {order.note && <div className="mt-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-900"><strong>Customer note</strong><p className="mt-1">{order.note}</p></div>}
                     <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                      <button type="button" disabled={updatingOrderId === order.id || order.status !== 'processing'} onClick={() => void updateCustomerOrder(order.id,'new')} className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-3 text-sm font-bold text-blue-800 disabled:opacity-50">Mark received</button>
                       <button type="button" disabled={updatingOrderId === order.id || order.status !== 'new'} onClick={() => void updateCustomerOrder(order.id,'processing')} className="rounded-lg bg-amber-500 px-3 py-3 text-sm font-bold text-white disabled:opacity-50">Start processing</button>
                       <button type="button" disabled={updatingOrderId === order.id || !['new','processing','review'].includes(order.status)} onClick={() => void updateCustomerOrder(order.id,'ready')} className="rounded-lg bg-emerald-600 px-3 py-3 text-sm font-bold text-white disabled:opacity-50">Confirm Ready</button>
                       <button type="button" disabled={updatingOrderId === order.id || order.status !== 'ready'} onClick={() => updateCustomerOrder(order.id,'completed')} className="rounded-lg bg-slate-200 px-3 py-3 text-sm font-bold text-slate-800 disabled:opacity-50">Completed</button>
@@ -827,7 +828,7 @@ export function AdminUploadApp({
                         <a href={`tel:${order.customerPhone}`} className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-emerald-700"><Phone className="h-3 w-3" /> {order.customerPhone}</a>
                         <p className="mt-1 text-[11px] text-slate-400">{new Date(order.createdAt).toLocaleString('en-IN')}</p>
                       </div>
-                      <span className={`rounded-full px-3 py-1 text-[11px] font-extrabold uppercase ${order.status === 'new' ? 'bg-blue-100 text-blue-800' : order.status === 'ready' ? 'bg-emerald-100 text-emerald-800' : order.status === 'unavailable' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}`}>{order.status === 'new' ? 'Received' : order.status === 'ready' ? 'Ready for pickup' : order.status}</span>
+                      <span className={`rounded-full px-3 py-1 text-[11px] font-extrabold uppercase ${order.status === 'new' ? 'bg-blue-100 text-blue-800' : order.status === 'processing' ? 'bg-amber-100 text-amber-800' : order.status === 'ready' ? 'bg-emerald-100 text-emerald-800' : order.status === 'unavailable' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}`}>{order.status === 'new' ? 'Order received' : order.status === 'processing' ? 'Processing' : order.status === 'ready' ? 'Ready for pickup' : order.status}</span>
                     </div>
                     <div className="my-3 rounded-xl bg-slate-50 p-3">
                       <div className="mb-2 text-[11px] font-extrabold uppercase tracking-wide text-slate-500">Items ordered</div>
@@ -1699,7 +1700,7 @@ export function AdminUploadApp({
                 <input type="search" value={dealSearch} onChange={e => setDealSearch(e.target.value)} placeholder="Search product name or category…" className="mt-1.5 w-full rounded-xl border border-rose-200 bg-white px-3 py-2.5 text-sm font-medium outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-100" />
               </label>
               <div className="max-h-64 overflow-y-auto rounded-xl border border-rose-100 bg-white divide-y divide-slate-100">
-                {products.filter(product => !dealSearch.trim() || [product.name, product.category].some(value => String(value || "").toLowerCase().includes(dealSearch.trim().toLowerCase()))).map(product => {
+                {products.filter(product => !dealSearch.trim() || [product.name, product.category].some(value => String(value || "").toLowerCase().includes(dealSearch.trim().toLowerCase()))).length === 0 ? <p className="p-4 text-center text-xs text-slate-500">No products match your search.</p> : products.filter(product => !dealSearch.trim() || [product.name, product.category].some(value => String(value || "").toLowerCase().includes(dealSearch.trim().toLowerCase()))).map(product => {
                   const selected = (storeSettings.dealProductIds || []).includes(product.id);
                   return (
                     <label key={product.id} className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-rose-50">
