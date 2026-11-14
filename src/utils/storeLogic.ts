@@ -45,6 +45,9 @@ export interface StoreSettings {
   greetingBengali?: string;
   deliveryEtaMins?: string;
   showOccasionBanner?: boolean;
+  /** Owner-curated Deals of the Day shelf. */
+  dealsOfDayEnabled?: boolean;
+  dealProductIds?: string[];
   occasionTitle?: string;
   occasionSubtitle?: string;
   occasionTag?: string;
