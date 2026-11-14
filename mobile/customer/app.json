@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "Parbati Bhandar",
+    "slug": "parbati-bhandar-customer",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "parbatibhandar",
+    "android": {
+      "package": "com.parbatibhandar.customer",
+      "versionCode": 1,
+      "permissions": ["INTERNET", "CAMERA"]
+    },
+    "extra": {
+      "storeOrigin": "https://parbati-bhandar.pages.dev",
+      "appRole": "customer"
+    }
+  }
+}
