@@ -2,23 +2,26 @@ import React, { useEffect, useState } from 'react';
 import {
   ArrowLeft, Eye, EyeOff, UserRound, Phone, Package, LogOut,
   UserPlus, LogIn, ShoppingBasket, Sparkles, CheckCircle2, Clock3,
-  LockKeyhole, ArrowRight
+  LockKeyhole, ArrowRight, ShieldCheck, ChevronRight, ReceiptText
 } from 'lucide-react';
+import { TurnstileWidget } from './TurnstileWidget';
 
 type Customer = { id: string; name: string; phone: string };
-type Order = { status: string; total: number; createdAt: number; items: {name:string;quantity:number;unit:string}[] };
+type Order = { orderNumber?: number; status: string; total: number; createdAt: number; items: {name:string;quantity:number;unit:string}[] };
 
-export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack }: {
+export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, onViewOrders }: {
   customer: Customer | null;
   onAuthenticated: (customer: Customer) => void;
   onLogout: () => void;
   onBack: () => void;
+  onViewOrders: () => void;
 }) {
   const [mode,setMode] = useState<'login'|'register'>('login');
   const [name,setName] = useState('');
   const [phone,setPhone] = useState('');
   const [password,setPassword] = useState('');
   const [showPassword,setShowPassword] = useState(false);
+  const [turnstileToken,setTurnstileToken] = useState('');
   const [busy,setBusy] = useState(false);
   const [error,setError] = useState('');
   const [orders,setOrders] = useState<Order[]>([]);
@@ -45,11 +48,12 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack }:
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (busy) return;
+    if (!turnstileToken) { setError('Please complete the security verification below.'); return; }
     setBusy(true); setError('');
     try {
       const response = await fetch('/api/customer-auth/'+(mode==='register'?'register':'login'),{
         method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({name,phone,password})
+        body:JSON.stringify({name,phone,password,turnstileToken})
       });
       const data=await response.json().catch(()=>({}));
       if(!response.ok) {
@@ -71,7 +75,7 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack }:
   };
 
   const switchMode = (next: 'login'|'register') => {
-    setMode(next); setError(''); setPassword(''); setShowPassword(false);
+    setMode(next); setError(''); setPassword(''); setShowPassword(false); setTurnstileToken('');
   };
 
   return (
@@ -118,10 +122,14 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack }:
                   <p className="mt-1 flex items-center gap-2 text-sm text-slate-600"><Phone className="h-4 w-4"/>{customer.phone}</p>
                   <p className="mt-3 text-xs font-semibold text-emerald-800">Your details are ready for your next checkout.</p>
                 </div>
-                <div>
-                  <div className="mb-3 flex items-center justify-between"><h3 className="font-extrabold text-slate-900">Your recent orders</h3><span className="text-xs text-slate-500">Updates automatically</span></div>
-                  {ordersLoading ? <p className="py-8 text-center text-sm text-slate-500">Loading your orders…</p> : orders.length===0 ? <div className="rounded-2xl border border-dashed border-slate-200 p-7 text-center text-sm text-slate-500"><Package className="mx-auto mb-2 h-7 w-7 text-slate-400"/>Your orders will appear here after checkout.</div> :
-                    <div className="max-h-[360px] space-y-2 overflow-y-auto pr-1">{orders.map(order=><div key={order.createdAt} className="rounded-2xl border border-slate-200 p-3.5"><div className="flex flex-wrap items-center justify-between gap-2"><div><p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Order placed</p><strong className="text-sm">{new Date(order.createdAt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Kolkata'})}</strong></div><span className={`rounded-full px-2.5 py-1 text-xs font-bold ${order.status==='new'?'bg-blue-50 text-blue-800':order.status==='processing'?'bg-amber-50 text-amber-800':order.status==='ready'?'bg-emerald-50 text-emerald-800':order.status==='completed'?'bg-slate-100 text-slate-700':'bg-rose-50 text-rose-800'}`}>{order.status==='new'?'Order received':order.status==='processing'?'Processing':order.status==='ready'?'Ready for pickup':order.status==='completed'?'Completed':order.status==='cancelled'?'Cancelled':order.status==='unavailable'?'Availability update':order.status}</span></div><p className="mt-2 text-xs text-slate-500">{order.items.map(i=>i.name+' × '+i.quantity+' '+i.unit).join(', ')}</p><p className="mt-2 text-sm font-extrabold text-slate-800">₹{order.total}</p></div>)}</div>}
+                <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                  <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+                    <div><h3 className="font-extrabold text-slate-900">Your recent orders</h3><p className="mt-0.5 text-xs text-slate-500">A quick look at your latest shopping</p></div>
+                    <span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-50 text-emerald-700"><ReceiptText className="h-5 w-5"/></span>
+                  </div>
+                  {ordersLoading ? <p className="py-8 text-center text-sm text-slate-500">Loading your orders…</p> : orders.length===0 ? <div className="p-7 text-center text-sm text-slate-500"><Package className="mx-auto mb-2 h-7 w-7 text-slate-400"/>Your first order will appear here after checkout.</div> :
+                    <div className="divide-y divide-slate-100">{orders.slice(0,2).map(order=><button type="button" key={order.orderNumber || order.createdAt} onClick={onViewOrders} className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left transition hover:bg-emerald-50/50"><span className="min-w-0"><span className="flex items-center gap-2"><strong className="text-sm text-slate-900">Order #{order.orderNumber || '—'}</strong><span className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${order.status==='new'?'bg-blue-50 text-blue-800':order.status==='processing'?'bg-amber-50 text-amber-800':order.status==='ready'?'bg-emerald-50 text-emerald-800':order.status==='completed'?'bg-slate-100 text-slate-700':'bg-rose-50 text-rose-800'}`}>{order.status==='new'?'Received':order.status==='processing'?'Preparing':order.status==='ready'?'Ready':order.status==='completed'?'Completed':order.status==='cancelled'?'Cancelled':order.status==='unavailable'?'Update needed':order.status}</span></span><span className="mt-1 block truncate text-xs text-slate-500">{order.items.slice(0,2).map(i=>i.name+' × '+i.quantity).join(' · ')}{order.items.length>2?' · + more':''}</span><span className="mt-1 block text-[11px] text-slate-400">{new Date(order.createdAt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Kolkata'})}</span></span><span className="shrink-0 text-sm font-black text-slate-900">₹{order.total}<ChevronRight className="ml-auto mt-1 h-4 w-4 text-emerald-700"/></span></button>)}</div>}
+                  <button type="button" onClick={onViewOrders} className="flex w-full items-center justify-between border-t border-slate-100 bg-slate-50 px-4 py-3 text-sm font-extrabold text-emerald-800 hover:bg-emerald-50">View all orders and live updates <ArrowRight className="h-4 w-4"/></button>
                 </div>
                 {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-700">{error}</p>}
               </div>
@@ -149,8 +157,14 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack }:
                   <label className="block text-xs font-extrabold uppercase tracking-wide text-slate-600">Password
                     <span className="relative mt-2 block"><LockKeyhole className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"/><input required type={showPassword?'text':'password'} minLength={mode==='register'?8:1} maxLength={128} value={password} onChange={e=>setPassword(e.target.value)} autoComplete={mode==='register'?'new-password':'current-password'} placeholder={mode==='register'?'Create a password (8+ characters)':'Enter your password'} className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-12 text-sm font-semibold tracking-normal text-slate-900 outline-none transition placeholder:font-normal placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10"/><button type="button" onClick={()=>setShowPassword(v=>!v)} aria-label={showPassword?'Hide password':'Show password'} className="absolute right-3 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-xl text-slate-400 hover:bg-slate-200/70 hover:text-slate-700">{showPassword?<EyeOff className="h-4 w-4"/>:<Eye className="h-4 w-4"/>}</button></span>
                   </label>
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3.5">
+                    <div className="mb-2 flex items-center gap-2 text-xs font-extrabold text-slate-800"><ShieldCheck className="h-4 w-4 text-emerald-700"/> Security verification</div>
+                    <p className="mb-3 text-[11px] leading-5 text-slate-500">Complete this quick check to protect customer accounts from automated sign-ins.</p>
+                    <TurnstileWidget key={mode} action={mode} onVerify={setTurnstileToken}/>
+                    {turnstileToken && <p className="mt-2 flex items-center gap-1.5 text-xs font-bold text-emerald-700"><CheckCircle2 className="h-4 w-4"/> Verification complete</p>}
+                  </div>
                   {error && <div role="alert" className="rounded-2xl border border-red-100 bg-red-50 p-3.5 text-sm font-semibold leading-5 text-red-700">{error}</div>}
-                  <button disabled={busy} className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-700 to-emerald-600 py-4 text-sm font-black text-white shadow-lg shadow-emerald-900/15 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60">
+                  <button disabled={busy || !turnstileToken} className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-700 to-emerald-600 py-4 text-sm font-black text-white shadow-lg shadow-emerald-900/15 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60">
                     {busy?'Please wait…':mode==='register'?<><UserPlus className="h-4 w-4"/> Create my account</>:<><LogIn className="h-4 w-4"/> Sign in to my account</>}
                     {!busy && <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1"/>}
                   </button>
