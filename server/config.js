@@ -8,49 +8,35 @@ function parseBoolean(value, fallback) {
 export function parseConfig(env = process.env) {
   const nodeEnv = env.NODE_ENV || "development";
   const port = Number(env.PORT || 8080);
-  if (!Number.isInteger(port) || port < 1 || port > 65535) {
-    throw new Error("PORT must be an integer between 1 and 65535.");
-  }
+  if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error("PORT must be an integer between 1 and 65535.");
 
   const databaseUrl = env.DATABASE_URL;
-  if (typeof databaseUrl !== "string" || !databaseUrl.trim()) {
-    throw new Error("DATABASE_URL is required by the Node API.");
-  }
+  if (typeof databaseUrl !== "string" || !databaseUrl.trim()) throw new Error("DATABASE_URL is required by the Node API.");
   let parsedDatabaseUrl;
   try { parsedDatabaseUrl = new URL(databaseUrl); }
   catch { throw new Error("DATABASE_URL must be a valid PostgreSQL connection URL."); }
-  if (!["postgres:", "postgresql:"].includes(parsedDatabaseUrl.protocol)) {
-    throw new Error("DATABASE_URL must use the postgres:// or postgresql:// protocol.");
-  }
+  if (!["postgres:", "postgresql:"].includes(parsedDatabaseUrl.protocol)) throw new Error("DATABASE_URL must use the postgres:// or postgresql:// protocol.");
 
-  const configuredOrigins = (env.CORS_ORIGINS || "")
-    .split(",").map(value => value.trim()).filter(Boolean);
-  const allowedOrigins = configuredOrigins.length
-    ? configuredOrigins
-    : nodeEnv === "production" ? [] : DEFAULT_DEV_ORIGINS;
-  if (allowedOrigins.includes("*")) {
-    throw new Error("CORS_ORIGINS cannot contain a wildcard. List exact trusted origins.");
-  }
+  const configuredOrigins = (env.CORS_ORIGINS || "").split(",").map(value => value.trim()).filter(Boolean);
+  const allowedOrigins = configuredOrigins.length ? configuredOrigins : nodeEnv === "production" ? [] : DEFAULT_DEV_ORIGINS;
+  if (allowedOrigins.includes("*")) throw new Error("CORS_ORIGINS cannot contain a wildcard. List exact trusted origins.");
   for (const origin of allowedOrigins) {
     let parsed;
     try { parsed = new URL(origin); } catch { throw new Error("CORS_ORIGINS contains an invalid origin."); }
-    if (!["http:", "https:"].includes(parsed.protocol) || parsed.origin !== origin) {
-      throw new Error("CORS_ORIGINS entries must be exact http(s) origins without paths.");
-    }
+    if (!["http:", "https:"].includes(parsed.protocol) || parsed.origin !== origin) throw new Error("CORS_ORIGINS entries must be exact http(s) origins without paths.");
   }
 
   const databaseSsl = parseBoolean(env.DATABASE_SSL, nodeEnv === "production");
-  if (nodeEnv === "production" && !databaseSsl) {
-    throw new Error("DATABASE_SSL cannot be disabled in production.");
-  }
+  const databaseSslRejectUnauthorized = parseBoolean(env.DATABASE_SSL_REJECT_UNAUTHORIZED, true);
+  if (nodeEnv === "production" && !databaseSsl) throw new Error("DATABASE_SSL cannot be disabled in production.");
+  if (nodeEnv === "production" && !databaseSslRejectUnauthorized) throw new Error("DATABASE_SSL_REJECT_UNAUTHORIZED cannot be disabled in production.");
+
+  const pgPoolMax = Number(env.PG_POOL_MAX || 10);
+  if (!Number.isInteger(pgPoolMax) || pgPoolMax < 1 || pgPoolMax > 50) throw new Error("PG_POOL_MAX must be an integer between 1 and 50.");
 
   return Object.freeze({
-    nodeEnv,
-    port,
-    databaseUrl,
-    databaseSsl,
-    databaseSslRejectUnauthorized: parseBoolean(env.DATABASE_SSL_REJECT_UNAUTHORIZED, true),
-    allowedOrigins: Object.freeze(allowedOrigins),
+    nodeEnv, port, databaseUrl, databaseSsl, databaseSslRejectUnauthorized,
+    pgPoolMax, allowedOrigins: Object.freeze(allowedOrigins),
     trustProxy: parseBoolean(env.TRUST_PROXY, nodeEnv === "production"),
     logLevel: env.LOG_LEVEL || (nodeEnv === "production" ? "info" : "debug"),
   });
