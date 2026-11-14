@@ -39,14 +39,27 @@ export const onRequestPost: PagesFunction<Env> = async ({request,env}) => {
   if(!id||!["cancel","edit"].includes(action))return json({error:"Invalid order action."},400);
   const order=await env.DB.prepare("SELECT id,customer_id,items_json,total,status,stock_deducted FROM customer_orders WHERE id=? AND customer_id=? AND archived_at IS NULL").bind(id,customer.id).first<any>();
   if(!order)return json({error:"Order not found in your account."},404);
-  if(action==="cancel" && order.status!=="new")return json({error:"Orders can only be cancelled before the store starts processing them."},409);
-  if(action==="edit" && !["new","processing"].includes(String(order.status)))return json({error:"Orders can only be edited until the store marks them ready."},409);
+  if(action==="cancel" && !["new","review"].includes(String(order.status)))return json({error:"Orders can only be cancelled before the store starts processing them."},409);
+  if(action==="edit" && !["new","review","processing"].includes(String(order.status)))return json({error:"Orders can only be edited until the store marks them ready."},409);
   const original:Item[]=JSON.parse(order.items_json||"[]");
   if(!original.length)return json({error:"This order has no editable items."},409);
   const now=Date.now(), actionId=crypto.randomUUID();
   const deductionRows=Number(order.stock_deducted||0)===1?(await env.DB.prepare("SELECT product_id,quantity FROM order_stock_deductions WHERE order_id=?").bind(id).all<any>()).results||[]:[];
   const oldDeductions=new Map<string,number>(deductionRows.map((r:any)=>[String(r.product_id),Number(r.quantity||0)]));
   if(action==="cancel"){
+    // If checkout created no stock-deduction rows, there is nothing to refund.
+    // Cancel directly instead of running the inventory-refund guard transaction.
+    if(oldDeductions.size===0){
+      const now=Date.now();
+      try{
+        const result=await env.DB.batch([
+          env.DB.prepare("UPDATE customer_orders SET status='cancelled',total=0,updated_at=?,estimated_ready_at=NULL WHERE id=? AND customer_id=? AND status IN ('new','review') AND stock_deducted IN (0,1) AND items_json=?").bind(now,id,customer.id,order.items_json),
+          env.DB.prepare("DELETE FROM order_stock_reservations WHERE order_id=?").bind(id)
+        ]);
+        if(!result[0]?.meta?.changes)return json({error:"The order changed while cancellation was being processed. Refresh and try again."},409);
+      }catch(error){console.error("Customer order cancellation without stock refund failed",error);return json({error:"Could not cancel this order safely. Refresh and try again."},409);}
+      return json({ok:true,status:"cancelled"});
+    }
     const refundMap=new Map<string,number>();
     const marked=original.map(item=>({...item}));
     for(const [productId,quantity] of oldDeductions){
@@ -121,7 +134,7 @@ export const onRequestPost: PagesFunction<Env> = async ({request,env}) => {
     if(Math.abs(delta)>0.00001)deltas.set(productId,delta);
   }
   const statements:any[]=[
-    env.DB.prepare("UPDATE customer_orders SET stock_deducted=3 WHERE id=? AND customer_id=? AND status IN ('new','processing') AND stock_deducted=1 AND items_json=?").bind(id,customer.id,order.items_json),
+    env.DB.prepare("UPDATE customer_orders SET stock_deducted=3 WHERE id=? AND customer_id=? AND status IN ('new','review','processing') AND stock_deducted=1 AND items_json=?").bind(id,customer.id,order.items_json),
     env.DB.prepare("INSERT INTO customer_order_action_guard(action_id,expected_count,actual_count) SELECT ?,1,changes()").bind(actionId+":lock")
   ];
   for(const [productId,delta] of deltas){
@@ -141,7 +154,7 @@ export const onRequestPost: PagesFunction<Env> = async ({request,env}) => {
     ...Array.from(productIds).map(productId=>desired.has(productId)
       ? env.DB.prepare("INSERT INTO order_stock_deductions(order_id,product_id,quantity) VALUES(?,?,?) ON CONFLICT(order_id,product_id) DO UPDATE SET quantity=excluded.quantity").bind(id,productId,desired.get(productId))
       : env.DB.prepare("DELETE FROM order_stock_deductions WHERE order_id=? AND product_id=?").bind(id,productId)),
-    env.DB.prepare("UPDATE customer_orders SET items_json=?,total=?,updated_at=?,stock_deducted=1 WHERE id=? AND customer_id=? AND status IN ('new','processing') AND stock_deducted=3").bind(JSON.stringify(revised),revised.reduce((sum,item)=>sum+item.price*item.quantity,0),now,id,customer.id)
+    env.DB.prepare("UPDATE customer_orders SET items_json=?,total=?,updated_at=?,stock_deducted=1 WHERE id=? AND customer_id=? AND status IN ('new','review','processing') AND stock_deducted=3").bind(JSON.stringify(revised),revised.reduce((sum,item)=>sum+item.price*item.quantity,0),now,id,customer.id)
   );
   try{const result=await env.DB.batch(statements);if(!result[result.length-1]?.meta?.changes)return json({error:"The order changed while it was being edited. Refresh and try again."},409);}
   catch(error){console.error("Customer order edit transaction failed",error);return json({error:"Could not safely update your order or inventory. Please try again."},409);}
