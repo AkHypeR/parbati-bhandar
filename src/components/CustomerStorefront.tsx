@@ -414,11 +414,13 @@ export function CustomerStorefront({
   const greetingMain = storeSettings.greetingMain || 'Grahok';
   const deliveryEtaMins = storeSettings.deliveryEtaMins || '10';
   const seasonalThemeText = `${storeSettings.occasionTitle || ''} ${storeSettings.occasionSubtitle || ''} ${storeSettings.occasionTag || ''} ${storeSettings.occasionImageUrl || ''} ${currentSlide?.title || ''} ${currentSlide?.subtitle || ''} ${currentSlide?.tag || ''}`;
-  const isChhathSeason = /chhath|ছট\s*(পূজা|পুজো)?/i.test(seasonalThemeText);
+  const localCampaignDate = new Date();
+  const isChhathCalendarWindow = localCampaignDate.getFullYear() === 2026 && localCampaignDate.getMonth() === 10 && localCampaignDate.getDate() >= 13 && localCampaignDate.getDate() <= 16;
+  const isChhathSeason = isChhathCalendarWindow || /chhath|ছট\\s*(পূজা|পুজো)?/i.test(seasonalThemeText);
   const isChristmasSeason = /christmas|xmas/i.test(seasonalThemeText);
 
   return (
-    <div className="flex-1 flex flex-col bg-[#f4f7fc] text-slate-900 pb-32 sm:pb-28">
+    <div className={`flex-1 flex flex-col bg-[#f4f7fc] text-slate-900 pb-32 sm:pb-28 ${isChhathSeason ? "pb-chhath-page" : ""}`}>
       {isChristmasSeason && <div className="pb-christmas-sky fixed inset-0 z-[70] overflow-hidden pointer-events-none" aria-hidden="true">
         {Array.from({length:18},(_,i)=><span key={i} className="pb-snowflake" style={{left:`${(i*37)%100}%`,animationDelay:`${(i%7)*-1.8}s`,animationDuration:`${8+(i%5)*2}s`,fontSize:`${10+(i%4)*5}px`}}>❄</span>)}
         <span className="pb-christmas-twinkle absolute right-[8%] top-28 text-xl">✦</span><span className="pb-christmas-twinkle absolute left-[6%] top-[42%] text-sm">✧</span>
@@ -431,7 +433,7 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       {/* TOP MOBILE-FIRST APP BAR WITH SHOP NAME                               */}
       {/* ===================================================================== */}
-      <header className="bg-[#1d4ed8] text-white border-b border-blue-900/20 shadow-sm">
+      <header className={`text-white border-b shadow-sm ${isChhathSeason ? "pb-chhath-header" : "bg-[#1d4ed8] border-blue-900/20"}`}>
         <div className="max-w-5xl mx-auto px-3.5 sm:px-6 pt-3 pb-2">
           {/* Row 1: Profile | Shop Name (5-tap secret owner access) | Quick Actions */}
           <div className="flex items-center justify-between gap-2">

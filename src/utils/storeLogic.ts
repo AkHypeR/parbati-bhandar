@@ -857,7 +857,11 @@ export function buildHeroSlides(
 ): HeroSlide[] {
   const slides: HeroSlide[] = [];
   const occasionImage = settings.occasionImageUrl || '';
-  const isChhathOccasion = /chhath|ছট\s*(পূজা|পুজো)?/i.test(`${settings.occasionTitle || ''} ${settings.occasionSubtitle || ''} ${settings.occasionTag || ''} ${occasionImage}`);
+  // Chhath 2026 runs 13–16 November. Force the campaign during these dates,
+  // even when older cloud settings contain a different occasion or hide the banner.
+  const localDate = new Date();
+  const isChhathCalendarWindow = localDate.getFullYear() === 2026 && localDate.getMonth() === 10 && localDate.getDate() >= 13 && localDate.getDate() <= 16;
+  const isChhathOccasion = isChhathCalendarWindow || /chhath|ছট\\s*(পূজা|পুজো)?/i.test(`${settings.occasionTitle || ''} ${settings.occasionSubtitle || ''} ${settings.occasionTag || ''} ${occasionImage}`);
   const hasCustomOccasion = Boolean(settings.occasionTitle?.trim() || occasionImage.trim());
   // Chhath is a dedicated seasonal campaign: keep its hero visible even if an
   // older saved setting has the generic occasion-banner switch turned off.
@@ -867,9 +871,9 @@ export function buildHeroSlides(
     slides.push({
       type: 'festive',
       id: 'festive-banner',
-      title: settings.occasionTitle?.trim() || 'Merry Christmas',
-      subtitle: settings.occasionSubtitle?.trim() || (isChhathOccasion ? 'সূর্য উপাসনা ও পবিত্রতার উৎসব • শুভ ছট পূজা' : 'শুভ বড়দিন • Wishing you joy, warmth and happiness'),
-      tag: settings.occasionTag?.trim() || (isChhathOccasion ? 'Chhath Puja Celebration' : 'Christmas Celebration'),
+      title: isChhathOccasion ? (settings.occasionTitle?.trim() && /chhath|ছট/i.test(settings.occasionTitle) ? settings.occasionTitle.trim() : 'শুভ ছট পূজা') : (settings.occasionTitle?.trim() || 'Merry Christmas'),
+      subtitle: isChhathOccasion ? (settings.occasionSubtitle?.trim() && /chhath|ছট/i.test(settings.occasionSubtitle) ? settings.occasionSubtitle.trim() : 'সূর্য অর্ঘ্য • উৎসবের আনন্দে Parbati Bhandar') : (settings.occasionSubtitle?.trim() || 'শুভ বড়দিন • Wishing you joy, warmth and happiness'),
+      tag: isChhathOccasion ? 'Chhath Puja Celebration' : (settings.occasionTag?.trim() || 'Christmas Celebration'),
       imageUrl: occasionImage,
     });
   }
