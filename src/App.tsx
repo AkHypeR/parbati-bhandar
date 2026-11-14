@@ -165,7 +165,6 @@ export default function App() {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerAccount, setCustomerAccount] = useState<{id:string;name:string;phone:string} | null>(null);
-  const [customerAccountChecked, setCustomerAccountChecked] = useState(false);
   const [accountReturnPath, setAccountReturnPath] = useState('/account');
   useEffect(() => {
     fetch('/api/customer-auth/me', { credentials: 'same-origin', cache: 'no-store' })
@@ -175,7 +174,7 @@ export default function App() {
           setCustomerName(data.customer.name);
           setCustomerPhone(data.customer.phone);
         }
-      }).catch(() => {}).finally(() => setCustomerAccountChecked(true));
+      }).catch(() => {});
   }, []);
   const handleCustomerAuthenticated = (customer: {id:string;name:string;phone:string}) => {
     setCustomerAccount(customer);
