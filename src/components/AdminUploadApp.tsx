@@ -680,7 +680,7 @@ export function AdminUploadApp({
             <button type="button" onClick={() => setAdminTab('settings')} aria-current={adminTab === 'settings' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'settings' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><Settings className="h-4 w-4" /> Store settings</button>
             <button type="button" onClick={() => setAdminTab('christmasSpecials')} aria-current={adminTab === 'christmasSpecials' ? 'page' : undefined} className={adminTab === 'christmasSpecials' ? 'flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold bg-red-700 text-white shadow-sm' : 'flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold bg-white text-slate-700 hover:bg-red-50'}>🎄 Christmas Specials</button>
             <button type="button" onClick={() => setAdminTab('quickReplies')} aria-current={adminTab === 'quickReplies' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'quickReplies' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><MessageCircle className="h-4 w-4" /> WhatsApp replies</button>
-          </div>
+          </nav>
         </div>
       </div>
 
