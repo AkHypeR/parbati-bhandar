@@ -9,6 +9,15 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     if (!/^[6-9]\d{9}$/.test(phone) || password.length < 1 || password.length > 128) {
       return json({ error: "Enter your registered 10-digit mobile number and password." }, 400);
     }
+    if (!env.TURNSTILE_SECRET_KEY) return json({ error: "Account security verification is not configured yet." }, 503, { "cache-control": "no-store" });
+    const turnstileToken = String(body?.turnstileToken || "").slice(0, 2048);
+    if (!turnstileToken) return json({ error: "Please complete the security check before continuing." }, 400, { "cache-control": "no-store" });
+    try {
+      const verifyResponse = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ secret: env.TURNSTILE_SECRET_KEY, response: turnstileToken, remoteip: request.headers.get("CF-Connecting-IP") || undefined }) });
+      const verification: any = await verifyResponse.json();
+      if (!verification.success || verification.action !== "login") return json({ error: "Security check failed. Please try again." }, 403, { "cache-control": "no-store" });
+    } catch { return json({ error: "Security verification is temporarily unavailable. Please try again." }, 503, { "cache-control": "no-store" }); }
+
     if (!env.DB) return json({ error: "Customer accounts are temporarily unavailable. Please contact the store." }, 503);
 
     await ensureCustomerTables(env);
