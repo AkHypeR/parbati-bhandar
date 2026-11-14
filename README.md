@@ -1,56 +1,59 @@
 # Parbati Bhandar
 
-Parbati Bhandar is a React + Vite grocery storefront with a separate owner portal and customer account experience.
+Parbati Bhandar is a React + TypeScript grocery storefront with a separate owner portal and customer account experience.
 
-## Current production architecture
+## Production architecture — selected for a zero-hosting-cost target
 
-- **Frontend:** React + TypeScript + Vite; build output: `dist/`.
-- **Production API:** Cloudflare Pages Functions in `functions/api/`.
-- **Production database:** Cloudflare D1 through the `DB` binding.
+- **Frontend:** React + Vite on Cloudflare Pages.
+- **API:** Cloudflare Pages Functions in `functions/api/` (Cloudflare Workers runtime).
+- **Database:** Cloudflare D1 through the `DB` binding.
 - **Images:** Cloudinary.
-- **Customer and owner sessions:** secure server-managed cookies handled by Pages Functions.
+- **Sessions:** server-managed HttpOnly cookies.
 - **Notifications:** customer inbox and optional Web Push.
-- **Mobile:** Expo Android WebView apps use the same website and backend.
+- **Android apps:** Expo WebView shells use the same website and API.
 
-The active Cloudflare deployment instructions and required secrets are documented in [CLOUDFLARE_DEPLOY.md](./CLOUDFLARE_DEPLOY.md).
+**We are not deploying a separate Express server or PostgreSQL database.** Cloudflare Pages Functions already provide server-side JavaScript/TypeScript API handling. Cloudflare's Workers runtime supports a documented subset of Node.js APIs, so Node-compatible code can be used where it is supported. A traditional always-running Node server would add hosting and database costs and a second inventory system to maintain.
 
-## Node.js API foundation (staging only)
+This is the chosen architecture for the current target of around 100 customer visits/orders per day. It is a capacity target, not a guaranteed SLA; actual usage must be monitored.
 
-A separate Node.js + Express API foundation is being built in `server/` with PostgreSQL. It is not connected to production traffic and currently exposes health/readiness endpoints only.
+### Current free-plan reference limits
 
-Requirements: Node.js 22+ and a separate PostgreSQL database.
+Cloudflare currently documents:
+- Workers / Pages Functions: 100,000 requests per day on the Free plan.
+- D1: 5 million rows read per day, 100,000 rows written per day, and 5 GB total storage on the Free plan.
+
+These are account-wide quotas and reset daily where applicable. If the account shares these resources with other projects, the remaining quota is lower. Hitting a daily D1 limit can cause API queries to fail until the reset. See the official [Workers limits](https://developers.cloudflare.com/workers/platform/limits/) and [D1 pricing and limits](https://developers.cloudflare.com/d1/platform/pricing/).
+
+### Operating rules
+
+1. Keep one production inventory writer: the existing Cloudflare API.
+2. Keep images on Cloudinary; avoid putting product photos into D1.
+3. Cache public static assets through Cloudflare Pages/CDN; do not cache account, order, cart, or owner responses publicly.
+4. Keep D1 queries indexed and bounded; avoid full-table scans for customer/order lookups.
+5. Monitor Workers requests and D1 row reads/writes/storage before approaching free quotas.
+6. Keep backups and test restoration before schema changes.
+7. Do not enable paid Cloudflare features or create paid infrastructure without explicit approval.
+
+## Local development
 
 ```bash
 npm install
-cp .env.example .env
-# Set DATABASE_URL to a local or staging PostgreSQL database.
-npm run migrate:api
-npm run dev:api
-```
-
-Health checks:
-- `GET /health/live`
-- `GET /health/ready`
-
-For a production container build, use the included `Dockerfile`. Configure `DATABASE_URL`, `NODE_ENV=production`, `DATABASE_SSL=true`, and an explicit comma-separated `CORS_ORIGINS` allowlist. Do not deploy without a separate staging database and a verified backup/restore process.
-
-## Frontend development
-
-```bash
 npm run dev
 npm test
+npm run lint
 npm run build
 ```
 
-The Vite development server does not provide the Cloudflare Pages Functions runtime or a production D1 database. Use a separate test D1 database for the existing Pages API.
+The Pages Functions API needs the Cloudflare runtime and D1 bindings to be tested end-to-end; a plain Vite dev server does not emulate production bindings.
 
-## Production migration safety
+## Separate Node.js prototype
 
-The current Cloudflare backend remains the only production API and inventory writer. The Node service must not receive customer/order traffic until authentication, data migration, inventory transactions, notification delivery, contract tests and rollback have all been verified. See [docs/PRODUCTION_BACKEND_MIGRATION.md](./docs/PRODUCTION_BACKEND_MIGRATION.md).
+The `server/` directory is an isolated Express + PostgreSQL prototype from an earlier architecture exploration. It exposes only health/readiness endpoints and is **not deployed, not connected to production, and not required for the free production architecture**. Do not point it at production data.
 
 ## Security
 
 - Never commit production secrets, customer exports, or database backups.
 - Keep database credentials server-side only.
-- Test customer ownership and owner permissions on every protected endpoint.
-- Take and verify a database backup before schema changes.
+- Enforce customer ownership and owner permissions on every protected endpoint.
+- Verify prices, stock, and order totals on the server.
+- Keep order creation, stock deduction, cancellation and refunds atomic and idempotent.
