@@ -17,7 +17,7 @@ const steps = [
 const formatDate = (value: number) => new Date(value).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' });
 const formatTime = (value: number) => new Date(value).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Kolkata' });
 
-export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumber?: number; onNavigate: (path: string) => void; onBack: () => void }) {
+export function CustomerOrders({ orderNumber, phone, onNavigate, onBack }: { orderNumber?: number; phone: string; onNavigate: (path: string) => void; onBack: () => void }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selected, setSelected] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
@@ -31,7 +31,10 @@ export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumbe
     if (initial) setLoading(true);
     else setRefreshing(true);
     try {
-      const url = orderNumber ? '/api/orders/track?orderNumber=' + encodeURIComponent(String(orderNumber)) : '/api/orders/track?history=1';
+      const params = new URLSearchParams({ phone: phone.replace(/\\D/g, '') });
+      if (orderNumber) params.set('orderNumber', String(orderNumber));
+      else params.set('history', '1');
+      const url = '/api/orders/track?' + params.toString();
       const response = await fetch(url, { credentials: 'same-origin', cache: 'no-store' });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || 'Could not load your order.');
@@ -49,7 +52,7 @@ export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumbe
 
   useEffect(() => {
     void load(true);
-  }, [orderNumber]);
+  }, [orderNumber, phone]);
 
   const currentIndex = selected ? steps.findIndex(step => step.key === selected.status) : -1;
   const exceptional = selected?.status === 'cancelled' || selected?.status === 'unavailable';
@@ -73,7 +76,7 @@ export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumbe
             </div>
             <div className="relative mt-6 flex flex-wrap gap-2 text-xs font-bold text-emerald-50">
               <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><CheckCircle2 className="mr-1.5 inline h-3.5 w-3.5"/> Loads once when opened</span>
-              <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><ShieldCheck className="mr-1.5 inline h-3.5 w-3.5"/> Private to your account</span>
+              <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><ShieldCheck className="mr-1.5 inline h-3.5 w-3.5"/> Verified with your checkout phone</span>
             </div>
           </header>
 
