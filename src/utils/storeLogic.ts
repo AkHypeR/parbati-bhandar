@@ -851,16 +851,19 @@ export function buildHeroSlides(
   const slides: HeroSlide[] = [];
   const occasionImage = settings.occasionImageUrl || '';
   const isOldChhathArtwork = occasionImage.includes('photo_2026-11-12_10-31-46_ee14c399.jpg');
-  const hasCustomOccasion = Boolean(settings.occasionTitle?.trim() || settings.occasionImageUrl?.trim());
-  const shouldShowOccasion = settings.showOccasionBanner === true || (!hasCustomOccasion && settings.showOccasionBanner !== false);
+  const legacyChhathSettings = /chhath/i.test(`${settings.occasionTitle || ''} ${occasionImage}`);
+  const hasCustomOccasion = Boolean((settings.occasionTitle?.trim() || occasionImage.trim()) && !legacyChhathSettings);
+  // A blank/legacy occasion setting gets the ready-to-use Christmas campaign.
+  // Once the owner sets a custom occasion, the ON/OFF switch controls it normally.
+  const shouldShowOccasion = settings.showOccasionBanner === true || !hasCustomOccasion;
   if (shouldShowOccasion) {
     slides.push({
       type: 'festive',
       id: 'festive-banner',
-      title: settings.occasionTitle?.trim() || 'Merry Christmas',
-      subtitle: settings.occasionSubtitle?.trim() || 'শুভ বড়দিন • Wishing you joy, warmth and happiness',
-      tag: settings.occasionTag?.trim() || 'Christmas Celebration',
-      imageUrl: isOldChhathArtwork ? '' : occasionImage,
+      title: legacyChhathSettings ? 'Merry Christmas' : (settings.occasionTitle?.trim() || 'Merry Christmas'),
+      subtitle: legacyChhathSettings ? 'শুভ বড়দিন • Wishing you joy, warmth and happiness' : (settings.occasionSubtitle?.trim() || 'শুভ বড়দিন • Wishing you joy, warmth and happiness'),
+      tag: legacyChhathSettings ? 'Christmas Celebration' : (settings.occasionTag?.trim() || 'Christmas Celebration'),
+      imageUrl: isOldChhathArtwork || legacyChhathSettings ? '' : occasionImage,
     });
   }
   const orderedBest = getBestItems(products, 5);
