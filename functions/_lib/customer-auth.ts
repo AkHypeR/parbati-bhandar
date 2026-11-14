@@ -13,7 +13,7 @@ async function sha256(value: string) {
 }
 async function passwordHash(password: string, salt: Uint8Array) {
   const material = await crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, ["deriveBits"]);
-  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations: 210000, hash: "SHA-256" }, material, 256);
+  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" }, material, 256);
   return Array.from(new Uint8Array(bits), b => b.toString(16).padStart(2, "0")).join("");
 }
 export async function ensureCustomerTables(env: Env) {
