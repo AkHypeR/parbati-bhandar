@@ -848,68 +848,27 @@ export function CustomerStorefront({
                       catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  className="relative w-full max-w-md mx-auto rounded-[28px] overflow-hidden shadow-md border border-amber-200/80 cursor-pointer group select-none bg-gradient-to-b from-[#fce3ba] via-[#f7b977] to-[#df8944]"
+                  className="pb-christmas-banner relative w-full max-w-md mx-auto min-h-[360px] rounded-[28px] overflow-hidden shadow-xl border border-emerald-200/50 cursor-pointer group select-none"
                 >
-                  {/* Top Marigold Garland Decoration */}
-                  <div className="absolute top-0 inset-x-0 flex justify-between pointer-events-none z-20 px-2">
-                    <div className="flex items-start gap-0.5 text-lg sm:text-xl drop-shadow-xs">
-                      <span>🌼</span>
-                      <span>🟠</span>
-                      <span>🌼</span>
-                      <span>🌿</span>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#073b2b] via-[#0b6848] to-[#092e27]"/>
+                  <div className="pb-christmas-glow absolute -right-12 -top-12 h-56 w-56 rounded-full bg-amber-300/25 blur-3xl"/>
+                  <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-red-500 via-amber-300 to-emerald-300"/>
+                  <div className="pb-christmas-garland absolute left-0 right-0 top-3 flex justify-around px-2 text-lg sm:text-xl" aria-hidden="true"><span>🔴</span><span>🟡</span><span>🟢</span><span>🔴</span><span>🟡</span><span>🟢</span><span>🔴</span><span>🟡</span></div>
+                  <div className="relative z-10 flex min-h-[360px] flex-col items-center justify-center px-5 pb-6 pt-12 text-center">
+                    <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[9px] font-black uppercase tracking-[.22em] text-emerald-100 backdrop-blur-sm">🎄 {currentSlide.tag}</span>
+                    <div className="relative mt-3 flex h-28 w-full items-center justify-center gap-2 sm:h-32" aria-hidden="true">
+                      <span className="pb-christmas-sway text-6xl drop-shadow-lg sm:text-7xl">🎄</span>
+                      <span className="pb-christmas-gift text-4xl sm:text-5xl">🎁</span>
+                      <span className="pb-christmas-sway text-5xl sm:text-6xl" style={{animationDelay:'-.8s'}}>🧸</span>
+                      <span className="absolute left-[18%] top-1 text-xl">❄️</span><span className="absolute right-[17%] bottom-0 text-xl">✨</span>
                     </div>
-                    <div className="flex items-start gap-0.5 text-lg sm:text-xl drop-shadow-xs">
-                      <span>🌿</span>
-                      <span>🌼</span>
-                      <span>🟠</span>
-                      <span>🌼</span>
-                    </div>
+                    <p className="mt-1 text-[9px] font-black uppercase tracking-[.25em] text-amber-200">Parbati Bhandar wishes you</p>
+                    <h3 className="mt-2 text-3xl font-black leading-tight tracking-tight text-white drop-shadow sm:text-4xl">{currentSlide.title}</h3>
+                    <p className="mt-2 max-w-[290px] text-xs font-semibold leading-relaxed text-emerald-50/90 sm:text-sm">{currentSlide.subtitle}</p>
+                    <span className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#facc15] px-5 py-2.5 text-xs font-black text-emerald-950 shadow-lg transition group-hover:-translate-y-0.5">Shop Christmas Specials <ChevronRight className="h-4 w-4"/></span>
+                    <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-3 text-sm opacity-90" aria-hidden="true"><span>❄️</span><span>⭐</span><span>🎄</span><span>⭐</span><span>❄️</span></div>
                   </div>
-
-                  {/* Occasion Header Typography */}
-                  <div className="relative z-10 pt-6 pb-3 px-5 text-center">
-                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-white/85 text-[#0c4a3e] font-extrabold text-[10px] uppercase tracking-wider shadow-2xs mb-1">
-                      🪔 {currentSlide.tag}
-                    </span>
-                    <h3 className="font-serif text-3xl sm:text-4xl font-black text-[#093832] tracking-tight drop-shadow-2xs">
-                      {currentSlide.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm font-semibold text-[#2d1e12] mt-0.5">
-                      {currentSlide.subtitle}
-                    </p>
-                  </div>
-
-                  {/* Occasion Visual Artwork / Uploaded Picture */}
-                  <div className="relative h-56 sm:h-64 w-full flex items-end justify-center overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#f8c173]/50 to-[#946b45]/80 pointer-events-none" />
-                    <div className="w-14 h-14 rounded-full bg-[#fff7c2] shadow-[0_0_40px_14px_rgba(255,240,150,0.85)] absolute top-4 left-1/2 -translate-x-1/2 pointer-events-none" />
-
-                    {currentSlide.imageUrl ? (
-                      <img
-                        src={currentSlide.imageUrl}
-                        alt={currentSlide.title}
-                        referrerPolicy="no-referrer"
-                        className="relative z-10 w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="relative z-10 flex flex-col items-center justify-center pb-8 text-center px-4">
-                        <div className="text-6xl sm:text-7xl drop-shadow-md">🎉🌟🎁</div>
-                        <p className="mt-2 text-xs font-bold text-white bg-slate-900/50 px-3 py-1 rounded-full backdrop-blur-xs">
-                          Celebrate the season with special picks from Parbati Bhandar
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Bottom Glowing Diyas (প্রদীপ) */}
-                    <div className="absolute bottom-2.5 inset-x-4 flex items-center justify-between z-20 pointer-events-none">
-                      <span className="text-xl sm:text-2xl drop-shadow">✨🎊✨</span>
-                      <span className="px-3.5 py-1 rounded-full bg-white/95 text-slate-900 font-extrabold text-[11px] shadow-sm group-hover:bg-amber-300 transition-colors">
-                        Explore Festival Picks →
-                      </span>
-                      <span className="text-xl sm:text-2xl drop-shadow">🪔🌼🪔</span>
-                    </div>
-                  </div>
-                </div>
+                                </div>
               ) : (
                 /* =============================================================== */
                 /* SLIDE TYPE B: BEST PRODUCT SPOTLIGHT SLIDE (RANK #1 TO #5)      */
