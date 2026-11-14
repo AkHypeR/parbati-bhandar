@@ -407,7 +407,7 @@ export function CustomerStorefront({
   const greetingTop = storeSettings.greetingTop || 'Nomoshkar';
   const greetingMain = storeSettings.greetingMain || 'Grahok';
   const deliveryEtaMins = storeSettings.deliveryEtaMins || '10';
-  const isChristmasSeason = /christmas|xmas/i.test(`${storeSettings.occasionTitle || ''} ${storeSettings.occasionTag || ''}`) || [10, 11].includes(new Date().getMonth());
+  const isChristmasSeason = currentPage !== 'cart' && (/christmas|xmas/i.test(`${storeSettings.occasionTitle || ''} ${storeSettings.occasionTag || ''}`) || [10, 11].includes(new Date().getMonth()));
 
   return (
     <div className="flex-1 flex flex-col bg-[#f4f7fc] text-slate-900 pb-32 sm:pb-28">
