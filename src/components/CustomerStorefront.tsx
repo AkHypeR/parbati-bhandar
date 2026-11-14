@@ -147,7 +147,7 @@ export function CustomerStorefront({
     return data;
   };
   const loadOrderHistory = async (phoneValue = trackingPhone) => {
-    const cleanPhone = phoneValue.replace(/\\D/g, '');
+    const cleanPhone = phoneValue.replace(/\D/g, '');
     if (cleanPhone.length < 10) { setHistoryError('Enter the phone number used at checkout to view your orders.'); return; }
     setHistoryLoading(true); setHistoryError(''); setHistoryLoaded(false);
     try {
@@ -499,7 +499,7 @@ export function CustomerStorefront({
 
               <div className="grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1.5" role="tablist" aria-label="Order options">
                 <button type="button" role="tab" aria-selected={ordersView === 'track'} onClick={() => setOrdersView('track')} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${ordersView === 'track' ? 'bg-white text-[#07543a] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}><Package className="h-4 w-4" /> Track order</button>
-                <button type="button" role="tab" aria-selected={ordersView === 'history'} onClick={() => { setOrdersView('history'); if (!historyLoaded && trackingPhone.replace(/\\D/g, '').length >= 10) void loadOrderHistory(); }} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${ordersView === 'history' ? 'bg-white text-[#07543a] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}><ClipboardList className="h-4 w-4" /> Previous orders</button>
+                <button type="button" role="tab" aria-selected={ordersView === 'history'} onClick={() => { setOrdersView('history'); if (!historyLoaded && trackingPhone.replace(/\D/g, '').length >= 10) void loadOrderHistory(); }} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${ordersView === 'history' ? 'bg-white text-[#07543a] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}><ClipboardList className="h-4 w-4" /> Previous orders</button>
               </div>
 
               {ordersView === 'track' ? (
@@ -545,7 +545,7 @@ export function CustomerStorefront({
                   <div className="mb-4 flex flex-wrap items-end justify-between gap-2"><div><h3 className="text-lg font-black text-slate-900">Your previous orders</h3><p className="mt-1 text-xs text-slate-500">Orders placed using this phone number.</p></div><span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-extrabold text-amber-800"><CalendarDays className="h-3.5 w-3.5" /> Last 7 days</span></div>
                   <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
                     <label><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Checkout phone number</span><input inputMode="tel" value={trackingPhone} onChange={e=>setTrackingPhone(e.target.value)} placeholder="Enter your 10-digit phone number" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10" /></label>
-                    <button type="button" onClick={()=>void loadOrderHistory()} disabled={historyLoading || trackingPhone.replace(/\\D/g,'').length<10} className="self-end inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-extrabold text-emerald-800 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50">{historyLoading?<RefreshCw className="h-4 w-4 animate-spin"/>:<RefreshCw className="h-4 w-4"/>} Refresh history</button>
+                    <button type="button" onClick={()=>void loadOrderHistory()} disabled={historyLoading || trackingPhone.replace(/\D/g,'').length<10} className="self-end inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-extrabold text-emerald-800 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50">{historyLoading?<RefreshCw className="h-4 w-4 animate-spin"/>:<RefreshCw className="h-4 w-4"/>} Refresh history</button>
                   </div>
                   {historyError && <p role="alert" className="mt-3 flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0"/>{historyError}</p>}
                   {historyLoading && <div className="mt-5 flex items-center justify-center gap-2 rounded-xl bg-slate-50 py-8 text-sm font-semibold text-slate-500"><RefreshCw className="h-4 w-4 animate-spin"/> Loading your order history…</div>}
