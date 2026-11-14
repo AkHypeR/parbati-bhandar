@@ -27,6 +27,7 @@ import {
 import { CustomerStorefront } from './components/CustomerStorefront';
 import { CartDrawer } from './components/CartDrawer';
 import { CustomerAccount } from './components/CustomerAccount';
+import { CustomerOrders } from './components/CustomerOrders';
 import { OwnerPinGate } from './components/OwnerPinGate';
 import { AdminUploadApp } from './components/AdminUploadApp';
 import { QrPosterModal, SetupGuideModal } from './components/Modals';
@@ -1025,12 +1026,29 @@ export default function App() {
           </div>
         ) : (
         <>
-          {['/account', '/previous-orders', '/track-order'].includes(currentPath) ? (
+          {currentPath === '/orders' || /^\\/orders\\/\\d+$/.test(currentPath) ? (
+            customerAccount ? (
+              <CustomerOrders
+                orderNumber={currentPath.startsWith('/orders/') ? Number(currentPath.split('/')[2]) : undefined}
+                onNavigate={navigateToPath}
+                onBack={() => navigateToPath('/')}
+              />
+            ) : (
+              <CustomerAccount
+                customer={customerAccount}
+                onAuthenticated={handleCustomerAuthenticated}
+                onLogout={handleCustomerLogout}
+                onBack={() => navigateToPath('/')}
+                onViewOrders={() => navigateToPath('/orders')}
+              />
+            )
+          ) : ['/account', '/previous-orders', '/track-order'].includes(currentPath) ? (
             <CustomerAccount
               customer={customerAccount}
               onAuthenticated={handleCustomerAuthenticated}
               onLogout={handleCustomerLogout}
               onBack={() => navigateToPath('/')}
+              onViewOrders={() => navigateToPath('/orders')}
             />
           ) : <CustomerStorefront
             storeSettings={storeSettings}
@@ -1081,6 +1099,7 @@ export default function App() {
             rememberCustomerDetails={rememberCustomerDetails}
             setRememberCustomerDetails={setRememberCustomerDetails}
             onSaveOrder={handleSaveCustomerOrder}
+            onOrderPlaced={(orderNumber) => navigateToPath('/orders/' + orderNumber)}
             setCustomerName={setCustomerName}
             customerNote={customerNote}
             setCustomerNote={setCustomerNote}
