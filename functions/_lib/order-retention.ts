@@ -29,10 +29,10 @@ async function ensureOrderRetentionTables(env: Env): Promise<void> {
   await env.DB.prepare("INSERT INTO order_sequence (name,value) VALUES ('customer_orders',?) ON CONFLICT(name) DO UPDATE SET value=MAX(value,excluded.value)").bind(Number(maximum?.value || 0)).run();
 }
 
-/** Delete customer orders and related records seven days after creation. */
+/** Retain customer orders and related records for one year, then purge expired records. */
 export async function purgeExpiredCustomerOrders(env: Env): Promise<void> {
   await ensureOrderRetentionTables(env);
-  const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const cutoff = Date.now() - 365 * 24 * 60 * 60 * 1000;
   await env.DB.batch([
     env.DB.prepare("DELETE FROM push_subscriptions WHERE order_id IN (SELECT id FROM customer_orders WHERE created_at < ?)").bind(cutoff),
     env.DB.prepare("DELETE FROM order_stock_deductions WHERE order_id IN (SELECT id FROM customer_orders WHERE created_at < ?)").bind(cutoff),
