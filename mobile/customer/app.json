@@ -11,14 +11,6 @@
       "versionCode": 1,
       "permissions": ["INTERNET", "CAMERA"]
     },
-    "plugins": [
-      [
-        "react-native-webview",
-        {
-          "androidCameraPermission": "Allow Parbati Bhandar to use the camera when you choose to upload a product or image."
-        }
-      ]
-    ],
     "extra": {
       "storeOrigin": "https://parbati-bhandar.pages.dev",
       "appRole": "customer"
