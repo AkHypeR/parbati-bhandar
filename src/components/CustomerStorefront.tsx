@@ -681,7 +681,7 @@ export function CustomerStorefront({
           <div className="pb-promo-card relative mx-auto flex max-h-[88dvh] w-full max-w-[420px] flex-col overflow-hidden rounded-[30px] border border-white/70 bg-white shadow-[0_28px_90px_rgba(0,0,0,.38)]">
             <button type="button" onClick={closeWelcomePromo} aria-label="Close welcome promotion" className="absolute right-3 top-3 z-30 grid h-10 w-10 place-items-center rounded-full border border-white/50 bg-slate-950/65 text-white shadow-lg transition hover:rotate-90 hover:bg-slate-900"><X className="h-5 w-5"/></button>
             <div className="relative min-h-[270px] overflow-hidden bg-[#172554] sm:min-h-[300px]">
-              <img src="https://images.unsplash.com/photo-1775677073681-194049b1a7d3?auto=format&fit=crop&w=1200&q=85" alt="Colourful fresh vegetables displayed at a local market" className="absolute inset-0 h-full w-full object-cover" loading="eager"/>
+              <img src="https://india.neelamfoodland.in/cdn/shop/files/timeline-5.jpg?crop=center&height=900&v=1751950729&width=1200" alt="Indian grocery shop with shelves stocked with packaged foods, cooking oils, spices and everyday essentials" className="absolute inset-0 h-full w-full object-cover" loading="eager"/>
               <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#0b1530]/95 via-[#172554]/55 to-black/10"/>
               <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-amber-300 via-white to-blue-300"/>
               <div className="relative z-10 flex min-h-[270px] flex-col items-center justify-end px-5 pb-7 pt-12 text-center sm:min-h-[300px]">
