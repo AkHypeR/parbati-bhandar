@@ -44,8 +44,8 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
       }
       const params = new URLSearchParams({ history: '1', phone: normalizedPhone });
       const response = await fetch('/api/orders/track?' + params.toString(),{credentials:'same-origin',cache:'no-store'});
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Could not load order history');
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || `Could not load order history (HTTP ${response.status}).`);
       setOrders(Array.isArray(data.orders)?data.orders:[]);
       setError('');
     } catch (e) {
