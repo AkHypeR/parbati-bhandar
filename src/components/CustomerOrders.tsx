@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, PackageCheck, ShoppingBag, Clock3, CheckCircle2, ChefHat, Truck, ReceiptText, RefreshCw, ShieldCheck } from 'lucide-react';
 
 type OrderItem = { name: string; quantity: number; unit: string; price?: number; lineTotal?: number; unavailable?: boolean };
-type Order = { orderNumber: number; status: string; total: number; createdAt: number; updatedAt?: number; readyAt?: number | null; items: OrderItem[] };
+type Order = { orderNumber: number; status: string; total: number; createdAt: number; updatedAt?: number; readyAt?: number | null; estimatedReadyAt?: number | null; items: OrderItem[] };
 
 const statusLabel = (status: string) => {
   const labels: Record<string, string> = { new: 'Received', processing: 'Being prepared', ready: 'Ready for pickup', completed: 'Completed', cancelled: 'Cancelled', unavailable: 'Availability update' };
@@ -105,7 +105,7 @@ export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumbe
                           <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-extrabold text-emerald-800">{statusLabel(order.status)}</span>
                         </span>
                         <span className="mt-1 block truncate text-xs text-slate-500">{order.items.slice(0,3).map(item => item.name + ' × ' + item.quantity).join(' · ')}{order.items.length > 3 ? ' · + ' + (order.items.length - 3) + ' more' : ''}</span>
-                        <span className="mt-1 flex items-center gap-1 text-[11px] text-slate-400"><Clock3 className="h-3 w-3"/>{formatDate(order.createdAt)}</span>
+                        <span className="mt-1 flex items-center gap-1 text-[11px] text-slate-400"><Clock3 className="h-3 w-3"/>{formatDate(order.createdAt)}</span>{order.estimatedReadyAt && <span className="mt-1 block text-xs font-bold text-amber-700">Estimated ready: {formatTime(order.estimatedReadyAt)}</span>}
                       </span>
                     </span>
                     <span className="flex items-center justify-between gap-3 sm:justify-end">
@@ -120,9 +120,11 @@ export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumbe
             {!loading && !error && orderNumber && selected && (
               <div className="space-y-6">
                 <div className="flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-50 to-lime-50 p-5">
-                  <div><p className="text-xs font-black uppercase tracking-widest text-emerald-700">Order placed</p><p className="mt-1 text-xl font-black tracking-tight text-slate-900">{formatDate(selected.createdAt)}</p><p className="mt-2 text-xs text-slate-500">{selected.readyAt ? `Ready at ${formatTime(selected.readyAt)}` : selected.status === "ready" || selected.status === "completed" ? "Ready time is being updated" : "We’ll show the ready time here once your order is ready."}</p></div>
+                  <div><p className="text-xs font-black uppercase tracking-widest text-emerald-700">Order placed</p><p className="mt-1 text-xl font-black tracking-tight text-slate-900">{formatDate(selected.createdAt)}</p><p className="mt-2 text-xs text-slate-500">{selected.readyAt ? `Ready at ${formatTime(selected.readyAt)}` : selected.estimatedReadyAt ? `Estimated ready by ${formatTime(selected.estimatedReadyAt)} · This is an estimate and may change.` : selected.status === "ready" || selected.status === "completed" ? "Ready time is being updated" : "We’ll show the ready time here once your order is ready."}</p></div>
                   <div className="rounded-2xl bg-white px-4 py-3 text-right shadow-sm"><p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Order total</p><p className="mt-1 text-2xl font-black text-emerald-800">₹{selected.total}</p><span className="mt-1 inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-extrabold text-emerald-800">{statusLabel(selected.status)}</span></div>
                 </div>
+
+                {selected.estimatedReadyAt && !selected.readyAt && !["ready","completed","cancelled"].includes(selected.status) && <div className="rounded-xl border border-amber-200 bg-amber-50 p-4"><p className="text-sm font-extrabold text-amber-950">Your order is taking a little longer</p><p className="mt-1 text-sm text-amber-900">We expect it to be ready around {formatTime(selected.estimatedReadyAt)}. Thank you for your patience.</p></div>}
 
                 <section className="rounded-2xl border border-slate-200 p-5">
                   <div className="mb-5 flex items-center justify-between gap-2"><h2 className="font-black text-slate-900">Order journey</h2><span className="text-xs text-slate-400">Live status</span></div>
