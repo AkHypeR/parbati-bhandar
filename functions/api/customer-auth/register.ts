@@ -14,6 +14,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     await env.DB.prepare("INSERT INTO customer_accounts(id,name,phone,password_hash,password_salt,created_at,updated_at) VALUES(?,?,?,?,?,?,?)")
       .bind(id,name,phone,hash,salt,now,now).run();
   } catch { return json({error:"Could not create the account. Please try again."},503); }
+  // Attach any recent guest orders already placed with this phone number.
+  await env.DB.prepare("UPDATE customer_orders SET customer_id=? WHERE customer_phone=? AND customer_id IS NULL").bind(id,phone).run();
   const session = await createCustomerSession(id,env);
   return json({ok:true,customer:{id,name,phone}},201,{"set-cookie":session.cookie,"cache-control":"no-store"});
 };
