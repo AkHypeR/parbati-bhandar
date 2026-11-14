@@ -140,12 +140,12 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   })) : [];
   if (!name || phone.length < 10 || phone.length > 15 || !items.length || items.some((x: OrderItem) => !x.name)) return json({ error: "Please enter your name, valid phone number and at least one item." }, 400);
 
-  const cartReservationId = String(body?.cartReservationId || "").slice(0,80);
-  // Reserve inventory at checkout, not only when the owner later confirms.
-  // This prevents two pending orders from both claiming the final unit.
+  // Deduct inventory atomically when the order is placed. Cart contents never
+  // reserve stock, so customers can build carts freely; checkout is the single
+  // point where live stock is validated and decremented.
   const requestedByProduct = new Map<string, { quantity: number; name: string }>();
   const parsePriceMeasure = (value: unknown): { dimension: string; amount: number } | null => {
-    const match = String(value || "").trim().toLowerCase().match(/(\d+(?:\.\d+)?)\s*(kg|kgs|kilograms?|g|gm|grams?|l|litres?|liters?|ml|millilitres?|milliliters?)\b/i);
+    const match = String(value || "").trim().toLowerCase().match(/(\\d+(?:\\.\\d+)?)\\s*(kg|kgs|kilograms?|g|gm|grams?|l|litres?|liters?|ml|millilitres?|milliliters?)\\b/i);
     if (!match) return null;
     const amount = Number(match[1]);
     const unit = match[2].toLowerCase();
@@ -160,18 +160,13 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     const productRow = await env.DB.prepare("SELECT data FROM products WHERE id=?").bind(item.productId).first<any>();
     if (!productRow) return json({ error: item.name + " is no longer available. Please refresh your cart." }, 409);
     const product = JSON.parse(productRow.data);
-    if (product.inStock === false || (typeof product.stockQuantity === "number" && product.stockQuantity <= 0)) {
-      return json({ error: item.name + " is now out of stock. Please remove it from your cart." }, 409);
-    }
 
-    // Never trust prices or product names sent by the browser. Resolve the
-    // selected base unit, fixed variety, or allowed custom weight from D1.
+    // Resolve the selected sellable size/pack and price from the live catalogue.
     const selectedUnit = String(item.unit || "").trim().toLowerCase();
     const baseUnit = String(product.unit || "").trim().toLowerCase();
     let trustedPrice: number | null = null;
-    if (selectedUnit === baseUnit) {
-      trustedPrice = Number(product.price);
-    } else {
+    if (selectedUnit === baseUnit) trustedPrice = Number(product.price);
+    else {
       const variety = Array.isArray(product.varieties)
         ? product.varieties.find((entry: any) => String(entry.label || "").trim().toLowerCase() === selectedUnit)
         : undefined;
@@ -190,12 +185,15 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       }
     }
     if (trustedPrice === null || !Number.isFinite(trustedPrice) || trustedPrice < 0) {
-      return json({ error: "The selected size or price for " + product.name + " has changed. Refresh your cart and try again." }, 409);
+      return json({ error: "The selected size or price for " + item.name + " has changed. Refresh your cart and try again." }, 409);
     }
     item.name = String(product.name || item.name).slice(0, 120);
     item.price = trustedPrice;
 
     if (typeof product.stockQuantity === "number") {
+      if (product.inStock === false || product.stockQuantity <= 0) {
+        return json({ error: item.name + " is now out of stock. Please remove it from your cart." }, 409);
+      }
       const units = stockUnitsForOrder(item, product);
       if (units === null || !Number.isFinite(units) || units <= 0) {
         return json({ error: "Could not match the ordered unit for " + item.name + " with its stock unit. Please contact the store." }, 409);
@@ -205,36 +203,48 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       requestedByProduct.set(item.productId, current);
     }
   }
+
   const total = items.reduce((sum: number, x: OrderItem) => sum + x.price * x.quantity, 0);
   const sequence = await env.DB.prepare("INSERT INTO order_sequence (name,value) VALUES ('customer_orders',1) ON CONFLICT(name) DO UPDATE SET value=value+1 RETURNING value").first<any>();
   const orderNumber = Number(sequence?.value || 1);
   const id = crypto.randomUUID();
-  const reservationStatements = [
-    ...(cartReservationId ? [env.DB.prepare("DELETE FROM cart_stock_reservations WHERE reservation_id=?").bind(cartReservationId)] : []),
-    env.DB.prepare("INSERT INTO customer_orders (id,order_number,customer_id,customer_name,customer_phone,note,items_json,total,status,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?, 'new',?,?)")
+  const deductionStatements: any[] = [
+    env.DB.prepare("INSERT INTO customer_orders (id,order_number,customer_id,customer_name,customer_phone,note,items_json,total,status,created_at,updated_at,stock_deducted) VALUES (?,?,?,?,?,?,?,?, 'new',?,?,2)")
       .bind(id,orderNumber,customer.id,name,phone,note,JSON.stringify(items),total,now,now)
   ];
   for (const [productId, requested] of requestedByProduct) {
-    reservationStatements.push(env.DB.prepare(`INSERT INTO order_stock_reservations (order_id,product_id,quantity)
-      SELECT ?,?,? WHERE EXISTS (
-        SELECT 1 FROM products p
-        WHERE p.id=? AND COALESCE(json_extract(p.data,'$.inStock'),1)=1
-          AND json_type(p.data,'$.stockQuantity') IN ('integer','real')
-          AND ROUND(json_extract(p.data,'$.stockQuantity') -
-            COALESCE((SELECT SUM(r.quantity) FROM order_stock_reservations r WHERE r.product_id=p.id),0) -
-            COALESCE((SELECT SUM(h.quantity) FROM cart_stock_reservations h WHERE h.product_id=p.id AND h.expires_at>? AND h.reservation_id!=?),0),4) >= ROUND(?,4)
-      )`).bind(id,productId,requested.quantity,productId,now,cartReservationId,requested.quantity));
+    const qty = requested.quantity;
+    deductionStatements.push(
+      env.DB.prepare(`UPDATE products
+        SET data=json_set(
+          data,
+          '$.stockQuantity',MAX(0,ROUND(json_extract(data,'$.stockQuantity')-?,4)),
+          '$.inStock',CASE WHEN ROUND(json_extract(data,'$.stockQuantity')-?,4)<=0 THEN json('false') ELSE json('true') END,
+          '$.updatedAt',?
+        ),updated_at=?
+        WHERE id=? AND json_type(data,'$.stockQuantity') IN ('integer','real')
+          AND COALESCE(json_extract(data,'$.inStock'),1)=1
+          AND ROUND(json_extract(data,'$.stockQuantity'),4)>=ROUND(?,4)`)
+        .bind(qty,qty,now,now,productId,qty),
+      env.DB.prepare(`INSERT INTO order_stock_deductions(order_id,product_id,quantity)
+        SELECT ?,?,? WHERE changes()=1`).bind(id,productId,qty)
+    );
   }
   if (requestedByProduct.size) {
-    reservationStatements.push(env.DB.prepare(`INSERT INTO order_stock_reservation_guard (order_id,expected_count,actual_count)
-      SELECT ?,?,(SELECT COUNT(*) FROM order_stock_reservations WHERE order_id=?)`)
+    deductionStatements.push(env.DB.prepare(`INSERT INTO order_stock_deduction_guard(order_id,expected_count,actual_count)
+      SELECT ?,?,(SELECT COUNT(*) FROM order_stock_deductions WHERE order_id=?)`)
       .bind(id,requestedByProduct.size,id));
   }
+  deductionStatements.push(
+    env.DB.prepare("UPDATE customer_orders SET stock_deducted=1 WHERE id=? AND stock_deducted=2").bind(id)
+  );
   try {
-    await env.DB.batch(reservationStatements);
+    await env.DB.batch(deductionStatements);
+    const saved = await env.DB.prepare("SELECT stock_deducted FROM customer_orders WHERE id=?").bind(id).first<any>();
+    if (Number(saved?.stock_deducted) !== 1) throw new Error("Stock deduction transaction did not complete.");
   } catch (error) {
-    console.error("Atomic checkout stock reservation failed", error);
-    return json({ error: "This item has just been ordered by another customer or there is not enough stock. Please refresh your cart and try again." }, 409);
+    console.error("Atomic checkout stock deduction failed", error);
+    return json({ error: "Stock changed while you were checking out. Your order was not placed. Please refresh your cart and try again." }, 409);
   }
   const subscription = body?.pushSubscription;
   if (subscription && typeof subscription.endpoint === "string" && typeof subscription.keys?.p256dh === "string" && typeof subscription.keys?.auth === "string" && subscription.endpoint.startsWith("https://")) {
