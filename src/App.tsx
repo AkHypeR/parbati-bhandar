@@ -114,16 +114,6 @@ export default function App() {
   const [maintenanceNow, setMaintenanceNow] = useState(Date.now());
   const [maintenanceLogoTaps, setMaintenanceLogoTaps] = useState(0);
   const [cart, setCart] = useState<CartMap>(loadInitialCart);
-  const cartReservationId = useRef<string>((() => {
-    try {
-      const existing = localStorage.getItem('parbati_bhandar_cart_reservation_v1');
-      if (existing && /^[a-zA-Z0-9-]{16,80}$/.test(existing)) return existing;
-      const created = crypto.randomUUID();
-      localStorage.setItem('parbati_bhandar_cart_reservation_v1', created);
-      return created;
-    } catch { return crypto.randomUUID(); }
-  })());
-  const reservationQueueRef = useRef<Promise<any>>(Promise.resolve());
   const cartSyncReadyFor = useRef<string | null>(null);
   const cartSyncUpdatedAt = useRef(0);
   const cartSyncWriteTimer = useRef<number | null>(null);
@@ -677,7 +667,7 @@ export default function App() {
   const handleSaveCustomerOrder = async (turnstileToken: string): Promise<number | null> => {
     if (!checkIsStoreOpenIST(storeSettings)) { showToast('The store is closed. Orders cannot be placed right now.', 'error'); return null; }
     try {
-      const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerName, customerPhone, turnstileToken, cartReservationId: cartReservationId.current, note: customerNote, items: cartItemsList.map(item => ({ productId: item.product.id, name: item.product.name, quantity: item.qty, unit: item.selectedUnit, price: item.unitPrice })) }) });
+      const response = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customerName, customerPhone, turnstileToken, note: customerNote, items: cartItemsList.map(item => ({ productId: item.product.id, name: item.product.name, quantity: item.qty, unit: item.selectedUnit, price: item.unitPrice })) }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || 'Could not save order');
       const orderNumber = Number(result.orderNumber);
