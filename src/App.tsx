@@ -168,8 +168,12 @@ export default function App() {
   const [customerAccount, setCustomerAccount] = useState<{id:string;name:string;phone:string} | null>(null);
   const [accountReturnPath, setAccountReturnPath] = useState('/account');
   useEffect(() => {
-    fetch('/api/customer-auth/me', { credentials: 'same-origin', cache: 'no-store' })
-      .then(r => r.json()).then(data => {
+    fetch('/api/customer-auth/me', { credentials: 'same-origin', cache: 'no-store', headers: { Accept: 'application/json' } })
+      .then(async r => {
+        const contentType = r.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) return { authenticated: false };
+        return r.json().catch(() => ({ authenticated: false }));
+      }).then(data => {
         if (data?.authenticated && data.customer) {
           setCustomerAccount(data.customer);
           setCustomerName(data.customer.name);
