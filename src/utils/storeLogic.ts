@@ -457,17 +457,17 @@ export const INITIAL_SAMPLE_PRODUCTS: Product[] = [
 export const DEFAULT_STORE_SETTINGS: StoreSettings = {
   storeName: 'Parbati Bhandar (পার্বতী ভান্ডার)',
   tagline:
-    'Your Trusted Local Kirana & Grocery Store in Swasti Pally, Gangpur • ন্যায্য মূল্যে সেরা মানের মুদিখানার বিশ্বস্ত প্রতিষ্ঠান',
+    'Your Trusted Local Kirana & Grocery Store in Swasti Pally, Gangpur • Browse products and place orders on our website • ন্যায্য মূল্যে সেরা মানের মুদিখানার বিশ্বস্ত প্রতিষ্ঠান',
   phone: '+91 97347 65207',
   whatsappNumber: '919734765207',
   address: 'Swasti Pally, Gangpur, Purba Bardhaman, West Bengal 713103',
   mapsUrl: 'https://maps.app.goo.gl/pK5Tk8ms2S8NsPSS7',
-  timings: 'Mon–Sun: 7:00 AM – 10:00 PM',
+  timings: 'Mon–Sun: 7:00 AM – 10:30 PM',
   rating: '5.0 ★',
   autoSchedule: false,
   isOpen: true,
   announcement:
-    "🙏 স্বাগতম পার্বতী ভান্ডারে! Check today's live grocery stock & prices below and send your order list directly on WhatsApp (097347 65207).",
+    "🙏 স্বাগতম পার্বতী ভান্ডারে! Browse available groceries, check live prices and place your order directly on this website. Visit our shop in Swasti Pally, Gangpur. Home delivery is not currently available.",
   greetingTop: 'Nomoshkar',
   greetingMain: 'Grahok',
   greetingBengali: 'নমস্কার গ্রাহক • স্বস্তি পল্লী, বর্ধমান',
@@ -485,7 +485,7 @@ export const DEFAULT_STORE_SETTINGS: StoreSettings = {
 };
 
 /**
- * Checks whether the store is currently open based on IST (7:00 AM - 10:00 PM) or manual toggle.
+ * Checks whether the store is currently open based on IST (7:00 AM - 10:30 PM) or manual toggle.
  */
 export function checkIsStoreOpenIST(settings: StoreSettings, now: Date = new Date()): boolean {
   if (!settings.autoSchedule) {
@@ -495,7 +495,8 @@ export function checkIsStoreOpenIST(settings: StoreSettings, now: Date = new Dat
     const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
     const istDate = new Date(utcMs + 5.5 * 3600000);
     const hours = istDate.getHours();
-    return hours >= 7 && hours < 22;
+    const minutes = istDate.getMinutes();
+    return hours >= 7 && (hours < 22 || (hours === 22 && minutes < 30));
   } catch {
     return settings.isOpen;
   }
