@@ -407,13 +407,19 @@ export function CustomerStorefront({
   const greetingTop = storeSettings.greetingTop || 'Nomoshkar';
   const greetingMain = storeSettings.greetingMain || 'Grahok';
   const deliveryEtaMins = storeSettings.deliveryEtaMins || '10';
-  const isChristmasSeason = /christmas|xmas/i.test(`${storeSettings.occasionTitle || ''} ${storeSettings.occasionTag || ''}`) || [10, 11].includes(new Date().getMonth());
+  const seasonalThemeText = `${storeSettings.occasionTitle || ''} ${storeSettings.occasionTag || ''} ${currentSlide?.title || ''} ${currentSlide?.tag || ''}`;
+  const isChhathSeason = /chhath|ছট/i.test(seasonalThemeText);
+  const isChristmasSeason = /christmas|xmas/i.test(seasonalThemeText);
 
   return (
     <div className="flex-1 flex flex-col bg-[#f4f7fc] text-slate-900 pb-32 sm:pb-28">
       {isChristmasSeason && <div className="pb-christmas-sky fixed inset-0 z-[70] overflow-hidden pointer-events-none" aria-hidden="true">
         {Array.from({length:18},(_,i)=><span key={i} className="pb-snowflake" style={{left:`${(i*37)%100}%`,animationDelay:`${(i%7)*-1.8}s`,animationDuration:`${8+(i%5)*2}s`,fontSize:`${10+(i%4)*5}px`}}>❄</span>)}
         <span className="pb-christmas-twinkle absolute right-[8%] top-28 text-xl">✦</span><span className="pb-christmas-twinkle absolute left-[6%] top-[42%] text-sm">✧</span>
+      </div>}
+      {isChhathSeason && <div className="pb-chhath-sky fixed inset-0 z-[70] overflow-hidden pointer-events-none" aria-hidden="true">
+        {Array.from({length:9},(_,i)=><span key={i} className="pb-chhath-diya" style={{left:`${(i*29+7)%96}%`,animationDelay:`${(i%5)*-1.7}s`,animationDuration:`${7+(i%4)*1.5}s`}}>🪔</span>)}
+        <span className="pb-chhath-petal absolute left-[12%] top-[28%]">🌼</span><span className="pb-chhath-petal absolute right-[10%] top-[58%]">✨</span>
       </div>}
 
       {/* ===================================================================== */}
@@ -880,26 +886,23 @@ export function CustomerStorefront({
                       else catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  className="pb-christmas-banner relative w-full max-w-3xl mx-auto min-h-[390px] rounded-[28px] overflow-hidden shadow-[0_22px_55px_rgba(8,35,25,.28)] border border-amber-200/50 cursor-pointer group select-none"
+                  className={`pb-christmas-banner ${isChhathSeason ? "pb-chhath-banner" : ""} relative w-full max-w-3xl mx-auto min-h-[390px] rounded-[28px] overflow-hidden shadow-[0_22px_55px_rgba(8,35,25,.28)] border border-amber-200/50 cursor-pointer group select-none`}
                 >
-                  <img src="https://images.unsplash.com/photo-1767005608325-0ff075fca106?auto=format&fit=crop&w=1600&q=85" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"/>
-                  <div className="absolute inset-0 bg-gradient-to-b from-[#101a33]/35 via-[#172554]/65 to-[#0b1530]/95"/>
+                  <img src="https://images.unsplash.com/photo-1767005608325-0ff075fca106?auto=format&fit=crop&w=1600&q=85" alt="" aria-hidden="true" className={`absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03] ${isChhathSeason ? "hidden" : ""}`}/>
+                  <div className={`absolute inset-0 ${isChhathSeason ? "bg-gradient-to-b from-orange-500/25 via-orange-950/55 to-sky-950/95" : "bg-gradient-to-b from-[#101a33]/35 via-[#172554]/65 to-[#0b1530]/95"}`}/>
                   <div className="pb-christmas-glow absolute -right-12 -top-12 h-56 w-56 rounded-full bg-amber-300/25 blur-3xl"/>
                   <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-red-500 via-amber-300 to-blue-300"/>
                   <div className="pb-christmas-garland absolute left-0 right-0 top-3 flex justify-around px-2 text-lg sm:text-xl" aria-hidden="true"><span>🔴</span><span>🟡</span><span>🟢</span><span>🔴</span><span>🟡</span><span>🟢</span><span>🔴</span><span>🟡</span></div>
                   <div className="relative z-10 flex min-h-[390px] flex-col items-center justify-center px-5 pb-7 pt-12 text-center">
-                    <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[9px] font-black uppercase tracking-[.22em] text-blue-100 backdrop-blur-sm">🎄 {currentSlide.tag}</span>
+                    <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[9px] font-black uppercase tracking-[.22em] text-blue-100 backdrop-blur-sm">{isChhathSeason ? "🪔" : "🎄"} {currentSlide.tag}</span>
                     <div className="relative mt-3 flex h-28 w-full items-center justify-center gap-2 sm:h-32" aria-hidden="true">
-                      <span className="pb-christmas-sway text-6xl drop-shadow-lg sm:text-7xl">🎄</span>
-                      <span className="pb-christmas-gift text-4xl sm:text-5xl">🎁</span>
-                      <span className="pb-christmas-sway text-5xl sm:text-6xl" style={{animationDelay:'-.8s'}}>🧸</span>
-                      <span className="absolute left-[18%] top-1 text-xl">❄️</span><span className="absolute right-[17%] bottom-0 text-xl">✨</span>
+                      {isChhathSeason ? <><span className="pb-chhath-float text-5xl sm:text-6xl">🪔</span><span className="pb-chhath-float text-6xl sm:text-7xl" style={{animationDelay:"-.7s"}}>🧺</span><span className="pb-chhath-float text-5xl sm:text-6xl" style={{animationDelay:"-1.3s"}}>🌾</span><span className="absolute left-[15%] top-1 text-xl">🌼</span><span className="absolute right-[15%] bottom-0 text-xl">✨</span></> : <><span className="pb-christmas-sway text-6xl drop-shadow-lg sm:text-7xl">🎄</span><span className="pb-christmas-gift text-4xl sm:text-5xl">🎁</span><span className="pb-christmas-sway text-5xl sm:text-6xl" style={{animationDelay:"-.8s"}}>🧸</span><span className="absolute left-[18%] top-1 text-xl">❄️</span><span className="absolute right-[17%] bottom-0 text-xl">✨</span></>}
                     </div>
                     <p className="mt-1 text-[9px] font-black uppercase tracking-[.25em] text-amber-200">Parbati Bhandar wishes you</p>
                     <h3 className="mt-2 text-4xl font-black leading-tight tracking-tight text-white drop-shadow-[0_4px_14px_rgba(0,0,0,.65)] sm:text-5xl">{currentSlide.title}</h3>
                     <p className="mt-2 max-w-[290px] text-xs font-semibold leading-relaxed text-blue-50/90 sm:text-sm">{currentSlide.subtitle}</p>
                     <button type="button" onClick={() => { const section=document.getElementById('christmas-special-products'); if(section) section.scrollIntoView({behavior:'smooth',block:'start'}); else catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#facc15] px-5 py-2.5 text-xs font-black text-blue-950 shadow-lg transition hover:-translate-y-0.5">Shop {storeSettings.seasonalCollectionTitle || 'Christmas Specials'} <ChevronRight className="h-4 w-4"/></button>
-                    <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-3 text-sm opacity-90" aria-hidden="true"><span>❄️</span><span>⭐</span><span>🎄</span><span>⭐</span><span>❄️</span></div>
+                    <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-3 text-sm opacity-90" aria-hidden="true">{isChhathSeason ? <><span>🌼</span><span>🪔</span><span>🌾</span><span>🪔</span><span>🌼</span></> : <><span>❄️</span><span>⭐</span><span>🎄</span><span>⭐</span><span>❄️</span></>}</div>
                   </div>
                                 </div>
               ) : (

@@ -236,3 +236,16 @@
   .pb-cart-qty span { min-width: 48px; font-size: 12px; }
   .pb-cart-summary { padding: 12px 14px max(12px, env(safe-area-inset-bottom)) !important; }
 }
+
+/* Chhath Puja: warm sunrise palette and gentle floating diyas */
+.pb-chhath-banner { background:linear-gradient(160deg,#7c2d12 0%,#ea580c 38%,#0e7490 100%); border-color:rgba(253,230,138,.7) !important; }
+.pb-chhath-banner > img { filter:saturate(1.12) sepia(.12); }
+.pb-chhath-banner > div:nth-of-type(1) { background:linear-gradient(180deg,rgba(124,45,18,.18) 0%,rgba(120,53,15,.58) 48%,rgba(8,47,73,.94) 100%) !important; }
+.pb-chhath-sky { isolation:isolate; }
+.pb-chhath-diya { position:absolute; top:-36px; font-size:clamp(16px,2.3vw,25px); filter:drop-shadow(0 2px 8px rgba(245,158,11,.4)); animation:pbChhathDrift linear infinite; }
+.pb-chhath-petal { animation:pbChhathTwinkle 3.2s ease-in-out infinite; filter:drop-shadow(0 2px 5px rgba(245,158,11,.4)); }
+.pb-chhath-float { display:inline-block; transform-origin:50% 85%; animation:pbChhathFloat 3.1s ease-in-out infinite; filter:drop-shadow(0 4px 8px rgba(0,0,0,.28)); }
+@keyframes pbChhathDrift { 0% { transform:translate3d(0,-4vh,0) rotate(-8deg); opacity:0; } 12% { opacity:.78; } 85% { opacity:.68; } 100% { transform:translate3d(18px,108vh,0) rotate(12deg); opacity:0; } }
+@keyframes pbChhathFloat { 0%,100% { transform:translateY(0) rotate(-3deg); } 50% { transform:translateY(-8px) rotate(3deg); } }
+@keyframes pbChhathTwinkle { 0%,100% { opacity:.55; transform:scale(.9); } 50% { opacity:1; transform:scale(1.15); } }
+@media (prefers-reduced-motion: reduce) { .pb-chhath-diya,.pb-chhath-petal,.pb-chhath-float { animation:none !important; } }
