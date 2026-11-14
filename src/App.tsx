@@ -198,21 +198,6 @@ export default function App() {
   });
   const [lastOrderCreatedAt, setLastOrderCreatedAt] = useState<number>(() => { try { return Number(localStorage.getItem('parbati_bhandar_last_order_created_at_v1')) || 0; } catch { return 0; } });
   const [customerNote, setCustomerNote] = useState('');
-  const [rememberCustomerDetails, setRememberCustomerDetails] = useState(false);
-
-  // Restore only details the customer previously chose to remember on this device.
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('parbati_bhandar_customer_details_v1');
-      if (!saved) return;
-      const details = JSON.parse(saved);
-      if (typeof details?.name === 'string' && typeof details?.phone === 'string') {
-        setCustomerName(details.name.slice(0, 100));
-        setCustomerPhone(details.phone.slice(0, 20));
-        setRememberCustomerDetails(true);
-      }
-    } catch { /* Ignore unavailable or invalid local storage. */ }
-  }, []);
   const [copiedNotice, setCopiedNotice] = useState(false);
 
   // Admin View States
