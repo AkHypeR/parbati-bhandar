@@ -45,6 +45,8 @@ import {
   Database,
   Download,
   FileUp,
+  Send,
+  Megaphone,
 } from 'lucide-react';
 import {
   CATEGORIES,
@@ -69,8 +71,8 @@ interface AdminUploadAppProps {
   onToggleMaintenance: () => void;
   onSetMaintenanceTimer: (durationMinutes: number) => void;
   maintenanceUntil: number | null;
-  adminTab: 'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders' | 'christmasSpecials';
-  setAdminTab: (tab: 'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders' | 'christmasSpecials') => void;
+  adminTab: 'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders' | 'christmasSpecials' | 'notifications';
+  setAdminTab: (tab: 'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders' | 'christmasSpecials' | 'notifications') => void;
   adminSearch: string;
   setAdminSearch: (q: string) => void;
   adminCategoryFilter: string;
@@ -194,6 +196,25 @@ export function AdminUploadApp({
   const [replyCustomerPhone, setReplyCustomerPhone] = useState('');
   const [missingProducts, setMissingProducts] = useState('');
   const [replyNote, setReplyNote] = useState('');
+  const [broadcastTitle,setBroadcastTitle] = useState('');
+  const [broadcastBody,setBroadcastBody] = useState('');
+  const [broadcastSending,setBroadcastSending] = useState(false);
+  const [broadcastResult,setBroadcastResult] = useState('');
+  const sendCustomerBroadcast = async () => {
+    if (broadcastSending) return;
+    if (broadcastTitle.trim().length < 2 || broadcastBody.trim().length < 3) { showToast('Add a notification title and message first.', 'error'); return; }
+    setBroadcastSending(true); setBroadcastResult('');
+    try {
+      const response = await fetch('/api/owner-notifications', { method:'POST', credentials:'same-origin', headers:{ 'Content-Type':'application/json' }, body:JSON.stringify({ title:broadcastTitle.trim(), body:broadcastBody.trim() }) });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'Could not send the notification.');
+      const result = `Saved to ${Number(data.recipientCount || 0)} customer accounts. ${Number(data.pushSent || 0)} device push alerts accepted.`;
+      setBroadcastResult(result + (data.pushConfigured ? (Number(data.pushFailed || 0) ? ` ${Number(data.pushFailed)} push alerts failed.` : '') : ' Push is not configured; customers can still read this in their account inbox.'));
+      setBroadcastTitle(''); setBroadcastBody('');
+      showToast('Customer notification sent.', 'success');
+    } catch (error) { showToast((error as Error).message || 'Could not send the notification.', 'error'); }
+    finally { setBroadcastSending(false); }
+  };
   type CustomerOrder = { id: string; orderNumber: number; customerName: string; customerPhone: string; note?: string; items: { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean }[]; total: number; status: 'new' | 'processing' | 'review' | 'ready' | 'unavailable' | 'completed' | 'cancelled'; createdAt: number; estimatedReadyAt?: number | null };
   const [customerOrders, setCustomerOrders] = useState<CustomerOrder[]>([]);
   const knownOrderIdsRef = useRef<Set<string>>(new Set());
@@ -669,13 +690,13 @@ export function AdminUploadApp({
               </div>
               <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500">
                 <span>Owner portal</span><span aria-hidden="true">/</span>
-                <span className="text-blue-700" aria-current="page">{({ dashboard: 'Dashboard', orders: 'Orders', inventory: 'Inventory', add: editingProduct ? 'Edit product' : 'Add product', settings: 'Store settings', quickReplies: 'WhatsApp replies', christmasSpecials: 'Seasonal collection' } as const)[adminTab]}</span>
+                <span className="text-blue-700" aria-current="page">{({ dashboard: 'Dashboard', orders: 'Orders', inventory: 'Inventory', add: editingProduct ? 'Edit product' : 'Add product', settings: 'Store settings', quickReplies: 'WhatsApp replies', christmasSpecials: 'Seasonal collection', notifications: 'Notifications' } as const)[adminTab]}</span>
               </div>
               <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-950 leading-tight sm:text-3xl">
-                {({ dashboard: 'Dashboard', orders: 'Order management', inventory: 'Inventory management', add: editingProduct ? 'Edit product' : 'Add a product', settings: 'Store settings', quickReplies: 'Customer communication', christmasSpecials: 'Seasonal collection' } as const)[adminTab]}
+                {({ dashboard: 'Dashboard', orders: 'Order management', inventory: 'Inventory management', add: editingProduct ? 'Edit product' : 'Add a product', settings: 'Store settings', quickReplies: 'Customer communication', christmasSpecials: 'Seasonal collection', notifications: 'Customer notifications' } as const)[adminTab]}
               </h1>
               <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-500">
-                {({ dashboard: 'Monitor store performance and daily operations.', orders: 'Review incoming orders, update preparation status and keep customers informed.', inventory: 'Manage product availability, pricing and stock levels.', add: 'Create or update products in your store catalogue.', settings: 'Manage store information, customer-facing content and operational preferences.', quickReplies: 'Manage reusable responses for customer enquiries.', christmasSpecials: 'Choose a festival theme, edit its icon and select featured products for the homepage.' } as const)[adminTab]}
+                {({ dashboard: 'Monitor store performance and daily operations.', orders: 'Review incoming orders, update preparation status and keep customers informed.', inventory: 'Manage product availability, pricing and stock levels.', add: 'Create or update products in your store catalogue.', settings: 'Manage store information, customer-facing content and operational preferences.', quickReplies: 'Manage reusable responses for customer enquiries.', christmasSpecials: 'Choose a festival theme, edit its icon and select featured products for the homepage.', notifications: 'Send store announcements to customer accounts and opted-in devices.' } as const)[adminTab]}
               </p>
             </div>
 
@@ -704,13 +725,14 @@ export function AdminUploadApp({
           </div>
 
           {/* Owner workspace navigation */}
-          <nav aria-label="Owner workspace sections" className="mt-5 grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7">
+          <nav aria-label="Owner workspace sections" className="mt-5 grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-8">
             <button type="button" onClick={() => setAdminTab('dashboard')} aria-current={adminTab === 'dashboard' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'dashboard' ? 'bg-blue-800 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-blue-50 hover:text-blue-900'}`}><Layers className="h-4 w-4" /> Overview</button>
             <button type="button" onClick={() => setAdminTab('orders')} aria-current={adminTab === 'orders' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'orders' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-blue-50'}`}><BellRing className="h-4 w-4" /> Orders {newOrdersCount > 0 && <span className="rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] text-white">{newOrdersCount}</span>}</button>
             <button type="button" onClick={() => setAdminTab('inventory')} aria-current={adminTab === 'inventory' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'inventory' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-blue-50'}`}><Package className="h-4 w-4" /> Inventory</button>
             <button type="button" onClick={() => { setEditingProduct(null); setAdminTab('add'); }} aria-current={adminTab === 'add' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'add' ? 'bg-blue-700 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-blue-50 hover:text-blue-900'}`}><Plus className="h-4 w-4" /> Add product</button>
             <button type="button" onClick={() => setAdminTab('settings')} aria-current={adminTab === 'settings' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'settings' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-blue-50'}`}><Settings className="h-4 w-4" /> Store settings</button>
             <button type="button" onClick={() => setAdminTab('christmasSpecials')} aria-current={adminTab === 'christmasSpecials' ? 'page' : undefined} className={adminTab === 'christmasSpecials' ? 'flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold bg-red-700 text-white shadow-sm' : 'flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold bg-white text-slate-700 hover:bg-red-50'}>🎊 Seasonal collection</button>
+             <button type="button" onClick={() => setAdminTab('notifications')} aria-current={adminTab === 'notifications' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'notifications' ? 'bg-blue-800 text-white shadow-sm' : 'bg-blue-50 text-blue-800 hover:bg-blue-100'}`}><Megaphone className="h-4 w-4" /> Notifications</button>
             <button type="button" onClick={() => setAdminTab('quickReplies')} aria-current={adminTab === 'quickReplies' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'quickReplies' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-blue-50'}`}><MessageCircle className="h-4 w-4" /> WhatsApp replies</button>
           </nav>
         </div>
@@ -841,6 +863,28 @@ export function AdminUploadApp({
             <p className="text-center text-[11px] text-slate-500">Completed/cancelled orders are automatically deleted 7 days after their last status update. You can also delete any order manually.</p>
             </>
             )}
+          </section>
+        )}
+        {adminTab === 'notifications' && (
+          <section className="mx-auto max-w-2xl overflow-hidden rounded-3xl border border-blue-100 bg-white shadow-sm">
+            <div className="bg-gradient-to-r from-blue-800 to-indigo-700 p-5 text-white sm:p-7">
+              <div className="flex items-center gap-3"><span className="grid h-12 w-12 place-items-center rounded-2xl bg-white/15"><Megaphone className="h-6 w-6"/></span><div><p className="text-xs font-bold uppercase tracking-wider text-blue-100">Customer communication</p><h2 className="text-xl font-black">Send a store notification</h2></div></div>
+              <p className="mt-3 text-sm leading-6 text-blue-100">Share an important update, offer or store announcement with your customers.</p>
+            </div>
+            <div className="space-y-4 p-5 sm:p-7">
+              <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4 text-xs leading-5 text-blue-900"><strong className="block text-sm">Who receives this?</strong>Every registered customer gets the message in their Account → Store notifications inbox. Customers who enabled browser notifications also receive a device push alert. Customers who have not enabled push can still read it in their account.</div>
+              <label className="block text-xs font-extrabold text-slate-700">Notification title
+                <input value={broadcastTitle} onChange={e => setBroadcastTitle(e.target.value.slice(0,80))} maxLength={80} placeholder="Example: Special weekend offer!" className="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-3 text-sm font-semibold text-slate-900 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"/>
+                <span className="mt-1 block text-right text-[10px] font-medium text-slate-400">{broadcastTitle.length}/80</span>
+              </label>
+              <label className="block text-xs font-extrabold text-slate-700">Message
+                <textarea value={broadcastBody} onChange={e => setBroadcastBody(e.target.value.slice(0,400))} maxLength={400} rows={5} placeholder="Write a short message for your customers…" className="mt-1.5 w-full resize-y rounded-xl border border-slate-300 px-3 py-3 text-sm leading-6 text-slate-900 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"/>
+                <span className="mt-1 block text-right text-[10px] font-medium text-slate-400">{broadcastBody.length}/400</span>
+              </label>
+              <button type="button" onClick={() => void sendCustomerBroadcast()} disabled={broadcastSending || broadcastTitle.trim().length < 2 || broadcastBody.trim().length < 3} className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-800 px-4 py-3.5 text-sm font-extrabold text-white shadow-sm transition hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-50">{broadcastSending ? <><RefreshCw className="h-4 w-4 animate-spin"/> Sending…</> : <><Send className="h-4 w-4"/> Send to all customers</>}</button>
+              {broadcastResult && <p role="status" className="rounded-xl border border-emerald-100 bg-emerald-50 p-3 text-xs font-semibold leading-5 text-emerald-800">{broadcastResult}</p>}
+              <p className="text-[11px] leading-5 text-slate-500">Messages are saved in customer accounts. Browser push delivery depends on each customer having signed in, enabled notifications and allowed notifications in their browser/device settings.</p>
+            </div>
           </section>
         )}
         {adminTab === 'quickReplies' && (
