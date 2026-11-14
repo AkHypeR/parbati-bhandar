@@ -467,10 +467,10 @@ export const DEFAULT_STORE_SETTINGS: StoreSettings = {
   greetingMain: 'Grahok',
   greetingBengali: 'নমস্কার গ্রাহক • স্বস্তি পল্লী, বর্ধমান',
   deliveryEtaMins: '10',
-  showOccasionBanner: false,
-  occasionTitle: '',
-  occasionSubtitle: '',
-  occasionTag: '',
+  showOccasionBanner: true,
+  occasionTitle: 'Merry Christmas',
+  occasionSubtitle: 'শুভ বড়দিন • Wishing you joy, warmth and happiness',
+  occasionTag: 'Christmas Celebration',
   occasionImageUrl: '',
   storeWebsiteUrl: '',
   scannerImageUrl: '',
@@ -851,13 +851,15 @@ export function buildHeroSlides(
   const slides: HeroSlide[] = [];
   const occasionImage = settings.occasionImageUrl || '';
   const isOldChhathArtwork = occasionImage.includes('photo_2026-11-12_10-31-46_ee14c399.jpg');
-  if (settings.showOccasionBanner === true) {
+  const hasCustomOccasion = Boolean(settings.occasionTitle?.trim() || settings.occasionImageUrl?.trim());
+  const shouldShowOccasion = settings.showOccasionBanner === true || (!hasCustomOccasion && settings.showOccasionBanner !== false);
+  if (shouldShowOccasion) {
     slides.push({
       type: 'festive',
       id: 'festive-banner',
-      title: settings.occasionTitle?.trim() || 'Seasonal Greetings',
-      subtitle: settings.occasionSubtitle?.trim() || 'Warm wishes from Parbati Bhandar',
-      tag: settings.occasionTag?.trim() || 'Festival Special',
+      title: settings.occasionTitle?.trim() || 'Merry Christmas',
+      subtitle: settings.occasionSubtitle?.trim() || 'শুভ বড়দিন • Wishing you joy, warmth and happiness',
+      tag: settings.occasionTag?.trim() || 'Christmas Celebration',
       imageUrl: isOldChhathArtwork ? '' : occasionImage,
     });
   }
