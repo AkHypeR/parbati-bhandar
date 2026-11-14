@@ -127,7 +127,7 @@ export default function App() {
 
   // Mode Switcher: 'customer' | 'admin'
   const getAppPath = () => window.location.pathname.replace(/\/+$/, '') || '/';
-  const adminRouteTabs = { '/owner': 'dashboard', '/owner/dashboard': 'dashboard', '/owner/inventory': 'inventory', '/owner/add-product': 'add', '/owner/orders': 'orders', '/owner/settings': 'settings', '/owner/whatsapp-replies': 'quickReplies', '/owner/christmas-specials': 'christmasSpecials', '/owner/reviews': 'reviews' } as const;
+  const adminRouteTabs = { '/owner': 'dashboard', '/owner/dashboard': 'dashboard', '/owner/inventory': 'inventory', '/owner/add-product': 'add', '/owner/orders': 'orders', '/owner/settings': 'settings', '/owner/whatsapp-replies': 'quickReplies', '/owner/christmas-specials': 'christmasSpecials' } as const;
   const getAdminTabFromPath = () => adminRouteTabs[getAppPath() as keyof typeof adminRouteTabs] || 'inventory';
   const [currentPath, setCurrentPath] = useState(() => getAppPath());
   const navigateToPath = (path: string) => {
