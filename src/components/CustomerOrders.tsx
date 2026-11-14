@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, PackageCheck, ShoppingBag, Clock3, CheckCircle2, ChefHat, Truck, ReceiptText, RefreshCw, ShieldCheck } from 'lucide-react';
 
 type OrderItem = { name: string; quantity: number; unit: string; price?: number; lineTotal?: number; unavailable?: boolean };
@@ -25,7 +25,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, onNavigate,
   const [refreshing, setRefreshing] = useState(false);
   const requestInFlight = useRef(false);
 
-  const load = async (initial = false) => {
+  const load = useCallback(async (initial = false) => {
     if (requestInFlight.current) return;
     requestInFlight.current = true;
     if (initial) setLoading(true);
@@ -48,11 +48,24 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, onNavigate,
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [orderNumber, phone]);
 
   useEffect(() => {
     void load(true);
-  }, [orderNumber, phone]);
+  }, [load]);
+
+  useEffect(() => {
+    if (orderNumber && selected && ['completed', 'cancelled'].includes(selected.status)) return;
+    const refreshIfVisible = () => {
+      if (document.visibilityState === 'visible') void load();
+    };
+    const timer = window.setInterval(refreshIfVisible, 15000);
+    document.addEventListener('visibilitychange', refreshIfVisible);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', refreshIfVisible);
+    };
+  }, [load, orderNumber, selected?.status]);
 
   const currentIndex = selected ? steps.findIndex(step => step.key === selected.status) : -1;
   const exceptional = selected?.status === 'cancelled' || selected?.status === 'unavailable';
@@ -75,8 +88,8 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, onNavigate,
               <span className="hidden h-14 w-14 shrink-0 place-items-center rounded-2xl border border-white/20 bg-white/10 text-amber-200 sm:grid"><PackageCheck className="h-7 w-7"/></span>
             </div>
             <div className="relative mt-6 flex flex-wrap gap-2 text-xs font-bold text-emerald-50">
-              <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><CheckCircle2 className="mr-1.5 inline h-3.5 w-3.5"/> Loads once when opened</span>
-              <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><ShieldCheck className="mr-1.5 inline h-3.5 w-3.5"/> Verified with your checkout phone</span>
+              <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><CheckCircle2 className="mr-1.5 inline h-3.5 w-3.5"/> Auto-refreshes every 15 seconds</span>
+              <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><ShieldCheck className="mr-1.5 inline h-3.5 w-3.5"/> Private to your signed-in account</span>
             </div>
           </header>
 
