@@ -471,7 +471,7 @@ export function CustomerStorefront({
                 </div>
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-bold text-[11px]">
                   <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
-                  <span>5.0 Rated • {inStockCount} Items Live</span>
+                  <span>Local grocery • {inStockCount} Items Live</span>
                 </span>
               </div>
               <p className="text-slate-600">{storeSettings.tagline}</p>
@@ -1347,10 +1347,7 @@ export function CustomerStorefront({
                         </h3>
                         <div className="mt-1 flex items-center justify-between gap-2">
                           <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-600">
-                            <Star className="h-3 w-3 fill-amber-400 text-amber-500" />
-                            {productRatings[product.id]?.count ? productRatings[product.id].average.toFixed(1) + ' · ' + productRatings[product.id].count + ' reviews' : 'No reviews yet'}
                           </span>
-                          <button type="button" onClick={() => { setReviewProduct(product); setReviewStars(5); setReviewText(''); setReviewMessage(''); }} className="text-[10px] font-bold text-emerald-800 underline underline-offset-2">Rate product</button>
                         </div>
                       </div>
 
