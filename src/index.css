@@ -240,7 +240,7 @@
 /* Chhath Puja: warm sunrise palette and gentle floating diyas */
 .pb-chhath-banner { background:linear-gradient(160deg,#7c2d12 0%,#ea580c 38%,#0e7490 100%); border-color:rgba(253,230,138,.7) !important; }
 .pb-chhath-banner > img { filter:saturate(1.12) sepia(.12); }
-.pb-chhath-banner > div:nth-of-type(1) { background:linear-gradient(180deg,rgba(124,45,18,.18) 0%,rgba(120,53,15,.58) 48%,rgba(8,47,73,.94) 100%) !important; }
+/* Removed the nth-child overlay rule that obscured the sunrise artwork. */
 .pb-chhath-sky { isolation:isolate; }
 .pb-chhath-diya { position:absolute; top:-36px; font-size:clamp(16px,2.3vw,25px); filter:drop-shadow(0 2px 8px rgba(245,158,11,.4)); animation:pbChhathDrift linear infinite; }
 .pb-chhath-petal { animation:pbChhathTwinkle 3.2s ease-in-out infinite; filter:drop-shadow(0 2px 5px rgba(245,158,11,.4)); }
@@ -313,3 +313,13 @@ html.pb-dark .text-blue-950 { color:#dbeafe !important; }
 @keyframes pbChhathWater { from { transform:translateX(-1.5%); } to { transform:translateX(1.5%); } }
 @keyframes pbChhathToran { from { transform:translateY(-2px); } to { transform:translateY(3px); } }
 @media (prefers-reduced-motion: reduce) { .pb-chhath-sun,.pb-chhath-water,.pb-chhath-toran { animation:none !important; } }
+
+
+/* Full storefront Chhath campaign styling for 13–16 November 2026. */
+.pb-chhath-page { background:linear-gradient(180deg,#fff7ed 0%,#fffaf0 38%,#f0f9ff 100%) !important; }
+.pb-chhath-header { background:linear-gradient(105deg,#9a3412 0%,#ea580c 52%,#b45309 100%) !important; border-color:rgba(251,191,36,.55) !important; }
+.pb-chhath-header button { color:#fff !important; }
+.pb-chhath-banner { isolation:isolate; }
+.pb-chhath-banner > .pb-chhath-sunrise { z-index:0; }
+.pb-chhath-banner > .pb-chhath-sunrise + div { z-index:1; }
+.pb-chhath-banner .pb-chhath-toran { z-index:4; }
