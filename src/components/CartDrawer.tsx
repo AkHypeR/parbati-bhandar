@@ -538,7 +538,7 @@ export function CartDrawer({
                       if (popup) {
                         try {
                           const whatsapp = new URL(whatsAppUrl);
-                          whatsapp.searchParams.set('text', `${orderText}\\n\\nOrder Reference: #${orderNumber}\\nKeep this number and your phone number to track your order on the store website.`);
+                          whatsapp.searchParams.set('text', `${orderText}\\n\\nYour order has been received by Parbati Bhandar. Please check My Account on the store website for the order date, time and live status.`);
                           popup.location.href = whatsapp.toString();
                         } catch { popup.location.href = whatsAppUrl; }
                       }
