@@ -132,12 +132,11 @@ export function CartDrawer({
     const cartCategories = new Set(cartItemsList.map(item => normalizeCategory(item.product.category)).filter(Boolean));
     const sameCategory = inStock.filter(product => cartCategories.has(normalizeCategory(product.category)));
 
-    // Rank matching-category items first, then randomly choose from the top five.
+    // Show the most relevant matching-category products in a stable order.
     if (sameCategory.length > 0) {
-      const topCategoryFive = [...sameCategory].sort((left, right) =>
+      return [...sameCategory].sort((left, right) =>
         Number(left.bestItemRank ?? 999) - Number(right.bestItemRank ?? 999)
       ).slice(0, 5);
-      return topCategoryFive.sort(() => Math.random() - 0.5);
     }
 
     // Otherwise fall back to the store's five highest-ranked in-stock best items.
@@ -302,30 +301,33 @@ export function CartDrawer({
               </div>
 
               {checkoutStep === 'review' && (
-                <section className="py-4 space-y-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <div>
-                      <h4 className="text-sm font-extrabold text-slate-900">Complete your grocery list</h4>
-                      <p className="text-[11px] text-slate-500">Random picks from matching categories, or popular products if no match is available.</p>
-                    </div>
+                <section className="py-4">
+                  <div className="mb-3">
+                    <h4 className="text-sm font-extrabold text-slate-900">You may also need</h4>
+                    <p className="mt-1 text-xs leading-5 text-slate-500">Useful picks related to your basket. Add only what you need.</p>
                   </div>
-                  {recommendationProducts.length > 0 && (
-                  <div className="flex">
-                    {recommendationProducts.map(product => (
-                      <div key={product.id} className="rounded-xl border border-slate-200 p-3">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="text-2xl">{product.emoji || '🛍️'}</span>
-                          <div className="min-w-0">
-                            <p className="truncate text-xs font-bold text-slate-900">{product.name}</p>
-                            <p className="text-[11px] text-emerald-700">₹{product.price} / {product.unit}</p>
+                  {recommendationProducts.length > 0 ? (
+                    <div className="grid grid-cols-2 gap-2.5">
+                      {recommendationProducts.map(product => (
+                        <article key={product.id} className="min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white p-2.5 shadow-sm">
+                          <div className="flex h-20 items-center justify-center rounded-lg bg-slate-50">
+                            {product.imageUrl ? (
+                              <img src={product.imageUrl} alt={product.name} loading="lazy" referrerPolicy="no-referrer" className="h-full w-full object-contain p-2" />
+                            ) : (
+                              <span className="text-3xl" aria-hidden="true">{product.emoji || '🛍️'}</span>
+                            )}
                           </div>
-                        </div>
-                        <button type="button" onClick={() => updateCartQty(product, 1)} className="mt-2 w-full rounded-lg bg-emerald-50 px-2 py-2 text-xs font-bold text-emerald-800">+ Add to order</button>
-                      </div>
-                    ))}
-                  </div>
+                          <p className="mt-2 min-h-9 text-xs font-bold leading-4 text-slate-900 line-clamp-2">{product.name}</p>
+                          <p className="mt-1 text-xs font-semibold text-emerald-800">₹{product.price} <span className="font-normal text-slate-500">/ {product.unit}</span></p>
+                          <button type="button" onClick={() => updateCartQty(product, 1)} className="mt-2.5 w-full rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-2 text-xs font-bold text-emerald-800 transition-colors hover:bg-emerald-100">
+                            + Add to cart
+                          </button>
+                        </article>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="rounded-xl bg-slate-50 px-3 py-4 text-center text-xs text-slate-500">You’ve got everything available for now.</p>
                   )}
-                  {recommendationProducts.length === 0 && <p className="text-xs text-slate-500">No other in-stock products are available right now.</p>}
                 </section>
               )}
               
