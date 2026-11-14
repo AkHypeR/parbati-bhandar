@@ -124,6 +124,9 @@ export default function App() {
     } catch { return crypto.randomUUID(); }
   })());
   const reservationQueueRef = useRef<Promise<any>>(Promise.resolve());
+  const cartSyncReadyFor = useRef<string | null>(null);
+  const cartSyncUpdatedAt = useRef(0);
+  const cartSyncWriteTimer = useRef<number | null>(null);
 
 
   // Mode Switcher: 'customer' | 'admin'
@@ -368,6 +371,105 @@ export default function App() {
   useEffect(() => {
     try { localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(cart)); } catch { /* ignore */ }
   }, [cart]);
+\n  // Persist the signed-in customer's cart in D1 so the same account shares
+  // one cart across phones, tablets and browsers.
+  useEffect(() => {
+    if (!customerAccount?.id || !cloudReady) {
+      cartSyncReadyFor.current = null;
+      cartSyncUpdatedAt.current = 0;
+      return;
+    }
+    const customerId = customerAccount.id;
+    let cancelled = false;
+    const enrich = (raw: unknown): CartMap => {
+      const parsed = sanitizeCart(raw);
+      const next: CartMap = {};
+      for (const [key, entry] of Object.entries(parsed)) {
+        const liveProduct = products.find(product => product.id === entry.product.id);
+        if (liveProduct) next[key] = { ...entry, product: liveProduct };
+      }
+      return next;
+    };
+    const merge = (local: CartMap, remote: CartMap): CartMap => {
+      const result: CartMap = { ...remote };
+      for (const [key, entry] of Object.entries(local)) {
+        const existing = result[key];
+        result[key] = existing
+          ? { ...entry, qty: Math.max(Number(entry.qty) || 0, Number(existing.qty) || 0) }
+          : entry;
+      }
+      return result;
+    };
+    const save = async (value: CartMap) => {
+      const response = await fetch('/api/customer-cart', {
+        method: 'PUT', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ cart: value })
+      });
+      if (!response.ok) throw new Error('Could not save your cloud cart.');
+      const data = await response.json().catch(() => ({}));
+      cartSyncUpdatedAt.current = Number(data.updatedAt || Date.now());
+    };
+    const load = async () => {
+      const response = await fetch('/api/customer-cart', {
+        credentials: 'same-origin', cache: 'no-store',
+        headers: { Accept: 'application/json' }
+      });
+      if (!response.ok) throw new Error('Could not load your cloud cart.');
+      const data = await response.json();
+      if (cancelled) return;
+      const remote = enrich(data.cart);
+      const initial = merge(sanitizeCart(cart), remote);
+      cartSyncUpdatedAt.current = Number(data.updatedAt || 0);
+      cartSyncReadyFor.current = customerId;
+      setCart(initial);
+      await save(initial);
+    };
+    void load().catch(error => {
+      if (!cancelled) {
+        console.error('Cloud cart sync failed', error);
+        showToast('Your cart is saved on this device, but cloud sync is temporarily unavailable.', 'error');
+      }
+    });
+    const poll = window.setInterval(async () => {
+      if (cancelled || cartSyncReadyFor.current !== customerId || cartSyncWriteTimer.current !== null) return;
+      try {
+        const response = await fetch('/api/customer-cart', { credentials: 'same-origin', cache: 'no-store', headers: { Accept: 'application/json' } });
+        if (!response.ok) return;
+        const data = await response.json();
+        const updatedAt = Number(data.updatedAt || 0);
+        if (updatedAt > cartSyncUpdatedAt.current) {
+          cartSyncUpdatedAt.current = updatedAt;
+          setCart(enrich(data.cart));
+        }
+      } catch { /* Retry on the next polling cycle. */ }
+    }, 3500);
+    return () => { cancelled = true; window.clearInterval(poll); };
+  }, [customerAccount?.id, cloudReady]);
+
+  useEffect(() => {
+    if (!customerAccount?.id || cartSyncReadyFor.current !== customerAccount.id) return;
+    if (cartSyncWriteTimer.current !== null) window.clearTimeout(cartSyncWriteTimer.current);
+    cartSyncWriteTimer.current = window.setTimeout(async () => {
+      cartSyncWriteTimer.current = null;
+      try {
+        const response = await fetch('/api/customer-cart', {
+          method: 'PUT', credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ cart })
+        });
+        if (!response.ok) throw new Error('Cloud cart save failed');
+        const data = await response.json().catch(() => ({}));
+        cartSyncUpdatedAt.current = Number(data.updatedAt || Date.now());
+      } catch (error) { console.error('Cloud cart save failed', error); }
+    }, 450);
+    return () => {
+      if (cartSyncWriteTimer.current !== null) {
+        window.clearTimeout(cartSyncWriteTimer.current);
+        cartSyncWriteTimer.current = null;
+      }
+    };
+  }, [cart, customerAccount?.id]);
 
   useEffect(() => {
     let cancelled = false;
