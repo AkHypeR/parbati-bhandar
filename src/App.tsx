@@ -106,6 +106,32 @@ function loadInitialCart(): CartMap {
   }
   return {};
 }
+function InitialLoadingScreen() {
+  return (
+    <div className="fixed inset-0 z-[200] flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[#f8fbf8] px-6" role="status" aria-live="polite">
+      <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-emerald-100/70 blur-3xl" />
+      <div className="absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-amber-100/70 blur-3xl" />
+      <div className="relative flex flex-col items-center">
+        <div className="pb-loader-mark grid h-20 w-20 place-items-center rounded-[26px] bg-[#087a55] text-3xl font-black text-white shadow-xl shadow-emerald-900/15">PB</div>
+        <h1 className="mt-4 text-xl font-black tracking-tight text-[#07543b]">Parbati Bhandar</h1>
+        <p className="mt-1 text-xs font-semibold text-slate-500">Fresh essentials, closer to home</p>
+        <div className="mt-8 flex items-center gap-2"><span className="pb-loader-dot h-2 w-2 rounded-full bg-emerald-600"/><span className="pb-loader-dot h-2 w-2 rounded-full bg-emerald-600"/><span className="pb-loader-dot h-2 w-2 rounded-full bg-emerald-600"/></div>
+        <p className="mt-3 text-[11px] font-bold tracking-wide text-emerald-800">Preparing your store…</p>
+      </div>
+      <div className="relative mt-12 w-full max-w-sm overflow-hidden rounded-[26px] border border-emerald-100 bg-white/90 p-4 shadow-xl shadow-emerald-900/10">
+        <div className="flex items-center justify-between"><span className="text-[10px] font-black uppercase tracking-[.18em] text-emerald-800">Getting your basket ready</span><span className="text-lg">🛒</span></div>
+        <div className="pb-loader-track mt-4">
+          <div className="pb-loader-runner">
+            {['🍎','🥛','🍞','🥬','🍊','🧃','🥕','🛍️','🍎','🥛','🍞','🥬','🍊','🧃','🥕','🛍️'].map((item,index)=><span key={index} className="pb-loader-product">{item}</span>)}
+          </div>
+        </div>
+        <div className="mt-3 flex items-center justify-between text-[10px] font-bold text-slate-500"><span>Fresh groceries</span><span>Almost there…</span></div>
+        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-emerald-50"><div className="pb-loader-progress h-full w-1/3 rounded-full bg-gradient-to-r from-emerald-500 to-lime-400"/></div>
+      </div>
+    </div>
+  );
+}
+
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(() => { try { return localStorage.getItem('pb_site_theme') === 'dark'; } catch { return false; } });
@@ -151,9 +177,17 @@ export default function App() {
   const [authLoading, setAuthLoading] = useState(false);
   const [ownerCatalogReady, setOwnerCatalogReady] = useState(false);
   const [cloudReady, setCloudReady] = useState(false);
+  const [minimumLoaderTimeElapsed, setMinimumLoaderTimeElapsed] = useState(false);
   const [productSyncStatus, setProductSyncStatus] = useState<'loading' | 'saving' | 'saved' | 'error'>('loading');
   const productSyncRequest = useRef(0);
   const previousProductIds = useRef<string[]>([]);
+
+  // Keep the branded opening screen visible for at least 2.5 seconds while
+  // the real catalogue/settings request and initial React rendering complete.
+  useEffect(() => {
+    const timer = window.setTimeout(() => setMinimumLoaderTimeElapsed(true), 2500);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   // Modals: QR Poster & Free Hosting Guide
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
@@ -927,31 +961,9 @@ export default function App() {
   const liveIsOpen = checkIsStoreOpenIST(storeSettings);
 
   return (
-    <Suspense fallback={<div className="flex min-h-[50vh] items-center justify-center text-sm font-semibold text-slate-500">Loading Parbati Bhandar…</div>}>
+    <Suspense fallback={<InitialLoadingScreen />}>
     <div className="min-h-screen bg-[#f7faf8] text-slate-900 flex flex-col font-sans">
-      {!cloudReady && (
-        <div className="fixed inset-0 z-[200] flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[#f8fbf8] px-6" role="status" aria-live="polite">
-          <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-emerald-100/70 blur-3xl" />
-          <div className="absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-amber-100/70 blur-3xl" />
-          <div className="relative flex flex-col items-center">
-            <div className="pb-loader-mark grid h-20 w-20 place-items-center rounded-[26px] bg-[#087a55] text-3xl font-black text-white shadow-xl shadow-emerald-900/15">PB</div>
-            <h1 className="mt-4 text-xl font-black tracking-tight text-[#07543b]">Parbati Bhandar</h1>
-            <p className="mt-1 text-xs font-semibold text-slate-500">Fresh essentials, closer to home</p>
-            <div className="mt-8 flex items-center gap-2"><span className="pb-loader-dot h-2 w-2 rounded-full bg-emerald-600"/><span className="pb-loader-dot h-2 w-2 rounded-full bg-emerald-600"/><span className="pb-loader-dot h-2 w-2 rounded-full bg-emerald-600"/></div>
-            <p className="mt-3 text-[11px] font-bold tracking-wide text-emerald-800">Preparing your store…</p>
-          </div>
-          <div className="relative mt-12 w-full max-w-sm overflow-hidden rounded-[26px] border border-emerald-100 bg-white/90 p-4 shadow-xl shadow-emerald-900/10">
-            <div className="flex items-center justify-between"><span className="text-[10px] font-black uppercase tracking-[.18em] text-emerald-800">Getting your basket ready</span><span className="text-lg">🛒</span></div>
-            <div className="pb-loader-track mt-4">
-              <div className="pb-loader-runner">
-                {['🍎','🥛','🍞','🥬','🍊','🧃','🥕','🛍️','🍎','🥛','🍞','🥬','🍊','🧃','🥕','🛍️'].map((item,index)=><span key={index} className="pb-loader-product">{item}</span>)}
-              </div>
-            </div>
-            <div className="mt-3 flex items-center justify-between text-[10px] font-bold text-slate-500"><span>Fresh groceries</span><span>Almost there…</span></div>
-            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-emerald-50"><div className="pb-loader-progress h-full w-1/3 rounded-full bg-gradient-to-r from-emerald-500 to-lime-400"/></div>
-          </div>
-        </div>
-      )}
+      {(!cloudReady || !minimumLoaderTimeElapsed) && <InitialLoadingScreen />}
 
       {currentPath !== '/' && (
         <div className="sticky top-0 z-[60] border-b border-emerald-100 bg-white/95 shadow-sm backdrop-blur-sm">
