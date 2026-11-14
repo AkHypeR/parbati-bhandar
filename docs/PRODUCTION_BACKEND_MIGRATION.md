@@ -2,110 +2,112 @@
 
 ## Status
 
-This is the approved migration blueprint. The production API is **not yet migrated**. The current production-compatible implementation remains Cloudflare Pages Functions + Cloudflare D1. Keep it live until the replacement has passed the cutover checklist below.
+**Phase 1 foundation implemented in a separate, non-production Node.js service.** The current live API remains Cloudflare Pages Functions + D1. No production routes or data have been switched.
 
-## What the repository actually runs today
+## Current production architecture
 
-- The storefront is React + Vite and is built to `dist/`.
-- API routes live under `functions/api/` and use the Cloudflare Pages Functions request-handler contract.
-- Runtime data is stored in Cloudflare D1 through the `DB` binding. The schema is documented in `migrations/`; some order/account tables are also upgraded idempotently by runtime helpers.
-- Images are uploaded to Cloudinary.
-- Customer and owner sessions are implemented in the Pages Functions layer using HttpOnly cookies.
-- Web Push is sent by the existing notification functions.
-- The production deployment guide identifies Cloudflare Pages as the production host. The older README text mentioning Supabase/Netlify was stale and has been corrected.
-- `express` and `dotenv` are already listed in package dependencies, but the repository currently has no Node API entry point or `start` script. Their presence alone does not mean a Node server is running.
+- React + Vite storefront; Cloudflare Pages Functions under `functions/api/`.
+- Cloudflare D1 through the `DB` binding; several order/account tables are also upgraded idempotently at runtime.
+- Cloudinary images, customer/owner HttpOnly sessions, customer inbox and optional Web Push.
+- Both Expo Android apps use the same existing website/backend.
+- The Node API is a separate staging service, not a production replacement.
 
-## Target production architecture
+## Target architecture
 
-Use a **modular Node.js + TypeScript API**, initially as a single deployable service (a modular monolith), not microservices.
+Use a modular Node.js service (modular monolith, not microservices):
+- Node.js 22 LTS, Express 4 (reusing the existing dependency).
+- PostgreSQL with explicit versioned SQL migrations.
+- `pg` connection pool with parameterised queries.
+- Strict request validation before any domain API is exposed.
+- Secure HttpOnly sessions, CSRF protection for cookie-authenticated mutations, login rate limits.
+- Structured logs, request IDs, safe errors, health/readiness endpoints.
+- Cloudinary retained for media.
+- Redis/queues added only when measured background-job requirements justify them.
 
-- Runtime: supported Node.js LTS
-- HTTP: Fastify (preferred for a new service) or Express if the existing dependency is deliberately retained
-- Database: PostgreSQL, with explicit versioned SQL migrations
-- Data access: one repository/data-access layer; parameterised queries only
-- Validation: schemas at every request boundary
-- Authentication: secure HttpOnly cookies, hashed opaque session tokens, CSRF protection for cookie-authenticated mutations, rate limits for login and sensitive endpoints
-- Background work: durable queue only when asynchronous tasks justify it (push fan-out, scheduled cleanup, exports); do not add Redis before a measured need
-- Observability: structured logs with request IDs, health/readiness checks, error monitoring, and database/latency metrics
-- Media: keep Cloudinary initially
-- Frontends: keep the current React website and both Expo WebView apps; change only their API base URL at the final cutover
+## Phase 1 implementation
+
+The isolated service lives in `server/`:
+- `config.js`: validates PostgreSQL URL, port, exact CORS allowlist and production TLS.
+- `db.js`: bounded PostgreSQL connection pool and timeouts.
+- `app.js`: request IDs, structured request logs, security headers, strict CORS, 1 MB JSON limit, live/readiness checks, safe 404/error responses.
+- `index.js`: startup DB check and graceful SIGTERM/SIGINT shutdown.
+- `migrate.js`: ordered SQL migrations, transaction boundaries, PostgreSQL advisory lock and SHA-256 migration checksums.
+- `migrations/`: migration ledger and idempotency-key foundation table; does not import or modify D1.
+- `Dockerfile`: portable Node 22 container.
+- Commands: `npm run dev:api`, `npm run start:api`, `npm run migrate:api`.
+- Node built-in tests validate configuration safety.
+
+Only `/health/live` and `/health/ready` are exposed. Catalogue, customer, owner, order and inventory endpoints are intentionally not exposed yet. This prevents a second inventory writer before data migration and transaction parity are complete.
 
 ## Non-negotiable data and behaviour invariants
 
-1. There must be one authoritative inventory writer. Never run old and new order APIs as simultaneous writers against the same stock.
-2. Order creation, stock deduction, cancellation/refund, and order edits must be transactional and idempotent.
-3. A customer can access only their own account, cart, inbox, and orders. Owner-only routes must remain owner protected.
-4. Prices, product IDs, availability, customer identity, and order totals must be verified server-side; never trust client-supplied totals or identity.
-5. Payment verification (if/when enabled) must be based on a verified provider webhook/signature, not a browser success screen.
-6. Preserve order history, order numbers, customer accounts, notification inbox, push subscriptions, product catalogue, store settings, and backup/restore capability.
-7. Never put production credentials, customer exports, or database dumps in Git.
-8. The existing Cloudflare API stays available as the rollback target until the new backend is verified.
+1. One authoritative inventory writer only. Old and new order APIs must never write stock simultaneously.
+2. Order creation, stock deduction, cancellation/refund and edits must be transactional and idempotent.
+3. Customers may access only their own accounts, carts, inboxes and orders. Owner routes remain owner-protected.
+4. Verify prices, product IDs, availability, customer identity and totals server-side.
+5. Payment status must come from verified provider webhooks/signatures, not browser success screens.
+6. Preserve order history, order numbers, accounts, inbox, push subscriptions, catalogue, settings and backup/restore.
+7. Never commit credentials, customer exports or database dumps.
+8. Keep Cloudflare as rollback target until the replacement is verified.
 
 ## Migration phases
 
-### Phase 0 — Audit and baseline (in progress)
-- Inventory every API route, environment binding, database table, migration and external integration.
-- Record current production host and deployment workflow.
-- Establish repeatable build, type-check and API integration tests.
-- Identify any schema created dynamically at runtime and turn it into explicit migration steps before moving databases.
+### Phase 0 — Audit and baseline (partially complete)
+- Inventory API routes, environment bindings, schema and external integrations.
+- Establish repeatable build, type-check and integration tests.
+- Convert runtime-created D1 schema into reviewed PostgreSQL migrations.
 
-### Phase 1 — Node service foundation
-- Add a separate Node API workspace without changing the current Pages routes.
-- Add configuration validation, request IDs, structured logging, safe error responses, health/readiness endpoints and graceful shutdown.
-- Add PostgreSQL connection pooling and migration runner.
-- Add CI checks for the Node service.
-- Deploy only to a staging environment first.
+### Phase 1 — Node service foundation (implemented; staging deployment pending)
+- Separate Node API, configuration validation, request IDs, safe errors, health/readiness and graceful shutdown.
+- PostgreSQL pool and migration runner.
+- CI tests.
+- Staging deploy only.
 
-### Phase 2 — Data migration
-- Export D1 from the correct production account and verify the export.
-- Create a separate PostgreSQL staging database.
-- Map and migrate every table and JSON-backed product/settings record.
-- Compare row counts, totals, order status distributions, stock quantities, customer IDs and notification records.
-- Test a restore into a fresh database. Do not write to production during this phase.
+### Phase 2 — Data migration (not started)
+- Export D1 from the correct production account and verify it.
+- Create separate PostgreSQL staging database.
+- Map every D1 table and JSON-backed product/settings record.
+- Compare row counts, order totals/statuses, stock quantities, customer IDs and notification records.
+- Test restore to a fresh database. Never test against production.
 
-### Phase 3 — Domain API migration
-Migrate one domain at a time behind the existing frontend contract:
-1. public catalogue and settings reads;
-2. owner authentication and product/settings writes;
-3. customer authentication and account profile;
-4. carts and reservations;
-5. order placement and stock deductions;
-6. order tracking, edit, cancellation and refunds;
-7. customer inbox and Web Push;
-8. uploads, backups and owner reporting.
+### Phase 3 — Domain migration (not started)
+1. Catalogue/settings reads.
+2. Owner authentication and product/settings writes.
+3. Customer authentication/profile.
+4. Carts and reservations.
+5. Order placement and stock deductions.
+6. Tracking, edits, cancellation and refunds.
+7. Inbox and Web Push.
+8. Uploads, backups and owner reporting.
 
-Each domain needs contract tests and permission tests before it is switched.
+Each domain requires contract tests, ownership/permission tests and rollback checks.
 
-### Phase 4 — Staging and production cutover
-- Run end-to-end tests against staging using separate test accounts and products.
-- Test concurrent low-stock checkouts, duplicate requests, cancellation/refund, order edits, notification fan-out, session expiry and backup restore.
-- Freeze writes briefly for the final data sync.
-- Switch all clients to the Node API together so inventory has exactly one writer.
-- Keep a documented rollback switch and the old D1 database untouched until the new service is stable.
+### Phase 4 — Staging and cutover (not started)
+- Test concurrent low-stock checkouts, duplicate requests, cancellation/refund, edits, push delivery, session expiry and backup restore.
+- Freeze writes briefly for final sync.
+- Switch all clients together so inventory has exactly one writer.
+- Keep the old D1 database untouched as rollback until stable.
 
-### Phase 5 — Operate and optimise
-- Monitor errors, latency, database connections, queue depth and resource usage.
-- Add caching/Redis only where measurements justify it.
-- Schedule and verify database backups and restore drills.
-- Review security and dependency updates regularly.
+### Phase 5 — Operate and optimise (not started)
+- Monitor errors, latency, DB connections and resource usage.
+- Add caching/Redis only when measurements justify it.
+- Schedule backups and perform restore drills.
 
-## Current API inventory
+## Existing Cloudflare API inventory
 
-The Pages Functions API currently includes:
-
-- Catalogue and settings: `GET /api/catalog`, `GET/PUT /api/settings`
-- Owner authentication: `/api/auth/login`, `/api/auth/logout`
-- Customer authentication: `/api/customer-auth/register`, `login`, `logout`, `me`
-- Products and media: `PUT/DELETE /api/products`, `POST /api/upload`
-- Orders: `POST /api/orders`, order tracking/history routes under `/api/orders/*`, and `POST /api/orders/manage`
-- Cart stock holds: `POST/DELETE /api/cart-reservations`
+- Catalogue/settings: `GET /api/catalog`, `GET/PUT /api/settings`
+- Owner auth: `/api/auth/login`, `/api/auth/logout`
+- Customer auth: `/api/customer-auth/register`, `login`, `logout`, `me`
+- Products/media: `PUT/DELETE /api/products`, `POST /api/upload`
+- Orders: `POST /api/orders`, `/api/orders/*`, `POST /api/orders/manage`
+- Cart reservations: `POST/DELETE /api/cart-reservations`
 - Customer cart: `/api/customer-cart`
-- Customer inbox and push preferences: `/api/customer-inbox`, `/api/customer-notifications`, `GET /api/push-key`
+- Inbox/preferences: `/api/customer-inbox`, `/api/customer-notifications`, `GET /api/push-key`
 - Owner broadcasts: `POST /api/owner-notifications`
 - Backup/restore: `/api/backup`
 
-The route inventory must be reconciled against the live deployment before migration; this list is based on the current repository tree, not a live API probe.
+This list is based on repository inspection, not a live API probe.
 
-## Infrastructure / access boundary
+## Infrastructure and access boundary
 
-A Node backend cannot become production merely by adding files to GitHub. A production Node host, PostgreSQL instance, environment secrets, domain/API routing and backup destination must exist. Provisioning or connecting these requires authorised access to the relevant hosting/database accounts. Until those are available, keep the current production API unchanged. Do not silently substitute a new database or deploy a half-configured API.
+A managed Node host, separate PostgreSQL instance, secrets and staging hostname are required. The repository contains no credentials or authorised account connection for provisioning these. Do not point the Node service at production or switch clients until a separate staging database exists and data migration is verified.
