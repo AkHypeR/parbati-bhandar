@@ -1079,8 +1079,6 @@ export default function App() {
             setCustomerNote={setCustomerNote}
             updateCartQty={updateCartQty}
             clearCart={() => setCart({})}
-            handleCopyShoppingList={handleCopyShoppingList}
-            copiedNotice={copiedNotice}
             whatsAppUrl={whatsAppUrl}
             orderText={orderText}
           />
