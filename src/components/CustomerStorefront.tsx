@@ -268,9 +268,21 @@ export function CustomerStorefront({
     if (name.includes(q)) return 80;
     if (fields.includes(q)) return 70;
     const queryWords = q.split(' ').filter(Boolean);
+    const nameWords = name.split(' ');
     const fieldWords = fields.split(' ');
+    // Long, specific searches must match the product name as a whole (or all meaningful
+    // words in its name). A few shared words such as "1", "pack" or "breakfast"
+    // must never pull unrelated products into the results.
+    if (queryWords.length >= 4 || q.length >= 28) {
+      const meaningfulWords = queryWords.filter(word => word.length >= 3);
+      const matchedNameWords = meaningfulWords.filter(word =>
+        nameWords.some(candidate => candidate === word || candidate.startsWith(word) ||
+          (word.length >= 5 && editDistance(word, candidate) <= 1))
+      );
+      return meaningfulWords.length > 0 && matchedNameWords.length === meaningfulWords.length ? 55 : 0;
+    }
     const matched = queryWords.filter(word => fieldWords.some(candidate => candidate.startsWith(word) || (word.length >= 4 && editDistance(word, candidate) <= 1)));
-    return matched.length === queryWords.length ? 55 : matched.length ? 20 + matched.length : 0;
+    return matched.length === queryWords.length ? 55 : matched.length === 1 && queryWords.length === 1 ? 20 : 0;
   };
   const searchResultsProducts = searchQuery.trim()
     ? products.map(product => ({ product, score: rankSearchMatch(product, searchQuery) })).filter(item => item.score > 0).sort((a, b) => b.score - a.score || a.product.name.localeCompare(b.product.name)).map(item => item.product)
