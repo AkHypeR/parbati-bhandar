@@ -6,7 +6,6 @@ import {
   X,
   Minus,
   Plus,
-  Copy,
   MessageCircle,
   ShieldCheck,
 } from 'lucide-react';
@@ -33,8 +32,6 @@ interface CartDrawerProps {
     option?: { selectedUnit?: string; unitPrice?: number; unitMrp?: number | null }
   ) => void;
   clearCart: () => void;
-  handleCopyShoppingList: () => void;
-  copiedNotice: boolean;
   whatsAppUrl: string;
   orderText: string;
 }
@@ -55,8 +52,6 @@ export function CartDrawer({
   setCustomerNote,
   updateCartQty,
   clearCart,
-  handleCopyShoppingList,
-  copiedNotice,
   whatsAppUrl,
   orderText,
 }: CartDrawerProps) {
@@ -315,7 +310,7 @@ export function CartDrawer({
                     </div>
                   </div>
                   {recommendationProducts.length > 0 && (
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="flex">
                     {recommendationProducts.map(product => (
                       <div key={product.id} className="rounded-xl border border-slate-200 p-3">
                         <div className="flex items-center gap-2 min-w-0">
@@ -361,7 +356,7 @@ export function CartDrawer({
                   {customerAuthenticated ? <>Confirm my order <span aria-hidden="true">→</span></> : <>Sign in to continue checkout <span aria-hidden="true">→</span></>}
                 </button>
                 <div className="grid grid-cols-2 gap-2">
-                  <button type="button" onClick={handleCopyShoppingList} className="py-2.5 rounded-xl border border-slate-300 bg-white text-slate-800 font-bold text-xs">{copiedNotice ? 'Copied Bill!' : 'Copy Text Bill'}</button>
+                  
                   <button type="button" onClick={clearCart} className="py-2.5 rounded-xl border border-red-200 bg-white text-red-600 font-bold text-xs">Clear Shopping List</button>
                 </div>
               </>
@@ -397,7 +392,7 @@ export function CartDrawer({
                   <MessageCircle className="w-4 h-4" />
                   <span>{savingOrder ? 'Placing order…' : liveIsOpen ? 'Place order securely' : 'Store is closed'}</span>
                 </button>
-                <button type="button" onClick={handleCopyShoppingList} className="w-full py-2 text-xs font-bold text-slate-600">{copiedNotice ? 'Copied Bill!' : 'Copy Text Bill'}</button>
+                
               </>
             )}
           </div>
