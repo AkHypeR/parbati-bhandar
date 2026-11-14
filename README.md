@@ -1,50 +1,45 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Parbati Bhandar
 
-# Run and deploy your AI Studio app
+Parbati Bhandar is a React + Vite grocery storefront with a separate owner portal and customer account experience.
 
-This contains everything you need to run your app locally.
+## Current production architecture
 
-View your app in AI Studio: https://ai.studio/apps/f4ab383b-c7d3-4188-b70b-36298ffa6fb8
+- **Frontend:** React + TypeScript + Vite; build output: `dist/`.
+- **API:** Cloudflare Pages Functions in `functions/api/`.
+- **Database:** Cloudflare D1 through the `DB` binding; SQL migrations are in `migrations/`.
+- **Images:** Cloudinary.
+- **Customer and owner sessions:** secure server-managed cookies handled by Pages Functions.
+- **Notifications:** customer inbox and optional Web Push.
+- **Mobile:** Expo Android WebView apps use the same website and backend.
 
-## Run Locally
+The active deployment instructions and required Cloudflare secrets are documented in [CLOUDFLARE_DEPLOY.md](./CLOUDFLARE_DEPLOY.md).
 
-**Prerequisites:**  Node.js
+## Local development
 
+Requirements: Node.js 22 or newer and npm.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+```bash
+npm install
+npm run dev
+```
 
+Run the existing checks:
 
-## Parbati Bhandar — Supabase + Netlify
+```bash
+npm test
+npm run lint
+npm run build
+```
 
-This project is connected to the Parbati Bhandar Supabase project. The browser uses only the public publishable key; product and settings writes are protected by the database RLS policies and the `private.store_admins` membership check.
+The Vite development server does not by itself provide the Cloudflare Pages Functions runtime or a production D1 database. Use the Cloudflare Pages local-development workflow and a separate test D1 database when testing API routes. Never point local experiments at production data.
 
-### Owner login
-Open the owner portal from the shop logo / `?admin=1`, then sign in with the authorised owner account:
-- `7001.akashroy@gmail.com`
-- Use the password set for that Supabase Auth account (never put it in source code).
+## API architecture roadmap
 
-The previous client-side PIN (`1234`) has been removed. Do not restore it.
+The current production API remains Cloudflare Pages Functions + D1. A staged migration to a modular Node.js API and PostgreSQL is being planned in [docs/PRODUCTION_BACKEND_MIGRATION.md](./docs/PRODUCTION_BACKEND_MIGRATION.md). Do not remove or bypass existing API routes until the replacement has passed data migration, security, inventory and rollback tests.
 
-### Cloud data
-- `products`: shared catalogue, stock, pricing, variants and hero item order.
-- `store_settings`: shared store settings. The legacy `ownerPin` property is deliberately omitted.
-- `product-images` Storage bucket: product and store images. Uploads are limited to the bucket's configured 2 MB limit.
+## Security
 
-The shopping cart remains local to each customer's browser. WhatsApp ordering remains unchanged.
-
-### Deploy on Netlify
-1. Push this folder to a GitHub repository.
-2. In Netlify choose **Add new site → Import an existing project** and select the repository.
-3. Build command: `npm run build`; publish directory: `dist`.
-4. Deploy. The Supabase URL and public publishable key are already configured in `src/lib/supabase.ts`.
-5. In Supabase Authentication → URL Configuration, add your deployed Netlify URL to the allowed redirect URLs if you later enable OAuth.
-
-Never expose a Supabase `service_role` or secret key in frontend environment variables.
-
-<!-- Cloudflare Pages deployment refresh: 2026-11-13 -->
+- Never commit production secrets, customer exports, or database backups.
+- Keep service-role/database credentials server-side only.
+- Test customer ownership and owner permissions on every protected endpoint.
+- Take and verify a database backup before schema changes.
