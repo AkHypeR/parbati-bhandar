@@ -1022,7 +1022,7 @@ export default function App() {
           </div>
         ) : (
         <>
-          {currentPath === '/account' ? (
+          {['/account', '/previous-orders'].includes(currentPath) ? (
             <CustomerAccount
               customer={customerAccount}
               onAuthenticated={handleCustomerAuthenticated}
