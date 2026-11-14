@@ -124,7 +124,12 @@ export default function App() {
 
 
   // Mode Switcher: 'customer' | 'admin'
-  const [activeMode, setActiveMode] = useState<'customer' | 'admin'>('customer');
+  const [activeMode, setActiveModeState] = useState<'customer' | 'admin'>(() => window.location.pathname.replace(/\/+$/, '') === '/owner' ? 'admin' : 'customer');
+  const setActiveMode = (mode: 'customer' | 'admin') => {
+    const nextPath = mode === 'admin' ? '/owner' : '/';
+    if (window.location.pathname !== nextPath) window.history.pushState({}, '', nextPath);
+    setActiveModeState(mode);
+  };
   const [isOwnerUnlocked, setIsOwnerUnlocked] = useState(false);
   const [ownerPassword, setOwnerPassword] = useState('');
   const [pinError, setPinError] = useState('');
@@ -460,7 +465,14 @@ export default function App() {
     return () => window.removeEventListener('storage', handleStorageSync);
   }, []);
 
-  // Secret Owner-Only Access via URL (?admin=1, ?owner=1, #admin) or Keyboard (Alt+O / Ctrl+Shift+O)
+  // Dedicated owner URL with browser back/forward support.
+  useEffect(() => {
+    const syncRoute = () => setActiveModeState(window.location.pathname.replace(/\/+$/, '') === '/owner' ? 'admin' : 'customer');
+    window.addEventListener('popstate', syncRoute);
+    return () => window.removeEventListener('popstate', syncRoute);
+  }, []);
+
+  // Legacy secret access and keyboard shortcut remain supported.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (
