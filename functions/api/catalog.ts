@@ -44,7 +44,12 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     }
     return product;
   });
-  return json({ products: visibleProducts, settings: settings ? JSON.parse(settings.data) : null }, 200, {
+  const publicSettings = settings ? JSON.parse(settings.data) : null;
+  // The legacy client-side owner PIN is never used for authentication and
+  // must not be exposed to customer browsers if it exists in older records.
+  if (publicSettings && typeof publicSettings === "object") delete publicSettings.ownerPin;
+
+  return json({ products: visibleProducts, settings: publicSettings }, 200, {
     "cache-control": "private, no-store",
     "vary": "Cookie"
   });
