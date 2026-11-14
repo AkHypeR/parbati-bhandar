@@ -76,6 +76,7 @@ interface CustomerStorefrontProps {
   setIsQrModalOpen: (open: boolean) => void;
   onSecretOwnerAccess: () => void;
   lastOrderNumber?: string;
+  lastOrderCreatedAt?: number;
   lastOrderPhone?: string;
 }
 
@@ -105,6 +106,7 @@ export function CustomerStorefront({
   setIsQrModalOpen,
   onSecretOwnerAccess,
   lastOrderNumber = '',
+  lastOrderCreatedAt = 0,
   lastOrderPhone = '',
 }: CustomerStorefrontProps) {
   const [trackingOrderNumber, setTrackingOrderNumber] = useState(lastOrderNumber);
@@ -492,13 +494,10 @@ export function CustomerStorefront({
             </div>
 
             <div className="p-4 sm:p-6">
-              {lastOrderNumber && (
-                <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-3.5">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-100 text-emerald-800"><CheckCircle2 className="h-5 w-5" /></span>
-                    <div className="min-w-0"><p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800">Latest order placed</p><p className="truncate text-lg font-black text-slate-900">Order #{lastOrderNumber}</p></div>
-                  </div>
-                  <button type="button" onClick={() => { void navigator.clipboard?.writeText(String(lastOrderNumber)); }} className="rounded-xl border border-emerald-200 bg-white px-3 py-2 text-xs font-bold text-emerald-800 transition hover:bg-emerald-100">Copy order number</button>
+              {lastOrderCreatedAt > 0 && (
+                <div className="mb-4 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-3.5">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-100 text-emerald-800"><CheckCircle2 className="h-5 w-5" /></span>
+                  <div className="min-w-0"><p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800">Latest order received</p><p className="text-sm font-bold text-slate-900">{new Date(lastOrderCreatedAt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'})}</p></div>
                 </div>
               )}
 
