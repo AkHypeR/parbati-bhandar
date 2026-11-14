@@ -2392,7 +2392,7 @@ export function AdminUploadApp({
                       Special Occasion Picture &amp; &ldquo;Nomoshkar Grahok&rdquo; Header
                     </h3>
                     <p className="text-xs text-slate-600">
-                      Customize the Curzon Gate greeting and upload any festival/special occasion picture (e.g. Chhath Puja, Durga Puja).
+                      Set a seasonal greeting, festival name and picture (e.g. Christmas, New Year, Durga Puja or Chhath Puja). Change it whenever the season changes.
                     </p>
                   </div>
                   <label className="flex items-center gap-2 text-xs font-bold text-slate-900 cursor-pointer shrink-0">
@@ -2483,7 +2483,7 @@ export function AdminUploadApp({
                       onChange={(e) =>
                         setSettingsForm({ ...settingsForm, occasionTitle: e.target.value })
                       }
-                      placeholder="e.g., Chhath Puja or Durga Puja"
+                      placeholder="e.g., Merry Christmas or Happy New Year"
                       className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs font-bold"
                     />
                   </div>
