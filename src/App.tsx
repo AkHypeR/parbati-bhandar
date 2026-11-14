@@ -860,8 +860,15 @@ export default function App() {
             <div className="mt-8 flex items-center gap-2"><span className="pb-loader-dot h-2 w-2 rounded-full bg-emerald-600"/><span className="pb-loader-dot h-2 w-2 rounded-full bg-emerald-600"/><span className="pb-loader-dot h-2 w-2 rounded-full bg-emerald-600"/></div>
             <p className="mt-3 text-[11px] font-bold tracking-wide text-emerald-800">Preparing your store…</p>
           </div>
-          <div className="relative mt-12 grid w-full max-w-sm grid-cols-2 gap-3">
-            {[0,1,2,3].map(item => <div key={item} className="overflow-hidden rounded-2xl border border-emerald-100 bg-white p-3 shadow-sm"><div className="pb-loader-shimmer h-24 rounded-xl bg-slate-100"/><div className="pb-loader-shimmer mt-3 h-3 w-4/5 rounded-full bg-slate-100"/><div className="pb-loader-shimmer mt-2 h-3 w-2/5 rounded-full bg-slate-100"/></div>)}
+          <div className="relative mt-12 w-full max-w-sm overflow-hidden rounded-[26px] border border-emerald-100 bg-white/90 p-4 shadow-xl shadow-emerald-900/10">
+            <div className="flex items-center justify-between"><span className="text-[10px] font-black uppercase tracking-[.18em] text-emerald-800">Getting your basket ready</span><span className="text-lg">🛒</span></div>
+            <div className="pb-loader-track mt-4">
+              <div className="pb-loader-runner">
+                {['🍎','🥛','🍞','🥬','🍊','🧃','🥕','🛍️'].map((item,index)=><span key={index} className="pb-loader-product">{item}</span>)}
+              </div>
+            </div>
+            <div className="mt-3 flex items-center justify-between text-[10px] font-bold text-slate-500"><span>Fresh groceries</span><span>Almost there…</span></div>
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-emerald-50"><div className="pb-loader-progress h-full w-1/3 rounded-full bg-gradient-to-r from-emerald-500 to-lime-400"/></div>
           </div>
         </div>
       )}
