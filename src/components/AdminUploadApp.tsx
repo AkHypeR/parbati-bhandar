@@ -949,7 +949,6 @@ export function AdminUploadApp({
           </section>
             )}
             {notificationView === 'history' && (
-        )}
           <section className="mx-auto mt-5 max-w-2xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
               <div><h3 className="text-base font-black text-slate-900">Sent notification history</h3><p className="mt-1 text-xs text-slate-500">Manage announcements saved in customer accounts.</p></div>
