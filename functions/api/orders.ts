@@ -3,7 +3,7 @@ import { purgeExpiredCustomerOrders } from "../_lib/order-retention";
 import { sendPushNotification } from "@mmmike/web-push/send";
 import { ensureCustomerTables, getCustomer } from "../_lib/customer-auth";
 
-type OrderItem = { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean };
+type OrderItem = { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean; stockRefunded?: boolean };
 
 function stockUnitsForOrder(item: { quantity: number; unit: string }, product: any): number | null {
   const clean = (value: unknown) => String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
@@ -78,6 +78,14 @@ const ensureTable = async (env: Env) => {
     PRIMARY KEY (order_id, product_id)
   )`).run();
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS order_stock_deduction_guard (
+    order_id TEXT PRIMARY KEY, expected_count INTEGER NOT NULL, actual_count INTEGER NOT NULL,
+    CHECK (expected_count = actual_count)
+  )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS order_stock_refunds (
+    order_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL,
+    PRIMARY KEY (order_id, product_id)
+  )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS order_stock_refund_guard (
     order_id TEXT PRIMARY KEY, expected_count INTEGER NOT NULL, actual_count INTEGER NOT NULL,
     CHECK (expected_count = actual_count)
   )`).run();
@@ -292,10 +300,72 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
     unavailable: Array.isArray(body.items) ? !!body.items[index]?.unavailable : !!item.unavailable
   }));
   let changes = 0;
-  if (status === "completed" && order.status !== "ready" && order.status !== "completed") {
+  if (status === "unavailable") {
+    for (const item of items) item.unavailable = true;
+  }
+  const refundAll = status === "cancelled" || status === "unavailable";
+  const refundLines = items.filter(item => !item.stockRefunded && (refundAll || item.unavailable));
+  const shouldRefundNow = Number(order.stock_deducted || 0) === 1 && refundLines.length > 0;
+  if (shouldRefundNow) {
+    const refunds = new Map<string, number>();
+    for (const item of refundLines) {
+      if (item.productId) {
+        const row = await env.DB.prepare("SELECT data FROM products WHERE id=?").bind(item.productId).first<any>();
+        if (row) {
+          const product = JSON.parse(row.data);
+          if (typeof product.stockQuantity === "number") {
+            const units = stockUnitsForOrder(item, product);
+            if (units === null || !Number.isFinite(units) || units <= 0) {
+              return json({error:"Could not calculate the stock refund for " + item.name + ". Please review its inventory unit."},409);
+            }
+            refunds.set(item.productId, (refunds.get(item.productId) || 0) + units);
+          }
+        }
+      }
+      item.stockRefunded = true;
+    }
+    const now = Date.now();
+    const refundStatements: any[] = [];
+    for (const [productId, quantity] of refunds) {
+      refundStatements.push(
+        env.DB.prepare(`UPDATE products SET data=json_set(
+          data,
+          '$.stockQuantity',ROUND(json_extract(data,'$.stockQuantity')+?,4),
+          '$.inStock',json('true'),
+          '$.updatedAt',?
+        ),updated_at=? WHERE id=? AND json_type(data,'$.stockQuantity') IN ('integer','real')`)
+          .bind(quantity,now,now,productId),
+        env.DB.prepare(`INSERT INTO order_stock_refunds(order_id,product_id,quantity)
+          SELECT ?,?,? WHERE changes()=1
+          ON CONFLICT(order_id,product_id) DO UPDATE SET quantity=order_stock_refunds.quantity+excluded.quantity`)
+          .bind(id,productId,quantity)
+      );
+    }
+    if (refunds.size) {
+      refundStatements.push(env.DB.prepare(`INSERT INTO order_stock_refund_guard(order_id,expected_count,actual_count)
+        SELECT ?,?,(SELECT COUNT(*) FROM order_stock_refunds WHERE order_id=?)`)
+        .bind(id,refunds.size,id));
+    }
+    const revisedTotal = status === "cancelled" ? 0 : items.reduce((sum, item) => sum + (item.unavailable ? 0 : item.price * item.quantity), 0);
+    refundStatements.push(
+      env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,total=?,updated_at=?,estimated_ready_at=CASE WHEN ? IN ('cancelled','unavailable') THEN NULL ELSE estimated_ready_at END WHERE id=? AND stock_deducted=1")
+        .bind(status,JSON.stringify(items),revisedTotal,now,status,id),
+      env.DB.prepare("DELETE FROM order_stock_reservations WHERE order_id=?").bind(id)
+    );
+    try {
+      const results = await env.DB.batch(refundStatements);
+      changes = Number(results[results.length - 2]?.meta?.changes || 0);
+      if (!changes) return json({error:"The order changed while its stock refund was being processed. Refresh and try again."},409);
+    } catch (error) {
+      console.error("Atomic order stock refund failed",error);
+      return json({error:"Could not safely restore the unavailable items to inventory. Refresh the order and try again."},409);
+    }
+  } else if (status === "completed" && order.status !== "ready" && order.status !== "completed") {
     return json({error:"Only a ready order can be marked completed."},409);
   }
-  if (status === "ready" && order.status !== "ready" && !Number(order.stock_deducted || 0)) {
+  if (shouldRefundNow) {
+    // The refund and order update were committed together above.
+  } else if (status === "ready" && order.status !== "ready" && !Number(order.stock_deducted || 0)) {
     if (items.length && items.every(item => item.unavailable)) {
       return json({error:"All items are marked unavailable. At least one available item is required to mark this order ready."},409);
     }
