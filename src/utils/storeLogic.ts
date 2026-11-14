@@ -878,7 +878,7 @@ export function buildHeroSlides(
   const shouldShowOccasion = isChhathOccasion || settings.showOccasionBanner === true || !hasCustomOccasion || Boolean(autoFestival);
   if (shouldShowOccasion) {
     const fallback = autoFestival || { title:'Welcome to Parbati Bhandar', subtitle:'Your neighbourhood grocery store • Everyday essentials with care', tag:'Fresh essentials, friendly service', emoji:'🛍️' };
-    slides.push({ type:'festive', id:'festive-banner', title:settings.occasionTitle?.trim() || fallback.title, subtitle:settings.occasionSubtitle?.trim() || fallback.subtitle, tag:settings.occasionTag?.trim() || fallback.tag, imageUrl:occasionImage });
+    slides.push({ type:'festive', id:'festive-banner', title:autoFestival?.title || settings.occasionTitle?.trim() || fallback.title, subtitle:autoFestival?.subtitle || settings.occasionSubtitle?.trim() || fallback.subtitle, tag:autoFestival?.tag || settings.occasionTag?.trim() || fallback.tag, imageUrl:occasionImage });
   }
   const orderedBest = getBestItems(products, 5);
   orderedBest.forEach((product, idx) => {
