@@ -25,7 +25,10 @@ export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumbe
 
   useEffect(() => {
     let active = true;
+    let requestInFlight = false;
     const load = async () => {
+      if (requestInFlight || document.visibilityState !== 'visible') return;
+      requestInFlight = true;
       try {
         const url = orderNumber ? '/api/orders/track?orderNumber=' + encodeURIComponent(String(orderNumber)) : '/api/orders/track?history=1';
         const response = await fetch(url, { credentials: 'same-origin', cache: 'no-store' });
@@ -38,26 +41,27 @@ export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumbe
       } catch (e) {
         if (active) setError((e as Error).message || 'Could not load your order.');
       } finally {
+        requestInFlight = false;
         if (active) setLoading(false);
       }
     };
+    const refreshWhenVisible = () => { if (document.visibilityState === 'visible') void load(); };
     void load();
-    const timer = window.setInterval(() => {
-      if (document.visibilityState === 'visible') void load();
-    }, 15000);
-    return () => { active = false; window.clearInterval(timer); };
+    const timer = window.setInterval(refreshWhenVisible, 30000);
+    document.addEventListener('visibilitychange', refreshWhenVisible);
+    return () => { active = false; window.clearInterval(timer); document.removeEventListener('visibilitychange', refreshWhenVisible); };
   }, [orderNumber]);
 
   const currentIndex = selected ? steps.findIndex(step => step.key === selected.status) : -1;
   const exceptional = selected?.status === 'cancelled' || selected?.status === 'unavailable';
 
   return (
-    <main className="min-h-[78vh] bg-[#f5f8f2] px-4 py-7 sm:py-10">
-      <div className="mx-auto max-w-4xl">
+    <main className="min-h-dvh w-full overflow-x-clip bg-[#f5f8f2] px-3 py-4 sm:px-4 sm:py-10">
+      <div className="mx-auto w-full min-w-0 max-w-4xl">
         <button type="button" onClick={orderNumber ? () => onNavigate('/orders') : onBack} className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-900/10 bg-white px-4 py-2 text-sm font-bold text-emerald-900 shadow-sm hover:bg-emerald-50">
           <ArrowLeft className="h-4 w-4"/> {orderNumber ? 'All orders' : 'Back to account'}
         </button>
-        <section className="overflow-hidden rounded-[2rem] border border-white bg-white shadow-[0_24px_70px_-35px_rgba(6,78,59,.28)]">
+        <section className="min-w-0 overflow-hidden rounded-2xl border border-white bg-white shadow-[0_12px_36px_-24px_rgba(6,78,59,.22)] sm:rounded-[2rem]">
           <header className="relative overflow-hidden bg-gradient-to-br from-[#064e3b] via-[#087256] to-[#0e8063] px-6 py-8 text-white sm:px-9 sm:py-10">
             <div aria-hidden="true" className="absolute -right-10 -top-20 h-56 w-56 rounded-full border-[30px] border-white/[.07]"/>
             <div className="relative flex items-start justify-between gap-4">
@@ -69,12 +73,12 @@ export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumbe
               <span className="hidden h-14 w-14 shrink-0 place-items-center rounded-2xl border border-white/20 bg-white/10 text-amber-200 sm:grid"><PackageCheck className="h-7 w-7"/></span>
             </div>
             <div className="relative mt-6 flex flex-wrap gap-2 text-xs font-bold text-emerald-50">
-              <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><RefreshCw className="mr-1.5 inline h-3.5 w-3.5"/> Auto-refreshes every 15 sec</span>
+              <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><RefreshCw className="mr-1.5 inline h-3.5 w-3.5"/> Auto-refreshes every 30 sec</span>
               <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><ShieldCheck className="mr-1.5 inline h-3.5 w-3.5"/> Private to your account</span>
             </div>
           </header>
 
-          <div className="p-4 sm:p-8">
+          <div className="min-w-0 p-3 sm:p-8">
             {loading && <div className="py-16 text-center text-sm font-semibold text-slate-500"><span className="mx-auto mb-3 block h-8 w-8 animate-spin rounded-full border-4 border-emerald-600 border-t-transparent"/>Loading your orders…</div>}
             {!loading && error && <div role="alert" className="rounded-2xl border border-rose-200 bg-rose-50 p-5 text-sm font-semibold text-rose-700">{error}<button type="button" onClick={() => onNavigate('/account')} className="mt-3 block font-extrabold underline">Go to sign in</button></div>}
 
@@ -123,7 +127,7 @@ export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumbe
                   {exceptional ? (
                     <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">{selected.status === 'cancelled' ? 'This order has been cancelled. Please contact the store if you need help.' : 'The store has an availability update for this order. Please check with the store for details.'}</div>
                   ) : (
-                    <div className="grid gap-4 sm:grid-cols-4">
+                    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
                       {steps.map((step,index) => {
                         const Icon = step.icon;
                         const done = index <= currentIndex;
@@ -150,7 +154,7 @@ export function CustomerOrders({ orderNumber, onNavigate, onBack }: { orderNumbe
                   </div>
                   <div className="flex items-center justify-between border-t border-slate-200 bg-emerald-50/70 px-5 py-4"><span className="font-extrabold text-slate-800">Total payable</span><span className="text-xl font-black text-emerald-800">₹{selected.total}</span></div>
                 </section>
-                <p className="text-center text-xs text-slate-400">Last updated {formatDate(selected.updatedAt || selected.createdAt)} · This page refreshes automatically</p>
+                <p className="text-center text-xs text-slate-400">Last updated {formatDate(selected.updatedAt || selected.createdAt)} · Updates automatically every 30 seconds</p>
               </div>
             )}
           </div>
