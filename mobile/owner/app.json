@@ -2,6 +2,7 @@
   "expo": {
     "name": "Parbati Bhandar Owner",
     "slug": "parbati-bhandar-owner",
+    "owner": "parbatibhandars-team",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
