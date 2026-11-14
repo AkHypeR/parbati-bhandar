@@ -31,6 +31,8 @@ import {
   Sparkles,
   Pause,
   Play,
+  Moon,
+  Sun,
 } from 'lucide-react';
 import {
   CATEGORIES,
@@ -47,6 +49,8 @@ import {
 } from '../utils/storeLogic';
 
 interface CustomerStorefrontProps {
+  darkMode: boolean;
+  onToggleDarkMode: () => void;
   storeSettings: StoreSettings;
   currentPage: 'home' | 'track' | 'history' | 'cart';
   onNavigate: (path: string) => void;
@@ -81,6 +85,8 @@ interface CustomerStorefrontProps {
 }
 
 export function CustomerStorefront({
+  darkMode,
+  onToggleDarkMode,
   storeSettings,
   currentPage,
   onNavigate,
@@ -490,6 +496,16 @@ export function CustomerStorefront({
               >
                 <MessageCircle className="w-4 h-4" />
               </a>
+              <button
+                type="button"
+                onClick={onToggleDarkMode}
+                aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+                aria-pressed={darkMode}
+                className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 text-white border border-white/20 flex items-center justify-center cursor-pointer transition-colors"
+                title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+              >
+                {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </button>
               <button
                 type="button"
                 onClick={() => setIsQrModalOpen(true)}
