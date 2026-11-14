@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, PackageCheck, ShoppingBag, Clock3, CheckCircle2, ChefHat, Truck, ReceiptText, RefreshCw, ShieldCheck } from 'lucide-react';
 
 type OrderItem = { name: string; quantity: number; unit: string; price?: number; lineTotal?: number; unavailable?: boolean };
-type Order = { orderNumber: number; status: string; total: number; createdAt: number; updatedAt?: number; readyAt?: number | null; estimatedReadyAt?: number | null; items: OrderItem[] };
+type Order = { orderNumber: number; status: string; total: number; originalTotal?: number; unavailableDeduction?: number; createdAt: number; updatedAt?: number; readyAt?: number | null; estimatedReadyAt?: number | null; items: OrderItem[] };
 
 const statusLabel = (status: string) => {
   const labels: Record<string, string> = { new: 'Received', processing: 'Being prepared', ready: 'Ready for pickup', completed: 'Completed', cancelled: 'Cancelled', unavailable: 'Availability update' };
@@ -31,7 +31,7 @@ export function CustomerOrders({ orderNumber, phone, onNavigate, onBack }: { ord
     if (initial) setLoading(true);
     else setRefreshing(true);
     try {
-      const params = new URLSearchParams({ phone: phone.replace(/\\D/g, '') });
+      const params = new URLSearchParams({ phone: phone.replace(/\D/g, '') });
       if (orderNumber) params.set('orderNumber', String(orderNumber));
       else params.set('history', '1');
       const url = '/api/orders/track?' + params.toString();
@@ -121,67 +121,61 @@ export function CustomerOrders({ orderNumber, phone, onNavigate, onBack }: { ord
             )}
 
             {!loading && !error && orderNumber && selected && (
-              <div className="space-y-5 text-slate-900">
-                <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <span className="grid h-9 w-9 place-items-center rounded-full bg-blue-50 text-blue-700"><PackageCheck className="h-5 w-5"/></span>
-                      <div>
-                        <p className="text-sm font-extrabold">{selected.status === 'completed' ? 'Your order was delivered!' : selected.status === 'ready' ? 'Your order is ready!' : selected.status === 'cancelled' ? 'This order was cancelled' : 'Your order is confirmed'}</p>
-                        <p className="mt-0.5 text-xs text-slate-500">{statusLabel(selected.status)}</p>
-                      </div>
-                    </div>
-                    <span className="rounded-lg bg-blue-600 px-2.5 py-1.5 text-center text-xs font-black leading-tight text-white">#{selected.orderNumber}</span>
+              <div className="space-y-4 text-slate-900">
+                <section className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-blue-50 text-blue-700"><Truck className="h-5 w-5"/></span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-extrabold">{selected.status === 'completed' ? 'Your order was delivered!' : selected.status === 'cancelled' ? 'Your order was cancelled' : selected.status === 'ready' ? 'Your order is ready!' : selected.estimatedReadyAt ? 'Estimated ready in ' + Math.max(0, Math.ceil((selected.estimatedReadyAt - Date.now()) / 60000)) + ' minutes' : statusLabel(selected.status)}</p>
+                    <p className="mt-0.5 text-[11px] text-slate-500">{selected.readyAt ? 'Ready at ' + formatTime(selected.readyAt) : selected.estimatedReadyAt ? 'Estimated at ' + formatTime(selected.estimatedReadyAt) : 'We’ll update your order status here'}</p>
                   </div>
-                </div>
+                  <span className="shrink-0 rounded-md bg-blue-600 px-2.5 py-1.5 text-xs font-black text-white">#{selected.orderNumber}</span>
+                </section>
 
-                {selected.estimatedReadyAt && !selected.readyAt && !["ready","completed","cancelled"].includes(selected.status) && (
-                  <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
-                    <Clock3 className="mt-0.5 h-5 w-5 shrink-0 text-amber-700"/>
-                    <div><p className="text-sm font-extrabold text-amber-950">A little more time needed?</p><p className="mt-1 text-sm text-amber-900">The store estimates your order will be ready around {formatTime(selected.estimatedReadyAt)}.</p></div>
+                <section className="rounded-lg border border-slate-200 bg-white px-3 py-3 sm:px-4">
+                  <div className="mb-3 flex items-center justify-between gap-2">
+                    <h2 className="text-sm font-black">{selected.items.reduce((sum,item)=>sum+Number(item.quantity||0),0)} items in your order</h2>
+                    <span className="text-[11px] text-slate-500">{formatDate(selected.createdAt)}</span>
                   </div>
-                )}
-
-                <section className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-                  <div className="flex flex-wrap items-start justify-between gap-2 border-b border-slate-100 px-4 py-4 sm:px-5">
-                    <div><h2 className="text-sm font-black">Order summary</h2><p className="mt-1 text-xs text-slate-500">Order #{selected.orderNumber}</p></div>
-                    <div className="text-right"><p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Placed at</p><p className="mt-0.5 text-xs font-bold text-slate-700">{formatTime(selected.createdAt)}</p><p className="text-[11px] text-slate-500">{new Date(selected.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric',timeZone:'Asia/Kolkata'})}</p></div>
-                  </div>
-                  <div className="flex gap-3 overflow-x-auto p-4 sm:p-5">
+                  <div className="divide-y divide-slate-100">
                     {selected.items.map((item,index) => (
-                      <div key={index} className={'w-40 shrink-0 rounded-lg border p-3 ' + (item.unavailable ? 'border-amber-200 bg-amber-50/60' : 'border-slate-200 bg-white')}>
-                        <div className="mx-auto grid h-16 w-16 place-items-center rounded-lg bg-slate-50 text-blue-700"><ShoppingBag className="h-8 w-8"/></div>
-                        <p className="mt-2 line-clamp-2 min-h-8 text-center text-xs font-bold">{item.name}</p>
-                        <p className="mt-1 text-center text-[11px] text-slate-500">{item.unit} · {item.quantity} {Number(item.quantity) === 1 ? 'unit' : 'units'}</p>
-                        {item.unavailable ? <p className="mt-1 text-center text-[11px] font-extrabold text-amber-700">Unavailable · Deducted</p> : <p className="mt-1 text-center text-xs font-extrabold text-slate-800">₹{item.lineTotal ?? Number(item.price || 0) * Number(item.quantity || 0)}</p>}
+                      <div key={index} className="flex min-h-[58px] items-center gap-3 py-2.5">
+                        <span className={'grid h-10 w-10 shrink-0 place-items-center rounded-md border ' + (item.unavailable ? 'border-amber-200 bg-amber-50 text-amber-700' : 'border-slate-200 bg-slate-50 text-blue-700')}><ShoppingBag className="h-5 w-5"/></span>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-bold leading-5 text-slate-900">{item.name}</p>
+                          <p className="text-[10px] text-slate-500">{item.unit} · {item.quantity} {Number(item.quantity) === 1 ? 'unit' : 'units'}</p>
+                          {item.unavailable && <p className="mt-0.5 text-[10px] font-bold text-amber-700">Unavailable · Removed from bill</p>}
+                        </div>
+                        <div className="shrink-0 text-right">
+                          {item.unavailable && <p className="text-[10px] text-slate-400 line-through">₹{item.lineTotal ?? Number(item.price||0)*Number(item.quantity||0)}</p>}
+                          <p className={'text-xs font-extrabold ' + (item.unavailable ? 'text-amber-700' : 'text-slate-900')}>{item.unavailable ? '₹0' : '₹' + (item.lineTotal ?? Number(item.price||0)*Number(item.quantity||0))}</p>
+                        </div>
                       </div>
                     ))}
                   </div>
-                  <div className="border-t border-slate-100 bg-slate-50/70 px-4 py-4 sm:px-5">
-                    {selected.items.some(item => item.unavailable) && (
-                      <div className="mb-3 space-y-1.5 text-xs">
-                        <div className="flex justify-between text-slate-500"><span>Original order amount</span><span>₹{selected.total + selected.items.filter(item=>item.unavailable).reduce((sum,item)=>sum+Number(item.price||0)*Number(item.quantity||0),0)}</span></div>
-                        <div className="flex justify-between font-semibold text-amber-700"><span>Unavailable item deduction</span><span>−₹{selected.items.filter(item=>item.unavailable).reduce((sum,item)=>sum+Number(item.price||0)*Number(item.quantity||0),0)}</span></div>
-                      </div>
-                    )}
-                    <div className="flex items-center justify-between"><span className="text-sm font-extrabold">Final amount payable</span><span className="text-xl font-black text-blue-800">₹{selected.total}</span></div>
+                </section>
+
+                <section className="rounded-lg border border-slate-200 bg-white px-4 py-4">
+                  <h2 className="mb-3 text-sm font-black">Bill summary</h2>
+                  <div className="space-y-2 text-xs">
+                    <div className="flex justify-between gap-3"><span className="text-slate-600">Items total</span><span className="font-bold">₹{selected.originalTotal ?? (selected.total + Number(selected.unavailableDeduction || 0))}</span></div>
+                    {Number(selected.unavailableDeduction || 0) > 0 && <div className="flex justify-between gap-3 text-amber-700"><span>Unavailable items deduction</span><span className="font-bold">−₹{selected.unavailableDeduction}</span></div>}
+                    <div className="flex justify-between gap-3"><span className="text-slate-600">Handling fee</span><span className="font-bold text-blue-700">FREE</span></div>
+                    <div className="flex justify-between gap-3"><span className="text-slate-600">Delivery fee</span><span className="font-bold text-blue-700">FREE</span></div>
+                  </div>
+                  <div className="mt-3 border-t border-slate-200 pt-3">
+                    <div className="flex items-center justify-between gap-3"><div><p className="text-sm font-black">You pay</p><p className="text-[10px] text-slate-500">Final amount after availability updates</p></div><p className="text-xl font-black text-blue-800">₹{selected.total}</p></div>
                   </div>
                 </section>
 
-                <section className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
-                  <h2 className="text-sm font-black">Delivery details</h2>
-                  <div className="mt-3 flex items-center gap-3">
-                    <span className="grid h-9 w-9 place-items-center rounded-lg bg-blue-50 text-blue-700"><Truck className="h-5 w-5"/></span>
-                    <div><p className="text-xs font-bold">Checkout details verified</p><p className="mt-0.5 text-xs text-slate-500">Your order is linked to the phone number used at checkout.</p></div>
-                  </div>
+                <button type="button" onClick={() => onNavigate('/')} className="flex min-h-11 w-full items-center justify-center rounded-full bg-amber-400 px-5 py-3 text-xs font-black text-slate-950 shadow-sm transition hover:bg-amber-300">Continue shopping</button>
+                <section className="rounded-lg bg-slate-50 px-4 py-3">
+                  <p className="text-[10px] font-bold text-slate-600">Order ID</p><p className="mt-1 text-xs text-slate-700">#{selected.orderNumber}</p>
+                  <p className="mt-2 text-[10px] text-slate-500">Last updated {formatDate(selected.updatedAt || selected.createdAt)}</p>
                 </section>
-
-                <section className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-                  <h2 className="px-4 pb-2 pt-4 text-sm font-black sm:px-5">Need help with your order?</h2>
-                  <button type="button" onClick={() => onNavigate('/account')} className="flex w-full items-center justify-between border-t border-slate-100 px-4 py-3 text-left hover:bg-slate-50 sm:px-5"><span><span className="block text-xs font-bold">Contact Parbati Bhandar</span><span className="mt-0.5 block text-[11px] text-slate-500">Ask about an item, delivery or order update</span></span><ArrowRight className="h-4 w-4 text-slate-400"/></button>
-                  <button type="button" onClick={() => onNavigate('/')} className="flex w-full items-center justify-between border-t border-slate-100 px-4 py-3 text-left hover:bg-slate-50 sm:px-5"><span><span className="block text-xs font-bold">Continue shopping</span><span className="mt-0.5 block text-[11px] text-slate-500">Browse everyday grocery essentials</span></span><ArrowRight className="h-4 w-4 text-slate-400"/></button>
+                <section className="rounded-lg border border-slate-200 bg-white p-4">
+                  <h2 className="text-xs font-black">Need help with your order?</h2>
+                  <button type="button" onClick={() => onNavigate('/account')} className="mt-3 flex w-full items-center justify-between border-t border-slate-100 pt-3 text-left"><span><span className="block text-xs font-bold">Contact Parbati Bhandar</span><span className="mt-0.5 block text-[10px] text-slate-500">Ask about an item or order update</span></span><ArrowRight className="h-4 w-4 text-slate-400"/></button>
                 </section>
-                <p className="text-center text-[11px] text-slate-400">Last updated {formatDate(selected.updatedAt || selected.createdAt)}</p>
               </div>
             )}
           </div>
