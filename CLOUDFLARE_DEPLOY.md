@@ -11,7 +11,8 @@
 1. Create or use the D1 database named `parbati-bhandar`.
 2. Keep the D1 binding named `DB`; its database ID is recorded in `wrangler.toml`.
 3. Apply `migrations/0001_initial.sql` to D1. Order tables and stock-deduction audit tables are created by the API when needed.
-4. Product catalogue, customer orders and store settings are stored in D1.
+4. Customer account tables are bootstrapped idempotently by the Pages Functions on first account request. `migrations/0002_customer_accounts.sql` documents the schema for managed migration workflows; do not manually re-run it against a database where its tables/columns already exist.
+5. Product catalogue, customer accounts, sessions, orders and store settings are stored in D1.
 5. Product and store images are uploaded to Cloudinary; no Supabase or R2 storage is required.
 
 ## Pages variables and secrets
@@ -24,8 +25,16 @@ Configure these under **Workers & Pages → parbati-bhandar → Settings → Var
 
 Never commit real secrets or put them in browser-side Vite variables.
 
+## Customer accounts
+- Customers register and sign in using their name, 10-digit Indian mobile number and password.
+- Passwords use PBKDF2-HMAC-SHA-256 with a unique random salt; plaintext passwords are never stored.
+- Sessions use random opaque tokens in HttpOnly, Secure, SameSite cookies. Only SHA-256 token hashes are stored in D1.
+- Sessions expire after 30 days. Customer order creation, tracking and history require a valid account session.
+- Existing orders are linked to a new account by matching the phone number at registration.
+- Checkout requires sign-in; the server takes the customer name and phone from the authenticated session, not browser-supplied values.
+
 ## Order and stock behaviour
-- Customers track orders using order number + phone number.
+- Customers view their own orders from the signed-in account. Order tracking is account-protected.
 - The public catalogue exposes availability only; inventory counts are owner-only.
 - The owner reviews an order, marks unavailable items, then confirms Ready.
 - D1 applies stock deductions transactionally and only once per order.
