@@ -328,8 +328,8 @@ export function CustomerStorefront({
             <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
-                onClick={() => onNavigate('/previous-orders')}
-                aria-label="My profile and orders"
+                onClick={() => onNavigate('/account')}
+                aria-label="My account and orders"
                 aria-expanded={currentPage === 'history'}
                 className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 border border-white/20 flex items-center justify-center text-white cursor-pointer shrink-0 transition-colors"
               >
