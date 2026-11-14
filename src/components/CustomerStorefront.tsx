@@ -1168,7 +1168,7 @@ export function CustomerStorefront({
             </button>
           </div>
         ) : (
-          <div className="pb-product-grid grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
+          <div className="pb-product-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
             {filteredCustomerProducts.map((product) => {
               const activeOpt = getActiveOptionForProduct(product);
               const activeCartKey = makeCartKey(product.id, activeOpt.label);
@@ -1496,7 +1496,7 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
 
 <footer className="bg-slate-50 border-t border-slate-200 mt-10 py-6 px-4 text-xs text-slate-600">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left space-y-1">
             <div className="flex items-center justify-center sm:justify-start gap-2 font-extrabold text-slate-900 text-sm">
               <Store className="w-4 h-4 text-[#0d647d]" />
