@@ -37,7 +37,13 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
     if (showLoading) setOrdersLoading(true);
     else setOrdersRefreshing(true);
     try {
-      const response = await fetch('/api/orders/track?history=1',{credentials:'same-origin',cache:'no-store'});
+      const normalizedPhone = String(customer?.phone || '').replace(/\D/g, '');
+      if (normalizedPhone.length !== 10) {
+        setOrders([]);
+        throw new Error('Your account phone number is missing or invalid. Please sign in again.');
+      }
+      const params = new URLSearchParams({ history: '1', phone: normalizedPhone });
+      const response = await fetch('/api/orders/track?' + params.toString(),{credentials:'same-origin',cache:'no-store'});
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not load order history');
       setOrders(Array.isArray(data.orders)?data.orders:[]);
@@ -53,7 +59,7 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
 
   useEffect(() => {
     if (customer) void loadOrders(true);
-  },[customer?.id]);
+  },[customer?.id, customer?.phone]);
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
