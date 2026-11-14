@@ -1,4 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
+
+const SEASONAL_COLLECTION_ICONS = [
+  { label: 'Diwali', icon: '🪔' }, { label: 'Holi', icon: '🎨' }, { label: 'Durga Puja', icon: '🌺' },
+  { label: 'Navratri', icon: '🔱' }, { label: 'Dussehra', icon: '🏹' }, { label: 'Chhath Puja', icon: '🌅' },
+  { label: 'Makar Sankranti', icon: '🪁' }, { label: 'Lohri', icon: '🔥' }, { label: 'Baisakhi', icon: '🌾' },
+  { label: 'Janmashtami', icon: '🦚' }, { label: 'Ganesh Chaturthi', icon: '🐘' }, { label: 'Mahashivratri', icon: '🕉️' },
+  { label: 'Raksha Bandhan', icon: '🧵' }, { label: 'Karwa Chauth', icon: '🌙' }, { label: 'Eid', icon: '🌙' },
+  { label: 'Christmas', icon: '🎄' }, { label: 'New Year', icon: '🎉' }, { label: 'Wedding', icon: '💐' },
+  { label: 'Puja / Aarti', icon: '🙏' }, { label: 'Flowers', icon: '🌼' }, { label: 'Sweets', icon: '🍬' },
+  { label: 'Grocery', icon: '🛍️' }, { label: 'Fresh produce', icon: '🥬' }, { label: 'Special offer', icon: '🎁' },
+  { label: 'Star', icon: '⭐' }, { label: 'Heart', icon: '❤️' },
+] as const;
+
 import {
   Lock,
   Plus,
@@ -2124,11 +2137,12 @@ export function AdminUploadApp({
         {adminTab === 'christmasSpecials' && (
           <section className="space-y-5">
             <div className="overflow-hidden rounded-3xl bg-gradient-to-r from-blue-950 via-blue-800 to-red-900 p-5 text-white shadow-lg sm:p-7">
-              <div className="flex items-center gap-3"><span className="text-4xl">🎄</span><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-blue-200">Seasonal collection</p><h2 className="text-2xl font-black">{storeSettings.seasonalCollectionTitle || 'Christmas Specials'}</h2><p className="mt-1 text-xs text-blue-100">Choose the products customers see when they tap the seasonal banner.</p></div></div>
+              <div className="flex items-center gap-3"><span className="text-4xl">{storeSettings.seasonalCollectionIcon || "🎄"}</span><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-blue-200">Seasonal collection</p><h2 className="text-2xl font-black">{storeSettings.seasonalCollectionTitle || 'Christmas Specials'}</h2><p className="mt-1 text-xs text-blue-100">Choose the products customers see when they tap the seasonal banner.</p></div></div>
               <div className="mt-4 rounded-full bg-white/15 px-3 py-2 text-xs font-bold inline-flex">{(storeSettings.christmasSpecialProductIds || []).length} selected products</div>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-              <label className="mb-4 block"><span className="mb-1 block text-xs font-extrabold uppercase tracking-wide text-slate-600">Homepage collection name</span><input type="text" maxLength={60} value={storeSettings.seasonalCollectionTitle || 'Christmas Specials'} onChange={e => onSaveSettings({...storeSettings, seasonalCollectionTitle:e.target.value})} placeholder="e.g. Christmas Specials" className="w-full rounded-xl border border-slate-200 px-3 py-3 text-sm font-semibold outline-none focus:border-blue-500"/><span className="mt-1 block text-[11px] text-slate-500">This name appears on the homepage collection and its banner button.</span></label>
+              <label className="mb-4 block"><span className="mb-1 block text-xs font-extrabold uppercase tracking-wide text-slate-600">Homepage collection name</span><input type="text" maxLength={60} value={storeSettings.seasonalCollectionTitle || 'Christmas Specials'} onChange={e => onSaveSettings({...storeSettings, seasonalCollectionTitle:e.target.value})} placeholder="e.g. Diwali Specials" className="w-full rounded-xl border border-slate-200 px-3 py-3 text-sm font-semibold outline-none focus:border-blue-500"/><span className="mt-1 block text-[11px] text-slate-500">This name appears on the homepage collection and its banner button.</span></label>
+              <div className="mb-4"><p className="mb-2 text-xs font-extrabold uppercase tracking-wide text-slate-600">Choose collection icon</p><div className="grid grid-cols-4 gap-2 sm:grid-cols-6">{SEASONAL_COLLECTION_ICONS.map(item => <button key={item.label} type="button" title={item.label} aria-label={item.label} aria-pressed={(storeSettings.seasonalCollectionIcon || '🎄') === item.icon} onClick={() => onSaveSettings({...storeSettings, seasonalCollectionIcon:item.icon})} className={'flex min-h-[72px] flex-col items-center justify-center gap-1 rounded-xl border p-2 transition ' + ((storeSettings.seasonalCollectionIcon || '🎄') === item.icon ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-200' : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50')}><span className="text-2xl">{item.icon}</span><span className="text-center text-[10px] font-semibold leading-tight text-slate-600">{item.label}</span></button>)}</div><p className="mt-2 text-[11px] text-slate-500">Popular North Indian festivals, celebrations and everyday store themes. Your selection saves automatically.</p></div>
               <div className="mb-3 flex flex-wrap items-center justify-between gap-2"><h3 className="font-extrabold text-slate-900">Select seasonal products</h3><div className="flex gap-3 text-xs"><button type="button" onClick={() => onSaveSettings({...storeSettings, christmasSpecialProductIds: products.filter(p => p.inStock).map(p => p.id)})} className="font-bold text-blue-700">Select all available</button><button type="button" onClick={() => onSaveSettings({...storeSettings, christmasSpecialProductIds: []})} className="font-bold text-rose-700">Clear selection</button></div></div>
               <input type="search" value={christmasSearch} onChange={e => setChristmasSearch(e.target.value)} placeholder="Search products…" className="mb-3 w-full rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-blue-500"/>
               <div className="grid max-h-[65vh] grid-cols-1 gap-2 overflow-y-auto sm:grid-cols-2">
