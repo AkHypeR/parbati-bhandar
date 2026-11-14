@@ -534,7 +534,7 @@ export function AdminUploadApp({
 
   const restoreFullBackup = async (file?: File) => {
     if (!file) return;
-    if (!window.confirm('Restore this backup? It will REPLACE the current online products, settings and customer orders. Download a fresh backup first.')) {
+    if (!window.confirm('Restore this version 2 backup? It will replace the current catalogue, store settings, orders and inventory history in one database transaction. Existing customer accounts and passwords are preserved. Download a fresh backup first.')) {
       if (backupFileInputRef.current) backupFileInputRef.current.value = '';
       return;
     }
@@ -2149,13 +2149,13 @@ export function AdminUploadApp({
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-sky-100 text-sky-700"><Database className="h-5 w-5" /></span>
                 <div className="min-w-0 flex-1">
                   <h3 className="text-sm font-extrabold text-slate-900">Backup &amp; restore</h3>
-                  <p className="mt-1 text-xs leading-5 text-slate-600">Download a complete copy of your online products, categories, store settings and customer orders. Keep the file somewhere safe.</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-600">Version 2 backup includes your catalogue, store settings, complete order records and inventory deduction/refund history. Customer passwords and active sessions are never exported.</p>
                   <div className="mt-3 flex flex-col gap-2 sm:flex-row">
                     <button type="button" onClick={downloadFullBackup} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-sky-700 px-4 py-2.5 text-xs font-bold text-white hover:bg-sky-800"><Download className="h-4 w-4" /> Download full backup</button>
                     <button type="button" onClick={() => backupFileInputRef.current?.click()} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-sky-300 bg-white px-4 py-2.5 text-xs font-bold text-sky-800 hover:bg-sky-100"><FileUp className="h-4 w-4" /> Restore from backup</button>
                     <input ref={backupFileInputRef} type="file" accept="application/json,.json" className="hidden" onChange={e => void restoreFullBackup(e.target.files?.[0])} />
                   </div>
-                  <p className="mt-2 text-[11px] font-semibold text-amber-800">Warning: restore replaces the current online catalogue, settings and orders. Download a fresh backup before restoring.</p>
+                  <p className="mt-2 text-[11px] font-semibold text-amber-800">Restore replaces catalogue, settings, orders and stock ledgers together. Customer accounts and passwords stay on this store; backups from another store may require matching customer accounts.</p>
                 </div>
               </div>
             </section>
