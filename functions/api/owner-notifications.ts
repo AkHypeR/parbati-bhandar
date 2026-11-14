@@ -34,6 +34,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     await env.DB.batch(insertStatements.slice(i, i + 50));
   }
 
+  await env.DB.prepare("CREATE TABLE IF NOT EXISTS customer_push_subscriptions (customer_id TEXT PRIMARY KEY, subscription_json TEXT NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)").run();
   const pushConfigured = Boolean(env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.VAPID_SUBJECT);
   let pushSent = 0;
   let pushFailed = 0;
