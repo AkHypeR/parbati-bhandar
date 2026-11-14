@@ -28,6 +28,7 @@ import { CustomerStorefront } from './components/CustomerStorefront';
 import { CartDrawer } from './components/CartDrawer';
 import { CustomerAccount } from './components/CustomerAccount';
 import { CustomerOrders } from './components/CustomerOrders';
+import { TermsAndConditions } from './components/TermsAndConditions';
 import { OwnerPinGate } from './components/OwnerPinGate';
 import { AdminUploadApp } from './components/AdminUploadApp';
 import { QrPosterModal, SetupGuideModal } from './components/Modals';
@@ -1066,7 +1067,9 @@ export default function App() {
           </div>
         ) : (
         <>
-          {currentPath === '/orders' || (currentPath.startsWith('/orders/') && Number.isInteger(Number(currentPath.split('/')[2]))) ? (
+          {currentPath === '/terms-and-conditions' ? (
+            <TermsAndConditions onBack={() => navigateToPath('/')} />
+          ) : currentPath === '/orders' || (currentPath.startsWith('/orders/') && Number.isInteger(Number(currentPath.split('/')[2]))) ? (
             customerAccount ? (
               <CustomerOrders
                 orderNumber={currentPath.startsWith('/orders/') ? Number(currentPath.split('/')[2]) : undefined}
