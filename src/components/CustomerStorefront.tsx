@@ -521,7 +521,7 @@ export function CustomerStorefront({
       {/* STICKY SEARCH BAR & CATEGORY RIBBON (Follows User on Scroll)          */}
       {/* ===================================================================== */}
       <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-2xs">
-        <div className="max-w-5xl mx-auto px-3.5 sm:px-6 py-2.5 space-y-2">
+        <div className="max-w-6xl mx-auto px-3.5 sm:px-6 py-3 space-y-2">
           <div className="flex items-center gap-2">
             {/* Rounded Pill Search Bar (like "Search for 'Coffee'" in screenshot) */}
             <div className="relative flex-1">
@@ -608,61 +608,43 @@ export function CustomerStorefront({
         </div>
       </div>
 
-      {/* ===================================================================== */}
-      {/* "NOMOSHKAR GRAHOK" BURDWAN HERITAGE GREETING BANNER                   */}
-      {/* Matches the Curzon Gate + "Nomoshkar Burdwan" section in screenshot   */}
-      {/* ===================================================================== */}
-      <section
-        aria-label="Nomoshkar Grahok Welcome Banner"
-        className={`relative bg-gradient-to-b from-[#eaf7ed] via-[#f7fbf6] to-[#f4f8f3] pt-4 pb-3 overflow-hidden ${isSearchSubmitted ? "hidden" : ""}`}
-      >
-        <div className="max-w-5xl mx-auto px-4 relative">
-          <div className="relative isolate overflow-hidden rounded-[26px] border border-emerald-200/70 bg-[#063f2c] px-5 sm:px-9 py-5 sm:py-6 shadow-[0_18px_45px_rgba(4,75,42,0.22)] animate-[welcomeRise_800ms_cubic-bezier(.2,.8,.2,1)]">
-            <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_15%_20%,rgba(250,204,21,.22),transparent_28%),radial-gradient(circle_at_88%_85%,rgba(74,222,128,.24),transparent_32%),linear-gradient(115deg,#064e36,#087a45_55%,#064e36)]" />
-            <div aria-hidden="true" className="absolute -top-16 -right-10 h-52 w-52 rounded-full border border-lime-200/20 animate-[welcomeOrbit_18s_linear_infinite]" />
-            <div aria-hidden="true" className="absolute -bottom-24 -left-12 h-56 w-56 rounded-full border border-amber-200/20 animate-[welcomeOrbit_24s_linear_infinite_reverse]" />
-            <div aria-hidden="true" className="absolute inset-x-0 top-0 h-1 overflow-hidden bg-white/10"><span className="block h-full w-1/3 bg-gradient-to-r from-transparent via-amber-300 to-transparent animate-[welcomeShine_4s_ease-in-out_infinite]" /></div>
-            <div className="relative z-10 grid grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-6">
-              <div className="relative flex items-center justify-start min-w-0">
-                <div className="relative rounded-2xl bg-white/10 border border-white/15 p-2 sm:p-3 shadow-inner">
-                  <svg viewBox="0 0 140 88" className="w-28 sm:w-40 h-20 sm:h-28 drop-shadow-[0_8px_12px_rgba(0,0,0,.25)]" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path d="M42 22 L98 22 L94 14 L70 8 L46 14 Z" fill="#f8e7b2" stroke="#fef3c7" strokeWidth="1.8"/>
-                    <circle cx="70" cy="6" r="2.5" fill="#fde68a"/><circle cx="48" cy="11" r="2" fill="#fde68a"/><circle cx="92" cy="11" r="2" fill="#fde68a"/>
-                    <rect x="26" y="24" width="18" height="60" fill="#e8f2df" stroke="#fff7d6" strokeWidth="1.8"/><rect x="96" y="24" width="18" height="60" fill="#e8f2df" stroke="#fff7d6" strokeWidth="1.8"/>
-                    <path d="M44 22 H96 V84 H84 V52 C84 42 56 42 56 52 V84 H44 V22 Z" fill="#fff9e8" stroke="#fff7d6" strokeWidth="1.8"/>
-                    <path d="M52 84 V51 C52 37 88 37 88 51 V84" stroke="#b7c9a9" strokeWidth="1.6"/>
-                    <path d="M31 84 V60 C31 55 39 55 39 60 V84 M101 84 V60 C101 55 109 55 109 60 V84" stroke="#b7c9a9" strokeWidth="1.6"/>
-                    <path d="M23 24 H117 M25 34 H115" stroke="#fef3c7" strokeWidth="2"/>
-                  </svg>
-                </div>
-                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-amber-300 px-2.5 py-1 text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-emerald-950 shadow-md">Bardhaman • Local roots</span>
-              </div>
-              <div className="col-span-2 sm:col-span-1 text-center sm:min-w-[260px] sm:px-2">
-                <div className="inline-flex items-center gap-2 rounded-full border border-amber-200/35 bg-white/10 px-3 py-1 text-[10px] sm:text-xs font-extrabold uppercase tracking-[.2em] text-amber-200"><span className="animate-[welcomeSparkle_2s_ease-in-out_infinite]">✦</span>{greetingTop}<span className="animate-[welcomeSparkle_2s_ease-in-out_infinite]">✦</span></div>
-                <h2 className="mt-2 font-serif text-4xl sm:text-5xl font-black leading-none tracking-tight text-white drop-shadow-lg">{greetingMain}</h2>
-                {storeSettings.greetingBengali && <p className="mt-2 text-sm sm:text-base font-bold text-lime-100">{storeSettings.greetingBengali}</p>}
-                <p className="mt-2 text-[10px] sm:text-xs font-semibold tracking-wide text-emerald-100/90">Fresh essentials • Fair prices • Friendly service</p>
-                <div className="mx-auto mt-3 h-1 w-24 rounded-full bg-gradient-to-r from-transparent via-amber-300 to-transparent" />
-              </div>
-              <div aria-hidden="true" className="hidden sm:flex flex-col items-end justify-center gap-2 text-right"><span className="text-4xl animate-[welcomeFloat_3s_ease-in-out_infinite]">🧺</span><span className="text-3xl animate-[welcomeFloat_3s_ease-in-out_infinite]">🥬</span><span className="text-[10px] font-black uppercase tracking-widest text-lime-100/80">Your neighbourhood store</span></div>
+      {/* Premium neighbourhood-store hero */}
+      <section aria-label="Welcome to Parbati Bhandar" className={`relative overflow-hidden bg-[#f5f8f3] px-3.5 pb-5 pt-4 sm:px-6 sm:pb-7 sm:pt-6 ${isSearchSubmitted ? "hidden" : ""}`}>
+        <div className="relative mx-auto grid max-w-6xl overflow-hidden rounded-[28px] bg-[#073f2b] shadow-[0_22px_55px_rgba(5,55,35,.18)] lg:grid-cols-[1.1fr_.9fr]">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_0%,rgba(74,222,128,.18),transparent_36%),radial-gradient(circle_at_90%_100%,rgba(250,204,21,.16),transparent_34%)]" />
+          <div className="relative z-10 flex flex-col items-start justify-center px-5 py-7 sm:px-9 sm:py-10 lg:px-12 lg:py-12">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/20 bg-white/10 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[.16em] text-emerald-100 sm:text-xs"><span className="h-2 w-2 rounded-full bg-lime-300" /> Your neighbourhood grocery store</div>
+            <p className="mt-5 text-sm font-bold text-amber-200 sm:text-base">{greetingTop} • {greetingMain}</p>
+            <h1 className="mt-2 max-w-xl text-3xl font-black leading-[1.08] tracking-tight text-white sm:text-4xl lg:text-[3.35rem]">Everyday essentials, <span className="text-lime-300">made simple.</span></h1>
+            {storeSettings.greetingBengali && <p className="mt-3 text-base font-semibold text-emerald-100 sm:text-lg">{storeSettings.greetingBengali}</p>}
+            <p className="mt-3 max-w-lg text-sm leading-6 text-emerald-50/80 sm:text-base sm:leading-7">Shop your daily groceries from Parbati Bhandar. Browse the live catalogue, choose your pack size and send your order with ease.</p>
+            <div className="mt-6 flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row">
+              <button type="button" onClick={() => catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#facc15] px-5 py-3 text-sm font-black text-[#173b2a] shadow-lg transition hover:bg-amber-300 active:scale-[.98]">Explore groceries <ChevronRight className="h-4 w-4" /></button>
+              <a href={`https://wa.me/${storeSettings.whatsappNumber || '919734765207'}?text=${encodeURIComponent('নমস্কার পার্বতী ভান্ডার, আমি অর্ডার করতে চাই।')}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/10 px-5 py-3 text-sm font-bold text-white transition hover:bg-white/15"><MessageCircle className="h-4 w-4" /> Chat on WhatsApp</a>
             </div>
-            <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-around text-base opacity-75"><span className="animate-[welcomeFloat_3s_ease-in-out_infinite]">🌼</span><span>✦</span><span className="animate-[welcomeFloat_3s_ease-in-out_infinite]">🌿</span><span>✦</span><span className="animate-[welcomeFloat_3s_ease-in-out_infinite]">🌼</span></div>
+            <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-[11px] font-semibold text-emerald-100/85 sm:text-xs">
+              <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-lime-300" /> Live availability</span>
+              <span className="inline-flex items-center gap-1.5"><ShoppingCart className="h-4 w-4 text-lime-300" /> Easy order list</span>
+              <span className="inline-flex items-center gap-1.5"><MapPin className="h-4 w-4 text-lime-300" /> Local to Burdwan</span>
+            </div>
           </div>
-          {/* Sweeping Curved Horizon Line under Curzon Gate & Nomoshkar Grahok */}
-          <svg
-            viewBox="0 0 600 24"
-            className="w-full h-4 text-emerald-300 -mt-1 relative z-10"
-            fill="none"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
-            <path
-              d="M0 20 Q160 2 310 14 T600 12"
-              stroke="currentColor"
-              strokeWidth="2"
-              fill="none"
-            />
-          </svg>
+          <div className="relative hidden min-h-[330px] items-center justify-center overflow-hidden lg:flex">
+            <div aria-hidden="true" className="absolute right-[-4rem] top-[-5rem] h-80 w-80 rounded-full border border-white/10" />
+            <div aria-hidden="true" className="absolute right-8 top-10 h-64 w-64 rounded-full border border-dashed border-amber-200/25" />
+            <div className="relative grid h-64 w-64 place-items-center rounded-[3rem] border border-white/15 bg-white/[.08] shadow-2xl backdrop-blur-sm">
+              <div className="absolute inset-4 rounded-[2.4rem] border border-white/10" />
+              <div className="text-center"><div className="text-8xl drop-shadow-xl">🧺</div><p className="mt-3 text-xs font-black uppercase tracking-[.22em] text-amber-200">Fresh picks, fair prices</p></div>
+              <span className="absolute -left-8 top-8 grid h-16 w-16 place-items-center rounded-2xl border border-white/20 bg-white text-3xl shadow-xl">🥬</span>
+              <span className="absolute -right-7 top-16 grid h-16 w-16 place-items-center rounded-2xl border border-white/20 bg-amber-300 text-3xl shadow-xl">🍅</span>
+              <span className="absolute -bottom-5 left-8 grid h-16 w-16 place-items-center rounded-2xl border border-white/20 bg-white text-3xl shadow-xl">🥛</span>
+            </div>
+            <div className="absolute bottom-7 right-8 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-right backdrop-blur-md"><p className="text-[10px] font-bold uppercase tracking-widest text-emerald-100/70">Store status</p><p className="mt-1 text-sm font-black text-white">{liveIsOpen ? 'Open for orders' : 'Currently closed'}</p></div>
+          </div>
+        </div>
+        <div className="mx-auto mt-3 grid max-w-6xl grid-cols-3 gap-2">
+          <div className="rounded-xl border border-emerald-100 bg-white px-2 py-3 text-center shadow-sm sm:rounded-2xl sm:px-4"><p className="text-base font-black text-emerald-800 sm:text-lg">{inStockCount}+</p><p className="mt-0.5 text-[9px] font-semibold text-slate-500 sm:text-xs">Available products</p></div>
+          <div className="rounded-xl border border-emerald-100 bg-white px-2 py-3 text-center shadow-sm sm:rounded-2xl sm:px-4"><p className="text-base font-black text-emerald-800 sm:text-lg">Easy</p><p className="mt-0.5 text-[9px] font-semibold text-slate-500 sm:text-xs">WhatsApp ordering</p></div>
+          <div className="rounded-xl border border-emerald-100 bg-white px-2 py-3 text-center shadow-sm sm:rounded-2xl sm:px-4"><p className="text-base font-black text-emerald-800 sm:text-lg">Local</p><p className="mt-0.5 text-[9px] font-semibold text-slate-500 sm:text-xs">Burdwan service</p></div>
         </div>
       </section>
 
@@ -1109,7 +1091,7 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       <main
         ref={catalogSectionRef}
-        className="max-w-5xl mx-auto px-3.5 sm:px-6 py-4 flex-1 w-full"
+        className="max-w-6xl mx-auto px-3.5 sm:px-6 py-5 flex-1 w-full"
       >
         {/* Filter Bar: In Stock Only + Sort Dropdown */}
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
