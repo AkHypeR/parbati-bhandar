@@ -111,20 +111,15 @@ export function CustomerStorefront({
 }: CustomerStorefrontProps) {
   const [showWelcomePromo, setShowWelcomePromo] = useState(false);
   useEffect(() => {
-    if (currentPage !== 'home') return;
-    try {
-      if (sessionStorage.getItem('pb-welcome-promo-seen') === '1') return;
-    } catch { /* Continue without session storage when unavailable. */ }
-    const timer = window.setTimeout(() => {
-      setShowWelcomePromo(true);
-      try { sessionStorage.setItem('pb-welcome-promo-seen', '1'); } catch { /* Ignore storage restrictions. */ }
-    }, 650);
+    if (currentPage !== 'home') {
+      setShowWelcomePromo(false);
+      return;
+    }
+    // Show the welcome promotion on every fresh homepage visit and browser refresh.
+    const timer = window.setTimeout(() => setShowWelcomePromo(true), 650);
     return () => window.clearTimeout(timer);
   }, [currentPage]);
-  const closeWelcomePromo = () => {
-    setShowWelcomePromo(false);
-    try { sessionStorage.setItem('pb-welcome-promo-seen', '1'); } catch { /* Ignore storage restrictions. */ }
-  };
+  const closeWelcomePromo = () => setShowWelcomePromo(false);
   const [trackingOrderNumber, setTrackingOrderNumber] = useState(lastOrderNumber);
   const [dealsSearch, setDealsSearch] = useState('');
   const [trackingPhone, setTrackingPhone] = useState(lastOrderPhone);
