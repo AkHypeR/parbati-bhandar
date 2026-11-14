@@ -166,6 +166,7 @@ export default function App() {
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerAccount, setCustomerAccount] = useState<{id:string;name:string;phone:string} | null>(null);
   const [customerAccountChecked, setCustomerAccountChecked] = useState(false);
+  const [accountReturnPath, setAccountReturnPath] = useState('/account');
   useEffect(() => {
     fetch('/api/customer-auth/me', { credentials: 'same-origin', cache: 'no-store' })
       .then(r => r.json()).then(data => {
@@ -180,7 +181,8 @@ export default function App() {
     setCustomerAccount(customer);
     setCustomerName(customer.name);
     setCustomerPhone(customer.phone);
-    navigateToPath('/cart');
+    navigateToPath(accountReturnPath);
+    setAccountReturnPath('/account');
     showToast('Signed in successfully. Your details are ready for checkout.');
   };
   const handleCustomerLogout = () => {
@@ -1061,7 +1063,7 @@ export default function App() {
           <CartDrawer
             isOpen={currentPath === '/cart'}
             customerAuthenticated={!!customerAccount}
-            onRequireLogin={() => navigateToPath('/account')}
+            onRequireLogin={() => { setAccountReturnPath('/cart'); navigateToPath('/account'); }}
             liveIsOpen={liveIsOpen}
             products={products}
             onClose={() => navigateToPath('/')}
