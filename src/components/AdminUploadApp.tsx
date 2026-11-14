@@ -2484,21 +2484,7 @@ export function AdminUploadApp({
                           <Camera className="w-3.5 h-3.5 text-emerald-600" />
                           <span>Choose from Gallery</span>
                         </button>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setSettingsForm({
-                              ...settingsForm,
-                              occasionTitle: 'Chhath Puja',
-                              occasionSubtitle: 'A sacred celebration • উৎসবের বিশেষ সম্ভার',
-                              occasionImageUrl:
-                                '/assets/aistudio/photo_2026-11-12_10-31-46_ee14c399.jpg',
-                            })
-                          }
-                          className="px-3 py-2 rounded-xl bg-amber-200/80 hover:bg-amber-300 text-amber-950 text-xs font-bold cursor-pointer"
-                        >
-                          Use Chhath Puja Reference Art
-                        </button>
+
                       </div>
                       <input
                         type="text"
