@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ArrowLeft, Eye, EyeOff, UserRound, Phone, Package, LogOut,
   UserPlus, LogIn, ShoppingBasket, Sparkles, CheckCircle2, Clock3,
-  LockKeyhole, ArrowRight, ShieldCheck, ChevronRight, ReceiptText, Bell, BellRing, BellOff
+  LockKeyhole, ArrowRight, ShieldCheck, ChevronRight, ReceiptText, Bell, BellRing, BellOff, RefreshCw
 } from 'lucide-react';
 import { TurnstileWidget } from './TurnstileWidget';
 
@@ -26,33 +26,33 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
   const [error,setError] = useState('');
   const [orders,setOrders] = useState<Order[]>([]);
   const [ordersLoading,setOrdersLoading] = useState(false);
+  const [ordersRefreshing,setOrdersRefreshing] = useState(false);
+  const ordersRequestInFlight = useRef(false);
   const [notificationState,setNotificationState] = useState<'off'|'working'|'on'|'unsupported'|'error'>('off');
   const [notificationMessage,setNotificationMessage] = useState('');
 
+  const loadOrders = async (showLoading = false) => {
+    if (ordersRequestInFlight.current) return;
+    ordersRequestInFlight.current = true;
+    if (showLoading) setOrdersLoading(true);
+    else setOrdersRefreshing(true);
+    try {
+      const response = await fetch('/api/orders/track?history=1',{credentials:'same-origin',cache:'no-store'});
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Could not load order history');
+      setOrders(Array.isArray(data.orders)?data.orders:[]);
+      setError('');
+    } catch (e) {
+      setError((e as Error).message || 'Could not load order history');
+    } finally {
+      ordersRequestInFlight.current = false;
+      setOrdersLoading(false);
+      setOrdersRefreshing(false);
+    }
+  };
+
   useEffect(() => {
-    if (!customer) return;
-    let active = true;
-    let requestInFlight = false;
-    const loadOrders = async (showLoading = false) => {
-      if (requestInFlight || document.visibilityState !== 'visible') return;
-      requestInFlight = true;
-      if (showLoading) setOrdersLoading(true);
-      try {
-        const response = await fetch('/api/orders/track?history=1',{credentials:'same-origin',cache:'no-store'});
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Could not load order history');
-        if (active) { setOrders(Array.isArray(data.orders)?data.orders:[]); setError(''); }
-      } catch (e) { if (active) setError((e as Error).message || 'Could not load order history'); }
-      finally {
-        requestInFlight = false;
-        if (active && showLoading) setOrdersLoading(false);
-      }
-    };
-    const refreshWhenVisible = () => { if (document.visibilityState === 'visible') void loadOrders(); };
-    void loadOrders(true);
-    const timer = window.setInterval(refreshWhenVisible, 30000);
-    document.addEventListener('visibilitychange', refreshWhenVisible);
-    return () => { active = false; window.clearInterval(timer); document.removeEventListener('visibilitychange', refreshWhenVisible); };
+    if (customer) void loadOrders(true);
   },[customer?.id]);
 
   const submit = async (event: React.FormEvent) => {
@@ -219,9 +219,9 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
                   {notificationMessage && <p role="status" className={'mt-2 text-xs font-semibold ' + (notificationState === 'error' || notificationState === 'unsupported' ? 'text-rose-700' : 'text-emerald-700')}>{notificationMessage}</p>}
                 </section>
                 <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-                  <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-                    <div><h3 className="font-extrabold text-slate-900">Your recent orders</h3><p className="mt-0.5 text-xs text-slate-500">A quick look at your latest shopping</p></div>
-                    <span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-50 text-emerald-700"><ReceiptText className="h-5 w-5"/></span>
+                  <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
+                    <div className="min-w-0"><h3 className="font-extrabold text-slate-900">Your recent orders</h3><p className="mt-0.5 text-xs text-slate-500">Your latest shopping activity</p></div>
+                    <button type="button" onClick={() => void loadOrders()} disabled={ordersRefreshing || ordersLoading} className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-extrabold text-emerald-800 transition hover:bg-emerald-100 disabled:opacity-60" aria-label="Refresh orders"><RefreshCw className={'h-4 w-4 ' + (ordersRefreshing ? 'animate-spin' : '')}/><span>{ordersRefreshing ? 'Refreshing' : 'Refresh'}</span></button>
                   </div>
                   {ordersLoading ? <p className="py-8 text-center text-sm text-slate-500">Loading your orders…</p> : orders.length===0 ? <div className="p-7 text-center text-sm text-slate-500"><Package className="mx-auto mb-2 h-7 w-7 text-slate-400"/>Your first order will appear here after checkout.</div> :
                     <div className="divide-y divide-slate-100">{orders.slice(0,2).map(order=><button type="button" key={order.orderNumber || order.createdAt} onClick={onViewOrders} className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left transition hover:bg-emerald-50/50"><span className="min-w-0"><span className="flex items-center gap-2"><strong className="text-sm text-slate-900">Your grocery order</strong><span className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${order.status==='new'?'bg-blue-50 text-blue-800':order.status==='processing'?'bg-amber-50 text-amber-800':order.status==='ready'?'bg-emerald-50 text-emerald-800':order.status==='completed'?'bg-slate-100 text-slate-700':'bg-rose-50 text-rose-800'}`}>{order.status==='new'?'Received':order.status==='processing'?'Preparing':order.status==='ready'?'Ready':order.status==='completed'?'Completed':order.status==='cancelled'?'Cancelled':order.status==='unavailable'?'Update needed':order.status}</span></span><span className="mt-1 block truncate text-xs text-slate-500">{order.items.slice(0,2).map(i=>i.name+' × '+i.quantity).join(' · ')}{order.items.length>2?' · + more':''}</span><span className="mt-1 block text-[11px] text-slate-400">{new Date(order.createdAt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Kolkata'})}</span></span><span className="shrink-0 text-sm font-black text-slate-900">₹{order.total}<ChevronRight className="ml-auto mt-1 h-4 w-4 text-emerald-700"/></span></button>)}</div>}
