@@ -48,6 +48,7 @@ export interface StoreSettings {
   /** Owner-curated Deals of the Day shelf. */
   dealsOfDayEnabled?: boolean;
   dealProductIds?: string[];
+  christmasSpecialProductIds?: string[];
   occasionTitle?: string;
   occasionSubtitle?: string;
   occasionTag?: string;
