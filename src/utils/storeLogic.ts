@@ -51,6 +51,8 @@ export interface StoreSettings {
   christmasSpecialProductIds?: string[];
   /** Owner-editable heading for the customer-facing seasonal product shelf. */
   seasonalCollectionTitle?: string;
+  /** Owner-selectable emoji used for the seasonal collection across the storefront. */
+  seasonalCollectionIcon?: string;
   occasionTitle?: string;
   occasionSubtitle?: string;
   occasionTag?: string;
@@ -472,6 +474,7 @@ export const DEFAULT_STORE_SETTINGS: StoreSettings = {
   deliveryEtaMins: '10',
   showOccasionBanner: true,
   seasonalCollectionTitle: 'Christmas Specials',
+  seasonalCollectionIcon: '🎄',
   occasionTitle: 'Merry Christmas',
   occasionSubtitle: 'শুভ বড়দিন • Wishing you joy, warmth and happiness',
   occasionTag: 'Christmas Celebration',
