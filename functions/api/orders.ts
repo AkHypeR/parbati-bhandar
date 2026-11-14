@@ -238,7 +238,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     await env.DB.prepare("INSERT OR REPLACE INTO push_subscriptions (order_id,subscription_json,created_at) VALUES (?,?,?)")
       .bind(id,JSON.stringify({endpoint:subscription.endpoint,keys:{p256dh:subscription.keys.p256dh,auth:subscription.keys.auth}}),now).run();
   }
-  return json({ ok: true, orderId: id, orderNumber }, 201, { "cache-control": "no-store" });
+  return json({ ok: true, orderId: id, orderNumber, createdAt: now }, 201, { "cache-control": "no-store" });
 };
 
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
@@ -256,14 +256,14 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   await purgeExpiredCustomerOrders(env);
   let body: any; try { body = await request.json(); } catch { return json({error:"Invalid update."},400); }
   const status = String(body?.status || "");
-  if (!["new","review","ready","unavailable","completed","cancelled"].includes(status) || !body?.id) return json({error:"Invalid order status."},400);
+  if (!["new","processing","review","ready","unavailable","completed","cancelled"].includes(status) || !body?.id) return json({error:"Invalid order status."},400);
   const id = String(body.id);
   const order = await env.DB.prepare("SELECT status,customer_name,order_number,items_json,stock_deducted FROM customer_orders WHERE id=?").bind(id).first<any>();
   if (!order) return json({error:"Order not found."},404);
-  if (Array.isArray(body.items) && !["new","review"].includes(order.status)) {
+  if (Array.isArray(body.items) && !["new","processing","review"].includes(order.status)) {
     return json({error:"Item availability can only be changed before the order is ready."},409);
   }
-  if (status === "review") return json({error:"Under review is not a supported order status."},400);
+  if (status === "review") return json({error:"Use Processing instead of the legacy review status."},400);
   if (status === "cancelled" && ["ready","completed"].includes(order.status)) {
     return json({error:"A ready or completed order cannot be cancelled from this screen."},409);
   }
@@ -369,10 +369,11 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
     }
   }
   let notification = "not-configured";
-  if (["ready","unavailable","completed","cancelled"].includes(status) && env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.VAPID_SUBJECT) {
+  if (["processing","ready","unavailable","completed","cancelled"].includes(status) && env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.VAPID_SUBJECT) {
     const saved = await env.DB.prepare("SELECT subscription_json FROM push_subscriptions WHERE order_id=?").bind(id).first<any>();
     if (saved?.subscription_json) {
       const messages: Record<string,{title:string;body:string}> = {
+        processing:{title:"Your order is being processed",body:"Parbati Bhandar has started preparing your order."},
         ready:{title:"Your order is ready!",body:"Order #" + order.order_number + " is ready for pickup at Parbati Bhandar."},
         unavailable:{title:"Order update from Parbati Bhandar",body:"There is an availability update for order #" + order.order_number + ". Please contact the store."},
         completed:{title:"Order completed",body:"Order #" + order.order_number + " has been marked completed. Thank you!"},
