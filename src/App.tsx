@@ -124,11 +124,15 @@ export default function App() {
 
 
   // Mode Switcher: 'customer' | 'admin'
-  const [activeMode, setActiveModeState] = useState<'customer' | 'admin'>(() => window.location.pathname.replace(/\/+$/, '') === '/owner' ? 'admin' : 'customer');
+  const getAppPath = () => window.location.pathname.replace(/\/+$/, '') || '/';
+  const adminRouteTabs = { '/owner': 'inventory', '/owner/inventory': 'inventory', '/owner/add-product': 'add', '/owner/orders': 'orders', '/owner/settings': 'settings', '/owner/whatsapp-replies': 'quickReplies' } as const;
+  const getAdminTabFromPath = () => adminRouteTabs[getAppPath() as keyof typeof adminRouteTabs] || 'inventory';
+  const [activeMode, setActiveModeState] = useState<'customer' | 'admin'>(() => getAppPath().startsWith('/owner') ? 'admin' : 'customer');
   const setActiveMode = (mode: 'customer' | 'admin') => {
-    const nextPath = mode === 'admin' ? '/owner' : '/';
-    if (window.location.pathname !== nextPath) window.history.pushState({}, '', nextPath);
+    const nextPath = mode === 'admin' ? '/owner/inventory' : '/';
+    if (getAppPath() !== nextPath) window.history.pushState({}, '', nextPath);
     setActiveModeState(mode);
+    if (mode === 'admin') setAdminTabState(getAdminTabFromPath());
   };
   const [isOwnerUnlocked, setIsOwnerUnlocked] = useState(false);
   const [ownerPassword, setOwnerPassword] = useState('');
@@ -177,7 +181,13 @@ export default function App() {
   const [copiedNotice, setCopiedNotice] = useState(false);
 
   // Admin View States
-  const [adminTab, setAdminTab] = useState<'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders'>('inventory');
+  const [adminTab, setAdminTabState] = useState<'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders'>(() => getAdminTabFromPath());
+  const adminTabRoutes = { inventory: '/owner/inventory', add: '/owner/add-product', orders: '/owner/orders', settings: '/owner/settings', quickReplies: '/owner/whatsapp-replies' } as const;
+  const setAdminTab = (tab: 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders') => {
+    const nextPath = adminTabRoutes[tab];
+    if (getAppPath() !== nextPath) window.history.pushState({}, '', nextPath);
+    setAdminTabState(tab);
+  };
   const [adminSearch, setAdminSearch] = useState('');
   const [adminCategoryFilter, setAdminCategoryFilter] = useState('all');
   const [adminLowStockOnly, setAdminLowStockOnly] = useState(false);
@@ -467,7 +477,15 @@ export default function App() {
 
   // Dedicated owner URL with browser back/forward support.
   useEffect(() => {
-    const syncRoute = () => setActiveModeState(window.location.pathname.replace(/\/+$/, '') === '/owner' ? 'admin' : 'customer');
+    const syncRoute = () => {
+      const path = getAppPath();
+      if (path.startsWith('/owner')) {
+        setActiveModeState('admin');
+        setAdminTabState(getAdminTabFromPath());
+      } else {
+        setActiveModeState('customer');
+      }
+    };
     window.addEventListener('popstate', syncRoute);
     return () => window.removeEventListener('popstate', syncRoute);
   }, []);
