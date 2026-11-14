@@ -243,10 +243,49 @@ export function CustomerStorefront({
     }, 2200);
   };
 
-  const handleSearchInputChange = (val: string) => { setSearchQuery(val); };
+  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
+  const normalizeSearchText = (value: string) => value.toLocaleLowerCase().normalize('NFKD').replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9\\s]/g, ' ').replace(/\\s+/g, ' ').trim();
+  const editDistance = (a: string, b: string) => {
+    const row = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 1; i <= a.length; i++) {
+      let diagonal = row[0]; row[0] = i;
+      for (let j = 1; j <= b.length; j++) {
+        const above = row[j];
+        row[j] = Math.min(row[j] + 1, row[j - 1] + 1, diagonal + (a[i - 1] === b[j - 1] ? 0 : 1));
+        diagonal = above;
+      }
+    }
+    return row[b.length];
+  };
+  const searchFields = (product: Product) => normalizeSearchText([product.name, product.category, product.unit, (product as any).brand, (product as any).description, ...((product as any).keywords || [])].filter(Boolean).join(' '));
+  const rankSearchMatch = (product: Product, query: string) => {
+    const q = normalizeSearchText(query);
+    if (!q) return 0;
+    const fields = searchFields(product);
+    const name = normalizeSearchText(product.name);
+    if (name === q) return 100;
+    if (name.startsWith(q)) return 90;
+    if (name.includes(q)) return 80;
+    if (fields.includes(q)) return 70;
+    const queryWords = q.split(' ').filter(Boolean);
+    const fieldWords = fields.split(' ');
+    const matched = queryWords.filter(word => fieldWords.some(candidate => candidate.startsWith(word) || (word.length >= 4 && editDistance(word, candidate) <= 1)));
+    return matched.length === queryWords.length ? 55 : matched.length ? 20 + matched.length : 0;
+  };
+  const searchResultsProducts = searchQuery.trim()
+    ? products.map(product => ({ product, score: rankSearchMatch(product, searchQuery) })).filter(item => item.score > 0).sort((a, b) => b.score - a.score || a.product.name.localeCompare(b.product.name)).map(item => item.product)
+    : filteredCustomerProducts;
+  const handleSearchInputChange = (val: string) => { setSearchQuery(val); setIsSearchSubmitted(false); setShowSearchSuggestions(Boolean(val.trim())); };
+  const submitSearch = (query = searchQuery) => {
+    setSearchQuery(query.trim());
+    setIsSearchSubmitted(true);
+    setShowSearchSuggestions(false);
+    setSelectedCategory('all');
+    setInStockOnly(false);
+    window.setTimeout(() => catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  };
   const searchSuggestions = searchQuery.trim().length > 0
-    ? products.filter(product => product.name.toLocaleLowerCase().includes(searchQuery.trim().toLocaleLowerCase()))
-      .sort((a, b) => { const q = searchQuery.trim().toLocaleLowerCase(); return Number(!a.name.toLocaleLowerCase().startsWith(q)) - Number(!b.name.toLocaleLowerCase().startsWith(q)) || a.name.localeCompare(b.name); }).slice(0, 6)
+    ? products.map(product => ({ product, score: rankSearchMatch(product, searchQuery) })).filter(item => item.score > 0).sort((a, b) => b.score - a.score || a.product.name.localeCompare(b.product.name)).slice(0, 6).map(item => item.product)
     : [];
 
   // Stock is tracked per product, so all selected sizes/varieties share the same stock limit.
@@ -593,36 +632,34 @@ export function CustomerStorefront({
           <div className="flex items-center gap-2">
             {/* Rounded Pill Search Bar (like "Search for 'Coffee'" in screenshot) */}
             <div className="relative flex-1">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-              <input
-                type="text"
-                aria-label="Search store products"
-                value={searchQuery}
-                onChange={(e) => handleSearchInputChange(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    setIsSearchSubmitted(true);
-                    setSelectedCategory('all');
-                    setInStockOnly(false);
-                    setTimeout(() => catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-                  }
-                }}
-                placeholder='Search for "Miniket Rice", "Atta", "Mustard Oil", "Ghee"...'
-                className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white text-slate-900 placeholder-slate-400 text-xs sm:text-sm font-medium border border-blue-200 shadow-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
-                autoComplete="off"
-              />
-              {/* Search is a live filter: keep the header clean and show matching products only below. */}
-              {searchQuery && (
-                <button
-                  type="button"
-                  aria-label="Clear search query"
-                  onClick={() => { setSearchQuery(''); setIsSearchSubmitted(false); }}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
-                >
-                  <X className="w-4 h-4" />
+              <form className="flex items-center gap-1.5" role="search" onSubmit={(e) => { e.preventDefault(); submitSearch(); }}>
+                <div className="relative min-w-0 flex-1">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <input
+                    type="search"
+                    aria-label="Search store products"
+                    aria-autocomplete="list"
+                    aria-expanded={showSearchSuggestions && searchSuggestions.length > 0}
+                    value={searchQuery}
+                    onFocus={() => { if (searchQuery.trim() && !isSearchSubmitted) setShowSearchSuggestions(true); }}
+                    onChange={(e) => handleSearchInputChange(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Escape') setShowSearchSuggestions(false); }}
+                    placeholder='Search rice, atta, oil, biscuits...'
+                    className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white text-slate-900 placeholder-slate-400 text-xs sm:text-sm font-medium border border-blue-200 shadow-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                    autoComplete="off"
+                  />
+                  {searchQuery && <button type="button" aria-label="Clear search query" onClick={() => { setSearchQuery(''); setIsSearchSubmitted(false); setShowSearchSuggestions(false); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"><X className="w-4 h-4" /></button>}
+                </div>
+                <button type="submit" aria-label="Search" className="inline-flex min-h-[42px] shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#1d4ed8] px-3 sm:px-4 text-xs font-extrabold text-white shadow-sm hover:bg-blue-800 active:scale-[.98]">
+                  <Search className="h-4 w-4" /><span className="hidden sm:inline">Search</span>
                 </button>
-              )}
+              </form>
+              {showSearchSuggestions && searchSuggestions.length > 0 && <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl" role="listbox" aria-label="Product suggestions">
+                {searchSuggestions.map(product => <button key={product.id} type="button" role="option" aria-selected="false" onClick={() => submitSearch(product.name)} className="flex w-full items-center gap-3 border-b border-slate-100 px-3 py-2.5 text-left last:border-0 hover:bg-blue-50">
+                  <Search className="h-4 w-4 shrink-0 text-slate-400" /><span className="min-w-0 flex-1 truncate text-xs font-semibold text-slate-800">{product.name}</span><ArrowRight className="h-3.5 w-3.5 shrink-0 text-slate-400"/>
+                </button>)}
+                <button type="button" onClick={() => submitSearch()} className="w-full bg-slate-50 px-3 py-2.5 text-left text-xs font-extrabold text-blue-800 hover:bg-blue-50">See all results for “{searchQuery.trim()}”</button>
+              </div>}
             </div>
 
             {/* Compact My Order Button in Sticky Header */}
@@ -1122,7 +1159,7 @@ export function CustomerStorefront({
         ref={catalogSectionRef}
         className="max-w-6xl mx-auto px-3.5 sm:px-6 py-5 flex-1 w-full"
       >
-        {searchQuery.trim() && <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-white px-4 py-3 shadow-sm"><div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-[.16em] text-blue-700">Your search</p><h2 className="truncate text-base font-extrabold text-slate-900">{filteredCustomerProducts.length} {filteredCustomerProducts.length === 1 ? "product" : "products"} found</h2><p className="truncate text-xs text-slate-500">Matching “{searchQuery.trim()}”</p></div><button type="button" onClick={() => {setSearchQuery("");setIsSearchSubmitted(false);setSelectedCategory("all");setInStockOnly(false);}} className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs font-bold text-slate-700 hover:bg-slate-100"><X className="h-3.5 w-3.5"/> Clear</button></div>}
+        {searchQuery.trim() && <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-white px-4 py-3 shadow-sm"><div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-[.16em] text-blue-700">Your search</p><h2 className="truncate text-base font-extrabold text-slate-900">{searchResultsProducts.length} {searchResultsProducts.length === 1 ? "product" : "products"} found</h2><p className="truncate text-xs text-slate-500">Matching “{searchQuery.trim()}”</p></div><button type="button" onClick={() => {setSearchQuery("");setIsSearchSubmitted(false);setSelectedCategory("all");setInStockOnly(false);}} className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs font-bold text-slate-700 hover:bg-slate-100"><X className="h-3.5 w-3.5"/> Clear</button></div>}
         {/* Search mode shows only the matching product list, without extra filters. */}
         {!searchQuery.trim() && <div className="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
           <div>
@@ -1169,7 +1206,7 @@ export function CustomerStorefront({
             <RefreshCw className="w-8 h-8 text-blue-600 animate-spin mx-auto" />
             <p className="text-slate-600 font-medium">Loading fresh store catalog...</p>
           </div>
-        ) : filteredCustomerProducts.length === 0 ? (
+        ) : searchResultsProducts.length === 0 ? (
           <div className="bg-slate-50 rounded-3xl p-10 text-center border border-slate-200 max-w-md mx-auto my-6">
             <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center mx-auto text-3xl mb-3 shadow-2xs">
               🔍
@@ -1193,7 +1230,7 @@ export function CustomerStorefront({
           </div>
         ) : (
           <div className={searchQuery.trim() ? "pb-product-grid mx-auto grid w-full max-w-3xl grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4" : "pb-product-grid grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4"}>
-            {filteredCustomerProducts.map((product) => {
+            {searchResultsProducts.map((product) => {
               const activeOpt = getActiveOptionForProduct(product);
               const activeCartKey = makeCartKey(product.id, activeOpt.label);
               const inCartQty =
