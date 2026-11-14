@@ -1541,6 +1541,7 @@ export function CustomerStorefront({
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-2.5">
+            <button type="button" onClick={() => onNavigate('/terms-and-conditions')} className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-200 font-semibold whitespace-nowrap">Terms &amp; Conditions</button>
             <a
               href={'https://maps.app.goo.gl/yrXRW4uuwWjaEzQi6?g_st=ac'}
               target="_blank"
