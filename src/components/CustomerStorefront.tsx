@@ -342,7 +342,7 @@ export function CustomerStorefront({
   const deliveryEtaMins = storeSettings.deliveryEtaMins || '10';
 
   return (
-    <div className="flex-1 flex flex-col bg-[#f4f8f3] text-slate-900 pb-24">
+    <div className="flex-1 flex flex-col bg-[#f4f8f3] text-slate-900 pb-32 sm:pb-28">
       {/* ===================================================================== */}
       {/* TOP MOBILE-FIRST APP BAR WITH SHOP NAME                               */}
       {/* ===================================================================== */}
@@ -703,24 +703,29 @@ export function CustomerStorefront({
         </div>
       </div>
 
-      {/* Premium neighbourhood-store hero */}
-      <section aria-label="Welcome to Parbati Bhandar" className={`relative overflow-hidden bg-[#f5f8f3] px-3.5 pb-5 pt-4 sm:px-6 sm:pb-7 sm:pt-6 ${isSearchSubmitted ? "hidden" : ""}`}>
-        <div className="relative mx-auto grid max-w-6xl overflow-hidden rounded-[28px] bg-[#073f2b] shadow-[0_22px_55px_rgba(5,55,35,.18)] lg:grid-cols-[1.1fr_.9fr]">
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_0%,rgba(74,222,128,.18),transparent_36%),radial-gradient(circle_at_90%_100%,rgba(250,204,21,.16),transparent_34%)]" />
-          <div className="relative z-10 flex flex-col items-start justify-center px-5 py-7 sm:px-9 sm:py-10 lg:px-12 lg:py-12">
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/20 bg-white/10 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[.16em] text-emerald-100 sm:text-xs"><span className="h-2 w-2 rounded-full bg-lime-300" /> Your neighbourhood grocery store</div>
-            <p className="mt-5 text-sm font-bold text-amber-200 sm:text-base">{greetingTop} • {greetingMain}</p>
-            <h1 className="mt-2 max-w-xl text-3xl font-black leading-[1.08] tracking-tight text-white sm:text-4xl lg:text-[3.35rem]">Everyday essentials, <span className="text-lime-300">made simple.</span></h1>
-            {storeSettings.greetingBengali && <p className="mt-3 text-base font-semibold text-emerald-100 sm:text-lg">{storeSettings.greetingBengali}</p>}
-            <p className="mt-3 max-w-lg text-sm leading-6 text-emerald-50/80 sm:text-base sm:leading-7">Shop your daily groceries from Parbati Bhandar. Browse the live catalogue, choose your pack size and send your order with ease.</p>
-            <div className="mt-6 flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row">
-              <button type="button" onClick={() => catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#facc15] px-5 py-3 text-sm font-black text-[#173b2a] shadow-lg transition hover:bg-amber-300 active:scale-[.98]">Explore groceries <ChevronRight className="h-4 w-4" /></button>
-              <a href={`https://wa.me/${storeSettings.whatsappNumber || '919734765207'}?text=${encodeURIComponent('নমস্কার পার্বতী ভান্ডার, আমি অর্ডার করতে চাই।')}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/10 px-5 py-3 text-sm font-bold text-white transition hover:bg-white/15"><MessageCircle className="h-4 w-4" /> Chat on WhatsApp</a>
+      {/* Compact, animated storefront welcome */}
+      <section aria-label="Welcome to Parbati Bhandar" className={`pb-welcome relative overflow-hidden px-3.5 pb-4 pt-3 sm:px-6 sm:pb-6 sm:pt-5 ${isSearchSubmitted ? "hidden" : ""}`}>
+        <div className="pb-welcome-card relative mx-auto grid max-w-6xl overflow-hidden rounded-[24px] sm:rounded-[30px] bg-[#073f2b] shadow-[0_16px_40px_rgba(5,55,35,.14)] lg:grid-cols-[1.1fr_.9fr]">
+          <div aria-hidden="true" className="pb-welcome-glow pointer-events-none absolute inset-0" />
+          <div className="relative z-10 flex flex-col items-start justify-center px-5 py-5 sm:px-9 sm:py-9 lg:px-12 lg:py-12">
+            <div className="pb-welcome-enter inline-flex items-center gap-2 rounded-full border border-emerald-200/20 bg-white/[.09] px-3 py-1.5 text-[9px] font-extrabold uppercase tracking-[.13em] text-emerald-100 sm:text-xs"><span className="h-2 w-2 rounded-full bg-lime-300 shadow-[0_0_12px_rgba(190,242,100,.8)]" /> Your neighbourhood grocery store</div>
+            <div className="mt-3 flex w-full items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-amber-200 sm:text-base">{greetingTop} <span className="text-emerald-200">•</span> {greetingMain}</p>
+                <h1 className="mt-1.5 max-w-xl text-[27px] font-black leading-[1.08] tracking-tight text-white sm:mt-2 sm:text-4xl lg:text-[3.2rem]">Everyday essentials, <span className="text-lime-300">made simple.</span></h1>
+              </div>
+              <div aria-hidden="true" className="pb-welcome-basket mt-1 grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-white/15 bg-white/[.08] text-3xl sm:hidden">🧺</div>
             </div>
-            <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-[11px] font-semibold text-emerald-100/85 sm:text-xs">
-              <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-lime-300" /> Live availability</span>
-              <span className="inline-flex items-center gap-1.5"><ShoppingCart className="h-4 w-4 text-lime-300" /> Easy order list</span>
-              <span className="inline-flex items-center gap-1.5"><MapPin className="h-4 w-4 text-lime-300" /> Local to Burdwan</span>
+            {storeSettings.greetingBengali && <p className="mt-2 text-sm font-semibold text-emerald-100 sm:mt-3 sm:text-lg">{storeSettings.greetingBengali}</p>}
+            <p className="mt-2 max-w-lg text-[13px] leading-[1.55] text-emerald-50/80 sm:mt-3 sm:text-base sm:leading-7">Shop your daily groceries from Parbati Bhandar. Browse the live catalogue, choose your pack size and send your order with ease.</p>
+            <div className="mt-4 flex w-full gap-2 sm:mt-6 sm:w-auto sm:gap-2.5">
+              <button type="button" onClick={() => catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="pb-welcome-primary inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#facc15] px-3 py-2.5 text-xs font-black text-[#173b2a] shadow-md transition-all duration-200 hover:bg-amber-300 hover:-translate-y-0.5 active:scale-[.98] sm:flex-none sm:px-5 sm:py-3 sm:text-sm">Explore groceries <ChevronRight className="h-4 w-4" /></button>
+              <a href={`https://wa.me/${storeSettings.whatsappNumber || '919734765207'}?text=${encodeURIComponent('নমস্কার পার্বতী ভান্ডার, আমি অর্ডার করতে চাই।')}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl border border-white/20 bg-white/[.08] px-3 py-2.5 text-xs font-bold text-white transition-all duration-200 hover:bg-white/[.15] active:scale-[.98] sm:flex-none sm:px-5 sm:py-3 sm:text-sm"><MessageCircle className="h-4 w-4" /> WhatsApp</a>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 border-t border-white/10 pt-3 text-[10px] font-semibold text-emerald-100/85 sm:mt-7 sm:gap-x-5 sm:pt-4 sm:text-xs">
+              <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-lime-300" /> Live availability</span>
+              <span className="inline-flex items-center gap-1.5"><ShoppingCart className="h-3.5 w-3.5 text-lime-300" /> Easy order list</span>
+              <span className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-lime-300" /> Local to Burdwan</span>
             </div>
           </div>
           <div className="relative hidden min-h-[330px] items-center justify-center overflow-hidden lg:flex">
@@ -728,7 +733,7 @@ export function CustomerStorefront({
             <div aria-hidden="true" className="absolute right-8 top-10 h-64 w-64 rounded-full border border-dashed border-amber-200/25" />
             <div className="relative grid h-64 w-64 place-items-center rounded-[3rem] border border-white/15 bg-white/[.08] shadow-2xl backdrop-blur-sm">
               <div className="absolute inset-4 rounded-[2.4rem] border border-white/10" />
-              <div className="text-center"><div className="text-8xl drop-shadow-xl">🧺</div><p className="mt-3 text-xs font-black uppercase tracking-[.22em] text-amber-200">Fresh picks, fair prices</p></div>
+              <div className="text-center"><div className="pb-welcome-basket text-8xl drop-shadow-xl">🧺</div><p className="mt-3 text-xs font-black uppercase tracking-[.22em] text-amber-200">Fresh picks, fair prices</p></div>
               <span className="absolute -left-8 top-8 grid h-16 w-16 place-items-center rounded-2xl border border-white/20 bg-white text-3xl shadow-xl">🥬</span>
               <span className="absolute -right-7 top-16 grid h-16 w-16 place-items-center rounded-2xl border border-white/20 bg-amber-300 text-3xl shadow-xl">🍅</span>
               <span className="absolute -bottom-5 left-8 grid h-16 w-16 place-items-center rounded-2xl border border-white/20 bg-white text-3xl shadow-xl">🥛</span>
@@ -736,10 +741,10 @@ export function CustomerStorefront({
             <div className="absolute bottom-7 right-8 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-right backdrop-blur-md"><p className="text-[10px] font-bold uppercase tracking-widest text-emerald-100/70">Store status</p><p className="mt-1 text-sm font-black text-white">{liveIsOpen ? 'Open for orders' : 'Currently closed'}</p></div>
           </div>
         </div>
-        <div className="mx-auto mt-3 grid max-w-6xl grid-cols-3 gap-2">
-          <div className="rounded-xl border border-emerald-100 bg-white px-2 py-3 text-center shadow-sm sm:rounded-2xl sm:px-4"><p className="text-base font-black text-emerald-800 sm:text-lg">{inStockCount}+</p><p className="mt-0.5 text-[9px] font-semibold text-slate-500 sm:text-xs">Available products</p></div>
-          <div className="rounded-xl border border-emerald-100 bg-white px-2 py-3 text-center shadow-sm sm:rounded-2xl sm:px-4"><p className="text-base font-black text-emerald-800 sm:text-lg">Easy</p><p className="mt-0.5 text-[9px] font-semibold text-slate-500 sm:text-xs">WhatsApp ordering</p></div>
-          <div className="rounded-xl border border-emerald-100 bg-white px-2 py-3 text-center shadow-sm sm:rounded-2xl sm:px-4"><p className="text-base font-black text-emerald-800 sm:text-lg">Local</p><p className="mt-0.5 text-[9px] font-semibold text-slate-500 sm:text-xs">Burdwan service</p></div>
+        <div className="mx-auto mt-2 grid max-w-6xl grid-cols-3 gap-2 sm:mt-3">
+          <div className="rounded-xl border border-emerald-100 bg-white px-2 py-2.5 text-center shadow-sm sm:rounded-2xl sm:px-4 sm:py-3"><p className="text-sm font-black text-emerald-800 sm:text-lg">{inStockCount}+</p><p className="mt-0.5 text-[9px] font-semibold text-slate-500 sm:text-xs">Available products</p></div>
+          <div className="rounded-xl border border-emerald-100 bg-white px-2 py-2.5 text-center shadow-sm sm:rounded-2xl sm:px-4 sm:py-3"><p className="text-sm font-black text-emerald-800 sm:text-lg">Easy</p><p className="mt-0.5 text-[9px] font-semibold text-slate-500 sm:text-xs">WhatsApp ordering</p></div>
+          <div className="rounded-xl border border-emerald-100 bg-white px-2 py-2.5 text-center shadow-sm sm:rounded-2xl sm:px-4 sm:py-3"><p className="text-sm font-black text-emerald-800 sm:text-lg">Local</p><p className="mt-0.5 text-[9px] font-semibold text-slate-500 sm:text-xs">Burdwan service</p></div>
         </div>
       </section>
 
