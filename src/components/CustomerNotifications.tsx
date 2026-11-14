@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Bell, BellRing, Trash2, CheckCheck, LogIn, Clock3 } from 'lucide-react';
+import { ArrowLeft, Bell, BellRing, Trash2, CheckCheck, LogIn } from 'lucide-react';
 
 type Customer = { id: string; name: string; phone: string };
 type InboxNotification = { id: string; title: string; body: string; createdAt: number; readAt: number | null };
@@ -97,7 +97,7 @@ export function CustomerNotifications({ customer, onBack, onSignIn }: {
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">Parbati Bhandar</p>
                 <h1 className="text-2xl font-black text-slate-900">Notifications</h1>
-                <p className="text-xs text-slate-500">{customer ? unreadCount + ' unread · Automatically removed after 24 hours' : 'Sign in to view your store updates'}</p>
+                <p className="text-xs text-slate-500">{customer ? unreadCount + ' unread' : 'Sign in to view your store updates'}</p>
               </div>
             </div>
             {customer && items.length > 0 && <div className="flex flex-wrap gap-2">
@@ -113,7 +113,7 @@ export function CustomerNotifications({ customer, onBack, onSignIn }: {
           </div> : loading && !loaded ? <div className="px-6 py-12 text-center text-sm text-slate-500">Loading your notifications…</div> : items.length === 0 ? <div className="px-6 py-14 text-center">
             <Bell className="mx-auto h-9 w-9 text-slate-300" />
             <h2 className="mt-3 text-lg font-black text-slate-900">You’re all caught up</h2>
-            <p className="mt-1 text-sm text-slate-500">New store announcements will appear here. Notifications expire after 24 hours.</p>
+            <p className="mt-1 text-sm text-slate-500">New store announcements will appear here.</p>
           </div> : <div className="divide-y divide-slate-100">
             {items.map(item => <article key={item.id} className={'px-5 py-4 sm:px-7 ' + (!item.readAt ? 'bg-blue-50/40' : 'bg-white')}>
               <div className="flex items-start gap-3">
@@ -121,7 +121,7 @@ export function CustomerNotifications({ customer, onBack, onSignIn }: {
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2"><h2 className="font-extrabold text-slate-900">{item.title}</h2>{!item.readAt && <span className="rounded-full bg-blue-700 px-2 py-0.5 text-[10px] font-black text-white">NEW</span>}</div>
                   <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-slate-600">{item.body}</p>
-                  <p className="mt-2 flex items-center gap-1.5 text-[11px] font-semibold text-slate-400"><Clock3 className="h-3.5 w-3.5" />{new Date(item.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' })}</p>
+                  <p className="mt-2 flex items-center gap-1.5 text-[11px] font-semibold text-slate-400">{new Date(item.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' })}</p>
                 </div>
                 <div className="flex shrink-0 flex-col gap-2">
                   {!item.readAt && <button type="button" onClick={() => void markRead(item.id)} disabled={!!busyId} aria-label="Mark as read" title="Mark as read" className="rounded-lg p-2 text-blue-700 hover:bg-blue-100 disabled:opacity-50"><CheckCheck className="h-4 w-4" /></button>}
@@ -131,7 +131,7 @@ export function CustomerNotifications({ customer, onBack, onSignIn }: {
             </article>)}
           </div>}
           {error && <p role="alert" className="border-t border-rose-100 bg-rose-50 px-5 py-3 text-sm font-semibold text-rose-700">{error}</p>}
-          {customer && !loading && loaded && items.length > 0 && <p className="border-t border-slate-100 px-5 py-3 text-center text-[11px] text-slate-400">Notifications are private to your account and are removed after 24 hours.</p>}
+          {customer && !loading && loaded && items.length > 0 && <p className="border-t border-slate-100 px-5 py-3 text-center text-[11px] text-slate-400">Notifications are private to your account. Delete them whenever you wish.</p>}
         </section>
       </div>
     </main>
