@@ -9,6 +9,12 @@ import {
   Clock,
   RefreshCw,
   CheckCircle2,
+  Package,
+  ClipboardList,
+  CalendarDays,
+  ArrowRight,
+  ShieldCheck,
+  AlertCircle,
   ShoppingCart,
   Minus,
   MessageCircle,
@@ -108,6 +114,7 @@ export function CustomerStorefront({
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState('');
   const [historyLoaded, setHistoryLoaded] = useState(false);
+  const [ordersView, setOrdersView] = useState<'track' | 'history'>('track');
   useEffect(() => {
     if (lastOrderNumber) {
       setTrackingOrderNumber(lastOrderNumber);
@@ -139,10 +146,12 @@ export function CustomerStorefront({
     if (!response.ok) throw new Error(data.error || 'Unable to find order');
     return data;
   };
-  const loadOrderHistory = async () => {
+  const loadOrderHistory = async (phoneValue = trackingPhone) => {
+    const cleanPhone = phoneValue.replace(/\\D/g, '');
+    if (cleanPhone.length < 10) { setHistoryError('Enter the phone number used at checkout to view your orders.'); return; }
     setHistoryLoading(true); setHistoryError(''); setHistoryLoaded(false);
     try {
-      const response = await fetch('/api/orders/track?history=1&phone=' + encodeURIComponent(trackingPhone), { cache: 'no-store' });
+      const response = await fetch('/api/orders/track?history=1&phone=' + encodeURIComponent(cleanPhone), { cache: 'no-store' });
       const data = await readOrderApiResponse(response);
       if (!response.ok) throw new Error(data.error || 'Unable to load order history');
       setOrderHistory(Array.isArray(data.orders) ? data.orders : []);
@@ -456,67 +465,104 @@ export function CustomerStorefront({
         </div>
       </header>
 
-      {/* Order tracking and order history live inside the customer profile menu. */}
+      {/* Customer order centre */}
       {isProfileOpen && (
-      <section id="customer-order-tools" className="max-w-3xl mx-auto w-full px-4 py-3 scroll-mt-4" aria-label="My profile and orders">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Parbati Bhandar account</p>
-              <h2 className="mt-0.5 text-lg font-extrabold text-slate-900">My profile & orders</h2>
-              <p className="mt-0.5 text-xs text-slate-500">Track a delivery or revisit your recent purchases.</p>
-            </div>
-            <button type="button" onClick={() => setIsProfileOpen(false)} aria-label="Close profile" className="rounded-full p-2 text-slate-500 hover:bg-slate-100"><X className="h-4 w-4" /></button>
-          </div>
-          {lastOrderNumber ? (
-            <div className="mt-3 rounded-xl border border-emerald-100 bg-emerald-50/70 p-3">
-              <p className="text-[11px] font-semibold text-emerald-800">Latest order placed</p>
-              <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
-                <p className="text-lg font-extrabold text-slate-900">Order #{lastOrderNumber}</p>
-                <button type="button" onClick={() => { void navigator.clipboard?.writeText(String(lastOrderNumber)); }} className="rounded-lg border border-emerald-200 bg-white px-3 py-1.5 text-xs font-semibold text-emerald-800">Copy number</button>
+        <section id="customer-order-tools" className="mx-auto w-full max-w-4xl scroll-mt-4 px-3 py-4 sm:px-6" aria-label="My orders">
+          <div className="overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-[0_18px_50px_rgba(15,23,42,.08)]">
+            <div className="relative overflow-hidden bg-[#073f2b] px-5 py-5 text-white sm:px-7 sm:py-6">
+              <div aria-hidden="true" className="absolute -right-12 -top-20 h-56 w-56 rounded-full border border-white/10" />
+              <div aria-hidden="true" className="absolute -right-2 -top-12 h-40 w-40 rounded-full bg-emerald-300/10 blur-2xl" />
+              <div className="relative flex items-start justify-between gap-3">
+                <div>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[.16em] text-emerald-100"><Package className="h-3.5 w-3.5" /> Customer order centre</div>
+                  <h2 className="mt-3 text-2xl font-black tracking-tight sm:text-3xl">Your orders, in one place.</h2>
+                  <p className="mt-1.5 max-w-lg text-xs leading-5 text-emerald-50/80 sm:text-sm">Follow an order's progress or review your recent purchases from Parbati Bhandar.</p>
+                </div>
+                <button type="button" onClick={() => setIsProfileOpen(false)} aria-label="Close orders" className="relative rounded-full border border-white/15 bg-white/10 p-2 text-white transition hover:bg-white/20"><X className="h-4 w-4" /></button>
               </div>
-              <p className="mt-1 text-xs text-slate-600">Use this order number and your phone number to track it.</p>
+              <div className="relative mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-semibold text-emerald-100/90">
+                <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-lime-300" /> Private order lookup</span>
+                <span className="inline-flex items-center gap-1.5"><Clock className="h-4 w-4 text-lime-300" /> History available for 7 days</span>
+              </div>
             </div>
-          ) : null}
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <h3 className="text-sm font-bold text-slate-900">Track an order</h3>
-              <p className="text-xs text-slate-500 mt-0.5">Enter your order number and phone number.</p>
-            </div>
-            <RefreshCw className="h-5 w-5 text-slate-400" />
-          </div>
-          {lastOrderNumber && <div className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 p-3"><p className="text-xs font-bold uppercase tracking-wide text-emerald-800">Your order was placed successfully</p><div className="mt-1 flex flex-wrap items-center justify-between gap-2"><p className="text-xl font-black text-emerald-950">Order #{lastOrderNumber}</p><button type="button" onClick={() => { void navigator.clipboard?.writeText(String(lastOrderNumber)); }} className="rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-emerald-800 border border-emerald-200">Copy order number</button></div><p className="mt-1 text-xs text-emerald-800">Keep this number and your phone number to track this order.</p></div>}
-          <form onSubmit={trackOrder} className="grid sm:grid-cols-3 gap-2.5 mt-4">
-            <input required inputMode="numeric" value={trackingOrderNumber} onChange={e=>setTrackingOrderNumber(e.target.value)} placeholder="Order number" className="min-w-0 rounded-xl border border-slate-300 px-3 py-2.5 text-sm" />
-            <input required inputMode="tel" value={trackingPhone} onChange={e=>setTrackingPhone(e.target.value)} placeholder="Phone number" className="min-w-0 rounded-xl border border-slate-300 px-3 py-2.5 text-sm" />
-            <button disabled={trackingLoading} className="rounded-xl bg-[#0d647d] text-white font-bold px-4 py-2.5 hover:bg-[#094e62] disabled:opacity-60">{trackingLoading ? 'Checking…' : 'TRACK ORDER →'}</button>
-          </form>
-          <button type="button" onClick={loadOrderHistory} disabled={historyLoading || trackingPhone.replace(/\D/g, '').length < 10} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-800 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-200 disabled:cursor-not-allowed disabled:opacity-50"><Clock className="h-4 w-4" />{historyLoading ? 'Loading your orders…' : 'View previous orders'}<span className="rounded-full bg-white/70 px-2 py-0.5 text-[10px] font-black">7 DAYS</span></button>
-          <p className="mt-1.5 text-center text-[11px] text-slate-500">Enter the same phone number used at checkout. Previous orders stay available for 7 days.</p>
-          {historyError && <p role="alert" className="mt-2 text-sm text-red-600">{historyError}</p>}
-          {historyLoaded && <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
-            <div className="flex items-center justify-between gap-2"><h3 className="font-bold text-slate-900">Your recent orders</h3><span className="text-[10px] text-slate-400">Last 7 days</span></div>
-            {orderHistory.length === 0 ? <p className="rounded-xl bg-slate-50 p-3 text-sm text-slate-500">No orders found for this phone number in the last 7 days.</p> : orderHistory.map((order:any) => <div key={order.orderNumber} className="rounded-xl border border-slate-200 p-3">
-              <div className="flex flex-wrap items-center justify-between gap-2"><p className="font-bold text-sm text-slate-900">Order #{order.orderNumber}</p><span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700">{({new:'Received',ready:'Ready for pickup',completed:'Completed',unavailable:'Availability update',cancelled:'Cancelled',review:'Received'} as Record<string,string>)[order.status] || order.status}</span></div>
-              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500"><span>Placed: {new Date(order.createdAt).toLocaleString()}</span>{order.confirmedAt && <span>Confirmed: {new Date(order.confirmedAt).toLocaleString()}</span>}</div>
-              <div className="mt-2 flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2"><span className="text-xs font-medium text-slate-600">Order amount</span><span className="text-sm font-extrabold text-slate-900">₹{Number(order.total || 0).toFixed(2)}</span></div>
-              <div className="mt-2 space-y-2">{order.items.map((item:any,index:number)=><div key={index} className="flex items-center justify-between gap-3 text-xs"><div className="min-w-0"><p className="font-semibold text-slate-800">{item.name}</p><p className="text-slate-500">{item.quantity} {item.unit} × ₹{Number(item.price || 0).toFixed(2)} <span className={order.status === 'cancelled' ? 'font-semibold text-slate-500' : item.unavailable ? 'font-semibold text-red-600' : 'font-semibold text-emerald-700'}>· {order.status === 'cancelled' ? 'Not processed' : item.unavailable ? 'Unavailable' : 'Available'}</span></p></div><span className="shrink-0 font-bold text-slate-900">₹{Number(item.lineTotal ?? Number(item.price || 0)*Number(item.quantity || 0)).toFixed(2)}</span></div>)}</div>
-            </div>)}
-          </div>}
-          {trackingError && <p role="alert" className="text-sm text-red-600 mt-3">{trackingError}</p>}
-          {trackingResult && <div className="mt-4 border-t border-slate-100 pt-4">
-            <div className="flex items-center justify-between gap-3"><p className="font-bold text-slate-900">Order #{trackingResult.orderNumber}</p><span className="text-[10px] font-semibold text-slate-400">Auto-updates every 15 seconds</span></div>
-            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500"><span>Placed: {new Date(trackingResult.createdAt).toLocaleString()}</span>{trackingResult.confirmedAt && <span>Confirmed: {new Date(trackingResult.confirmedAt).toLocaleString()}</span>}<span className="font-bold text-slate-800">Amount: ₹{Number(trackingResult.total || 0).toFixed(2)}</span></div>
-            {trackingResult.status === 'cancelled' && <p className="mt-2 rounded-lg bg-red-50 p-2 text-xs font-semibold text-red-700">This order was cancelled. Please contact the store if you need help.</p>}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3 text-xs">
-              {['Received','Ready for pickup','Completed'].map((label,index)=>{ const stepIndex=[0,2,3][index]; return <div key={label} aria-current={trackingStep === stepIndex ? 'step' : undefined} className={'rounded-lg p-2 text-center font-semibold '+(trackingStep >= stepIndex?'bg-emerald-50 text-emerald-800':'bg-slate-100 text-slate-500')}>{label}</div>; })}
-            </div>
-            <div className="mt-3 space-y-2">{trackingResult.items.map((item:any,index:number)=><div key={index} className="flex items-center justify-between gap-3 text-sm"><div className="min-w-0"><p className="font-semibold text-slate-800">{item.name}</p><p className="text-xs text-slate-500">{item.quantity} {item.unit} × ₹{Number(item.price || 0).toFixed(2)} <span className={trackingResult.status === 'cancelled' ? 'font-semibold text-slate-500' : item.unavailable ? 'font-semibold text-red-600' : 'font-semibold text-emerald-700'}>· {trackingResult.status === 'cancelled' ? 'Not processed' : item.unavailable ? 'Unavailable' : 'Available'}</span></p></div><span className="shrink-0 font-bold text-slate-900">₹{Number(item.lineTotal ?? Number(item.price || 0)*Number(item.quantity || 0)).toFixed(2)}</span></div>)}</div>
-          </div>}
-        </div>
-      </section>
-      )}
 
+            <div className="p-4 sm:p-6">
+              {lastOrderNumber && (
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-3.5">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-100 text-emerald-800"><CheckCircle2 className="h-5 w-5" /></span>
+                    <div className="min-w-0"><p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800">Latest order placed</p><p className="truncate text-lg font-black text-slate-900">Order #{lastOrderNumber}</p></div>
+                  </div>
+                  <button type="button" onClick={() => { void navigator.clipboard?.writeText(String(lastOrderNumber)); }} className="rounded-xl border border-emerald-200 bg-white px-3 py-2 text-xs font-bold text-emerald-800 transition hover:bg-emerald-100">Copy order number</button>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1.5" role="tablist" aria-label="Order options">
+                <button type="button" role="tab" aria-selected={ordersView === 'track'} onClick={() => setOrdersView('track')} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${ordersView === 'track' ? 'bg-white text-[#07543a] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}><Package className="h-4 w-4" /> Track order</button>
+                <button type="button" role="tab" aria-selected={ordersView === 'history'} onClick={() => { setOrdersView('history'); if (!historyLoaded && trackingPhone.replace(/\\D/g, '').length >= 10) void loadOrderHistory(); }} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${ordersView === 'history' ? 'bg-white text-[#07543a] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}><ClipboardList className="h-4 w-4" /> Previous orders</button>
+              </div>
+
+              {ordersView === 'track' ? (
+                <div className="pt-5">
+                  <div className="mb-4"><h3 className="text-lg font-black text-slate-900">Track your order</h3><p className="mt-1 text-xs leading-5 text-slate-500">Enter the order number and the same phone number you used at checkout.</p></div>
+                  <form onSubmit={trackOrder} className="grid gap-3 sm:grid-cols-[1fr_1.2fr_auto]">
+                    <label className="block"><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Order number</span><input required inputMode="numeric" value={trackingOrderNumber} onChange={e=>setTrackingOrderNumber(e.target.value)} placeholder="e.g. 1024" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm font-semibold text-slate-900 outline-none transition placeholder:font-normal focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10" /></label>
+                    <label className="block"><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Checkout phone number</span><input required inputMode="tel" value={trackingPhone} onChange={e=>setTrackingPhone(e.target.value)} placeholder="10-digit mobile number" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm font-semibold text-slate-900 outline-none transition placeholder:font-normal focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10" /></label>
+                    <button disabled={trackingLoading} className="self-end inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl bg-[#087044] px-5 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#065b37] disabled:cursor-not-allowed disabled:opacity-60">{trackingLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : 'Track order'} <ArrowRight className="h-4 w-4" /></button>
+                  </form>
+                  {trackingError && <p role="alert" className="mt-3 flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />{trackingError}</p>}
+
+                  {trackingResult && (
+                    <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">
+                      <div className="flex flex-wrap items-start justify-between gap-3 bg-slate-50 px-4 py-4 sm:px-5">
+                        <div><p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Order details</p><h4 className="mt-1 text-xl font-black text-slate-900">Order #{trackingResult.orderNumber}</h4><p className="mt-1 text-[11px] text-slate-500">Placed {new Date(trackingResult.createdAt).toLocaleString()}</p></div>
+                        <div className="text-right"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Order total</p><p className="mt-1 text-xl font-black tabular-nums text-[#07543a]">₹{Number(trackingResult.total || 0).toFixed(2)}</p><span className="mt-1 inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700"><RefreshCw className="h-3 w-3" /> Live status updates</span></div>
+                      </div>
+                      {trackingResult.status === 'cancelled' ? (
+                        <div className="m-4 flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm font-semibold text-rose-700"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0" /> This order was cancelled. The items were not processed. Please contact the store if you need help.</div>
+                      ) : (
+                        <div className="px-4 pt-5 sm:px-5">
+                          <div className="grid grid-cols-4 gap-1.5">
+                            {['Received','Preparing','Ready','Completed'].map((label,index)=>{const active=trackingStep>=index;return <div key={label} className="min-w-0 text-center"><div className={`mx-auto grid h-7 w-7 place-items-center rounded-full text-xs font-black ${active?'bg-emerald-700 text-white':'bg-slate-100 text-slate-400'}`}>{active?<CheckCircle2 className="h-4 w-4"/>:index+1}</div><p className={`mt-2 text-[9px] font-bold sm:text-[11px] ${active?'text-emerald-800':'text-slate-400'}`}>{label}</p></div>})}
+                          </div>
+                          <div className="relative mt-[-13px] mx-[12.5%] -z-0 h-1 rounded-full bg-slate-100"><div className="h-full rounded-full bg-emerald-600 transition-all" style={{width:`${Math.max(0,Math.min(100,trackingStep/3*100))}%`}} /></div>
+                        </div>
+                      )}
+                      {trackingResult.status === 'unavailable' && <p className="mx-4 mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-semibold text-amber-800 sm:mx-5">There is an availability update for one or more items. Please review the item details below.</p>}
+                      {trackingResult.confirmedAt && <p className="px-4 pt-3 text-[11px] text-slate-500 sm:px-5">Confirmed: {new Date(trackingResult.confirmedAt).toLocaleString()}</p>}
+                      <div className="px-4 pb-4 pt-4 sm:px-5">
+                        <div className="mb-2 flex items-center justify-between"><h5 className="text-sm font-extrabold text-slate-900">Items in this order</h5><span className="text-[10px] font-semibold text-slate-400">{trackingResult.items.length} item(s)</span></div>
+                        <div className="divide-y divide-slate-100 rounded-xl border border-slate-100">
+                          {trackingResult.items.map((item:any,index:number)=><div key={index} className="flex items-center justify-between gap-3 px-3 py-3"><div className="min-w-0"><p className="truncate text-sm font-bold text-slate-800">{item.name}</p><p className="mt-0.5 text-[11px] text-slate-500">{item.quantity} {item.unit} × ₹{Number(item.price || 0).toFixed(2)}</p><span className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[9px] font-bold ${trackingResult.status==='cancelled'?'bg-slate-100 text-slate-500':item.unavailable?'bg-rose-50 text-rose-700':'bg-emerald-50 text-emerald-700'}`}>{trackingResult.status==='cancelled'?'Not processed':item.unavailable?'Unavailable':'Available'}</span></div><span className="shrink-0 text-sm font-extrabold tabular-nums text-slate-900">₹{Number(item.lineTotal ?? Number(item.price || 0)*Number(item.quantity || 0)).toFixed(2)}</span></div>)}
+                        </div>
+                        <p className="mt-3 text-center text-[10px] text-slate-400">Order status refreshes automatically every 15 seconds while in progress.</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="pt-5">
+                  <div className="mb-4 flex flex-wrap items-end justify-between gap-2"><div><h3 className="text-lg font-black text-slate-900">Your previous orders</h3><p className="mt-1 text-xs text-slate-500">Orders placed using this phone number.</p></div><span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-extrabold text-amber-800"><CalendarDays className="h-3.5 w-3.5" /> Last 7 days</span></div>
+                  <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
+                    <label><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Checkout phone number</span><input inputMode="tel" value={trackingPhone} onChange={e=>setTrackingPhone(e.target.value)} placeholder="Enter your 10-digit phone number" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10" /></label>
+                    <button type="button" onClick={()=>void loadOrderHistory()} disabled={historyLoading || trackingPhone.replace(/\\D/g,'').length<10} className="self-end inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-extrabold text-emerald-800 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50">{historyLoading?<RefreshCw className="h-4 w-4 animate-spin"/>:<RefreshCw className="h-4 w-4"/>} Refresh history</button>
+                  </div>
+                  {historyError && <p role="alert" className="mt-3 flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0"/>{historyError}</p>}
+                  {historyLoading && <div className="mt-5 flex items-center justify-center gap-2 rounded-xl bg-slate-50 py-8 text-sm font-semibold text-slate-500"><RefreshCw className="h-4 w-4 animate-spin"/> Loading your order history…</div>}
+                  {historyLoaded && !historyLoading && (orderHistory.length===0 ? <div className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center"><ClipboardList className="mx-auto h-8 w-8 text-slate-300"/><p className="mt-2 text-sm font-bold text-slate-700">No recent orders found</p><p className="mt-1 text-xs text-slate-500">There are no orders for this phone number in the last 7 days.</p></div> : <div className="mt-4 space-y-3">{orderHistory.map((order:any)=><article key={order.orderNumber} className="overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:border-emerald-200 hover:shadow-sm">
+                    <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50/80 px-4 py-3"><div><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Order reference</p><p className="text-base font-black text-slate-900">#{order.orderNumber}</p></div><span className={`rounded-full px-3 py-1.5 text-[10px] font-extrabold ${order.status==='completed'?'bg-emerald-100 text-emerald-800':order.status==='cancelled'?'bg-rose-100 text-rose-700':order.status==='ready'?'bg-sky-100 text-sky-800':'bg-amber-100 text-amber-800'}`}>{({new:'Order received',review:'Order received',ready:'Ready for pickup',completed:'Completed',unavailable:'Availability update',cancelled:'Cancelled'} as Record<string,string>)[order.status] || order.status}</span></div>
+                    <div className="px-4 py-3"><div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500"><span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5"/>{new Date(order.createdAt).toLocaleString()}</span><span className="text-base font-black tabular-nums text-[#07543a]">₹{Number(order.total||0).toFixed(2)}</span></div>
+                      <div className="mt-3 flex flex-wrap items-center justify-between gap-2"><span className="text-[11px] font-semibold text-slate-500">{order.items.length} item(s) · {order.items.reduce((sum:number,item:any)=>sum+Number(item.quantity||0),0)} total quantity</span><button type="button" onClick={async()=>{setTrackingOrderNumber(String(order.orderNumber));setOrdersView('track');setTrackingError('');setTrackingResult(null);setTrackingLoading(true);try{setTrackingResult(await fetchTrackedOrder(String(order.orderNumber),trackingPhone));}catch(error){setTrackingError((error as Error).message);}finally{setTrackingLoading(false);}}} className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-white px-3 py-2 text-xs font-extrabold text-emerald-800 transition hover:bg-emerald-50">Track this order <ArrowRight className="h-3.5 w-3.5"/></button></div>
+                    </div>
+                  </article>)}</div>)}
+                  {!historyLoaded && !historyLoading && <div className="mt-4 rounded-xl bg-slate-50 p-4 text-center text-xs text-slate-500">Enter your checkout phone number and select <strong>Refresh history</strong> to find your recent purchases.</div>}
+                  <p className="mt-4 text-center text-[10px] leading-5 text-slate-400">For privacy, order history is matched to your checkout phone number and automatically removed after 7 days.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
       {/* ===================================================================== */}
       {/* STICKY SEARCH BAR & CATEGORY RIBBON (Follows User on Scroll)          */}
       {/* ===================================================================== */}
