@@ -261,7 +261,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   const status = String(body?.status || "");
   if (!["new","processing","review","ready","unavailable","completed","cancelled"].includes(status) || !body?.id) return json({error:"Invalid order status."},400);
   const hasEstimateUpdate = Object.prototype.hasOwnProperty.call(body, "estimatedReadyAt");
-  const estimatedReadyAt = body.estimatedReadyAt === null ? null : Number(body.estimatedReadyAt);
+  const estimatedReadyAt = !hasEstimateUpdate || body.estimatedReadyAt === null ? null : Number(body.estimatedReadyAt);
   if (hasEstimateUpdate && estimatedReadyAt !== null && (!Number.isFinite(estimatedReadyAt) || estimatedReadyAt <= Date.now() || estimatedReadyAt > Date.now() + 48 * 60 * 60 * 1000)) return json({error:"Choose an estimated ready time within the next 48 hours."},400);
   const id = String(body.id);
   const order = await env.DB.prepare("SELECT status,customer_id,customer_name,order_number,items_json,stock_deducted FROM customer_orders WHERE id=?").bind(id).first<any>();
