@@ -115,6 +115,22 @@ export function CustomerStorefront({
   const [reviewText, setReviewText] = useState('');
   const [reviewMessage, setReviewMessage] = useState('');
   const [reviewSaving, setReviewSaving] = useState(false);
+  const [showWelcomePromo, setShowWelcomePromo] = useState(false);
+  useEffect(() => {
+    if (currentPage !== 'home') return;
+    try {
+      if (sessionStorage.getItem('pb-welcome-promo-seen') === '1') return;
+    } catch { /* Continue without session storage when unavailable. */ }
+    const timer = window.setTimeout(() => {
+      setShowWelcomePromo(true);
+      try { sessionStorage.setItem('pb-welcome-promo-seen', '1'); } catch { /* Ignore storage restrictions. */ }
+    }, 650);
+    return () => window.clearTimeout(timer);
+  }, [currentPage]);
+  const closeWelcomePromo = () => {
+    setShowWelcomePromo(false);
+    try { sessionStorage.setItem('pb-welcome-promo-seen', '1'); } catch { /* Ignore storage restrictions. */ }
+  };
   useEffect(() => {
     fetch('/api/reviews', { cache: 'no-store' }).then(r => r.ok ? r.json() : null)
       .then(data => { if (data?.ratings) setProductRatings(data.ratings); }).catch(() => {});
@@ -703,50 +719,26 @@ export function CustomerStorefront({
         </div>
       </div>
 
-      {/* Compact, animated storefront welcome */}
-      <section aria-label="Welcome to Parbati Bhandar" className={`pb-welcome relative overflow-hidden px-3.5 pb-4 pt-3 sm:px-6 sm:pb-6 sm:pt-5 ${isSearchSubmitted ? "hidden" : ""}`}>
-        <div className="pb-welcome-card relative mx-auto grid max-w-6xl overflow-hidden rounded-[24px] sm:rounded-[30px] bg-[#073f2b] shadow-[0_16px_40px_rgba(5,55,35,.14)] lg:grid-cols-[1.1fr_.9fr]">
-          <div aria-hidden="true" className="pb-welcome-glow pointer-events-none absolute inset-0" />
-          <div className="relative z-10 flex flex-col items-start justify-center px-5 py-5 sm:px-9 sm:py-9 lg:px-12 lg:py-12">
-            <div className="pb-welcome-enter inline-flex items-center gap-2 rounded-full border border-emerald-200/20 bg-white/[.09] px-3 py-1.5 text-[9px] font-extrabold uppercase tracking-[.13em] text-emerald-100 sm:text-xs"><span className="h-2 w-2 rounded-full bg-lime-300 shadow-[0_0_12px_rgba(190,242,100,.8)]" /> Your neighbourhood grocery store</div>
-            <div className="mt-3 flex w-full items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-xs font-bold text-amber-200 sm:text-base">{greetingTop} <span className="text-emerald-200">•</span> {greetingMain}</p>
-                <h1 className="mt-1.5 max-w-xl text-[27px] font-black leading-[1.08] tracking-tight text-white sm:mt-2 sm:text-4xl lg:text-[3.2rem]">Everyday essentials, <span className="text-lime-300">made simple.</span></h1>
+      {showWelcomePromo && currentPage === 'home' && !isSearchSubmitted && (() => {
+        const promoProducts = products.filter(product => product.imageUrl).slice(0, 4);
+        return <div className="pb-promo-overlay fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Welcome to Parbati Bhandar" onMouseDown={event => { if (event.target === event.currentTarget) closeWelcomePromo(); }}>
+          <div className="pb-promo-card relative mx-auto flex max-h-[88dvh] w-full max-w-[440px] flex-col overflow-hidden rounded-[28px] bg-[#06452f] shadow-[0_28px_90px_rgba(0,0,0,.45)]">
+            <button type="button" onClick={closeWelcomePromo} aria-label="Close welcome promotion" className="absolute -top-12 right-0 z-20 grid h-10 w-10 place-items-center rounded-full border border-white/30 bg-slate-950/70 text-white shadow-lg transition hover:rotate-90 hover:bg-slate-900"><X className="h-6 w-6"/></button>
+            <div className="relative min-h-[250px] flex-1 overflow-hidden bg-gradient-to-br from-emerald-700 via-lime-700 to-amber-500 sm:min-h-[300px]">
+              <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-1.5 p-2">
+                {promoProducts.length > 0 ? promoProducts.map((product,index) => <div key={product.id} className={`relative overflow-hidden rounded-2xl ${index===0?'row-span-2':''} bg-white/15`}><img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-110"/><span className="absolute inset-x-1 bottom-1 rounded-lg bg-slate-950/55 px-2 py-1 text-center text-[10px] font-extrabold text-white backdrop-blur-sm">{product.name}</span></div>) : <div className="col-span-2 row-span-2 grid grid-cols-2 place-items-center text-6xl"><span>🥬</span><span>🍊</span><span>🍅</span><span>🥭</span></div>}
               </div>
-              <div aria-hidden="true" className="pb-welcome-basket mt-1 grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-white/15 bg-white/[.08] text-3xl sm:hidden">🧺</div>
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-slate-950/45 via-transparent to-slate-950/35"/>
+              <div className="absolute inset-x-4 top-5 text-center text-white drop-shadow-lg"><p className="text-[10px] font-black uppercase tracking-[.2em] text-lime-200">Parbati Bhandar presents</p><h2 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Fresh for your home</h2><p className="mt-1 text-xs font-semibold text-white/90 sm:text-sm">Everyday groceries • Local convenience</p></div>
+              <div className="absolute bottom-4 left-4 rounded-xl border border-white/25 bg-amber-300/90 px-3 py-2 text-xs font-black text-emerald-950 shadow-lg">Fresh picks · Fair prices</div>
             </div>
-            {storeSettings.greetingBengali && <p className="mt-2 text-sm font-semibold text-emerald-100 sm:mt-3 sm:text-lg">{storeSettings.greetingBengali}</p>}
-            <p className="mt-2 max-w-lg text-[13px] leading-[1.55] text-emerald-50/80 sm:mt-3 sm:text-base sm:leading-7">Shop your daily groceries from Parbati Bhandar. Browse the live catalogue, choose your pack size and send your order with ease.</p>
-            <div className="mt-4 flex w-full gap-2 sm:mt-6 sm:w-auto sm:gap-2.5">
-              <button type="button" onClick={() => catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="pb-welcome-primary inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#facc15] px-3 py-2.5 text-xs font-black text-[#173b2a] shadow-md transition-all duration-200 hover:bg-amber-300 hover:-translate-y-0.5 active:scale-[.98] sm:flex-none sm:px-5 sm:py-3 sm:text-sm">Explore groceries <ChevronRight className="h-4 w-4" /></button>
-              <a href={`https://wa.me/${storeSettings.whatsappNumber || '919734765207'}?text=${encodeURIComponent('নমস্কার পার্বতী ভান্ডার, আমি অর্ডার করতে চাই।')}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl border border-white/20 bg-white/[.08] px-3 py-2.5 text-xs font-bold text-white transition-all duration-200 hover:bg-white/[.15] active:scale-[.98] sm:flex-none sm:px-5 sm:py-3 sm:text-sm"><MessageCircle className="h-4 w-4" /> WhatsApp</a>
-            </div>
-            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 border-t border-white/10 pt-3 text-[10px] font-semibold text-emerald-100/85 sm:mt-7 sm:gap-x-5 sm:pt-4 sm:text-xs">
-              <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-lime-300" /> Live availability</span>
-              <span className="inline-flex items-center gap-1.5"><ShoppingCart className="h-3.5 w-3.5 text-lime-300" /> Easy order list</span>
-              <span className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-lime-300" /> Local to Burdwan</span>
+            <div className="shrink-0 bg-[#06452f] p-4 sm:p-5">
+              <p className="text-center text-xs leading-relaxed text-emerald-50/80">Your neighbourhood grocery store in Burdwan. Browse the catalogue and order your daily essentials with ease.</p>
+              <button type="button" onClick={() => { closeWelcomePromo(); window.setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),100); }} className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#ffd814] px-4 py-3 text-sm font-black text-emerald-950 shadow-lg transition hover:-translate-y-0.5 hover:bg-amber-300 active:scale-[.98]">Explore groceries <ChevronRight className="h-5 w-5"/></button>
             </div>
           </div>
-          <div className="relative hidden min-h-[330px] items-center justify-center overflow-hidden lg:flex">
-            <div aria-hidden="true" className="absolute right-[-4rem] top-[-5rem] h-80 w-80 rounded-full border border-white/10" />
-            <div aria-hidden="true" className="absolute right-8 top-10 h-64 w-64 rounded-full border border-dashed border-amber-200/25" />
-            <div className="relative grid h-64 w-64 place-items-center rounded-[3rem] border border-white/15 bg-white/[.08] shadow-2xl backdrop-blur-sm">
-              <div className="absolute inset-4 rounded-[2.4rem] border border-white/10" />
-              <div className="text-center"><div className="pb-welcome-basket text-8xl drop-shadow-xl">🧺</div><p className="mt-3 text-xs font-black uppercase tracking-[.22em] text-amber-200">Fresh picks, fair prices</p></div>
-              <span className="absolute -left-8 top-8 grid h-16 w-16 place-items-center rounded-2xl border border-white/20 bg-white text-3xl shadow-xl">🥬</span>
-              <span className="absolute -right-7 top-16 grid h-16 w-16 place-items-center rounded-2xl border border-white/20 bg-amber-300 text-3xl shadow-xl">🍅</span>
-              <span className="absolute -bottom-5 left-8 grid h-16 w-16 place-items-center rounded-2xl border border-white/20 bg-white text-3xl shadow-xl">🥛</span>
-            </div>
-            <div className="absolute bottom-7 right-8 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-right backdrop-blur-md"><p className="text-[10px] font-bold uppercase tracking-widest text-emerald-100/70">Store status</p><p className="mt-1 text-sm font-black text-white">{liveIsOpen ? 'Open for orders' : 'Currently closed'}</p></div>
-          </div>
-        </div>
-        <div className="mx-auto mt-2 grid max-w-6xl grid-cols-3 gap-2 sm:mt-3">
-          <div className="rounded-xl border border-emerald-100 bg-white px-2 py-2.5 text-center shadow-sm sm:rounded-2xl sm:px-4 sm:py-3"><p className="text-sm font-black text-emerald-800 sm:text-lg">{inStockCount}+</p><p className="mt-0.5 text-[9px] font-semibold text-slate-500 sm:text-xs">Available products</p></div>
-          <div className="rounded-xl border border-emerald-100 bg-white px-2 py-2.5 text-center shadow-sm sm:rounded-2xl sm:px-4 sm:py-3"><p className="text-sm font-black text-emerald-800 sm:text-lg">Easy</p><p className="mt-0.5 text-[9px] font-semibold text-slate-500 sm:text-xs">WhatsApp ordering</p></div>
-          <div className="rounded-xl border border-emerald-100 bg-white px-2 py-2.5 text-center shadow-sm sm:rounded-2xl sm:px-4 sm:py-3"><p className="text-sm font-black text-emerald-800 sm:text-lg">Local</p><p className="mt-0.5 text-[9px] font-semibold text-slate-500 sm:text-xs">Burdwan service</p></div>
-        </div>
-      </section>
+        </div>;
+      })()}
 
       {/* ===================================================================== */}
       {/* SPECIAL OCCASION BANNER + ADMIN "BEST ITEMS" HOVER / PEEK SHOWCASE    */}
