@@ -208,7 +208,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const id = crypto.randomUUID();
   const reservationStatements = [
     ...(cartReservationId ? [env.DB.prepare("DELETE FROM cart_stock_reservations WHERE reservation_id=?").bind(cartReservationId)] : []),
-    env.DB.prepare("undefined")
+    env.DB.prepare("INSERT INTO customer_orders (id,order_number,customer_id,customer_name,customer_phone,note,items_json,total,status,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?, 'new',?,?)")
       .bind(id,orderNumber,customer.id,name,phone,note,JSON.stringify(items),total,now,now)
   ];
   for (const [productId, requested] of requestedByProduct) {
