@@ -30,6 +30,42 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
   const ordersRequestInFlight = useRef(false);
   const [notificationState,setNotificationState] = useState<'off'|'working'|'on'|'unsupported'|'error'>('off');
   const [notificationMessage,setNotificationMessage] = useState('');
+  type InboxNotification = { id: string; title: string; body: string; createdAt: number; readAt: number | null };
+  const [inboxNotifications,setInboxNotifications] = useState<InboxNotification[]>([]);
+  const [inboxLoading,setInboxLoading] = useState(false);
+  const [inboxError,setInboxError] = useState('');
+  const [inboxUnreadCount,setInboxUnreadCount] = useState(0);
+  const [inboxLoaded,setInboxLoaded] = useState(false);
+  const loadInbox = async (initial = false) => {
+    if (!customer) return;
+    if (initial) setInboxLoading(true);
+    try {
+      const response = await fetch('/api/customer-inbox', { credentials:'same-origin', cache:'no-store', headers:{ Accept:'application/json' } });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'Could not load store notifications.');
+      setInboxNotifications(Array.isArray(data.notifications) ? data.notifications : []);
+      setInboxUnreadCount(Number(data.unreadCount || 0));
+      setInboxError('');
+      setInboxLoaded(true);
+    } catch (e) {
+      setInboxError((e as Error).message || 'Could not load notifications.');
+    } finally {
+      setInboxLoading(false);
+    }
+  };
+  const markInboxRead = async (id?: string) => {
+    if (!customer) return;
+    const payload = id ? { id } : { markAllRead:true };
+    try {
+      const response = await fetch('/api/customer-inbox', { method:'PATCH', credentials:'same-origin', headers:{ 'Content-Type':'application/json' }, body:JSON.stringify(payload) });
+      if (!response.ok) throw new Error('Could not update notifications.');
+      const now = Date.now();
+      setInboxNotifications(previous => previous.map(item => (!id || item.id === id) ? { ...item, readAt:item.readAt || now } : item));
+      setInboxUnreadCount(previous => id ? Math.max(0, previous - (inboxNotifications.some(item => item.id === id && !item.readAt) ? 1 : 0)) : 0);
+    } catch (e) {
+      setInboxError((e as Error).message || 'Could not update notifications.');
+    }
+  };
 
   const loadOrders = async (showLoading = false) => {
     if (ordersRequestInFlight.current) return;
@@ -119,7 +155,7 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
       const result = await saved.json().catch(() => ({}));
       if (!saved.ok) throw new Error(result.error || 'Could not save your notification preference.');
       setNotificationState('on');
-      setNotificationMessage('You’ll receive an alert when your order status changes.');
+      setNotificationMessage('You’ll receive order updates and store announcements on this device.');
     } catch (error) {
       setNotificationState('error');
       setNotificationMessage((error as Error).message || 'Could not enable notifications. Please try again.');
@@ -156,6 +192,23 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
       if (active && response.ok) setNotificationState('on');
     }).catch(() => {});
     return () => { active = false; };
+  }, [customer?.id]);
+
+  useEffect(() => {
+    if (!customer) {
+      setInboxNotifications([]);
+      setInboxUnreadCount(0);
+      setInboxLoaded(false);
+      return;
+    }
+    void loadInbox(true);
+    const refresh = () => { if (document.visibilityState === 'visible') void loadInbox(false); };
+    const timer = window.setInterval(refresh, 60000);
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', refresh);
+    };
   }, [customer?.id]);
 
   const signOut = async () => {
@@ -223,6 +276,24 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
                     {notificationState === 'working' ? 'Updating…' : notificationState === 'on' ? <><BellOff className="h-4 w-4"/> Turn off notifications</> : <><Bell className="h-4 w-4"/> Enable order notifications</>}
                   </button>
                   {notificationMessage && <p role="status" className={'mt-2 text-xs font-semibold ' + (notificationState === 'error' || notificationState === 'unsupported' ? 'text-rose-700' : 'text-emerald-700')}>{notificationMessage}</p>}
+                </section>
+                <section className="overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm">
+                  <div className="flex items-center justify-between gap-3 border-b border-blue-50 bg-blue-50/70 px-4 py-3">
+                    <div className="flex min-w-0 items-center gap-2.5">
+                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-blue-100 text-blue-800"><BellRing className="h-4 w-4"/></span>
+                      <div><h3 className="font-extrabold text-slate-900">Store notifications</h3><p className="text-[11px] text-slate-500">{inboxUnreadCount ? inboxUnreadCount + ' unread' : 'Updates and announcements from Parbati Bhandar'}</p></div>
+                      {inboxUnreadCount > 0 && <span className="rounded-full bg-blue-700 px-2 py-0.5 text-[10px] font-black text-white">{inboxUnreadCount}</span>}
+                    </div>
+                    {inboxUnreadCount > 0 && <button type="button" onClick={() => void markInboxRead()} className="shrink-0 text-[11px] font-extrabold text-blue-700 hover:underline">Mark all read</button>}
+                  </div>
+                  {inboxLoading && !inboxLoaded ? <p className="px-4 py-7 text-center text-xs text-slate-500">Loading notifications…</p> :
+                    inboxNotifications.length === 0 ? <div className="px-4 py-7 text-center"><Bell className="mx-auto h-6 w-6 text-slate-300"/><p className="mt-2 text-sm font-bold text-slate-700">You’re all caught up</p><p className="mt-1 text-xs text-slate-500">Store announcements and important updates will appear here.</p></div> :
+                    <div className="max-h-80 divide-y divide-slate-100 overflow-y-auto">{inboxNotifications.map(item => <button key={item.id} type="button" onClick={() => !item.readAt && void markInboxRead(item.id)} className={'block w-full px-4 py-3 text-left transition hover:bg-blue-50/60 ' + (!item.readAt ? 'bg-blue-50/50' : 'bg-white')}>
+                      <span className="flex items-start justify-between gap-3"><strong className="text-sm text-slate-900">{item.title}</strong>{!item.readAt && <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-blue-600" aria-label="Unread"/>}</span>
+                      <span className="mt-1 block whitespace-pre-wrap text-xs leading-5 text-slate-600">{item.body}</span>
+                      <span className="mt-2 block text-[10px] font-semibold text-slate-400">{new Date(item.createdAt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Kolkata'})}</span>
+                    </button>)}</div>}
+                  {inboxError && <p role="alert" className="border-t border-rose-100 bg-rose-50 px-4 py-2 text-xs font-semibold text-rose-700">{inboxError}</p>}
                 </section>
                 <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                   <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
