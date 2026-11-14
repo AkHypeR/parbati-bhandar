@@ -112,6 +112,7 @@ export const onRequestPost: PagesFunction<Env> = async ({request,env}) => {
     if(!row)return json({error:"An inventory item is missing. No changes were saved."},409);
     const product=JSON.parse(row.data);
     if(typeof product.stockQuantity!=="number")return json({error:"Inventory tracking changed for an item. No changes were saved."},409);
+    if(delta>0&&product.inStock===false)return json({error:(product.name||"An item")+" is currently unavailable, so its quantity cannot be increased."},409);
     if(delta>0&&Number(product.stockQuantity)+1e-9<delta)return json({error:"Not enough stock is available to increase "+(product.name||"an item")+"'s quantity."},409);
     statements.push(
       env.DB.prepare("UPDATE products SET data=json_set(data,'$.stockQuantity',ROUND(json_extract(data,'$.stockQuantity')-?,4),'$.inStock',CASE WHEN ROUND(json_extract(data,'$.stockQuantity')-?,4)<=0 THEN json('false') ELSE json('true') END,'$.updatedAt',?),updated_at=? WHERE id=? AND json_type(data,'$.stockQuantity') IN ('integer','real') AND (ROUND(json_extract(data,'$.stockQuantity'),4)>=ROUND(?,4) OR ?<=0) AND EXISTS(SELECT 1 FROM customer_orders WHERE id=? AND stock_deducted=3)").bind(delta,delta,now,now,productId,Math.max(0,delta),delta,id),
