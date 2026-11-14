@@ -196,6 +196,7 @@ export function AdminUploadApp({
   const [replyCustomerPhone, setReplyCustomerPhone] = useState('');
   const [missingProducts, setMissingProducts] = useState('');
   const [replyNote, setReplyNote] = useState('');
+  const [notificationView, setNotificationView] = useState<'send' | 'history'>('send');
   const [broadcastTitle,setBroadcastTitle] = useState('');
   const [broadcastBody,setBroadcastBody] = useState('');
   const [broadcastSending,setBroadcastSending] = useState(false);
@@ -215,7 +216,7 @@ export function AdminUploadApp({
     } catch (error) { setOwnerBroadcastsError((error as Error).message || 'Could not load notification history.'); }
     finally { setOwnerBroadcastsLoading(false); }
   };
-  useEffect(() => { if (adminTab === 'notifications') void loadOwnerBroadcasts(); }, [adminTab]);
+  useEffect(() => { if (adminTab === 'notifications' && notificationView === 'history') void loadOwnerBroadcasts(); }, [adminTab, notificationView]);
   const deleteOwnerBroadcast = async (id?: string) => {
     const all = !id;
     if (all && !window.confirm('Delete all sent notifications from every customer account?')) return;
@@ -920,6 +921,12 @@ export function AdminUploadApp({
           </section>
         )}
         {adminTab === 'notifications' && (
+          <>
+            <div className="mx-auto mb-4 grid max-w-2xl grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm" role="tablist" aria-label="Notification options">
+              <button type="button" role="tab" aria-selected={notificationView === 'send'} onClick={() => setNotificationView('send')} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-extrabold transition ${notificationView === 'send' ? 'bg-blue-800 text-white shadow-sm' : 'bg-slate-50 text-slate-700 hover:bg-blue-50'}`}><Send className="h-4 w-4"/> Send notification</button>
+              <button type="button" role="tab" aria-selected={notificationView === 'history'} onClick={() => setNotificationView('history')} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-extrabold transition ${notificationView === 'history' ? 'bg-blue-800 text-white shadow-sm' : 'bg-slate-50 text-slate-700 hover:bg-blue-50'}`}><ClipboardList className="h-4 w-4"/> Sent history</button>
+            </div>
+            {notificationView === 'send' && (
           <section className="mx-auto max-w-2xl overflow-hidden rounded-3xl border border-blue-100 bg-white shadow-sm">
             <div className="bg-gradient-to-r from-blue-800 to-indigo-700 p-5 text-white sm:p-7">
               <div className="flex items-center gap-3"><span className="grid h-12 w-12 place-items-center rounded-2xl bg-white/15"><Megaphone className="h-6 w-6"/></span><div><p className="text-xs font-bold uppercase tracking-wider text-blue-100">Customer communication</p><h2 className="text-xl font-black">Send a store notification</h2></div></div>
@@ -940,6 +947,8 @@ export function AdminUploadApp({
               <p className="text-[11px] leading-5 text-slate-500">Messages are saved in customer accounts. Browser push delivery depends on each customer having signed in, enabled notifications and allowed notifications in their browser/device settings.</p>
             </div>
           </section>
+            )}
+            {notificationView === 'history' && (
         )}
           <section className="mx-auto mt-5 max-w-2xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
@@ -959,6 +968,9 @@ export function AdminUploadApp({
             </div>}
             <p className="border-t border-slate-100 px-5 py-3 text-[11px] text-slate-400">Deleting here removes the saved notification from every customer's account inbox, including all devices using that account. Already delivered device push alerts cannot be remotely recalled.</p>
           </section>
+            )}
+          </>
+        )}
         {adminTab === 'quickReplies' && (
           <section className="mx-auto max-w-2xl rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
             <div className="mb-5 flex items-start gap-3">
