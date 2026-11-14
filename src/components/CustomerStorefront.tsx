@@ -655,7 +655,7 @@ export function CustomerStorefront({
                 <div className="relative min-w-0 flex-1">
                   <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
-                    type="search"
+                    type="text"
                     aria-label="Search store products"
                     aria-autocomplete="list"
                     aria-expanded={showSearchSuggestions && searchSuggestions.length > 0}
