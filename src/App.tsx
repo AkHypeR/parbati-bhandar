@@ -783,9 +783,21 @@ export default function App() {
     }
   };
 
-  const handleSaveSettings = (newSettings: StoreSettings) => {
-    setStoreSettings(newSettings);
-    showToast('Parbati Bhandar settings updated!');
+  const handleSaveSettings = async (newSettings: StoreSettings) => {
+    try {
+      // Persist owner settings to Cloudflare D1 before updating the live storefront.
+      // This includes the greeting text and special-occasion image URL.
+      await saveCloudSettings(newSettings);
+      setStoreSettings(newSettings);
+      try {
+        localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(newSettings));
+      } catch {
+        // Cloudflare remains the source of truth if local storage is unavailable.
+      }
+      showToast('Parbati Bhandar settings saved successfully.');
+    } catch (error) {
+      showToast(`Could not save store settings: ${(error as Error).message}`, 'error');
+    }
   };
 
   const handleResetSampleProducts = () => {
