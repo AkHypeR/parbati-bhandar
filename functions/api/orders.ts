@@ -1,6 +1,7 @@
 import { json, ownerRequired, type Env } from "../_lib/env";
 import { purgeExpiredCustomerOrders } from "../_lib/order-retention";
 import { sendPushNotification } from "@mmmike/web-push/send";
+import { ensureCustomerTables, getCustomer } from "../_lib/customer-auth";
 
 type OrderItem = { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean };
 
@@ -105,6 +106,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     if (!verification.success || verification.action !== "order") return json({ error: "Security check failed. Please try again." }, 403);
   } catch { return json({ error: "Security verification is temporarily unavailable. Please try again." }, 503); }
   await ensureTable(env);
+  await ensureCustomerTables(env);
+  const customer = await getCustomer(request, env);
+  if (!customer) return json({ error: "Please sign in to your customer account before placing an order." }, 401, { "cache-control": "no-store" });
   await purgeExpiredCustomerOrders(env);
   await env.DB.prepare("DELETE FROM order_stock_reservations WHERE order_id NOT IN (SELECT id FROM customer_orders)").run();
 
@@ -124,8 +128,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   if (maintenanceActive) return json({ error: "The store is temporarily closed. Please place your order after it reopens." }, 403);
   if (!storeOpen) return json({ error: "The store is currently closed. Online orders are paused until the store opens." }, 403);
 
-  const name = String(body?.customerName || "").trim().slice(0, 100);
-  const phone = String(body?.customerPhone || "").replace(/\D/g, "").slice(0, 15);
+  const name = customer.name;
+  const phone = customer.phone;
   const note = String(body?.note || "").trim().slice(0, 500);
   const items = Array.isArray(body?.items) ? body.items.slice(0, 100).map((x: any) => ({
     productId: x.productId ? String(x.productId).slice(0, 100) : undefined, name: String(x.name || "").slice(0, 120), quantity: Math.max(1, Math.min(999, Number(x.quantity) || 1)),
@@ -204,8 +208,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const id = crypto.randomUUID();
   const reservationStatements = [
     ...(cartReservationId ? [env.DB.prepare("DELETE FROM cart_stock_reservations WHERE reservation_id=?").bind(cartReservationId)] : []),
-    env.DB.prepare("INSERT INTO customer_orders (id,order_number,customer_name,customer_phone,note,items_json,total,status,created_at,updated_at) VALUES (?,?,?,?,?,?,?,'new',?,?)")
-      .bind(id,orderNumber,name,phone,note,JSON.stringify(items),total,now,now)
+    env.DB.prepare("undefined")
+      .bind(id,orderNumber,customer.id,name,phone,note,JSON.stringify(items),total,now,now)
   ];
   for (const [productId, requested] of requestedByProduct) {
     reservationStatements.push(env.DB.prepare(`INSERT INTO order_stock_reservations (order_id,product_id,quantity)
