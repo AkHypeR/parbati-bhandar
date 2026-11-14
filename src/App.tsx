@@ -20,7 +20,6 @@ import {
   updateCartQuantity,
   calculateCartTotals,
   generateWhatsAppOrderText,
-  buildWhatsAppUrl,
   isProductLowStock,
   assignBestItemRank,
 } from './utils/storeLogic';
@@ -703,11 +702,6 @@ export default function App() {
     ]
   );
 
-  const whatsAppUrl = useMemo(
-    () => buildWhatsAppUrl(storeSettings.whatsappNumber || storeSettings.phone, orderText),
-    [storeSettings.whatsappNumber, storeSettings.phone, orderText]
-  );
-
   const handleSaveCustomerOrder = async (): Promise<number | null> => {
     if (!checkIsStoreOpenIST(storeSettings)) { showToast('The store is closed. Orders cannot be placed right now.', 'error'); return null; }
     try {
@@ -720,7 +714,7 @@ export default function App() {
       const placedAt = Number(result.createdAt) || Date.now();
       setLastOrderCreatedAt(placedAt);
       try { localStorage.setItem('parbati_bhandar_last_order_created_at_v1', String(placedAt)); } catch { /* Timestamp is optional UI convenience. */ }
-      try { localStorage.setItem('parbati_bhandar_last_order_number_v1', String(orderNumber)); } catch { /* Tracking number can still be copied from WhatsApp. */ }
+      try { localStorage.setItem('parbati_bhandar_last_order_number_v1', String(orderNumber)); } catch { /* Tracking number is available in My Account. */ }
       showToast('Your order has been received by Parbati Bhandar. You can check its progress in My Account.');
       return orderNumber;
     } catch (error) { showToast((error as Error).message, 'error'); return null; }
@@ -1232,8 +1226,6 @@ export default function App() {
             setCustomerNote={setCustomerNote}
             updateCartQty={updateCartQty}
             clearCart={() => setCart({})}
-            whatsAppUrl={whatsAppUrl}
-            orderText={orderText}
           />
         </>
         )
