@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { TurnstileWidget } from './TurnstileWidget';
 import {
   ShoppingCart,
   ShoppingBag,
@@ -8,7 +7,6 @@ import {
   Minus,
   Plus,
   MessageCircle,
-  ShieldCheck,
 } from 'lucide-react';
 import { CartItem, Product } from '../utils/storeLogic';
 
@@ -50,7 +48,7 @@ interface CartDrawerProps {
   cartTotalItems: number;
   cartTotalPrice: number;
   cartTotalSaved: number;
-  onSaveOrder: (turnstileToken: string) => Promise<number | null>;
+  onSaveOrder: () => Promise<number | null>;
   onOrderPlaced: (orderNumber: number) => void;
   customerNote: string;
   setCustomerNote: (v: string) => void;
@@ -85,8 +83,6 @@ export function CartDrawer({
 }: CartDrawerProps) {
   const [checkoutStep, setCheckoutStep] = useState<'review' | 'checkout'>('review');
   const [savingOrder, setSavingOrder] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState('');
-  const [captchaError, setCaptchaError] = useState('');
   // Keep countdown updates isolated from the whole cart to avoid mobile UI re-renders.
   const getLowStockStart = (product: Product): number | null => {
     const currentProduct = products.find(item => item.id === product.id) || product;
@@ -179,7 +175,7 @@ export function CartDrawer({
           <div className="mb-3 flex items-center justify-between">
             <button
               type="button"
-              onClick={() => checkoutStep === 'checkout' ? (setCheckoutStep('review'), setTurnstileToken(''), setCaptchaError('')) : onClose()}
+              onClick={() => checkoutStep === 'checkout' ? setCheckoutStep('review') : onClose()}
               className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-600 bg-emerald-700 px-3 py-2 text-xs font-bold text-white shadow-sm transition-colors hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-amber-300"
             >
               <ArrowLeft className="h-4 w-4 shrink-0" />
@@ -347,17 +343,6 @@ export function CartDrawer({
               
             </>
           )}
-          {checkoutStep === 'checkout' && <div className="mt-4 rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-4 shadow-sm">
-            <div className="mb-2 flex items-center gap-2.5">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-emerald-700 text-white"><ShieldCheck className="h-5 w-5"/></span>
-              <div><p className="text-sm font-extrabold text-slate-900">Secure order verification</p><p className="text-[11px] text-slate-500">A quick check to keep automated orders away</p></div>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-white p-3">
-              <TurnstileWidget action="order" onVerify={(token) => { setTurnstileToken(token); setCaptchaError(''); }} />
-              {turnstileToken ? <p className="mt-2 text-xs font-bold text-emerald-700">✓ Security check completed</p> : <p className="mt-2 text-[11px] text-slate-500">Complete the verification above to securely place your order.</p>}
-              {captchaError && <p role="alert" className="mt-2 text-xs font-bold text-rose-700">{captchaError}</p>}
-            </div>
-          </div>}
         </div>
 
         {cartItemsList.length > 0 && (
@@ -379,17 +364,16 @@ export function CartDrawer({
             ) : (
               <>
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-extrabold text-slate-900">Final step · Secure checkout</p>
-                  <button type="button" onClick={() => { setCheckoutStep('review'); setTurnstileToken(''); }} className="text-xs font-bold text-emerald-700">← Edit order</button>
+                  <p className="text-sm font-extrabold text-slate-900">Final step · Place your order</p>
+                  <button type="button" onClick={() => setCheckoutStep('review')} className="text-xs font-bold text-emerald-700">← Edit order</button>
                 </div>
                 {!liveIsOpen && <div role="status" className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-semibold text-red-800">The store is currently closed. Online orders are paused and will be available when the store opens.</div>}
                 <button type="button" disabled={savingOrder || !liveIsOpen} onClick={async () => {
-                                    if (!turnstileToken) { setCaptchaError('Please complete the security verification before placing your order.'); return; }
                   if (savingOrder) return;
                   const popup = window.open('about:blank', '_blank');
                   setSavingOrder(true);
                   try {
-                    const orderNumber = await onSaveOrder(turnstileToken);
+                    const orderNumber = await onSaveOrder();
                     if (orderNumber !== null) {
                       // Navigate the pre-opened tab as soon as Cloudflare confirms the order.
                       if (popup) {
@@ -400,14 +384,12 @@ export function CartDrawer({
                         } catch { popup.location.replace(whatsAppUrl); }
                       }
                       clearCart();
-                      setTurnstileToken('');
-                      setCaptchaError('');
                       onOrderPlaced(orderNumber);
                     } else if (popup) popup.close();
                   } finally { setSavingOrder(false); }
                 }} className="w-full flex items-center justify-center gap-2 py-3.5 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm shadow-sm disabled:opacity-60">
                   <MessageCircle className="w-4 h-4" />
-                  <span>{savingOrder ? 'Placing order…' : liveIsOpen ? 'Place order securely' : 'Store is closed'}</span>
+                  <span>{savingOrder ? 'Placing order…' : liveIsOpen ? 'Place order' : 'Store is closed'}</span>
                 </button>
                 
               </>
