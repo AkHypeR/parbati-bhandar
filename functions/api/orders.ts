@@ -161,7 +161,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   // point where live stock is validated and decremented.
   const requestedByProduct = new Map<string, { quantity: number; name: string }>();
   const parsePriceMeasure = (value: unknown): { dimension: string; amount: number } | null => {
-    const match = String(value || "").trim().toLowerCase().match(/(\\d+(?:\\.\\d+)?)\\s*(kg|kgs|kilograms?|g|gm|grams?|l|litres?|liters?|ml|millilitres?|milliliters?)\\b/i);
+    const match = String(value || "").trim().toLowerCase().match(/(\d+(?:\.\d+)?)\s*(kg|kgs|kilograms?|g|gm|grams?|l|litres?|liters?|ml|millilitres?|milliliters?)\b/i);
     if (!match) return null;
     const amount = Number(match[1]);
     const unit = match[2].toLowerCase();
