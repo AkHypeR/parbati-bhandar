@@ -54,12 +54,12 @@ function stockUnitsForOrder(item: { quantity: number; unit: string }, product: a
 const ensureTable = async (env: Env) => {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS push_subscriptions (order_id TEXT PRIMARY KEY, subscription_json TEXT NOT NULL, created_at INTEGER NOT NULL)`).run();
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS customer_push_subscriptions (customer_id TEXT PRIMARY KEY, subscription_json TEXT NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)`).run();
-  await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN ready_at INTEGER").run().catch(() => {});
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS customer_orders (
    id TEXT PRIMARY KEY, customer_name TEXT NOT NULL, customer_phone TEXT NOT NULL,
    note TEXT, items_json TEXT NOT NULL, total REAL NOT NULL, status TEXT NOT NULL DEFAULT 'new',
    created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, order_number INTEGER
   )`).run();
+  await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN ready_at INTEGER").run().catch(() => {});
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS cart_stock_reservations (
     reservation_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL,
     expires_at INTEGER NOT NULL, PRIMARY KEY (reservation_id, product_id)
