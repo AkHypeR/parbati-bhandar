@@ -183,7 +183,6 @@ export default function App() {
       }
     } catch { /* Ignore unavailable or invalid local storage. */ }
   }, []);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [copiedNotice, setCopiedNotice] = useState(false);
 
   // Admin View States
@@ -1013,12 +1012,10 @@ export default function App() {
             setSortBy={setSortBy}
             cart={cart}
             cartItemsList={cartItemsList}
-            products={products}
             cartTotalItems={cartTotalItems}
             cartTotalPrice={cartTotalPrice}
             cartTotalSaved={cartTotalSaved}
             updateCartQty={updateCartQty}
-            setIsCartOpen={setIsCartOpen}
             setIsQrModalOpen={setIsQrModalOpen}
             lastOrderNumber={lastSavedOrderNumber}
             lastOrderPhone={customerPhone}
