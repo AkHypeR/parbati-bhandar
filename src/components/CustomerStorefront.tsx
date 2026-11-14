@@ -766,7 +766,7 @@ export function CustomerStorefront({
                 </span>
                 <div className="min-w-0">
                   <h2 className="text-xs sm:text-sm font-extrabold text-slate-900 truncate">
-                    Best 5 Products Spotlight Slider • সেরা ৫ পছন্দের পণ্য
+                    {storeSettings.showOccasionBanner === true ? 'Festival Greeting + Best 5 Products • উৎসবের শুভেচ্ছা' : 'Best 5 Products Spotlight Slider • সেরা ৫ পছন্দের পণ্য'}
                   </h2>
                 </div>
               </div>
@@ -875,22 +875,22 @@ export function CustomerStorefront({
                         src={currentSlide.imageUrl}
                         alt={currentSlide.title}
                         referrerPolicy="no-referrer"
-                        className={`relative z-10 w-full h-full object-cover transition-transform duration-300 $'object-center group-hover:scale-105'`}
+                        className="relative z-10 w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
                       />
                     ) : (
                       <div className="relative z-10 flex flex-col items-center justify-center pb-8 text-center px-4">
-                        <div className="text-6xl sm:text-7xl drop-shadow-md">🙏🧺🍌🥥🪔</div>
+                        <div className="text-6xl sm:text-7xl drop-shadow-md">🎉🌟🎁</div>
                         <p className="mt-2 text-xs font-bold text-white bg-slate-900/50 px-3 py-1 rounded-full backdrop-blur-xs">
-                          Fresh Puja Ghee, Gobindobhog Rice, Fruits &amp; Spices Available
+                          Celebrate the season with special picks from Parbati Bhandar
                         </p>
                       </div>
                     )}
 
                     {/* Bottom Glowing Diyas (প্রদীপ) */}
                     <div className="absolute bottom-2.5 inset-x-4 flex items-center justify-between z-20 pointer-events-none">
-                      <span className="text-xl sm:text-2xl drop-shadow">🪔🌼🪔</span>
+                      <span className="text-xl sm:text-2xl drop-shadow">✨🎊✨</span>
                       <span className="px-3.5 py-1 rounded-full bg-white/95 text-slate-900 font-extrabold text-[11px] shadow-sm group-hover:bg-amber-300 transition-colors">
-                        Shop Festival Items →
+                        Explore Festival Picks →
                       </span>
                       <span className="text-xl sm:text-2xl drop-shadow">🪔🌼🪔</span>
                     </div>
