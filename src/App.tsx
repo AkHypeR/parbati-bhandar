@@ -181,9 +181,10 @@ export default function App() {
     setCustomerAccount(customer);
     setCustomerName(customer.name);
     setCustomerPhone(customer.phone);
-    navigateToPath(created ? '/' : accountReturnPath);
+    // Both registration and sign-in should return customers to the main shopping page.
+    navigateToPath('/');
     setAccountReturnPath('/account');
-    showToast(created ? 'Your account is ready. Welcome to Parbati Bhandar!' : 'Signed in successfully. Your details are ready for checkout.');
+    showToast(created ? 'Your account is ready. Welcome to Parbati Bhandar!' : 'Signed in successfully. Welcome back!');
   };
   const handleCustomerLogout = () => {
     setCustomerAccount(null);
