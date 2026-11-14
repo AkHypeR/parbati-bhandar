@@ -497,7 +497,7 @@ export function CustomerStorefront({
               {lastOrderCreatedAt > 0 && (
                 <div className="mb-4 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-3.5">
                   <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-100 text-emerald-800"><CheckCircle2 className="h-5 w-5" /></span>
-                  <div className="min-w-0"><p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800">Latest order received</p><p className="text-sm font-bold text-slate-900">{new Date(lastOrderCreatedAt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'})}</p></div>
+                  <div className="min-w-0"><p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800">Latest order received</p><p className="text-sm font-bold text-slate-900">{new Date(lastOrderCreatedAt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Kolkata'})}</p></div>
                 </div>
               )}
 
