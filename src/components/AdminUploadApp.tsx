@@ -585,7 +585,7 @@ export function AdminUploadApp({
         product.stockQuantity ?? '', product.lowStockThreshold ?? '',
       ]),
     ];
-    const csv = '\\uFEFF' + rows.map(row => row.map(escapeCsv).join(',')).join('\\r\\n');
+    const csv = '\uFEFF' + rows.map(row => row.map(escapeCsv).join(',')).join('\r\n');
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
     const link = document.createElement('a');
     link.href = url;
@@ -2677,12 +2677,13 @@ export function AdminUploadApp({
                     ) : (
                       <>
                         <label className="block text-[11px] font-bold uppercase text-slate-700">
-                          Upload Scanner Picture from Gallery
+                          Take or Upload Scanner Picture
                         </label>
                         <input
                           ref={scannerFileInputRef}
                           type="file"
                           accept="image/*"
+                          capture="environment"
                           onChange={handleScannerFileChange}
                           className="hidden"
                         />
