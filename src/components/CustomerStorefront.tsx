@@ -110,6 +110,7 @@ export function CustomerStorefront({
   lastOrderPhone = '',
 }: CustomerStorefrontProps) {
   const [trackingOrderNumber, setTrackingOrderNumber] = useState(lastOrderNumber);
+  const [dealsSearch, setDealsSearch] = useState('');
   const [trackingPhone, setTrackingPhone] = useState(lastOrderPhone);
   const [trackingResult, setTrackingResult] = useState<any>(null);
   const [trackingError, setTrackingError] = useState('');
@@ -1092,6 +1093,11 @@ export function CustomerStorefront({
         const dealProducts = (storeSettings.dealProductIds || [])
           .map(id => products.find(product => product.id === id))
           .filter((product): product is Product => Boolean(product && product.inStock));
+        const visibleDealProducts = dealProducts.filter(product =>
+          !dealsSearch.trim() || [product.name, product.category].some(value =>
+            String(value || '').toLowerCase().includes(dealsSearch.trim().toLowerCase())
+          )
+        );
         if (!dealProducts.length) return null;
         return (
           <section aria-label="Deals of the Day" className="max-w-5xl mx-auto w-full px-3.5 sm:px-6 pb-4">
@@ -1106,8 +1112,17 @@ export function CustomerStorefront({
                 </div>
                 <span className="shrink-0 rounded-full bg-rose-100 px-2.5 py-1 text-[10px] font-black text-rose-700">{dealProducts.length} DEAL{dealProducts.length === 1 ? '' : 'S'}</span>
               </div>
+              <div className="border-b border-rose-100 bg-white/70 px-3.5 py-2.5">
+                <label className="flex items-center gap-2 rounded-xl border border-rose-200 bg-white px-3 py-2 focus-within:border-rose-400 focus-within:ring-2 focus-within:ring-rose-100">
+                  <Search className="h-4 w-4 shrink-0 text-rose-500" />
+                  <input type="search" value={dealsSearch} onChange={event => setDealsSearch(event.target.value)}
+                    placeholder="Search today’s deals by product or category…" aria-label="Search Deals of the Day"
+                    className="min-w-0 w-full bg-transparent text-xs font-medium text-slate-800 outline-none placeholder:text-slate-400" />
+                  {dealsSearch && <button type="button" onClick={() => setDealsSearch('')} aria-label="Clear deals search" className="rounded-full p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-700"><X className="h-3.5 w-3.5" /></button>}
+                </label>
+              </div>
               <div className="flex gap-3 overflow-x-auto p-3 snap-x snap-mandatory">
-                {dealProducts.map(product => {
+                {visibleDealProducts.length ? visibleDealProducts.map(product => {
                   const discount = calculateDiscountDetails(product.price, product.mrp);
                   const cartKey = makeCartKey(product.id, product.unit || '1 unit');
                   const quantity = cart[cartKey]?.qty || cart[product.id]?.qty || 0;
@@ -1130,7 +1145,7 @@ export function CustomerStorefront({
                       </button>
                     </article>
                   );
-                })}
+                }) : <p className="w-full py-5 text-center text-xs font-semibold text-slate-500">No deals match “{dealsSearch}”. Try another product name.</p>}
               </div>
             </div>
           </section>
