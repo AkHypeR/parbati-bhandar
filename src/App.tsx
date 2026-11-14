@@ -622,7 +622,7 @@ export default function App() {
       if (!Number.isInteger(orderNumber) || orderNumber < 1) throw new Error('Order was saved, but its tracking number could not be confirmed.');
       setLastSavedOrderNumber(String(orderNumber));
       try { localStorage.setItem('parbati_bhandar_last_order_number_v1', String(orderNumber)); } catch { /* Tracking number can still be copied from WhatsApp. */ }
-      showToast(`Order #${orderNumber} saved. Keep this number to track your order.`);
+      showToast('Your order has been received by Parbati Bhandar. You can check its progress in My Account.');
       return orderNumber;
     } catch (error) { showToast((error as Error).message, 'error'); return null; }
   };
@@ -1021,7 +1021,7 @@ export default function App() {
           </div>
         ) : (
         <>
-          {['/account', '/previous-orders'].includes(currentPath) ? (
+          {['/account', '/previous-orders', '/track-order'].includes(currentPath) ? (
             <CustomerAccount
               customer={customerAccount}
               onAuthenticated={handleCustomerAuthenticated}
