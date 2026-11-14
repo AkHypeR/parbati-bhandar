@@ -132,8 +132,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const maintenanceActive = storeSettings.maintenanceMode === true &&
     !(typeof storeSettings.maintenanceUntil === "number" && now >= storeSettings.maintenanceUntil);
   const istNow = new Date(now + 5.5 * 60 * 60 * 1000);
-  const istHour = istNow.getUTCHours();
-  const scheduledOpen = istHour >= 7 && istHour < 22;
+  const istMinutes = istNow.getUTCHours() * 60 + istNow.getUTCMinutes();
+  // Match the customer-facing store schedule: 7:00 AM to 10:30 PM IST.
+  const scheduledOpen = istMinutes >= 7 * 60 && istMinutes < 22 * 60 + 30;
   const storeOpen = storeSettings.autoSchedule === true
     ? scheduledOpen
     : storeSettings.isOpen !== false;
