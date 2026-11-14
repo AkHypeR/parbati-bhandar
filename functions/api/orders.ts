@@ -320,7 +320,17 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
     for (const item of items) item.unavailable = true;
   }
   const refundAll = status === "cancelled" || status === "unavailable";
-  const refundLines = items.filter(item => !item.stockRefunded && (refundAll || item.unavailable));
+  // Only restore stock that checkout/confirmation actually deducted. Orders can
+  // contain catalogue items without stock tracking; those must not block cancellation.
+  const deductionRows = Number(order.stock_deducted || 0) === 1
+    ? await env.DB.prepare("SELECT product_id FROM order_stock_deductions WHERE order_id=?").bind(id).all<any>()
+    : { results: [] as any[] };
+  const deductedProductIds = new Set((deductionRows.results || []).map((row: any) => String(row.product_id)));
+  const refundCandidates = items.filter(item => !item.stockRefunded && (refundAll || item.unavailable));
+  if (deductedProductIds.size > 0 && refundCandidates.some(item => !item.productId)) {
+    return json({error:"This order has a stock deduction that cannot be matched to an item. The order was not changed; contact support."},409);
+  }
+  const refundLines = refundCandidates.filter(item => item.productId && deductedProductIds.has(String(item.productId)));
   const shouldRefundNow = Number(order.stock_deducted || 0) === 1 && refundLines.length > 0;
   if (shouldRefundNow) {
     const refunds = new Map<string, number>();
