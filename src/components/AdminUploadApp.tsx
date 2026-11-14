@@ -200,6 +200,37 @@ export function AdminUploadApp({
   const [broadcastBody,setBroadcastBody] = useState('');
   const [broadcastSending,setBroadcastSending] = useState(false);
   const [broadcastResult,setBroadcastResult] = useState('');
+  type OwnerBroadcast = { id: string; title: string; body: string; createdAt: number; recipientCount: number; unreadCount: number };
+  const [ownerBroadcasts, setOwnerBroadcasts] = useState<OwnerBroadcast[]>([]);
+  const [ownerBroadcastsLoading, setOwnerBroadcastsLoading] = useState(false);
+  const [ownerBroadcastsError, setOwnerBroadcastsError] = useState('');
+  const [deletingBroadcastId, setDeletingBroadcastId] = useState('');
+  const loadOwnerBroadcasts = async () => {
+    setOwnerBroadcastsLoading(true); setOwnerBroadcastsError('');
+    try {
+      const response = await fetch('/api/owner-notifications', { credentials:'same-origin', cache:'no-store', headers:{ Accept:'application/json' } });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'Could not load notification history.');
+      setOwnerBroadcasts(Array.isArray(data.notifications) ? data.notifications : []);
+    } catch (error) { setOwnerBroadcastsError((error as Error).message || 'Could not load notification history.'); }
+    finally { setOwnerBroadcastsLoading(false); }
+  };
+  useEffect(() => { if (adminTab === 'notifications') void loadOwnerBroadcasts(); }, [adminTab]);
+  const deleteOwnerBroadcast = async (id?: string) => {
+    const all = !id;
+    if (all && !window.confirm('Delete all sent notifications from every customer account?')) return;
+    if (id && !window.confirm('Delete this notification from every customer account?')) return;
+    setDeletingBroadcastId(id || 'all'); setOwnerBroadcastsError('');
+    try {
+      const response = await fetch('/api/owner-notifications', { method:'DELETE', credentials:'same-origin', headers:{ 'Content-Type':'application/json' }, body:JSON.stringify(all ? { deleteAll:true } : { id }) });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'Could not delete notification.');
+      setOwnerBroadcasts(previous => all ? [] : previous.filter(item => item.id !== id));
+      showToast(all ? 'All customer notifications deleted.' : 'Notification deleted from all customer accounts.', 'success');
+    } catch (error) { setOwnerBroadcastsError((error as Error).message || 'Could not delete notification.'); }
+    finally { setDeletingBroadcastId(''); }
+  };
+
   const sendCustomerBroadcast = async () => {
     if (broadcastSending) return;
     if (broadcastTitle.trim().length < 2 || broadcastBody.trim().length < 3) { showToast('Add a notification title and message first.', 'error'); return; }
@@ -894,6 +925,24 @@ export function AdminUploadApp({
             </div>
           </section>
         )}
+          <section className="mx-auto mt-5 max-w-2xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
+              <div><h3 className="text-base font-black text-slate-900">Sent notification history</h3><p className="mt-1 text-xs text-slate-500">Manage announcements saved in customer accounts.</p></div>
+              <div className="flex gap-2">
+                <button type="button" onClick={() => void loadOwnerBroadcasts()} disabled={ownerBroadcastsLoading || !!deletingBroadcastId} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-700 disabled:opacity-50"><RefreshCw className={'mr-1 inline h-3.5 w-3.5 '+(ownerBroadcastsLoading?'animate-spin':'')}/>Refresh</button>
+                {ownerBroadcasts.length > 0 && <button type="button" onClick={() => void deleteOwnerBroadcast()} disabled={!!deletingBroadcastId} className="rounded-xl border border-rose-200 px-3 py-2 text-xs font-extrabold text-rose-700 disabled:opacity-50"><Trash2 className="mr-1 inline h-3.5 w-3.5"/>Delete all</button>}
+              </div>
+            </div>
+            {ownerBroadcastsError && <p role="alert" className="bg-rose-50 px-5 py-3 text-xs font-semibold text-rose-700">{ownerBroadcastsError}</p>}
+            {ownerBroadcastsLoading && ownerBroadcasts.length === 0 ? <div className="py-8 text-center text-xs text-slate-500"><span className="mx-auto mb-2 block h-6 w-6 animate-spin rounded-full border-[3px] border-blue-700 border-t-transparent"/>Loading notification history…</div> : ownerBroadcasts.length === 0 ? <div className="px-5 py-9 text-center text-sm text-slate-500"><BellRing className="mx-auto mb-2 h-7 w-7 text-slate-300"/>No sent notifications yet.</div> : <div className="divide-y divide-slate-100">
+              {ownerBroadcasts.map(item => <article key={item.id} className="flex items-start gap-3 px-5 py-4 sm:px-6">
+                <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-blue-50 text-blue-700"><BellRing className="h-4 w-4"/></span>
+                <div className="min-w-0 flex-1"><h4 className="text-sm font-extrabold text-slate-900">{item.title}</h4><p className="mt-1 whitespace-pre-wrap text-sm leading-5 text-slate-600">{item.body}</p><p className="mt-2 text-[11px] text-slate-400">{new Date(item.createdAt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Kolkata'})} · {item.recipientCount} customer accounts · {item.unreadCount} unread</p></div>
+                <button type="button" onClick={() => void deleteOwnerBroadcast(item.id)} disabled={!!deletingBroadcastId} className="inline-flex min-h-9 shrink-0 items-center gap-1 rounded-lg border border-rose-200 bg-white px-3 py-2 text-xs font-extrabold text-rose-700 disabled:opacity-50"><Trash2 className="h-4 w-4"/>Delete</button>
+              </article>)}
+            </div>}
+            <p className="border-t border-slate-100 px-5 py-3 text-[11px] text-slate-400">Deleting here removes the saved notification from every customer's account inbox, including all devices using that account. Already delivered device push alerts cannot be remotely recalled.</p>
+          </section>
         {adminTab === 'quickReplies' && (
           <section className="mx-auto max-w-2xl rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
             <div className="mb-5 flex items-start gap-3">

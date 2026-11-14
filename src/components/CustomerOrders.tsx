@@ -27,7 +27,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
   const [editing, setEditing] = useState(false);
   const [editQuantities, setEditQuantities] = useState<number[]>([]);
   const [editAdditions, setEditAdditions] = useState<Array<{ productId: string; quantity: number }>>([]);
-  const [selectedAddProductId, setSelectedAddProductId] = useState('');
+  const [addProductSearch, setAddProductSearch] = useState('');
   const [savingAction, setSavingAction] = useState(false);
   const [actionMessage, setActionMessage] = useState('');
   const requestInFlight = useRef(false);
@@ -198,12 +198,16 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
                     </div>)}
                     <div className="rounded-xl border border-dashed border-blue-200 bg-blue-50/60 p-3">
                       <p className="mb-2 text-xs font-extrabold text-slate-800">Add another product</p>
-                      <div className="flex flex-col gap-2 sm:flex-row">
-                        <select aria-label="Choose a product to add" value={selectedAddProductId} onChange={event=>setSelectedAddProductId(event.target.value)} className="min-h-11 min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-800">
-                          <option value="">Choose from available products</option>
-                          {products.filter(product=>product.inStock).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(product=><option key={product.id} value={product.id}>{product.name} · ₹{product.price} / {product.unit}</option>)}
-                        </select>
-                        <button type="button" disabled={!selectedAddProductId} onClick={()=>{setEditAdditions(current=>{const found=current.find(item=>item.productId===selectedAddProductId);return found?current.map(item=>item.productId===selectedAddProductId?{...item,quantity:Math.min(999,item.quantity+1)}:item):[...current,{productId:selectedAddProductId,quantity:1}];});setSelectedAddProductId('');}} className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg bg-blue-800 px-4 text-xs font-extrabold text-white disabled:opacity-40"><Plus className="h-4 w-4"/> Add item</button>
+                      <div className="space-y-2">
+                        <input type="search" aria-label="Search available products" value={addProductSearch} onChange={event=>setAddProductSearch(event.target.value)} placeholder="Search products to add…" className="min-h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"/>
+                        <div className="max-h-52 space-y-1 overflow-y-auto rounded-xl border border-slate-200 bg-white p-1">
+                          {products.filter(product=>product.inStock && (!addProductSearch.trim() || product.name.toLocaleLowerCase().includes(addProductSearch.trim().toLocaleLowerCase()))).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(product=><div key={product.id} className="flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-slate-50">
+                            <div className="min-w-0 flex-1"><p className="truncate text-xs font-bold text-slate-800">{product.name}</p><p className="text-[10px] text-slate-500">₹{product.price} / {product.unit}</p></div>
+                            <button type="button" aria-label={'Add '+product.name} onClick={()=>setEditAdditions(current=>{const found=current.find(item=>item.productId===product.id);return found?current.map(item=>item.productId===product.id?{...item,quantity:Math.min(999,item.quantity+1)}:item):[...current,{productId:product.id,quantity:1}];})} className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-800 text-white transition hover:bg-blue-900" title="Add product"><Plus className="h-4 w-4"/></button>
+                          </div>)}
+                          {products.filter(product=>product.inStock && (!addProductSearch.trim() || product.name.toLocaleLowerCase().includes(addProductSearch.trim().toLocaleLowerCase()))).length===0 && <p className="px-3 py-5 text-center text-xs text-slate-500">{addProductSearch.trim()?'No matching available products.':'No products currently available.'}</p>}
+                        </div>
+                        <p className="text-[10px] text-slate-500">Tap + beside a product to add it. Tap + again to increase its quantity.</p>
                       </div>
                       {editAdditions.map(addition=>{const product=products.find(item=>item.id===addition.productId);if(!product)return null;return <div key={addition.productId} className="mt-2 flex items-center gap-2 rounded-lg border border-blue-100 bg-white p-2">
                         <div className="min-w-0 flex-1"><p className="truncate text-xs font-bold text-slate-900">{product.name}</p><p className="text-[10px] text-slate-500">₹{product.price} / {product.unit}</p></div>
