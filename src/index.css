@@ -325,3 +325,6 @@ html.pb-dark .text-blue-950 { color:#dbeafe !important; }
 .pb-festival-page { background:linear-gradient(180deg,#fffaf0 0%,#fff7ed 45%,#f8fafc 100%) !important; }
 .pb-festival-header { background:linear-gradient(105deg,#9a3412 0%,#d97706 52%,#b45309 100%) !important; border-color:rgba(251,191,36,.55) !important; }
 .pb-festival-header button { color:#fff !important; }
+
+.pb-festival-banner { background:linear-gradient(155deg,#f59e0b 0%,#c2410c 48%,#172554 100%) !important; border-color:rgba(253,230,138,.8) !important; }
+.pb-festival-banner > img { display:none !important; }
