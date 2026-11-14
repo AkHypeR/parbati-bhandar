@@ -5,7 +5,6 @@ import {
   BackHandler,
   Linking,
   Platform,
-  RefreshControl,
   SafeAreaView,
   StatusBar,
   StyleSheet,
@@ -89,6 +88,7 @@ export default function App() {
           <Text style={styles.brandCaption}>ONLINE GROCERY STORE</Text>
         </View>
         <View style={styles.securePill}><View style={styles.onlineDot} /><Text style={styles.secureText}>Store</Text></View>
+        <TouchableOpacity accessibilityRole="button" accessibilityLabel="Refresh page" onPress={onRefresh} style={styles.refreshButton}><Text style={styles.refreshText}>Refresh</Text></TouchableOpacity>
       </View>
 
       <View style={styles.webArea}>
@@ -118,7 +118,6 @@ export default function App() {
           setSupportMultipleWindows={false}
           allowsBackForwardNavigationGestures
           pullToRefreshEnabled={Platform.OS === 'ios'}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#087f5b" colors={['#087f5b']} />}
           mixedContentMode="never"
           javaScriptCanOpenWindowsAutomatically={false}
           setBuiltInZoomControls={false}
@@ -158,6 +157,8 @@ const styles = StyleSheet.create({
   securePill: { flexDirection: 'row', alignItems: 'center', borderRadius: 20, backgroundColor: '#ecfdf5', paddingHorizontal: 10, paddingVertical: 6 },
   onlineDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#059669', marginRight: 6 },
   secureText: { color: '#047857', fontSize: 10, fontWeight: '800' },
+  refreshButton: { marginLeft: 8, borderRadius: 9, borderWidth: 1, borderColor: '#e2e8f0', paddingHorizontal: 9, paddingVertical: 7 },
+  refreshText: { color: '#475569', fontSize: 10, fontWeight: '800' },
   webArea: { flex: 1, backgroundColor: '#f8fafc' },
   webView: { flex: 1, backgroundColor: '#ffffff' },
   loadingOverlay: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', backgroundColor: '#ffffff' },
