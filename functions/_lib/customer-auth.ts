@@ -28,13 +28,13 @@ export async function ensureCustomerTables(env: Env) {
       expires_at INTEGER NOT NULL, created_at INTEGER NOT NULL,
       FOREIGN KEY(customer_id) REFERENCES customer_accounts(id) ON DELETE CASCADE
     )`),
-    env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_customer_sessions_expiry ON customer_sessions(expires_at)"),
-    env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_customer_orders_customer ON customer_orders(customer_id, created_at DESC)")
+    env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_customer_sessions_expiry ON customer_sessions(expires_at)")
   ]);
   const columns = await env.DB.prepare("PRAGMA table_info(customer_orders)").all<any>();
   if (!(columns.results || []).some((column: any) => column.name === "customer_id")) {
     await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN customer_id TEXT").run();
   }
+  await env.DB.prepare("CREATE INDEX IF NOT EXISTS idx_customer_orders_customer ON customer_orders(customer_id, created_at DESC)").run();
 }
 export async function getCustomer(request: Request, env: Env): Promise<Customer | null> {
   const token = cookieValue(request, "pb_customer");
