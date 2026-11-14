@@ -571,7 +571,8 @@ export function CustomerStorefront({
           </div>
         </section>
       )}
-      {currentPage === 'home' && (<>\n      {/* ===================================================================== */}
+      {currentPage === 'home' && (<>(
+      {/* ===================================================================== */}
       {/* STICKY SEARCH BAR & CATEGORY RIBBON (Follows User on Scroll)          */}
       {/* ===================================================================== */}
       <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-2xs">
