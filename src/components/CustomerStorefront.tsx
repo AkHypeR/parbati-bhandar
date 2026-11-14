@@ -356,9 +356,15 @@ export function CustomerStorefront({
   const greetingTop = storeSettings.greetingTop || 'Nomoshkar';
   const greetingMain = storeSettings.greetingMain || 'Grahok';
   const deliveryEtaMins = storeSettings.deliveryEtaMins || '10';
+  const isChristmasSeason = /christmas|xmas/i.test(`${storeSettings.occasionTitle || ''} ${storeSettings.occasionTag || ''}`) || [10, 11].includes(new Date().getMonth());
 
   return (
     <div className="flex-1 flex flex-col bg-[#f4f8f3] text-slate-900 pb-32 sm:pb-28">
+      {isChristmasSeason && <div className="pb-christmas-sky fixed inset-0 z-[70] overflow-hidden pointer-events-none" aria-hidden="true">
+        {Array.from({length:18},(_,i)=><span key={i} className="pb-snowflake" style={{left:`${(i*37)%100}%`,animationDelay:`${(i%7)*-1.8}s`,animationDuration:`${8+(i%5)*2}s`,fontSize:`${10+(i%4)*5}px`}}>❄</span>)}
+        <span className="pb-christmas-twinkle absolute right-[8%] top-28 text-xl">✦</span><span className="pb-christmas-twinkle absolute left-[6%] top-[42%] text-sm">✧</span>
+      </div>}
+
       {/* ===================================================================== */}
       {/* TOP MOBILE-FIRST APP BAR WITH SHOP NAME                               */}
       {/* ===================================================================== */}
