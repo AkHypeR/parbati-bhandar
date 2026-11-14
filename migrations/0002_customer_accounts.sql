@@ -1,4 +1,18 @@
 -- Minimal customer accounts. Passwords are PBKDF2 hashes with per-account random salts.
+CREATE TABLE IF NOT EXISTS customer_orders (
+  id TEXT PRIMARY KEY,
+  customer_name TEXT NOT NULL,
+  customer_phone TEXT NOT NULL,
+  note TEXT,
+  items_json TEXT NOT NULL,
+  total REAL NOT NULL,
+  status TEXT NOT NULL DEFAULT 'new',
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  order_number INTEGER,
+  stock_deducted INTEGER NOT NULL DEFAULT 0,
+  confirmed_at INTEGER
+);
 CREATE TABLE IF NOT EXISTS customer_accounts (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
