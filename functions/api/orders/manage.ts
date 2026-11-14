@@ -27,6 +27,9 @@ async function prepare(env:Env){
   await env.DB.prepare("CREATE TABLE IF NOT EXISTS order_stock_deductions (order_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL, PRIMARY KEY(order_id,product_id))").run();
   await env.DB.prepare("CREATE TABLE IF NOT EXISTS order_stock_refunds (order_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL, PRIMARY KEY(order_id,product_id))").run();
   await env.DB.prepare("CREATE TABLE IF NOT EXISTS customer_order_action_guard (action_id TEXT PRIMARY KEY, expected_count INTEGER NOT NULL, actual_count INTEGER NOT NULL, CHECK(expected_count=actual_count))").run();
+  await env.DB.prepare("CREATE TABLE IF NOT EXISTS order_stock_refunds (order_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL, PRIMARY KEY(order_id,product_id))").run();
+  await env.DB.prepare("CREATE TABLE IF NOT EXISTS order_stock_refund_checks (check_id TEXT NOT NULL, order_id TEXT NOT NULL, product_id TEXT NOT NULL, PRIMARY KEY(check_id,product_id))").run();
+  await env.DB.prepare("CREATE TABLE IF NOT EXISTS order_stock_refund_guard_v2 (check_id TEXT PRIMARY KEY, expected_count INTEGER NOT NULL, actual_count INTEGER NOT NULL, CHECK(expected_count=actual_count))").run();
 }
 
 export const onRequestPost: PagesFunction<Env> = async ({request,env}) => {
@@ -62,30 +65,34 @@ export const onRequestPost: PagesFunction<Env> = async ({request,env}) => {
     }
     const refundMap=new Map<string,number>();
     const marked=original.map(item=>({...item}));
-    for(const [productId,quantity] of oldDeductions){
-      if(!(quantity>0))continue;
+    for(const [productId,deductedQuantity] of oldDeductions){
+      if(!(deductedQuantity>0))continue;
       const row=await env.DB.prepare("SELECT data FROM products WHERE id=?").bind(productId).first<any>();
       if(!row)return json({error:"An inventory item is missing. The order was not cancelled; please contact the store."},409);
-      const product=JSON.parse(row.data);
+      let product:any;try{product=JSON.parse(row.data);}catch{return json({error:"An inventory record could not be read. The order was not cancelled; please contact the store."},409);}
       const matching=marked.filter(x=>x.productId===productId&&!x.stockRefunded);
-      const units=matching.reduce((sum,item)=>sum+(stockUnits(item,product)||0),0);
-      if(!matching.length||!Number.isFinite(units)||units<=0)return json({error:"Could not safely match an item to inventory. The order was not cancelled."},409);
+      const converted=matching.map(item=>stockUnits(item,product));
+      if(!matching.length||converted.some(value=>value===null||!Number.isFinite(value)||Number(value)<=0))
+        return json({error:"Could not safely match "+(matching[0]?.name||"an item")+" to inventory. The order was not cancelled."},409);
+      const units=converted.reduce((sum,value)=>sum+Number(value),0);
+      if(!Number.isFinite(units)||units<=0)return json({error:"Could not calculate the inventory refund. The order was not cancelled."},409);
       refundMap.set(productId,units);
       matching.forEach(x=>x.stockRefunded=true);
     }
+    const refundCheckId=crypto.randomUUID();
     const statements:any[]=[
       env.DB.prepare("UPDATE customer_orders SET stock_deducted=3 WHERE id=? AND customer_id=? AND status IN ('new','review') AND stock_deducted=1 AND items_json=?").bind(id,customer.id,order.items_json),
-      env.DB.prepare("INSERT INTO customer_order_action_guard(action_id,expected_count,actual_count) SELECT ?,1,changes()").bind(actionId+":lock")
+      env.DB.prepare("INSERT INTO order_stock_refund_guard_v2(check_id,expected_count,actual_count) SELECT ?,1,changes()").bind(refundCheckId+":lock")
     ];
     for(const [productId,quantity] of refundMap){
       statements.push(
         env.DB.prepare("UPDATE products SET data=json_set(data,'$.stockQuantity',ROUND(json_extract(data,'$.stockQuantity')+?,4),'$.inStock',json('true'),'$.updatedAt',?),updated_at=? WHERE id=? AND json_type(data,'$.stockQuantity') IN ('integer','real') AND EXISTS(SELECT 1 FROM customer_orders WHERE id=? AND stock_deducted=3)").bind(quantity,now,now,productId,id),
         env.DB.prepare("INSERT INTO order_stock_refunds(order_id,product_id,quantity) SELECT ?,?,? WHERE changes()=1 ON CONFLICT(order_id,product_id) DO UPDATE SET quantity=order_stock_refunds.quantity+excluded.quantity").bind(id,productId,quantity),
-        env.DB.prepare("INSERT INTO customer_order_action_guard(action_id,expected_count,actual_count) SELECT ?,1 WHERE changes()=1").bind(actionId+":refund:"+productId)
+        env.DB.prepare("INSERT INTO order_stock_refund_checks(check_id,order_id,product_id) SELECT ?,?,? WHERE changes()=1").bind(refundCheckId,id,productId)
       );
     }
     statements.push(
-      env.DB.prepare("INSERT INTO customer_order_action_guard(action_id,expected_count,actual_count) SELECT ?,?,(SELECT COUNT(*) FROM customer_order_action_guard WHERE action_id LIKE ?)").bind(actionId+":count",refundMap.size+1,actionId+":%"),
+      env.DB.prepare("INSERT INTO order_stock_refund_guard_v2(check_id,expected_count,actual_count) SELECT ?,?,(SELECT COUNT(*) FROM order_stock_refund_checks WHERE check_id=?)").bind(refundCheckId+":count",refundMap.size,refundCheckId),
       env.DB.prepare("UPDATE customer_orders SET status='cancelled',items_json=?,total=0,updated_at=?,estimated_ready_at=NULL,stock_deducted=1 WHERE id=? AND customer_id=? AND stock_deducted=3").bind(JSON.stringify(marked),now,id,customer.id),
       env.DB.prepare("DELETE FROM order_stock_reservations WHERE order_id=?").bind(id)
     );
