@@ -60,6 +60,7 @@ const ensureTable = async (env: Env) => {
    created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, order_number INTEGER
   )`).run();
   await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN ready_at INTEGER").run().catch(() => {});
+  await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN estimated_ready_at INTEGER").run().catch(() => {});
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS cart_stock_reservations (
     reservation_id TEXT NOT NULL, product_id TEXT NOT NULL, quantity REAL NOT NULL,
     expires_at INTEGER NOT NULL, PRIMARY KEY (reservation_id, product_id)
@@ -248,8 +249,8 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   await ensureTable(env);
   // Retain customer order history for seven days from order creation, regardless of status.
   await purgeExpiredCustomerOrders(env);
-  const rows = await env.DB.prepare("SELECT id,order_number,customer_name,customer_phone,note,items_json,total,status,created_at,updated_at FROM customer_orders ORDER BY order_number DESC LIMIT 100").all<any>();
-  return json({ orders: (rows.results || []).map((r: any) => ({ id:r.id, orderNumber:r.order_number, customerName:r.customer_name, customerPhone:r.customer_phone, note:r.note, items:JSON.parse(r.items_json), total:r.total, status:r.status, createdAt:r.created_at, updatedAt:r.updated_at })) }, 200, { "cache-control": "no-store" });
+  const rows = await env.DB.prepare("SELECT id,order_number,customer_name,customer_phone,note,items_json,total,status,created_at,updated_at,estimated_ready_at FROM customer_orders ORDER BY order_number DESC LIMIT 100").all<any>();
+  return json({ orders: (rows.results || []).map((r: any) => ({ id:r.id, orderNumber:r.order_number, customerName:r.customer_name, customerPhone:r.customer_phone, note:r.note, items:JSON.parse(r.items_json), total:r.total, status:r.status, createdAt:r.created_at, updatedAt:r.updated_at, estimatedReadyAt:r.estimated_ready_at || null })) }, 200, { "cache-control": "no-store" });
 };
 
 export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
@@ -259,6 +260,9 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   let body: any; try { body = await request.json(); } catch { return json({error:"Invalid update."},400); }
   const status = String(body?.status || "");
   if (!["new","processing","review","ready","unavailable","completed","cancelled"].includes(status) || !body?.id) return json({error:"Invalid order status."},400);
+  const hasEstimateUpdate = Object.prototype.hasOwnProperty.call(body, "estimatedReadyAt");
+  const estimatedReadyAt = body.estimatedReadyAt === null ? null : Number(body.estimatedReadyAt);
+  if (hasEstimateUpdate && estimatedReadyAt !== null && (!Number.isFinite(estimatedReadyAt) || estimatedReadyAt <= Date.now() || estimatedReadyAt > Date.now() + 48 * 60 * 60 * 1000)) return json({error:"Choose an estimated ready time within the next 48 hours."},400);
   const id = String(body.id);
   const order = await env.DB.prepare("SELECT status,customer_id,customer_name,order_number,items_json,stock_deducted FROM customer_orders WHERE id=?").bind(id).first<any>();
   if (!order) return json({error:"Order not found."},404);
@@ -347,7 +351,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
       env.DB.prepare(`INSERT INTO order_stock_deduction_guard (order_id,expected_count,actual_count)
         SELECT ?,?,(SELECT COUNT(*) FROM order_stock_deductions WHERE order_id=?)`)
         .bind(id, deductions.size, id),
-      env.DB.prepare("UPDATE customer_orders SET stock_deducted=1,status='ready',items_json=?,updated_at=?,confirmed_at=COALESCE(confirmed_at,?),ready_at=COALESCE(ready_at,?) WHERE id=? AND stock_deducted=2")
+      env.DB.prepare("UPDATE customer_orders SET stock_deducted=1,status='ready',items_json=?,updated_at=?,confirmed_at=COALESCE(confirmed_at,?),ready_at=COALESCE(ready_at,?),estimated_ready_at=NULL WHERE id=? AND stock_deducted=2")
         .bind(JSON.stringify(items), Date.now(), Date.now(), Date.now(), id)
     );
     try {
@@ -360,8 +364,8 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
       return json({error:"Stock changed while this order was being confirmed. Refresh the order, review availability, and try again."},409);
     }
   } else {
-    const updateStatement = env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,updated_at=?,confirmed_at=CASE WHEN ?='ready' THEN COALESCE(confirmed_at,?) ELSE confirmed_at END,ready_at=CASE WHEN ?='ready' THEN COALESCE(ready_at,?) ELSE ready_at END WHERE id=?")
-      .bind(status,JSON.stringify(items),Date.now(),status,Date.now(),status,Date.now(),id);
+    const updateStatement = env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,updated_at=?,confirmed_at=CASE WHEN ?='ready' THEN COALESCE(confirmed_at,?) ELSE confirmed_at END,ready_at=CASE WHEN ?='ready' THEN COALESCE(ready_at,?) ELSE ready_at END,estimated_ready_at=CASE WHEN ?=1 THEN ? WHEN ?='ready' THEN NULL ELSE estimated_ready_at END WHERE id=?")
+      .bind(status,JSON.stringify(items),Date.now(),status,Date.now(),status,Date.now(),hasEstimateUpdate ? 1 : 0,estimatedReadyAt,status,id);
     if (["cancelled","unavailable"].includes(status)) {
       const results = await env.DB.batch([updateStatement,env.DB.prepare("DELETE FROM order_stock_reservations WHERE order_id=?").bind(id)]);
       changes = Number(results[0]?.meta.changes || 0);
@@ -371,10 +375,11 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
     }
   }
   let notification = "not-configured";
-  if (["processing","ready","unavailable","completed","cancelled"].includes(status) && env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.VAPID_SUBJECT) {
+  if ((["processing","ready","unavailable","completed","cancelled"].includes(status) || hasEstimateUpdate) && env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.VAPID_SUBJECT) {
     const profileSaved = order.customer_id ? await env.DB.prepare("SELECT subscription_json FROM customer_push_subscriptions WHERE customer_id=?").bind(order.customer_id).first<any>() : null;
     const saved = profileSaved || await env.DB.prepare("SELECT subscription_json FROM push_subscriptions WHERE order_id=?").bind(id).first<any>();
     if (saved?.subscription_json) {
+      const estimateText = estimatedReadyAt ? new Date(estimatedReadyAt).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }) : "";
       const messages: Record<string,{title:string;body:string}> = {
         processing:{title:"Your order is being processed",body:"Parbati Bhandar has started preparing your order."},
         ready:{title:"Your order is ready!",body:"Your order is ready for pickup or delivery from Parbati Bhandar."},
@@ -382,6 +387,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
         completed:{title:"Order completed",body:"Your Parbati Bhandar order has been marked completed. Thank you!"},
         cancelled:{title:"Order cancelled",body:"Your Parbati Bhandar order has been cancelled. Please contact the store if you have questions."}
       };
+      if (hasEstimateUpdate) messages[status] = { title: estimatedReadyAt ? "Updated preparation estimate" : "Order estimate updated", body: estimatedReadyAt ? "Parbati Bhandar expects your order to be ready around " + estimateText + ". We’ll let you know if anything changes." : "The previous estimated ready time has been cleared. Please check your order status for updates." };
       try {
         const delivered = await sendPushNotification(JSON.parse(saved.subscription_json),{...messages[status],url:"/",tag:"order-" + id},{publicKey:env.VAPID_PUBLIC_KEY,privateKey:env.VAPID_PRIVATE_KEY,subject:env.VAPID_SUBJECT},{ttl:3600,urgency:"high"});
         notification = delivered ? "sent" : "subscription-expired";
@@ -389,7 +395,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
       } catch (error) { console.error("Order push notification failed",error); notification = "send-failed"; }
     } else notification = "customer-not-subscribed";
   }
-  return json({ok:true,changes,notification});
+  return json({ok:true,changes,notification,estimatedReadyAt:hasEstimateUpdate ? estimatedReadyAt : undefined});
 };
 
 export const onRequestDelete: PagesFunction<Env> = async ({ request, env }) => {
