@@ -1128,68 +1128,63 @@ export function CustomerStorefront({
         )}
       </section>
 
-      {/* Deals of the Day — owner-curated, multi-product quick-add shelf */}
-      {storeSettings.dealsOfDayEnabled === true && (() => {
-        const dealProducts = (storeSettings.dealProductIds || [])
-          .map(id => products.find(product => product.id === id))
-          .filter((product): product is Product => Boolean(product && product.inStock));
-        const visibleDealProducts = dealProducts.filter(product =>
-          !dealsSearch.trim() || [product.name, product.category].some(value =>
-            String(value || '').toLowerCase().includes(dealsSearch.trim().toLowerCase())
-          )
-        );
-        if (!dealProducts.length) return null;
-        return (
-          <section aria-label="Deals of the Day" className="max-w-5xl mx-auto w-full px-3.5 sm:px-6 pb-4">
-            <div className="overflow-hidden rounded-2xl border border-rose-200 bg-gradient-to-r from-rose-50 via-white to-orange-50 shadow-sm">
-              <div className="flex items-center justify-between gap-2 px-3.5 sm:px-4 py-3 border-b border-rose-100">
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="w-9 h-9 rounded-xl bg-rose-500 text-white flex items-center justify-center text-lg shadow-sm">🔥</span>
-                  <div className="min-w-0">
-                    <h2 className="text-sm sm:text-base font-black text-slate-900">Deals of the Day</h2>
-                    <p className="text-[10px] sm:text-xs text-slate-500">Today’s picks • আজকের সেরা অফার</p>
-                  </div>
-                </div>
-                <span className="shrink-0 rounded-full bg-rose-100 px-2.5 py-1 text-[10px] font-black text-rose-700">{dealProducts.length} DEAL{dealProducts.length === 1 ? '' : 'S'}</span>
+      {/* Colourful Deal Zone and featured shelf */}
+      {!isSearchSubmitted && !searchQuery && selectedCategory === 'all' && (() => {
+        const curated = (storeSettings.dealProductIds || []).map(id => products.find(product => product.id === id)).filter((product): product is Product => Boolean(product && product.inStock));
+        const discounted = products.filter(product => product.inStock && Number(product.mrp) > Number(product.price));
+        const dealProducts = storeSettings.dealsOfDayEnabled === true ? curated : discounted;
+        const featuredProducts = products.filter(product => product.inStock).sort((a,b) => {
+          if (Boolean(a.isBestItem) !== Boolean(b.isBestItem)) return a.isBestItem ? -1 : 1;
+          return Number(a.bestItemRank || 99) - Number(b.bestItemRank || 99);
+        }).slice(0,8);
+        const categoryTiles = [
+          {id:'Rice & Atta',title:'Rice & Atta',emoji:'🌾',tone:'from-amber-100 to-orange-50'},
+          {id:'Dal & Pulses',title:'Dal & Pulses',emoji:'🥣',tone:'from-lime-100 to-emerald-50'},
+          {id:'Tea & Biscuits',title:'Tea & Snacks',emoji:'🍪',tone:'from-rose-100 to-pink-50'},
+          {id:'Daily Essentials',title:'Home Needs',emoji:'🧺',tone:'from-sky-100 to-cyan-50'}
+        ];
+        const productCard = (product: Product, index: number) => {
+          const discount = calculateDiscountDetails(product.price, product.mrp);
+          const qty = cart[makeCartKey(product.id, product.unit || '1 unit')]?.qty || cart[product.id]?.qty || 0;
+          return <article key={product.id} className="pb-deal-product-card w-[148px] shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm sm:w-[176px]">
+            <div className={`relative flex h-28 items-center justify-center overflow-hidden ${['bg-rose-50','bg-amber-50','bg-sky-50','bg-emerald-50'][index%4]}`}>
+              {product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain p-2 transition-transform duration-500 hover:scale-110"/> : <span className="text-5xl">{product.emoji || '🛍️'}</span>}
+              {discount.hasDiscount && <span className="absolute left-2 top-2 rounded-full bg-[#e91e63] px-2 py-1 text-[9px] font-black text-white">{discount.discountPercent}% OFF</span>}
+            </div>
+            <div className="p-2.5"><h3 className="line-clamp-2 min-h-9 text-[11px] font-extrabold leading-4 text-slate-800">{product.name}</h3><p className="mt-1 text-[10px] text-slate-500">{product.unit}</p><div className="mt-1 flex items-baseline gap-1.5"><b className="text-sm text-slate-900">₹{product.price}</b>{discount.hasDiscount && <span className="text-[10px] text-slate-400 line-through">₹{product.mrp}</span>}</div><button type="button" disabled={!product.inStock} onClick={() => updateCartQty(product,1)} className="mt-2 flex min-h-9 w-full items-center justify-center gap-1 rounded-xl bg-[#087a55] px-2 py-2 text-[11px] font-black text-white transition hover:bg-[#065d42] active:scale-[.97] disabled:opacity-50"><Plus className="h-3.5 w-3.5"/>{qty ? `Add more · ${qty}` : 'Quick add'}</button></div>
+          </article>;
+        };
+        return <section aria-label="Deal Zone and featured products" className="mx-auto mb-5 w-full max-w-6xl overflow-hidden sm:px-6">
+          <div className="overflow-hidden rounded-none bg-[#c8f5fb] px-3.5 pb-4 pt-5 sm:rounded-[26px] sm:px-5 sm:pt-6">
+            <div className="relative overflow-hidden rounded-[22px] bg-gradient-to-br from-[#b9f1fa] via-[#c9f7fb] to-[#e3f9ff] px-4 py-5 sm:px-7 sm:py-7">
+              <div aria-hidden="true" className="absolute -right-8 -top-12 h-44 w-44 rounded-full border-[22px] border-white/25"/>
+              <div className="relative z-10 flex items-center justify-between gap-3">
+                <div><p className="text-[10px] font-black uppercase tracking-[.2em] text-sky-800 sm:text-xs">Parbati Bhandar specials</p><h2 className="mt-1 text-3xl font-black leading-none tracking-tight text-[#075b78] sm:text-5xl">DEAL ZONE</h2><p className="mt-2 max-w-[230px] text-xs font-semibold text-sky-900/75 sm:text-sm">Little savings on the things your home needs every day.</p></div>
+                <div className="pb-deal-burst grid h-20 w-20 shrink-0 place-items-center rounded-full border-4 border-white/70 bg-gradient-to-br from-amber-300 to-orange-400 text-4xl shadow-lg sm:h-28 sm:w-28 sm:text-6xl">🛍️</div>
               </div>
-              <div className="border-b border-rose-100 bg-white/70 px-3.5 py-2.5">
-                <label className="flex items-center gap-2 rounded-xl border border-rose-200 bg-white px-3 py-2 focus-within:border-rose-400 focus-within:ring-2 focus-within:ring-rose-100">
-                  <Search className="h-4 w-4 shrink-0 text-rose-500" />
-                  <input type="search" value={dealsSearch} onChange={event => setDealsSearch(event.target.value)}
-                    placeholder="Search today’s deals by product or category…" aria-label="Search Deals of the Day"
-                    className="min-w-0 w-full bg-transparent text-xs font-medium text-slate-800 outline-none placeholder:text-slate-400" />
-                  {dealsSearch && <button type="button" onClick={() => setDealsSearch('')} aria-label="Clear deals search" className="rounded-full p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-700"><X className="h-3.5 w-3.5" /></button>}
-                </label>
-              </div>
-              <div className="flex gap-3 overflow-x-auto p-3 snap-x snap-mandatory">
-                {visibleDealProducts.length ? visibleDealProducts.map(product => {
-                  const discount = calculateDiscountDetails(product.price, product.mrp);
-                  const cartKey = makeCartKey(product.id, product.unit || '1 unit');
-                  const quantity = cart[cartKey]?.qty || cart[product.id]?.qty || 0;
-                  return (
-                    <article key={product.id} className="w-[148px] sm:w-[172px] shrink-0 snap-start rounded-xl border border-rose-100 bg-white p-2.5 shadow-sm">
-                      <div className="relative flex h-24 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-50 to-amber-50 overflow-hidden">
-                        {product.imageUrl ? (
-                          <img src={product.imageUrl} alt={product.name} loading="lazy" referrerPolicy="no-referrer" className="h-full w-full object-contain p-2" />
-                        ) : <span className="text-4xl">{product.emoji || '🛍️'}</span>}
-                        {discount.hasDiscount && <span className="absolute left-1.5 top-1.5 rounded-md bg-rose-600 px-1.5 py-0.5 text-[9px] font-black text-white">{discount.discountPercent}% OFF</span>}
-                      </div>
-                      <h3 className="mt-2 h-9 overflow-hidden text-[11px] font-extrabold leading-4 text-slate-800">{product.name}</h3>
-                      <p className="mt-1 text-[10px] text-slate-500">{product.unit}</p>
-                      <div className="mt-1 flex items-baseline gap-1.5">
-                        <span className="text-sm font-black text-slate-900">₹{product.price}</span>
-                        {discount.hasDiscount && <span className="text-[10px] text-slate-400 line-through">₹{product.mrp}</span>}
-                      </div>
-                      <button type="button" onClick={() => updateCartQty(product, 1)} className="mt-2 flex w-full items-center justify-center gap-1 rounded-lg border border-emerald-600 bg-emerald-50 py-2 text-xs font-black text-emerald-700 hover:bg-emerald-600 hover:text-white active:scale-[.98]">
-                        <Plus className="h-3.5 w-3.5" /> {quantity > 0 ? `ADD MORE · ${quantity}` : 'ADD'}
-                      </button>
-                    </article>
-                  );
-                }) : <p className="w-full py-5 text-center text-xs font-semibold text-slate-500">No deals match “{dealsSearch}”. Try another product name.</p>}
+              <div className="relative z-10 mt-4 grid grid-cols-4 gap-2 sm:mt-6 sm:gap-3">
+                {categoryTiles.map(tile => {
+                  const sample = products.find(product => product.category === tile.id && product.imageUrl);
+                  return <button type="button" key={tile.id} onClick={() => {setSelectedCategory(tile.id);setIsSearchSubmitted(false);setSearchQuery('');setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),60);}} className={`pb-deal-category flex min-w-0 flex-col items-center justify-between rounded-2xl border border-white/80 bg-gradient-to-b ${tile.tone} p-2 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:p-3`}>
+                    <div className="grid h-12 w-full place-items-center sm:h-16">{sample ? <img src={sample.imageUrl} alt="" loading="lazy" className="h-full max-w-full object-contain"/> : <span className="text-3xl sm:text-4xl">{tile.emoji}</span>}</div><span className="mt-1 line-clamp-2 text-[9px] font-black leading-tight text-slate-800 sm:text-xs">{tile.title}</span>
+                  </button>;
+                })}
               </div>
             </div>
-          </section>
-        );
+            <div className="mt-4 flex items-center justify-between gap-2 px-1"><div><p className="text-[9px] font-black uppercase tracking-[.18em] text-sky-800">Handpicked for you</p><h3 className="text-lg font-black text-slate-900 sm:text-xl">{dealProducts.length ? 'Today’s Deals' : 'Featured groceries'}</h3></div><span className="rounded-full bg-white/80 px-3 py-1 text-[10px] font-extrabold text-sky-900">{dealProducts.length ? `${dealProducts.length} offers` : 'Popular picks'}</span></div>
+            <div className="mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2">
+              {(dealProducts.length ? dealProducts : featuredProducts).slice(0,10).map(productCard)}
+              {!dealProducts.length && !featuredProducts.length && <p className="w-full rounded-xl bg-white/70 p-5 text-center text-xs font-semibold text-slate-600">New offers and featured products will appear here.</p>}
+            </div>
+            {dealProducts.length > 0 && <p className="px-1 pt-1 text-[10px] font-medium text-sky-900/70">Offer prices are based on the live product catalogue. Availability may change.</p>}
+          </div>
+          <div className="mt-5 px-3.5 sm:px-0">
+            <div className="mb-3 flex items-center gap-3"><h3 className="shrink-0 text-lg font-black text-slate-900">Featured</h3><div className="h-px flex-1 border-t border-dashed border-slate-300"/></div>
+            <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2">
+              {featuredProducts.slice(0,8).map(product => <button type="button" key={product.id} onClick={() => {setSearchQuery(product.name);setIsSearchSubmitted(true);setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),60);}} className="w-[142px] shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-100 bg-white text-left shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:w-[165px]"><div className="flex h-28 items-center justify-center bg-slate-50 p-3">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/> : <span className="text-5xl">{product.emoji || '🛒'}</span>}</div><div className="p-2.5"><p className="line-clamp-2 min-h-9 text-[11px] font-extrabold text-slate-800">{product.name}</p><p className="mt-1 text-xs font-black text-emerald-800">₹{product.price} <span className="font-medium text-slate-400">/ {product.unit}</span></p></div></button>)}
+            </div>
+          </div>
+        </section>;
       })()}
 
       {!isSearchSubmitted && !searchQuery && selectedCategory === 'all' && (() => {
