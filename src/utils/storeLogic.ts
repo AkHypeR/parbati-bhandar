@@ -871,25 +871,14 @@ export function buildHeroSlides(
 ): HeroSlide[] {
   const slides: HeroSlide[] = [];
   const occasionImage = settings.occasionImageUrl || '';
-  // Chhath 2026 runs 13–16 November. Force the campaign during these dates,
-  // even when older cloud settings contain a different occasion or hide the banner.
-  const localDate = new Date();
-  const isChhathCalendarWindow = localDate.getFullYear() === 2026 && localDate.getMonth() === 10 && localDate.getDate() >= 13 && localDate.getDate() <= 16;
-  const isChhathOccasion = isChhathCalendarWindow || /chhath|ছট\\s*(পূজা|পুজো)?/i.test(`${settings.occasionTitle || ''} ${settings.occasionSubtitle || ''} ${settings.occasionTag || ''} ${occasionImage}`);
+  const autoFestival = getAutomaticFestivalTheme();
+  const settingsText = [settings.occasionTitle, settings.occasionSubtitle, settings.occasionTag, occasionImage].join(' ');
+  const isChhathOccasion = autoFestival?.id === 'chhath-puja' || /chhath|ছট\s*(পূজা|পুজো)?/i.test(settingsText);
   const hasCustomOccasion = Boolean(settings.occasionTitle?.trim() || occasionImage.trim());
-  // Chhath is a dedicated seasonal campaign: keep its hero visible even if an
-  // older saved setting has the generic occasion-banner switch turned off.
-  // Other owner-selected occasions continue to respect the normal switch.
-  const shouldShowOccasion = isChhathOccasion || settings.showOccasionBanner === true || !hasCustomOccasion;
+  const shouldShowOccasion = isChhathOccasion || settings.showOccasionBanner === true || !hasCustomOccasion || Boolean(autoFestival);
   if (shouldShowOccasion) {
-    slides.push({
-      type: 'festive',
-      id: 'festive-banner',
-      title: isChhathOccasion ? (settings.occasionTitle?.trim() && /chhath|ছট/i.test(settings.occasionTitle) ? settings.occasionTitle.trim() : 'শুভ ছট পূজা') : (settings.occasionTitle?.trim() || 'Merry Christmas'),
-      subtitle: isChhathOccasion ? (settings.occasionSubtitle?.trim() && /chhath|ছট/i.test(settings.occasionSubtitle) ? settings.occasionSubtitle.trim() : 'সূর্য অর্ঘ্য • উৎসবের আনন্দে Parbati Bhandar') : (settings.occasionSubtitle?.trim() || 'শুভ বড়দিন • Wishing you joy, warmth and happiness'),
-      tag: isChhathOccasion ? 'Chhath Puja Celebration' : (settings.occasionTag?.trim() || 'Christmas Celebration'),
-      imageUrl: occasionImage,
-    });
+    const fallback = autoFestival || { title:'Welcome to Parbati Bhandar', subtitle:'Your neighbourhood grocery store • Everyday essentials with care', tag:'Fresh essentials, friendly service', emoji:'🛍️' };
+    slides.push({ type:'festive', id:'festive-banner', title:settings.occasionTitle?.trim() || fallback.title, subtitle:settings.occasionSubtitle?.trim() || fallback.subtitle, tag:settings.occasionTag?.trim() || fallback.tag, imageUrl:occasionImage });
   }
   const orderedBest = getBestItems(products, 5);
   orderedBest.forEach((product, idx) => {
