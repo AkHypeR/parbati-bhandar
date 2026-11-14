@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, PackageCheck, ShoppingBag, Clock3, CheckCircle2, ChefHat, Truck, ReceiptText, RefreshCw, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, ArrowRight, PackageCheck, ShoppingBag, Clock3, CheckCircle2, ChefHat, Truck, ReceiptText, RefreshCw, ShieldCheck, Plus, X } from 'lucide-react';
+import type { Product } from '../utils/storeLogic';
 
 type OrderItem = { name: string; quantity: number; unit: string; price?: number; lineTotal?: number; unavailable?: boolean };
 type Order = { id?: string; orderNumber: number; status: string; total: number; originalTotal?: number; unavailableDeduction?: number; createdAt: number; updatedAt?: number; readyAt?: number | null; estimatedReadyAt?: number | null; items: OrderItem[] };
@@ -17,7 +18,7 @@ const steps = [
 const formatDate = (value: number) => new Date(value).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' });
 const formatTime = (value: number) => new Date(value).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Kolkata' });
 
-export function CustomerOrders({ orderNumber, phone, whatsappNumber, onNavigate, onBack }: { orderNumber?: number; phone: string; whatsappNumber?: string; onNavigate: (path: string) => void; onBack: () => void }) {
+export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = [], onNavigate, onBack }: { orderNumber?: number; phone: string; whatsappNumber?: string; products?: Product[]; onNavigate: (path: string) => void; onBack: () => void }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selected, setSelected] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
@@ -25,6 +26,8 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, onNavigate,
   const [refreshing, setRefreshing] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editQuantities, setEditQuantities] = useState<number[]>([]);
+  const [editAdditions, setEditAdditions] = useState<Array<{ productId: string; quantity: number }>>([]);
+  const [selectedAddProductId, setSelectedAddProductId] = useState('');
   const [savingAction, setSavingAction] = useState(false);
   const [actionMessage, setActionMessage] = useState('');
   const requestInFlight = useRef(false);
@@ -89,7 +92,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, onNavigate,
     if (!selected || savingAction) return;
     setSavingAction(true); setActionMessage('');
     try {
-      const response = await fetch('/api/orders/manage', { method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:selected.id,action:'edit',quantities:editQuantities}) });
+      const response = await fetch('/api/orders/manage', { method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:selected.id,action:'edit',quantities:editQuantities,additions:editAdditions}) });
       const data = await response.json().catch(()=>({}));
       if (!response.ok) throw new Error(data.error || 'Could not update this order.');
       setEditing(false); await load(true);
@@ -186,15 +189,33 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, onNavigate,
                 {actionMessage && <p role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs font-bold text-emerald-800">{actionMessage}</p>}
                 {['new','processing'].includes(selected.status) && <section className="rounded-2xl border border-blue-200 bg-blue-50 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-sm font-black text-slate-900">Change your order</h2><p className="mt-1 text-xs text-slate-600">You can edit until the order is ready. Cancellation is available only before processing starts.</p></div>
-                    {!editing ? <div className="flex gap-2"><button type="button" onClick={()=>{setEditQuantities(selected.items.map(item=>Number(item.quantity)||1));setEditing(true);setActionMessage('');}} className="rounded-xl border border-blue-200 bg-white px-4 py-2.5 text-xs font-extrabold text-blue-800">Edit order</button>{selected.status === 'new' && <button type="button" onClick={()=>void cancelOrder()} disabled={savingAction} className="rounded-xl bg-rose-600 px-4 py-2.5 text-xs font-extrabold text-white disabled:opacity-60">{savingAction?'Please wait…':'Cancel order'}</button>}</div> : <button type="button" onClick={()=>setEditing(false)} className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700">Close editor</button>}
+                    {!editing ? <div className="flex gap-2"><button type="button" onClick={()=>{setEditQuantities(selected.items.map(item=>Number(item.quantity)||1));setEditAdditions([]);setSelectedAddProductId('');setEditing(true);setActionMessage('');}} className="rounded-xl border border-blue-200 bg-white px-4 py-2.5 text-xs font-extrabold text-blue-800">Edit order</button>{selected.status === 'new' && <button type="button" onClick={()=>void cancelOrder()} disabled={savingAction} className="rounded-xl bg-rose-600 px-4 py-2.5 text-xs font-extrabold text-white disabled:opacity-60">{savingAction?'Please wait…':'Cancel order'}</button>}</div> : <button type="button" onClick={()=>setEditing(false)} className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700">Close editor</button>}
                   </div>
                   {editing && <div className="mt-4 space-y-3">
                     {selected.items.map((item,index)=><div key={index} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3">
                       <div className="min-w-0 flex-1"><p className="truncate text-xs font-bold text-slate-900">{item.name}</p><p className="text-[10px] text-slate-500">{item.unit} · ₹{item.price||0} each</p></div>
                       <div className="flex items-center gap-2"><button type="button" aria-label={'Decrease '+item.name} onClick={()=>setEditQuantities(q=>q.map((v,i)=>i===index?Math.max(0,v-1):v))} className="h-8 w-8 rounded-lg border border-slate-200 font-black">−</button><span className="w-5 text-center text-sm font-black">{editQuantities[index]||0}</span><button type="button" aria-label={'Increase '+item.name} onClick={()=>setEditQuantities(q=>q.map((v,i)=>i===index?Math.min(999,v+1):v))} className="h-8 w-8 rounded-lg border border-slate-200 font-black">+</button></div>
                     </div>)}
-                    <div className="flex items-center justify-between gap-3 border-t border-blue-100 pt-3"><span className="text-xs font-bold text-slate-600">Revised estimate</span><strong className="text-lg font-black text-slate-900">₹{selected.items.reduce((sum,item,index)=>sum+(Number(item.price)||0)*(editQuantities[index]||0),0)}</strong></div>
-                    <button type="button" onClick={()=>void saveOrderEdit()} disabled={savingAction||editQuantities.every(q=>q===0)} className="w-full rounded-xl bg-blue-800 px-4 py-3 text-sm font-extrabold text-white disabled:opacity-50">{savingAction?'Saving changes…':'Save order changes'}</button>
+                    <div className="rounded-xl border border-dashed border-blue-200 bg-blue-50/60 p-3">
+                      <p className="mb-2 text-xs font-extrabold text-slate-800">Add another product</p>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <select aria-label="Choose a product to add" value={selectedAddProductId} onChange={event=>setSelectedAddProductId(event.target.value)} className="min-h-11 min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-800">
+                          <option value="">Choose from available products</option>
+                          {products.filter(product=>product.inStock).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(product=><option key={product.id} value={product.id}>{product.name} · ₹{product.price} / {product.unit}</option>)}
+                        </select>
+                        <button type="button" disabled={!selectedAddProductId} onClick={()=>{setEditAdditions(current=>{const found=current.find(item=>item.productId===selectedAddProductId);return found?current.map(item=>item.productId===selectedAddProductId?{...item,quantity:Math.min(999,item.quantity+1)}:item):[...current,{productId:selectedAddProductId,quantity:1}];});setSelectedAddProductId('');}} className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg bg-blue-800 px-4 text-xs font-extrabold text-white disabled:opacity-40"><Plus className="h-4 w-4"/> Add item</button>
+                      </div>
+                      {editAdditions.map(addition=>{const product=products.find(item=>item.id===addition.productId);if(!product)return null;return <div key={addition.productId} className="mt-2 flex items-center gap-2 rounded-lg border border-blue-100 bg-white p-2">
+                        <div className="min-w-0 flex-1"><p className="truncate text-xs font-bold text-slate-900">{product.name}</p><p className="text-[10px] text-slate-500">₹{product.price} / {product.unit}</p></div>
+                        <button type="button" aria-label={'Decrease '+product.name} onClick={()=>setEditAdditions(current=>current.map(item=>item.productId===addition.productId?{...item,quantity:Math.max(0,item.quantity-1)}:item).filter(item=>item.quantity>0))} className="h-8 w-8 rounded-lg border border-slate-200 font-black">−</button>
+                        <span className="w-5 text-center text-sm font-black">{addition.quantity}</span>
+                        <button type="button" aria-label={'Increase '+product.name} onClick={()=>setEditAdditions(current=>current.map(item=>item.productId===addition.productId?{...item,quantity:Math.min(999,item.quantity+1)}:item))} className="h-8 w-8 rounded-lg border border-slate-200 font-black">+</button>
+                        <button type="button" aria-label={'Remove '+product.name} onClick={()=>setEditAdditions(current=>current.filter(item=>item.productId!==addition.productId))} className="rounded-lg p-2 text-rose-600 hover:bg-rose-50"><X className="h-4 w-4"/></button>
+                      </div>})}
+                      <p className="mt-2 text-[10px] leading-4 text-slate-500">New items are checked against live prices and stock before your changes are saved.</p>
+                    </div>
+                    <div className="flex items-center justify-between gap-3 border-t border-blue-100 pt-3"><span className="text-xs font-bold text-slate-600">Revised estimate</span><strong className="text-lg font-black text-slate-900">₹{selected.items.reduce((sum,item,index)=>sum+(Number(item.price)||0)*(editQuantities[index]||0),0)+editAdditions.reduce((sum,addition)=>{const product=products.find(item=>item.id===addition.productId);return sum+(Number(product?.price)||0)*addition.quantity;},0)}</strong></div>
+                    <button type="button" onClick={()=>void saveOrderEdit()} disabled={savingAction||(editQuantities.every(q=>q===0)&&editAdditions.length===0)} className="w-full rounded-xl bg-blue-800 px-4 py-3 text-sm font-extrabold text-white disabled:opacity-50">{savingAction?'Saving changes…':'Save order changes'}</button>
                   </div>}
                 </section>}
                 {selected.status === 'processing' && <p className="rounded-xl bg-amber-50 p-3 text-[11px] font-semibold text-amber-800">Processing has started, so cancellation is locked. You can still edit quantities until the order is marked ready.</p>}{['ready','completed','cancelled','unavailable'].includes(selected.status) && <p className="rounded-xl bg-slate-50 p-3 text-[11px] font-semibold text-slate-500">Order editing and cancellation are locked at this stage.</p>}
