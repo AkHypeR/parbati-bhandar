@@ -13,6 +13,15 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     if (password.length < 8 || password.length > 128) {
       return json({ error: "Choose a password with at least 8 characters." }, 400);
     }
+    if (!env.TURNSTILE_SECRET_KEY) return json({ error: "Account security verification is not configured yet." }, 503, { "cache-control": "no-store" });
+    const turnstileToken = String(body?.turnstileToken || "").slice(0, 2048);
+    if (!turnstileToken) return json({ error: "Please complete the security check before continuing." }, 400, { "cache-control": "no-store" });
+    try {
+      const verifyResponse = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ secret: env.TURNSTILE_SECRET_KEY, response: turnstileToken, remoteip: request.headers.get("CF-Connecting-IP") || undefined }) });
+      const verification: any = await verifyResponse.json();
+      if (!verification.success || verification.action !== "register") return json({ error: "Security check failed. Please try again." }, 403, { "cache-control": "no-store" });
+    } catch { return json({ error: "Security verification is temporarily unavailable. Please try again." }, 503, { "cache-control": "no-store" }); }
+
     if (!env.DB) return json({ error: "Customer accounts are not connected yet. Please contact the store owner." }, 503);
 
     stage = "database_setup";
