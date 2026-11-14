@@ -174,8 +174,8 @@ export function CartDrawer({
       aria-label="Parbati Bhandar Final Cart"
       className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end"
     >
-      <div className="bg-white w-full max-w-md h-full flex flex-col shadow-2xl">
-        <div className="p-3.5 sm:p-5 bg-emerald-800 text-white">
+      <div className="pb-cart-panel bg-white w-full max-w-3xl h-full flex flex-col shadow-2xl">
+        <div className="pb-cart-header p-3.5 sm:p-5 bg-emerald-800 text-white">
           <div className="mb-3 flex items-center justify-between">
             <button
               type="button"
@@ -205,7 +205,7 @@ export function CartDrawer({
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 divide-y divide-slate-100">
+        <div className="pb-cart-content flex-1 overflow-y-auto p-4 divide-y divide-slate-100">
           {cartItemsList.length === 0 ? (
             <div className="py-16 text-center space-y-3">
               <ShoppingBag className="w-12 h-12 text-slate-300 mx-auto" />
@@ -245,7 +245,7 @@ export function CartDrawer({
                     const { product, qty, selectedUnit, unitPrice, unitMrp, cartKey } = item;
 
                     return (
-                      <div key={cartKey} className="py-3 flex items-center justify-between gap-3">
+                      <div key={cartKey} className="pb-cart-row py-3 flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3 min-w-0">
                           <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-xl shrink-0">
                             {product.imageUrl ? (
@@ -260,7 +260,7 @@ export function CartDrawer({
                             )}
                           </div>
                           <div className="min-w-0">
-                            <h4 className="font-bold text-sm text-slate-900 truncate">
+                            <h4 className="font-bold text-sm text-slate-900 line-clamp-2 whitespace-normal leading-snug">
                               {idx + 1}. {product.name}
                             </h4>
                             <p className="text-xs font-bold text-emerald-800 tabular-nums">
@@ -273,7 +273,7 @@ export function CartDrawer({
                         </div>
 
                         <div className="flex items-center gap-2 shrink-0">
-                          <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
+                          <div className="pb-cart-qty flex items-center border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
                             <button
                               type="button"
                               aria-label={`Remove one ${product.name} (${selectedUnit})`}
@@ -323,8 +323,8 @@ export function CartDrawer({
                   {recommendationProducts.length > 0 ? (
                     <div className="grid grid-cols-2 gap-2.5">
                       {recommendationProducts.map(product => (
-                        <article key={product.id} className="min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white p-2.5 shadow-sm">
-                          <div className="flex h-20 items-center justify-center rounded-lg bg-slate-50">
+                        <article key={product.id} className="pb-cart-recommendation min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white p-2.5 shadow-sm">
+                          <div className="flex h-16 sm:h-20 items-center justify-center rounded-lg bg-slate-50">
                             {product.imageUrl ? (
                               <img src={product.imageUrl} alt={product.name} loading="lazy" referrerPolicy="no-referrer" className="h-full w-full object-contain p-2" />
                             ) : (
@@ -361,7 +361,7 @@ export function CartDrawer({
         </div>
 
         {cartItemsList.length > 0 && (
-          <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-200 space-y-3">
+          <div className="pb-cart-summary p-3 sm:p-4 bg-white border-t border-slate-200 space-y-2.5">
             <div className="flex items-center justify-between text-sm font-extrabold text-slate-900 tabular-nums">
               <span>Total Items in Bill</span>
               <span className="text-base text-emerald-800">{cartTotalItems} items · ₹{cartTotalPrice}</span>
