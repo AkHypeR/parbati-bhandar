@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   ArrowLeft, Eye, EyeOff, UserRound, Phone, Package, LogOut,
   UserPlus, LogIn, ShoppingBasket, Sparkles, CheckCircle2, Clock3,
-  LockKeyhole, ArrowRight, ShieldCheck, ChevronRight, ReceiptText
+  LockKeyhole, ArrowRight, ShieldCheck, ChevronRight, ReceiptText, Bell, BellRing, BellOff
 } from 'lucide-react';
 import { TurnstileWidget } from './TurnstileWidget';
 
@@ -11,7 +11,7 @@ type Order = { orderNumber?: number; status: string; total: number; createdAt: n
 
 export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, onViewOrders }: {
   customer: Customer | null;
-  onAuthenticated: (customer: Customer) => void;
+  onAuthenticated: (customer: Customer, created?: boolean) => void;
   onLogout: () => void;
   onBack: () => void;
   onViewOrders: () => void;
@@ -26,6 +26,8 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
   const [error,setError] = useState('');
   const [orders,setOrders] = useState<Order[]>([]);
   const [ordersLoading,setOrdersLoading] = useState(false);
+  const [notificationState,setNotificationState] = useState<'off'|'working'|'on'|'unsupported'|'error'>('off');
+  const [notificationMessage,setNotificationMessage] = useState('');
 
   useEffect(() => {
     if (!customer) return;
@@ -63,11 +65,84 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
       if (!data.customer?.id || !data.customer?.name || !data.customer?.phone) {
         throw new Error('Your account response was incomplete. Please try signing in again.');
       }
-      onAuthenticated(data.customer);
+      onAuthenticated(data.customer, mode === 'register');
       setPassword('');
     } catch(e) { setError((e as Error).message || 'Please try again in a moment.'); }
     finally { setBusy(false); }
   };
+
+  const urlBase64ToUint8Array = (value: string) => {
+    const padding = '='.repeat((4 - value.length % 4) % 4);
+    const base64 = (value + padding).replace(/-/g, '+').replace(/_/g, '/');
+    return Uint8Array.from(atob(base64), character => character.charCodeAt(0));
+  };
+
+  const enableProfileNotifications = async () => {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
+      setNotificationState('unsupported');
+      setNotificationMessage('This browser does not support order notifications.');
+      return;
+    }
+    setNotificationState('working');
+    setNotificationMessage('');
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') throw new Error('Allow notifications in your browser settings to receive order updates.');
+      const keyResponse = await fetch('/api/push-key', { cache: 'no-store' });
+      const keyData = await keyResponse.json();
+      if (!keyResponse.ok || !keyData.publicKey) throw new Error('Order notifications are not configured yet.');
+      const registration = await navigator.serviceWorker.register('/sw.js');
+      const existing = await registration.pushManager.getSubscription();
+      const subscription = existing || await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(keyData.publicKey)
+      });
+      const saved = await fetch('/api/customer-notifications', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subscription: subscription.toJSON() })
+      });
+      const result = await saved.json().catch(() => ({}));
+      if (!saved.ok) throw new Error(result.error || 'Could not save your notification preference.');
+      setNotificationState('on');
+      setNotificationMessage('You’ll receive an alert when your order status changes.');
+    } catch (error) {
+      setNotificationState('error');
+      setNotificationMessage((error as Error).message || 'Could not enable notifications. Please try again.');
+    }
+  };
+
+  const disableProfileNotifications = async () => {
+    setNotificationState('working');
+    try {
+      const registration = await navigator.serviceWorker.getRegistration('/sw.js');
+      const subscription = await registration?.pushManager.getSubscription();
+      if (subscription) await subscription.unsubscribe();
+      const response = await fetch('/api/customer-notifications', { method: 'DELETE', credentials: 'same-origin' });
+      if (!response.ok) throw new Error('Could not update your notification settings.');
+      setNotificationState('off');
+      setNotificationMessage('Order notifications are turned off on this device.');
+    } catch (error) {
+      setNotificationState('error');
+      setNotificationMessage((error as Error).message || 'Could not turn off notifications.');
+    }
+  };
+
+  useEffect(() => {
+    if (!customer || !('serviceWorker' in navigator)) return;
+    let active = true;
+    navigator.serviceWorker.getRegistration('/sw.js').then(async registration => {
+      const subscription = await registration?.pushManager.getSubscription();
+      if (!active || !subscription) return;
+      const response = await fetch('/api/customer-notifications', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subscription: subscription.toJSON() })
+      });
+      if (active && response.ok) setNotificationState('on');
+    }).catch(() => {});
+    return () => { active = false; };
+  }, [customer?.id]);
 
   const signOut = async () => {
     try { await fetch('/api/customer-auth/logout',{method:'POST',credentials:'same-origin'}); }
@@ -122,6 +197,19 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
                   <p className="mt-1 flex items-center gap-2 text-sm text-slate-600"><Phone className="h-4 w-4"/>{customer.phone}</p>
                   <p className="mt-3 text-xs font-semibold text-emerald-800">Your details are ready for your next checkout.</p>
                 </div>
+                <section className="rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-50 text-emerald-800"><BellRing className="h-5 w-5"/></span>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-extrabold text-slate-900">Order notifications</h3>
+                      <p className="mt-1 text-xs leading-5 text-slate-500">Get an alert on this device when your order is being prepared, ready, or updated.</p>
+                    </div>
+                  </div>
+                  <button type="button" onClick={notificationState === 'on' ? disableProfileNotifications : enableProfileNotifications} disabled={notificationState === 'working' || notificationState === 'unsupported'} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3 text-sm font-extrabold text-white hover:bg-emerald-800 disabled:opacity-60">
+                    {notificationState === 'working' ? 'Updating…' : notificationState === 'on' ? <><BellOff className="h-4 w-4"/> Turn off notifications</> : <><Bell className="h-4 w-4"/> Enable order notifications</>}
+                  </button>
+                  {notificationMessage && <p role="status" className={'mt-2 text-xs font-semibold ' + (notificationState === 'error' || notificationState === 'unsupported' ? 'text-rose-700' : 'text-emerald-700')}>{notificationMessage}</p>}
+                </section>
                 <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                   <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
                     <div><h3 className="font-extrabold text-slate-900">Your recent orders</h3><p className="mt-0.5 text-xs text-slate-500">A quick look at your latest shopping</p></div>
