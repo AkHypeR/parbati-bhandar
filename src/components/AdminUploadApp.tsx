@@ -629,21 +629,35 @@ export function AdminUploadApp({
                 </span>
                 <button
                   type="button"
+                  onClick={() => setAdminTab('dashboard')}
+                  aria-label="Go to owner dashboard"
+                  aria-current={adminTab === 'dashboard' ? 'page' : undefined}
+                  className={`ml-auto sm:ml-0 inline-flex min-h-9 items-center gap-2 rounded-lg border px-3 text-xs font-bold transition ${adminTab === 'dashboard' ? 'border-blue-200 bg-blue-50 text-blue-800' : 'border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:bg-blue-50'}`}
+                >
+                  <Layers className="h-4 w-4" />
+                  <span>Dashboard</span>
+                </button>
+                <button
+                  type="button"
                   onClick={() => {
                     setIsOwnerUnlocked(false);
                     setActiveMode('customer');
                   }}
-                  className="ml-auto sm:ml-0 text-xs font-semibold text-red-600 hover:underline inline-flex items-center gap-1 cursor-pointer whitespace-nowrap"
+                  className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold text-red-600 transition hover:bg-red-50"
                 >
                   <Lock className="w-3 h-3" />
                   <span>Lock Admin</span>
                 </button>
               </div>
-              <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-slate-950 leading-tight sm:text-3xl">
-                Owner workspace &amp; store operations
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500">
+                <span>Owner portal</span><span aria-hidden="true">/</span>
+                <span className="text-blue-700" aria-current="page">{({ dashboard: 'Dashboard', orders: 'Orders', inventory: 'Inventory', add: editingProduct ? 'Edit product' : 'Add product', settings: 'Store settings', quickReplies: 'WhatsApp replies', christmasSpecials: 'Christmas specials' } as const)[adminTab]}</span>
+              </div>
+              <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-950 leading-tight sm:text-3xl">
+                {({ dashboard: 'Dashboard', orders: 'Order management', inventory: 'Inventory management', add: editingProduct ? 'Edit product' : 'Add a product', settings: 'Store settings', quickReplies: 'Customer communication', christmasSpecials: 'Christmas specials' } as const)[adminTab]}
               </h1>
               <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-500">
-                Manage orders, catalogue, stock and customer updates from one place.
+                {({ dashboard: 'Monitor store performance and daily operations.', orders: 'Review incoming orders, update preparation status and keep customers informed.', inventory: 'Manage product availability, pricing and stock levels.', add: 'Create or update products in your store catalogue.', settings: 'Manage store information, customer-facing content and operational preferences.', quickReplies: 'Manage reusable responses for customer enquiries.', christmasSpecials: 'Manage seasonal offers and featured products.' } as const)[adminTab]}
               </p>
             </div>
 
@@ -672,7 +686,7 @@ export function AdminUploadApp({
           </div>
 
           {/* Owner workspace navigation */}
-          <nav aria-label="Owner workspace sections" className="mt-5 grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm sm:grid-cols-3 xl:grid-cols-7">
+          <nav aria-label="Owner workspace sections" className="mt-5 flex gap-2 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden xl:grid xl:grid-cols-7">
             <button type="button" onClick={() => setAdminTab('dashboard')} aria-current={adminTab === 'dashboard' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'dashboard' ? 'bg-blue-800 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-blue-50 hover:text-blue-900'}`}><Layers className="h-4 w-4" /> Overview</button>
             <button type="button" onClick={() => setAdminTab('orders')} aria-current={adminTab === 'orders' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'orders' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-blue-50'}`}><BellRing className="h-4 w-4" /> Orders {newOrdersCount > 0 && <span className="rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] text-white">{newOrdersCount}</span>}</button>
             <button type="button" onClick={() => setAdminTab('inventory')} aria-current={adminTab === 'inventory' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'inventory' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-blue-50'}`}><Package className="h-4 w-4" /> Inventory</button>
