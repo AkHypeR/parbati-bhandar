@@ -886,10 +886,10 @@ export function CustomerStorefront({
                       else catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  className={`pb-christmas-banner ${isChhathSeason ? "pb-chhath-banner" : ""} relative w-full max-w-3xl mx-auto min-h-[390px] rounded-[28px] overflow-hidden shadow-[0_22px_55px_rgba(8,35,25,.28)] border border-amber-200/50 cursor-pointer group select-none"
+                  className={`pb-christmas-banner ${isChhathSeason ? "pb-chhath-banner" : ""} relative w-full max-w-3xl mx-auto min-h-[390px] rounded-[28px] overflow-hidden shadow-[0_22px_55px_rgba(8,35,25,.28)] border border-amber-200/50 cursor-pointer group select-none`}
                 >
-                  <img src="https://images.unsplash.com/photo-1767005608325-0ff075fca106?auto=format&fit=crop&w=1600&q=85" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"/>
-                  <div className="absolute inset-0 bg-gradient-to-b from-[#101a33]/35 via-[#172554]/65 to-[#0b1530]/95"/>
+                  <img src="https://images.unsplash.com/photo-1767005608325-0ff075fca106?auto=format&fit=crop&w=1600&q=85" alt="" aria-hidden="true" className={`absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03] ${isChhathSeason ? "hidden" : ""}`}/>
+                  <div className={`absolute inset-0 ${isChhathSeason ? "bg-gradient-to-b from-orange-500/25 via-orange-950/55 to-sky-950/95" : "bg-gradient-to-b from-[#101a33]/35 via-[#172554]/65 to-[#0b1530]/95"}`}/>
                   <div className="pb-christmas-glow absolute -right-12 -top-12 h-56 w-56 rounded-full bg-amber-300/25 blur-3xl"/>
                   <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-red-500 via-amber-300 to-blue-300"/>
                   <div className="pb-christmas-garland absolute left-0 right-0 top-3 flex justify-around px-2 text-lg sm:text-xl" aria-hidden="true"><span>🔴</span><span>🟡</span><span>🟢</span><span>🔴</span><span>🟡</span><span>🟢</span><span>🔴</span><span>🟡</span></div>
