@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { TurnstileWidget } from './TurnstileWidget';
 import {
   ShoppingCart,
@@ -8,7 +8,6 @@ import {
   Plus,
   Copy,
   MessageCircle,
-  AlertCircle,
   ShieldCheck,
 } from 'lucide-react';
 import { CartItem, Product } from '../utils/storeLogic';
@@ -24,14 +23,8 @@ interface CartDrawerProps {
   cartTotalItems: number;
   cartTotalPrice: number;
   cartTotalSaved: number;
-  customerName: string;
-  customerPhone: string;
-  setCustomerPhone: (v: string) => void;
-  rememberCustomerDetails: boolean;
-  setRememberCustomerDetails: (v: boolean) => void;
   onSaveOrder: (turnstileToken: string) => Promise<number | null>;
   onOrderPlaced: (orderNumber: number) => void;
-  setCustomerName: (v: string) => void;
   customerNote: string;
   setCustomerNote: (v: string) => void;
   updateCartQty: (
@@ -56,14 +49,8 @@ export function CartDrawer({
   products,
   cartTotalItems,
   cartTotalPrice,
-  customerName,
-  customerPhone,
-  setCustomerPhone,
-  rememberCustomerDetails,
-  setRememberCustomerDetails,
   onSaveOrder,
   onOrderPlaced,
-  setCustomerName,
   customerNote,
   setCustomerNote,
   updateCartQty,
