@@ -213,3 +213,27 @@
 @keyframes pbChristmasSway { 0%,100% { transform:rotate(-4deg) translateY(0); } 50% { transform:rotate(4deg) translateY(-5px); } }
 @keyframes pbChristmasGift { 0%,100% { transform:translateY(0) rotate(-3deg); } 50% { transform:translateY(-7px) rotate(4deg); } }
 @media (prefers-reduced-motion: reduce) { .pb-christmas-glow,.pb-christmas-sway,.pb-christmas-gift { animation:none !important; } }
+
+
+/* Cart page polish: quiet, compact and focused on checkout. */
+.pb-cart-panel { max-width: 760px; }
+.pb-cart-header { background: #006b4f !important; }
+.pb-cart-content { padding: 18px 22px 28px; }
+.pb-cart-row { min-height: 82px; }
+.pb-cart-row > :first-child { flex: 1 1 auto; min-width: 0; }
+.pb-cart-row > :first-child > div:last-child { min-width: 0; }
+.pb-cart-qty { flex: 0 0 auto; border-radius: 999px !important; background: #f8fafc !important; }
+.pb-cart-qty button { min-width: 38px; min-height: 38px; display: grid; place-items: center; }
+.pb-cart-qty span { min-width: 54px; text-align: center; white-space: nowrap; }
+.pb-cart-recommendation { border-radius: 16px !important; box-shadow: 0 2px 8px rgba(15,23,42,.05) !important; }
+.pb-cart-summary { padding-bottom: max(12px, env(safe-area-inset-bottom)) !important; box-shadow: 0 -5px 18px rgba(15,23,42,.06); }
+.pb-cart-summary button { min-height: 48px; }
+.pb-christmas-sky { display: none !important; }
+@media (max-width: 640px) {
+  .pb-cart-panel { max-width: none; }
+  .pb-cart-content { padding: 12px 14px 22px; }
+  .pb-cart-row { align-items: center; gap: 8px; padding-block: 13px; }
+  .pb-cart-qty button { min-width: 34px; min-height: 36px; }
+  .pb-cart-qty span { min-width: 48px; font-size: 12px; }
+  .pb-cart-summary { padding: 12px 14px max(12px, env(safe-area-inset-bottom)) !important; }
+}
