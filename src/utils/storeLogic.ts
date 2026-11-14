@@ -867,11 +867,12 @@ export function buildHeroSlides(
   settings: Pick<
     StoreSettings,
     'showOccasionBanner' | 'occasionTitle' | 'occasionSubtitle' | 'occasionTag' | 'occasionImageUrl'
-  >
+  >,
+  date = new Date()
 ): HeroSlide[] {
   const slides: HeroSlide[] = [];
   const occasionImage = settings.occasionImageUrl || '';
-  const autoFestival = getAutomaticFestivalTheme();
+  const autoFestival = getAutomaticFestivalTheme(date);
   const settingsText = [settings.occasionTitle, settings.occasionSubtitle, settings.occasionTag, occasionImage].join(' ');
   const isChhathOccasion = autoFestival?.id === 'chhath-puja' || /chhath|ছট\s*(পূজা|পুজো)?/i.test(settingsText);
   const hasCustomOccasion = Boolean(settings.occasionTitle?.trim() || occasionImage.trim());
