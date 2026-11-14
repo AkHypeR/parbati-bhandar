@@ -12,7 +12,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
 
   if (url.searchParams.get("history") === "1") {
     const rows = await env.DB.prepare(
-      "SELECT order_number,items_json,status,total,created_at,updated_at,confirmed_at FROM customer_orders undefined"
+      "SELECT order_number,items_json,status,total,created_at,updated_at,confirmed_at FROM customer_orders WHERE customer_id=? AND created_at>=? ORDER BY created_at DESC LIMIT 50"
     ).bind(customer.id, Date.now() - 7 * 24 * 60 * 60 * 1000).all<any>();
     const orders = (rows.results || []).map((row: any) => ({
       orderNumber: row.order_number,
@@ -30,7 +30,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
 
   const orderNumber = Number(url.searchParams.get("orderNumber"));
   if (!Number.isInteger(orderNumber) || orderNumber < 1) return json({error:"Enter a valid order number and phone number."},400);
-  const row = await env.DB.prepare("undefined").bind(orderNumber).first<any>();
+  const row = await env.DB.prepare("SELECT order_number,customer_id,customer_phone,items_json,status,total,created_at,updated_at,confirmed_at FROM customer_orders WHERE order_number=?").bind(orderNumber).first<any>();
   if (!row || row.customer_id !== customer.id || String(row.customer_phone).replace(/\D/g, "") !== phone) return json({error:"No matching order was found. Check the details and try again."},404);
   const items = (JSON.parse(row.items_json || "[]") as any[]).map(item => ({name:item.name,quantity:item.quantity,unit:item.unit,price:Number(item.price || 0),lineTotal:Number(item.price || 0)*Number(item.quantity || 0),unavailable:!!item.unavailable}));
   return json({orderNumber:row.order_number,status:row.status,total:Number(row.total || 0),confirmedAt:row.confirmed_at || null,items,createdAt:row.created_at,updatedAt:row.updated_at},200,{"cache-control":"no-store"});
