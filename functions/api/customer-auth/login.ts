@@ -6,7 +6,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     let body: any;
     try { body = await request.json(); } catch { return json({ error: "Please check your mobile number and password." }, 400); }
     const { phone, password } = normalizeCustomerInput(body);
-    if (!/^[6-9]\\d{9}$/.test(phone) || password.length < 1 || password.length > 128) {
+    if (!/^[6-9]\d{9}$/.test(phone) || password.length < 1 || password.length > 128) {
       return json({ error: "Enter your registered 10-digit mobile number and password." }, 400);
     }
     if (!env.DB) return json({ error: "Customer accounts are temporarily unavailable. Please contact the store." }, 503);
