@@ -601,15 +601,15 @@ export function AdminUploadApp({
   };
 
   return (
-    <div className="min-h-dvh flex-1 bg-[#f6f8f7] pb-16 text-slate-900">
+    <div className="min-h-dvh flex-1 bg-[#f5f7fb] pb-16 text-slate-900">
       {/* Owner Admin Header */}
       <div className="border-b border-slate-200 bg-white shadow-[0_1px_3px_rgba(15,23,42,.04)]">
         <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-7">
           <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
             <div>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mb-2">
-                <span className="inline-flex items-center gap-2 rounded-lg bg-emerald-50 px-2.5 py-1.5 text-[11px] font-extrabold uppercase tracking-[.14em] text-emerald-800">
-                  <span className="grid h-6 w-6 place-items-center rounded-md bg-emerald-800 text-sm text-white">প</span>
+                <span className="inline-flex items-center gap-2 rounded-lg bg-blue-50 px-2.5 py-1.5 text-[11px] font-extrabold uppercase tracking-[.14em] text-blue-800">
+                  <span className="grid h-6 w-6 place-items-center rounded-md bg-blue-800 text-sm text-white">প</span>
                   Parbati Bhandar · Owner portal
                 </span>
                 <span aria-hidden="true" className="hidden sm:inline text-slate-300">
@@ -618,7 +618,7 @@ export function AdminUploadApp({
                 <span
                   role="status"
                   aria-live="polite"
-                  className={`inline-flex items-center gap-1 text-[11px] font-bold ${productSyncStatus === 'saved' ? 'text-emerald-700' : productSyncStatus === 'error' ? 'text-red-600' : 'text-amber-700'}`}
+                  className={`inline-flex items-center gap-1 text-[11px] font-bold ${productSyncStatus === 'saved' ? 'text-blue-700' : productSyncStatus === 'error' ? 'text-red-600' : 'text-amber-700'}`}
                   title={productSyncStatus === 'error' ? 'The latest product changes could not be confirmed as saved online.' : 'Product catalogue cloud sync status'}
                 >
                   {productSyncStatus === 'saving' && <RefreshCw className="w-3 h-3 animate-spin" />}
@@ -654,8 +654,8 @@ export function AdminUploadApp({
                 <div className="text-[11px] font-semibold text-slate-500 whitespace-nowrap">Total Items</div>
               </div>
               <div className="px-2.5 sm:px-3 py-2 text-center rounded-xl bg-white border border-slate-100">
-                <div className="text-lg font-extrabold text-emerald-600">{inStockCount}</div>
-                <div className="text-[11px] font-semibold text-emerald-700 whitespace-nowrap">In Stock</div>
+                <div className="text-lg font-extrabold text-blue-600">{inStockCount}</div>
+                <div className="text-[11px] font-semibold text-blue-700 whitespace-nowrap">In Stock</div>
               </div>
               <div className="px-2.5 sm:px-3 py-2 text-center rounded-xl bg-white border border-slate-100">
                 <div className="text-lg font-extrabold text-amber-600 flex items-center justify-center gap-1">
@@ -673,13 +673,13 @@ export function AdminUploadApp({
 
           {/* Owner workspace navigation */}
           <nav aria-label="Owner workspace sections" className="mt-5 grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm sm:grid-cols-3 xl:grid-cols-7">
-            <button type="button" onClick={() => setAdminTab('dashboard')} aria-current={adminTab === 'dashboard' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'dashboard' ? 'bg-emerald-800 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-emerald-50 hover:text-emerald-900'}`}><Layers className="h-4 w-4" /> Overview</button>
-            <button type="button" onClick={() => setAdminTab('orders')} aria-current={adminTab === 'orders' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'orders' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><BellRing className="h-4 w-4" /> Orders {newOrdersCount > 0 && <span className="rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] text-white">{newOrdersCount}</span>}</button>
-            <button type="button" onClick={() => setAdminTab('inventory')} aria-current={adminTab === 'inventory' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'inventory' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><Package className="h-4 w-4" /> Inventory</button>
-            <button type="button" onClick={() => { setEditingProduct(null); setAdminTab('add'); }} aria-current={adminTab === 'add' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'add' ? 'bg-emerald-700 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-emerald-50 hover:text-emerald-900'}`}><Plus className="h-4 w-4" /> Add product</button>
-            <button type="button" onClick={() => setAdminTab('settings')} aria-current={adminTab === 'settings' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'settings' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><Settings className="h-4 w-4" /> Store settings</button>
+            <button type="button" onClick={() => setAdminTab('dashboard')} aria-current={adminTab === 'dashboard' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'dashboard' ? 'bg-blue-800 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-blue-50 hover:text-blue-900'}`}><Layers className="h-4 w-4" /> Overview</button>
+            <button type="button" onClick={() => setAdminTab('orders')} aria-current={adminTab === 'orders' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'orders' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-blue-50'}`}><BellRing className="h-4 w-4" /> Orders {newOrdersCount > 0 && <span className="rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] text-white">{newOrdersCount}</span>}</button>
+            <button type="button" onClick={() => setAdminTab('inventory')} aria-current={adminTab === 'inventory' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'inventory' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-blue-50'}`}><Package className="h-4 w-4" /> Inventory</button>
+            <button type="button" onClick={() => { setEditingProduct(null); setAdminTab('add'); }} aria-current={adminTab === 'add' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'add' ? 'bg-blue-700 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-blue-50 hover:text-blue-900'}`}><Plus className="h-4 w-4" /> Add product</button>
+            <button type="button" onClick={() => setAdminTab('settings')} aria-current={adminTab === 'settings' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'settings' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-blue-50'}`}><Settings className="h-4 w-4" /> Store settings</button>
             <button type="button" onClick={() => setAdminTab('christmasSpecials')} aria-current={adminTab === 'christmasSpecials' ? 'page' : undefined} className={adminTab === 'christmasSpecials' ? 'flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold bg-red-700 text-white shadow-sm' : 'flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold bg-white text-slate-700 hover:bg-red-50'}>🎄 Christmas Specials</button>
-            <button type="button" onClick={() => setAdminTab('quickReplies')} aria-current={adminTab === 'quickReplies' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'quickReplies' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><MessageCircle className="h-4 w-4" /> WhatsApp replies</button>
+            <button type="button" onClick={() => setAdminTab('quickReplies')} aria-current={adminTab === 'quickReplies' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'quickReplies' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-blue-50'}`}><MessageCircle className="h-4 w-4" /> WhatsApp replies</button>
           </nav>
         </div>
       </div>
@@ -690,21 +690,21 @@ export function AdminUploadApp({
         {adminTab === 'dashboard' && (
           <section className="space-y-6">
             <div className="flex flex-wrap items-end justify-between gap-3">
-              <div><p className="text-xs font-black uppercase tracking-[0.16em] text-emerald-700">Store overview</p><h2 className="mt-1 text-2xl font-black tracking-tight text-slate-950">Good day. Here’s your shop at a glance.</h2><p className="mt-1 text-sm text-slate-500">Your daily operations, orders and inventory in one place.</p></div>
-              <span className={`rounded-full px-3 py-2 text-xs font-extrabold ${productSyncStatus === 'saved' ? 'bg-emerald-100 text-emerald-800' : productSyncStatus === 'error' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-800'}`}>{productSyncStatus === 'saved' ? '● Changes synced' : productSyncStatus === 'error' ? '● Sync needs attention' : productSyncStatus === 'saving' ? '● Saving changes' : '● Connecting to store'}</span>
+              <div><p className="text-xs font-black uppercase tracking-[0.16em] text-blue-700">Store overview</p><h2 className="mt-1 text-2xl font-black tracking-tight text-slate-950">Good day. Here’s your shop at a glance.</h2><p className="mt-1 text-sm text-slate-500">Your daily operations, orders and inventory in one place.</p></div>
+              <span className={`rounded-full px-3 py-2 text-xs font-extrabold ${productSyncStatus === 'saved' ? 'bg-blue-100 text-blue-800' : productSyncStatus === 'error' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-800'}`}>{productSyncStatus === 'saved' ? '● Changes synced' : productSyncStatus === 'error' ? '● Sync needs attention' : productSyncStatus === 'saving' ? '● Saving changes' : '● Connecting to store'}</span>
             </div>
             <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
               <button type="button" onClick={() => setAdminTab('orders')} className="group rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-[0_2px_8px_rgba(15,23,42,.035)] transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md sm:p-5"><span className="text-xs font-bold text-slate-500">Orders today</span><strong className="mt-2 block text-3xl font-black text-slate-950">{todaysOrders.length}</strong><span className="mt-1 block text-[11px] font-semibold text-blue-700">Open order centre →</span></button>
               <button type="button" onClick={() => setAdminTab('orders')} className="group rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-[0_2px_8px_rgba(15,23,42,.035)] transition hover:-translate-y-0.5 hover:border-amber-200 hover:shadow-md sm:p-5"><span className="text-xs font-bold text-slate-500">New orders</span><strong className="mt-2 block text-3xl font-black text-amber-600">{newOrdersCount}</strong><span className="mt-1 block text-[11px] font-semibold text-amber-700">Needs your attention →</span></button>
-              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_2px_8px_rgba(15,23,42,.035)] sm:p-5"><span className="text-xs font-bold text-slate-500">Estimated sales today</span><strong className="mt-2 block text-3xl font-black text-emerald-700">₹{todaysEstimatedSales.toLocaleString('en-IN')}</strong><span className="mt-1 block text-[11px] text-slate-500">Excludes cancelled / unavailable</span></div>
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_2px_8px_rgba(15,23,42,.035)] sm:p-5"><span className="text-xs font-bold text-slate-500">Estimated sales today</span><strong className="mt-2 block text-3xl font-black text-blue-700">₹{todaysEstimatedSales.toLocaleString('en-IN')}</strong><span className="mt-1 block text-[11px] text-slate-500">Excludes cancelled / unavailable</span></div>
               <button type="button" onClick={() => setAdminTab('inventory')} className="group rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-[0_2px_8px_rgba(15,23,42,.035)] transition hover:-translate-y-0.5 hover:border-rose-200 hover:shadow-md sm:p-5"><span className="text-xs font-bold text-slate-500">Stock alerts</span><strong className="mt-2 block text-3xl font-black text-rose-600">{lowStockCount + outOfStockCount}</strong><span className="mt-1 block text-[11px] font-semibold text-rose-700">{lowStockCount} low · {outOfStockCount} unavailable →</span></button>
             </div>
             <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_2px_10px_rgba(15,23,42,.04)] sm:p-6">
-                <div className="flex items-center justify-between gap-3"><div><h3 className="font-extrabold text-slate-900">Recent orders</h3><p className="mt-1 text-xs text-slate-500">Latest customer activity</p></div><button type="button" onClick={() => setAdminTab('orders')} className="text-xs font-extrabold text-emerald-700 hover:underline">View all →</button></div>
+                <div className="flex items-center justify-between gap-3"><div><h3 className="font-extrabold text-slate-900">Recent orders</h3><p className="mt-1 text-xs text-slate-500">Latest customer activity</p></div><button type="button" onClick={() => setAdminTab('orders')} className="text-xs font-extrabold text-blue-700 hover:underline">View all →</button></div>
                 {customerOrders.length ? <div className="mt-4 divide-y divide-slate-100">{[...customerOrders].sort((a,b) => b.createdAt-a.createdAt).slice(0,5).map(order => <button key={order.id} type="button" onClick={() => { openOrderForReview(order); setAdminTab('orders'); }} className="flex w-full items-center justify-between gap-3 py-3 text-left hover:bg-slate-50"><span className="min-w-0"><strong className="block truncate text-sm text-slate-800">#{order.orderNumber} · {order.customerName}</strong><span className="mt-0.5 block text-[11px] text-slate-500">{new Date(order.createdAt).toLocaleString('en-IN')}</span></span><span className="shrink-0 text-right"><strong className="block text-sm text-slate-900">₹{Number(order.total || 0).toLocaleString('en-IN')}</strong><span className="text-[10px] font-bold uppercase text-slate-500">{order.status}</span></span></button>)}</div> : <div className="mt-4 rounded-xl bg-slate-50 px-4 py-8 text-center"><Package className="mx-auto h-7 w-7 text-slate-300" /><p className="mt-2 text-sm font-bold text-slate-700">No orders yet</p><p className="mt-1 text-xs text-slate-500">New customer orders will appear here.</p></div>}
               </div>
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_2px_10px_rgba(15,23,42,.04)] sm:p-6"><h3 className="font-extrabold text-slate-900">Quick actions</h3><p className="mt-1 text-xs text-slate-500">Common tasks, one tap away.</p><div className="mt-4 grid gap-2"><button type="button" onClick={() => { setEditingProduct(null); setAdminTab('add'); }} className="flex items-center gap-3 rounded-xl border border-emerald-100 bg-emerald-50 p-3 text-left hover:bg-emerald-100"><span className="grid h-9 w-9 place-items-center rounded-lg bg-emerald-700 text-white"><Plus className="h-4 w-4" /></span><span><strong className="block text-xs text-emerald-950">Add a product</strong><span className="text-[11px] text-emerald-800">Add a new item to your catalogue</span></span></button><button type="button" onClick={() => setAdminTab('inventory')} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-left hover:bg-slate-100"><span className="grid h-9 w-9 place-items-center rounded-lg bg-slate-800 text-white"><Package className="h-4 w-4" /></span><span><strong className="block text-xs text-slate-900">Update prices & stock</strong><span className="text-[11px] text-slate-600">Review availability and low-stock items</span></span></button><button type="button" onClick={() => setAdminTab('settings')} className="flex items-center gap-3 rounded-xl border border-amber-100 bg-amber-50 p-3 text-left hover:bg-amber-100"><span className="grid h-9 w-9 place-items-center rounded-lg bg-amber-500 text-white"><Settings className="h-4 w-4" /></span><span><strong className="block text-xs text-amber-950">Store settings</strong><span className="text-[11px] text-amber-800">Hours, deals and store controls</span></span></button><button type="button" onClick={() => setAdminTab('quickReplies')} className="flex items-center gap-3 rounded-xl border border-sky-100 bg-sky-50 p-3 text-left hover:bg-sky-100"><span className="grid h-9 w-9 place-items-center rounded-lg bg-sky-700 text-white"><MessageCircle className="h-4 w-4" /></span><span><strong className="block text-xs text-sky-950">Customer replies</strong><span className="text-[11px] text-sky-800">Prepare WhatsApp responses</span></span></button></div></div>
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_2px_10px_rgba(15,23,42,.04)] sm:p-6"><h3 className="font-extrabold text-slate-900">Quick actions</h3><p className="mt-1 text-xs text-slate-500">Common tasks, one tap away.</p><div className="mt-4 grid gap-2"><button type="button" onClick={() => { setEditingProduct(null); setAdminTab('add'); }} className="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 p-3 text-left hover:bg-blue-100"><span className="grid h-9 w-9 place-items-center rounded-lg bg-blue-700 text-white"><Plus className="h-4 w-4" /></span><span><strong className="block text-xs text-blue-950">Add a product</strong><span className="text-[11px] text-blue-800">Add a new item to your catalogue</span></span></button><button type="button" onClick={() => setAdminTab('inventory')} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-left hover:bg-slate-100"><span className="grid h-9 w-9 place-items-center rounded-lg bg-slate-800 text-white"><Package className="h-4 w-4" /></span><span><strong className="block text-xs text-slate-900">Update prices & stock</strong><span className="text-[11px] text-slate-600">Review availability and low-stock items</span></span></button><button type="button" onClick={() => setAdminTab('settings')} className="flex items-center gap-3 rounded-xl border border-amber-100 bg-amber-50 p-3 text-left hover:bg-amber-100"><span className="grid h-9 w-9 place-items-center rounded-lg bg-amber-500 text-white"><Settings className="h-4 w-4" /></span><span><strong className="block text-xs text-amber-950">Store settings</strong><span className="text-[11px] text-amber-800">Hours, deals and store controls</span></span></button><button type="button" onClick={() => setAdminTab('quickReplies')} className="flex items-center gap-3 rounded-xl border border-sky-100 bg-sky-50 p-3 text-left hover:bg-sky-100"><span className="grid h-9 w-9 place-items-center rounded-lg bg-sky-700 text-white"><MessageCircle className="h-4 w-4" /></span><span><strong className="block text-xs text-sky-950">Customer replies</strong><span className="text-[11px] text-sky-800">Prepare WhatsApp responses</span></span></button></div></div>
             </div>
           </section>
         )}
@@ -719,10 +719,10 @@ export function AdminUploadApp({
                   <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
                     <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 pb-4">
                       <div><p className="text-xs font-bold uppercase tracking-wide text-slate-400">Order details</p><h2 className="mt-1 text-2xl font-black text-slate-900">Order #{order.orderNumber}</h2><p className="mt-1 text-sm text-slate-500">{new Date(order.createdAt).toLocaleString('en-IN')}</p></div>
-                      <span className={`rounded-full px-3 py-1.5 text-xs font-extrabold uppercase ${order.status === 'new' ? 'bg-blue-100 text-blue-800' : order.status === 'processing' ? 'bg-amber-100 text-amber-800' : order.status === 'ready' ? 'bg-emerald-100 text-emerald-800' : order.status === 'unavailable' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}`}>{order.status === 'new' ? 'Order received' : order.status === 'processing' ? 'Processing' : order.status === 'ready' ? 'Ready for pickup' : order.status}</span>
+                      <span className={`rounded-full px-3 py-1.5 text-xs font-extrabold uppercase ${order.status === 'new' ? 'bg-blue-100 text-blue-800' : order.status === 'processing' ? 'bg-amber-100 text-amber-800' : order.status === 'ready' ? 'bg-blue-100 text-blue-800' : order.status === 'unavailable' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}`}>{order.status === 'new' ? 'Order received' : order.status === 'processing' ? 'Processing' : order.status === 'ready' ? 'Ready for pickup' : order.status}</span>
                     </div>
                     <div className="grid gap-4 py-5 sm:grid-cols-2">
-                      <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-bold uppercase text-slate-400">Customer</p><p className="mt-1 text-lg font-extrabold text-slate-900">{order.customerName}</p><a onClick={event => event.stopPropagation()} href={`tel:${order.customerPhone}`} className="mt-1 inline-flex items-center gap-2 text-sm font-semibold text-emerald-700"><Phone className="h-4 w-4" />{order.customerPhone}</a></div>
+                      <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-bold uppercase text-slate-400">Customer</p><p className="mt-1 text-lg font-extrabold text-slate-900">{order.customerName}</p><a onClick={event => event.stopPropagation()} href={`tel:${order.customerPhone}`} className="mt-1 inline-flex items-center gap-2 text-sm font-semibold text-blue-700"><Phone className="h-4 w-4" />{order.customerPhone}</a></div>
                       <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-bold uppercase text-slate-400">Order value</p><p className="mt-1 text-2xl font-black text-slate-900">₹{Number(order.total || 0).toFixed(2)}</p><p className="text-xs text-slate-500">Estimated total; confirm at pickup</p></div>
                     </div>
                     {order.estimatedReadyAt && <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4"><p className="text-xs font-black uppercase tracking-wide text-amber-800">Customer has been told</p><p className="mt-1 text-sm font-extrabold text-amber-950">Estimated ready by {new Date(order.estimatedReadyAt).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Kolkata' })}</p></div>}
@@ -737,14 +737,14 @@ export function AdminUploadApp({
                         <h3 className="text-sm font-extrabold uppercase tracking-wide text-slate-500">Items ordered · Set item availability</h3>
                         
                       </div>
-                      <div className="divide-y divide-slate-100">{order.items.map((item,index) => <div key={index} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm"><div className="min-w-0"><p className={`font-bold ${item.unavailable ? 'text-amber-800 line-through' : 'text-slate-800'}`}>{item.name}</p><p className="text-xs text-slate-500">{item.unit} · Quantity {item.quantity}</p>{item.unavailable && <span className="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-extrabold uppercase text-amber-900">Unavailable</span>}</div><div className="flex items-center gap-3"><strong className="shrink-0 text-slate-900">₹{(Number(item.price || 0) * Number(item.quantity || 0)).toFixed(2)}</strong><button type="button" disabled={updatingOrderId === order.id || !['new','processing','review'].includes(order.status)} onClick={() => updateCustomerOrder(order.id, order.status, order.items.map((entry,itemIndex) => itemIndex === index ? { ...entry, unavailable: !entry.unavailable } : entry))} className={`rounded-lg border px-3 py-2 text-xs font-bold disabled:opacity-50 ${item.unavailable ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>{item.unavailable ? 'Mark available' : 'Mark unavailable'}</button></div></div>)}</div>
+                      <div className="divide-y divide-slate-100">{order.items.map((item,index) => <div key={index} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm"><div className="min-w-0"><p className={`font-bold ${item.unavailable ? 'text-amber-800 line-through' : 'text-slate-800'}`}>{item.name}</p><p className="text-xs text-slate-500">{item.unit} · Quantity {item.quantity}</p>{item.unavailable && <span className="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-extrabold uppercase text-amber-900">Unavailable</span>}</div><div className="flex items-center gap-3"><strong className="shrink-0 text-slate-900">₹{(Number(item.price || 0) * Number(item.quantity || 0)).toFixed(2)}</strong><button type="button" disabled={updatingOrderId === order.id || !['new','processing','review'].includes(order.status)} onClick={() => updateCustomerOrder(order.id, order.status, order.items.map((entry,itemIndex) => itemIndex === index ? { ...entry, unavailable: !entry.unavailable } : entry))} className={`rounded-lg border px-3 py-2 text-xs font-bold disabled:opacity-50 ${item.unavailable ? 'border-blue-200 bg-blue-50 text-blue-800' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>{item.unavailable ? 'Mark available' : 'Mark unavailable'}</button></div></div>)}</div>
                       <div className="mt-3 flex justify-between border-t border-slate-200 pt-3 font-extrabold"><span>Estimated total</span><span>₹{Number(order.total || 0).toFixed(2)}</span></div>
                     </div>
                     {order.note && <div className="mt-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-900"><strong>Customer note</strong><p className="mt-1">{order.note}</p></div>}
                     <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
                       <button type="button" disabled={updatingOrderId === order.id || order.status !== 'processing'} onClick={() => void updateCustomerOrder(order.id,'new')} className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-3 text-sm font-bold text-blue-800 disabled:opacity-50">Mark received</button>
                       <button type="button" disabled={updatingOrderId === order.id || order.status !== 'new'} onClick={() => void updateCustomerOrder(order.id,'processing')} className="rounded-lg bg-amber-500 px-3 py-3 text-sm font-bold text-white disabled:opacity-50">Start processing</button>
-                      <button type="button" disabled={updatingOrderId === order.id || !['new','processing','review'].includes(order.status)} onClick={() => void updateCustomerOrder(order.id,'ready')} className="rounded-lg bg-emerald-600 px-3 py-3 text-sm font-bold text-white disabled:opacity-50">Confirm Ready</button>
+                      <button type="button" disabled={updatingOrderId === order.id || !['new','processing','review'].includes(order.status)} onClick={() => void updateCustomerOrder(order.id,'ready')} className="rounded-lg bg-blue-600 px-3 py-3 text-sm font-bold text-white disabled:opacity-50">Confirm Ready</button>
                       <button type="button" disabled={updatingOrderId === order.id || order.status !== 'ready'} onClick={() => updateCustomerOrder(order.id,'completed')} className="rounded-lg bg-slate-200 px-3 py-3 text-sm font-bold text-slate-800 disabled:opacity-50">Completed</button>
                       <button type="button" disabled={updatingOrderId === order.id || ['ready','completed','cancelled'].includes(order.status)} onClick={() => updateCustomerOrder(order.id,'cancelled')} className="rounded-lg bg-red-50 px-3 py-3 text-sm font-bold text-red-700 disabled:opacity-50">Cancel</button>
                     </div>
@@ -761,16 +761,16 @@ export function AdminUploadApp({
                 <h2 className="text-lg font-extrabold text-slate-900">Customer Orders</h2>
                 <p className="text-xs text-slate-500">Pickup requests saved from the customer shopping list.</p>
               </div>
-              <button type="button" onClick={loadCustomerOrders} disabled={ordersLoading} className="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60">
+              <button type="button" onClick={loadCustomerOrders} disabled={ordersLoading} className="inline-flex items-center gap-2 rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60">
                 <RefreshCw className={`h-4 w-4 ${ordersLoading ? 'animate-spin' : ''}`} /> Refresh
               </button>
             </div>
             <div className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-3">
-              <div className="rounded-xl bg-emerald-50 p-3"><p className="text-xs font-semibold text-emerald-800">Orders today</p><p className="mt-1 text-xl font-extrabold text-emerald-950">{todaysOrders.length}</p></div>
+              <div className="rounded-xl bg-blue-50 p-3"><p className="text-xs font-semibold text-blue-800">Orders today</p><p className="mt-1 text-xl font-extrabold text-blue-950">{todaysOrders.length}</p></div>
               <div className="rounded-xl bg-sky-50 p-3"><p className="text-xs font-semibold text-sky-800">Estimated order value today</p><p className="mt-1 text-xl font-extrabold text-sky-950">₹{todaysEstimatedSales.toFixed(2)}</p></div>
               <div className="rounded-xl bg-slate-50 p-3"><p className="text-xs font-semibold text-slate-600">Orders shown</p><p className="mt-1 text-xl font-extrabold text-slate-900">{visibleCustomerOrders.length} / {customerOrders.length}</p></div>
               <label className="text-xs font-bold text-slate-700 sm:col-span-2">Search orders
-                <input value={orderSearch} onChange={e => setOrderSearch(e.target.value)} placeholder="Customer, phone or order number" className="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-medium outline-none focus:border-emerald-600" />
+                <input value={orderSearch} onChange={e => setOrderSearch(e.target.value)} placeholder="Customer, phone or order number" className="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-medium outline-none focus:border-blue-600" />
               </label>
               <label className="text-xs font-bold text-slate-700">Filter by status
                 <select value={orderStatusFilter} onChange={e => setOrderStatusFilter(e.target.value)} className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-medium">
@@ -781,14 +781,14 @@ export function AdminUploadApp({
             {ordersLoading && customerOrders.length === 0 ? <p className="rounded-xl bg-white p-6 text-center text-sm text-slate-500">Loading orders…</p> : customerOrders.length === 0 ? <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center"><ClipboardList className="mx-auto mb-2 h-8 w-8 text-slate-300" /><p className="font-bold text-slate-700">No customer orders yet</p><p className="mt-1 text-xs text-slate-500">New shopping-list requests will appear here.</p></div> : (
               <div className="grid gap-3">
                 {visibleCustomerOrders.length === 0 ? <p className="rounded-xl bg-white p-6 text-center text-sm text-slate-500">No orders match these filters.</p> : visibleCustomerOrders.map(order => (
-                  <article key={order.id} role="button" tabIndex={0} aria-label={`Open order #${order.orderNumber} details`} onClick={() => setSelectedOrderId(order.id)} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setSelectedOrderId(order.id); } }} className="cursor-pointer rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-emerald-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                  <article key={order.id} role="button" tabIndex={0} aria-label={`Open order #${order.orderNumber} details`} onClick={() => setSelectedOrderId(order.id)} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setSelectedOrderId(order.id); } }} className="cursor-pointer rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-blue-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
                         <h3 className="font-extrabold text-slate-900">#{order.orderNumber} · {order.customerName}</h3>
-                        <a href={`tel:${order.customerPhone}`} className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-emerald-700"><Phone className="h-3 w-3" /> {order.customerPhone}</a>
+                        <a href={`tel:${order.customerPhone}`} className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-blue-700"><Phone className="h-3 w-3" /> {order.customerPhone}</a>
                         <p className="mt-1 text-[11px] text-slate-400">{new Date(order.createdAt).toLocaleString('en-IN')}</p>
                       </div>
-                      <span className={`rounded-full px-3 py-1 text-[11px] font-extrabold uppercase ${order.status === 'new' ? 'bg-blue-100 text-blue-800' : order.status === 'processing' ? 'bg-amber-100 text-amber-800' : order.status === 'ready' ? 'bg-emerald-100 text-emerald-800' : order.status === 'unavailable' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}`}>{order.status === 'new' ? 'Order received' : order.status === 'processing' ? 'Processing' : order.status === 'ready' ? 'Ready for pickup' : order.status}</span>
+                      <span className={`rounded-full px-3 py-1 text-[11px] font-extrabold uppercase ${order.status === 'new' ? 'bg-blue-100 text-blue-800' : order.status === 'processing' ? 'bg-amber-100 text-amber-800' : order.status === 'ready' ? 'bg-blue-100 text-blue-800' : order.status === 'unavailable' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}`}>{order.status === 'new' ? 'Order received' : order.status === 'processing' ? 'Processing' : order.status === 'ready' ? 'Ready for pickup' : order.status}</span>
                     </div>
                     <div className="my-3 rounded-xl bg-slate-50 p-3">
                       <div className="mb-2 text-[11px] font-extrabold uppercase tracking-wide text-slate-500">Items ordered</div>
@@ -814,7 +814,7 @@ export function AdminUploadApp({
         {adminTab === 'quickReplies' && (
           <section className="mx-auto max-w-2xl rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
             <div className="mb-5 flex items-start gap-3">
-              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-emerald-100 text-emerald-700"><MessageCircle className="h-6 w-6" /></div>
+              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-blue-100 text-blue-700"><MessageCircle className="h-6 w-6" /></div>
               <div>
                 <h2 className="text-lg font-extrabold text-slate-900">Quick customer replies</h2>
                 <p className="mt-1 text-sm text-slate-500">Send a ready-for-pickup reminder or tell a customer which items are unavailable. No order tracking is stored here.</p>
@@ -822,19 +822,19 @@ export function AdminUploadApp({
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="text-xs font-bold text-slate-700">Customer name
-                <input value={replyCustomerName} onChange={e => setReplyCustomerName(e.target.value)} placeholder="Enter customer name" className="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-3 text-sm font-medium outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100" />
+                <input value={replyCustomerName} onChange={e => setReplyCustomerName(e.target.value)} placeholder="Enter customer name" className="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-3 text-sm font-medium outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
               </label>
               <label className="text-xs font-bold text-slate-700">WhatsApp number
-                <input value={replyCustomerPhone} onChange={e => setReplyCustomerPhone(e.target.value)} inputMode="tel" placeholder="10-digit mobile number" className="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-3 text-sm font-medium outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100" />
+                <input value={replyCustomerPhone} onChange={e => setReplyCustomerPhone(e.target.value)} inputMode="tel" placeholder="10-digit mobile number" className="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-3 text-sm font-medium outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
               </label>
             </div>
             <div className="mt-4 space-y-1.5">
               <label className="text-xs font-bold text-slate-700">Unavailable products (if any)</label>
-              <textarea value={missingProducts} onChange={e => setMissingProducts(e.target.value)} rows={3} placeholder="Example: Fortune Mustard Oil 1L, Moong Dal 500g" className="w-full rounded-xl border border-slate-300 px-3 py-3 text-sm outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100" />
+              <textarea value={missingProducts} onChange={e => setMissingProducts(e.target.value)} rows={3} placeholder="Example: Fortune Mustard Oil 1L, Moong Dal 500g" className="w-full rounded-xl border border-slate-300 px-3 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
             </div>
             <div className="mt-4 space-y-1.5">
               <label className="text-xs font-bold text-slate-700">Optional note</label>
-              <input value={replyNote} onChange={e => setReplyNote(e.target.value)} placeholder="Example: The remaining items are ready" className="w-full rounded-xl border border-slate-300 px-3 py-3 text-sm outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100" />
+              <input value={replyNote} onChange={e => setReplyNote(e.target.value)} placeholder="Example: The remaining items are ready" className="w-full rounded-xl border border-slate-300 px-3 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
             </div>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <button type="button" onClick={() => {
@@ -842,7 +842,7 @@ export function AdminUploadApp({
                 if (!replyCustomerName.trim() || phone.length < 10) { showToast('Enter customer name and a valid WhatsApp number.', 'error'); return; }
                 const msg = `নমস্কার ${replyCustomerName.trim()}! আপনার Parbati Bhandar-এর অর্ডার লিস্ট তৈরি। আপনি সুবিধামতো যেকোনো সময় দোকান থেকে এসে সংগ্রহ করতে পারেন। ধন্যবাদ।${replyNote.trim() ? '\n\n' + replyNote.trim() : ''}`;
                 window.open(`https://wa.me/${phone.length === 10 ? '91' + phone : phone}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener,noreferrer');
-              }} className="rounded-xl bg-emerald-600 px-4 py-3 text-sm font-extrabold text-white shadow-sm hover:bg-emerald-700">Ready for pickup message</button>
+              }} className="rounded-xl bg-blue-600 px-4 py-3 text-sm font-extrabold text-white shadow-sm hover:bg-blue-700">Ready for pickup message</button>
               <button type="button" onClick={() => {
                 const phone = replyCustomerPhone.replace(/\D/g, '');
                 if (!replyCustomerName.trim() || phone.length < 10) { showToast('Enter customer name and a valid WhatsApp number.', 'error'); return; }
@@ -898,7 +898,7 @@ export function AdminUploadApp({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g., Aashirvaad Shudh Chakki Atta, Miniket Rice, Tata Salt"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-sm"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium text-sm"
                 />
               </div>
 
@@ -919,7 +919,7 @@ export function AdminUploadApp({
                       const found = CATEGORIES.find((c) => c.id === e.target.value);
                       if (found && !editingProduct) setEmoji(found.icon);
                     }}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold text-sm"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-sm"
                   >
                     {CATEGORIES.filter((c) => c.id !== 'all').map((cat) => (
                       <option key={cat.id} value={cat.id}>
@@ -940,7 +940,7 @@ export function AdminUploadApp({
                     id="product-unit-select"
                     value={unit}
                     onChange={(e) => setUnit(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold text-sm"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-sm"
                   >
                     {UNITS.map((u) => (
                       <option key={u} value={u}>
@@ -957,7 +957,7 @@ export function AdminUploadApp({
                   <div>
                     <label
                       htmlFor="product-price-input"
-                      className="block text-xs font-bold uppercase tracking-wider text-emerald-800 mb-1.5"
+                      className="block text-xs font-bold uppercase tracking-wider text-blue-800 mb-1.5"
                     >
                       Our Store Price (₹) *
                     </label>
@@ -974,7 +974,7 @@ export function AdminUploadApp({
                         value={price}
                         onChange={(e) => setPrice(e.target.value)}
                         placeholder="65"
-                        className="w-full pl-8 pr-4 py-3 rounded-xl border-2 border-emerald-500/70 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-extrabold text-base text-slate-900 tabular-nums"
+                        className="w-full pl-8 pr-4 py-3 rounded-xl border-2 border-blue-500/70 focus:outline-none focus:ring-2 focus:ring-blue-500 font-extrabold text-base text-slate-900 tabular-nums"
                       />
                     </div>
                   </div>
@@ -998,7 +998,7 @@ export function AdminUploadApp({
                         value={mrp}
                         onChange={(e) => setMrp(e.target.value)}
                         placeholder="75"
-                        className="w-full pl-8 pr-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold text-base text-slate-700 tabular-nums"
+                        className="w-full pl-8 pr-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-base text-slate-700 tabular-nums"
                       />
                     </div>
                   </div>
@@ -1006,24 +1006,24 @@ export function AdminUploadApp({
 
                 {/* Live Automatic Discount Preview Banner */}
                 {liveFormDiscount.hasDiscount ? (
-                  <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs tabular-nums">
-                    <span className="font-bold text-emerald-900 flex items-center gap-1.5">
-                      <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-blue-50 border border-blue-200 text-xs tabular-nums">
+                    <span className="font-bold text-blue-900 flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-blue-600 shrink-0" />
                       <span>
                         Auto Discount on Product Page:{' '}
-                        <strong className="text-emerald-700">
+                        <strong className="text-blue-700">
                           {liveFormDiscount.discountPercent}% OFF · Save ₹{liveFormDiscount.savedAmount}
                         </strong>
                       </span>
                     </span>
-                    <span className="text-[11px] font-semibold text-emerald-700">
+                    <span className="text-[11px] font-semibold text-blue-700">
                       MRP ₹{mrp} → ₹{price}
                     </span>
                   </div>
                 ) : (
                   <p className="text-[11px] text-slate-500">
                     Tip: Enter an MRP higher than Store Price to automatically show{' '}
-                    <span className="font-semibold text-emerald-700">% OFF &amp; Save ₹X</span> on the product card.
+                    <span className="font-semibold text-blue-700">% OFF &amp; Save ₹X</span> on the product card.
                   </p>
                 )}
               </div>
@@ -1034,7 +1034,7 @@ export function AdminUploadApp({
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-slate-800">
-                    <Package className="w-4 h-4 text-emerald-700" />
+                    <Package className="w-4 h-4 text-blue-700" />
                     <span>Inventory Stock &amp; Low Stock Threshold Settings</span>
                   </div>
                   <label className="flex items-center gap-2 text-xs font-bold text-slate-800 cursor-pointer">
@@ -1043,7 +1043,7 @@ export function AdminUploadApp({
                       type="checkbox"
                       checked={inStock}
                       onChange={(e) => setInStock(e.target.checked)}
-                      className="w-4 h-4 accent-emerald-600 rounded cursor-pointer"
+                      className="w-4 h-4 accent-blue-600 rounded cursor-pointer"
                     />
                   </label>
                 </div>
@@ -1064,7 +1064,7 @@ export function AdminUploadApp({
                       value={stockQuantity}
                       onChange={(e) => setStockQuantity(e.target.value)}
                       placeholder="20"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white font-bold text-sm text-slate-900 tabular-nums focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white font-bold text-sm text-slate-900 tabular-nums focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
 
@@ -1210,13 +1210,13 @@ export function AdminUploadApp({
                                   handleUpdateVarietyRow(vRow.id, 'label', e.target.value)
                                 }
                                 placeholder="e.g., 5 kg Pack or 1 kg Pack"
-                                className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                               />
                             </div>
 
                             <div className="grid grid-cols-2 sm:col-span-5 gap-2">
                               <div>
-                                <label className="block text-[10px] font-bold uppercase text-emerald-800 mb-0.5">
+                                <label className="block text-[10px] font-bold uppercase text-blue-800 mb-0.5">
                                   Price ₹ *
                                 </label>
                                 <input
@@ -1229,7 +1229,7 @@ export function AdminUploadApp({
                                     handleUpdateVarietyRow(vRow.id, 'price', e.target.value)
                                   }
                                   placeholder="248"
-                                  className="w-full px-2.5 py-2 rounded-lg border border-emerald-400 text-xs font-extrabold text-slate-900 tabular-nums focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                  className="w-full px-2.5 py-2 rounded-lg border border-blue-400 text-xs font-extrabold text-slate-900 tabular-nums focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
                               </div>
 
@@ -1247,7 +1247,7 @@ export function AdminUploadApp({
                                     handleUpdateVarietyRow(vRow.id, 'mrp', e.target.value)
                                   }
                                   placeholder="285"
-                                  className="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 tabular-nums focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                  className="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 tabular-nums focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
                               </div>
                             </div>
@@ -1260,7 +1260,7 @@ export function AdminUploadApp({
                                   onChange={(e) =>
                                     handleUpdateVarietyRow(vRow.id, 'inStock', e.target.checked)
                                   }
-                                  className="w-4 h-4 accent-emerald-600 rounded"
+                                  className="w-4 h-4 accent-blue-600 rounded"
                                 />
                                 <span>In Stock</span>
                               </label>
@@ -1277,7 +1277,7 @@ export function AdminUploadApp({
                           </div>
 
                           {rowDisc.hasDiscount && (
-                            <div className="text-[11px] font-bold text-emerald-700 tabular-nums">
+                            <div className="text-[11px] font-bold text-blue-700 tabular-nums">
                               ✓ Shows {rowDisc.discountPercent}% OFF (Save ₹{rowDisc.savedAmount}) on {vRow.label || 'this pack'}
                             </div>
                           )}
@@ -1296,7 +1296,7 @@ export function AdminUploadApp({
                 <div className="pt-2 border-t border-amber-200/80">
                   <label className="flex items-start sm:items-center justify-between gap-3 p-3 rounded-xl bg-white border border-amber-200 cursor-pointer">
                     <div className="flex items-start gap-2.5">
-                      <Scale className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
+                      <Scale className="w-4 h-4 text-blue-700 shrink-0 mt-0.5" />
                       <div>
                         <div className="text-xs font-bold text-slate-900">
                           Allow Customer Weight Selection (100g, 200g, 500g, 1 kg, 2 kg, 5 kg &amp; Custom gm/kg)
@@ -1310,7 +1310,7 @@ export function AdminUploadApp({
                       type="checkbox"
                       checked={allowCustomWeights}
                       onChange={(e) => setAllowCustomWeights(e.target.checked)}
-                      className="w-5 h-5 accent-emerald-600 rounded shrink-0 cursor-pointer"
+                      className="w-5 h-5 accent-blue-600 rounded shrink-0 cursor-pointer"
                     />
                   </label>
                 </div>
@@ -1361,7 +1361,7 @@ export function AdminUploadApp({
                       onClick={() => fileInputRef.current?.click()}
                       className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-2xs cursor-pointer"
                     >
-                      <Camera className="w-4 h-4 text-emerald-600" />
+                      <Camera className="w-4 h-4 text-blue-600" />
                       <span>Take Photo / Upload from Phone</span>
                     </button>
 
@@ -1371,7 +1371,7 @@ export function AdminUploadApp({
                       value={imageUrl.startsWith('data:') ? '' : imageUrl}
                       onChange={(e) => setImageUrl(e.target.value)}
                       placeholder="Or paste an image link (optional)"
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </div>
@@ -1394,7 +1394,7 @@ export function AdminUploadApp({
                         title={item.label}
                         className={`w-9 h-9 rounded-xl text-xl flex items-center justify-center transition-all cursor-pointer ${
                           emoji === item.emoji && !imageUrl
-                            ? 'bg-emerald-600 text-white ring-2 ring-emerald-600 ring-offset-1 scale-105'
+                            ? 'bg-blue-600 text-white ring-2 ring-blue-600 ring-offset-1 scale-105'
                             : 'bg-white border border-slate-200 hover:bg-slate-100'
                         }`}
                       >
@@ -1422,7 +1422,7 @@ export function AdminUploadApp({
                       value={badge}
                       onChange={(e) => setBadge(e.target.value)}
                       placeholder="Type any tag: Burdwan Special, Fresh Arrival..."
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     {badge && (
                       <button
@@ -1473,7 +1473,7 @@ export function AdminUploadApp({
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-base shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-base shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Sparkles className="w-5 h-5" />
                 <span>
@@ -1504,9 +1504,9 @@ export function AdminUploadApp({
                   <p className="text-[11px] font-semibold text-slate-500">Catalogue</p>
                   <p className="mt-1 text-xl font-black tabular-nums text-slate-900">{totalProductsCount}</p>
                 </div>
-                <div className="rounded-xl bg-emerald-50 p-3">
-                  <p className="text-[11px] font-semibold text-emerald-700">Available</p>
-                  <p className="mt-1 text-xl font-black tabular-nums text-emerald-800">{inStockCount}</p>
+                <div className="rounded-xl bg-blue-50 p-3">
+                  <p className="text-[11px] font-semibold text-blue-700">Available</p>
+                  <p className="mt-1 text-xl font-black tabular-nums text-blue-800">{inStockCount}</p>
                 </div>
                 <div className="rounded-xl bg-amber-50 p-3">
                   <p className="text-[11px] font-semibold text-amber-700">Restock soon</p>
@@ -1533,13 +1533,13 @@ export function AdminUploadApp({
                   </div>
                 </div>
               ) : (
-                <p className="mt-4 rounded-xl bg-emerald-50 px-3 py-2.5 text-xs font-semibold text-emerald-800"><CheckCircle2 className="mr-1 inline h-4 w-4" /> No low-stock products need attention right now.</p>
+                <p className="mt-4 rounded-xl bg-blue-50 px-3 py-2.5 text-xs font-semibold text-blue-800"><CheckCircle2 className="mr-1 inline h-4 w-4" /> No low-stock products need attention right now.</p>
               )}
             </section>
             {/* =============================================================== */}
             {/* HERO SLIDER MANAGER: FESTIVE BANNER TOGGLE + BEST 5 ORDER (1-5) */}
             {/* =============================================================== */}
-            <div className="bg-gradient-to-r from-amber-50 via-white to-emerald-50 p-4 rounded-2xl border border-amber-300 shadow-2xs space-y-3">
+            <div className="bg-gradient-to-r from-amber-50 via-white to-blue-50 p-4 rounded-2xl border border-amber-300 shadow-2xs space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-amber-200/80">
                 <div className="flex items-center gap-2">
                   <span className="w-8 h-8 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center font-black shadow-2xs shrink-0">
@@ -1567,7 +1567,7 @@ export function AdminUploadApp({
                   }
                   className={`px-3.5 py-2 rounded-xl font-extrabold text-xs flex items-center gap-2 cursor-pointer transition-all shrink-0 shadow-2xs ${
                     storeSettings.showOccasionBanner !== false
-                      ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                      ? 'bg-blue-600 text-white hover:bg-blue-700'
                       : 'bg-slate-200 text-slate-800 hover:bg-slate-300'
                   }`}
                 >
@@ -1595,7 +1595,7 @@ export function AdminUploadApp({
                           {slotRank === 1 ? '(1st)' : slotRank === 5 ? '(Last)' : ''}
                         </span>
                         {slotProduct && (
-                          <span className="text-xs font-extrabold text-emerald-700">
+                          <span className="text-xs font-extrabold text-blue-700">
                             ₹{slotProduct.price}
                           </span>
                         )}
@@ -1644,7 +1644,7 @@ export function AdminUploadApp({
                   type="button"
                   aria-pressed={storeSettings.dealsOfDayEnabled === true}
                   onClick={() => onSaveSettings({ ...storeSettings, dealsOfDayEnabled: storeSettings.dealsOfDayEnabled !== true })}
-                  className={`px-4 py-2 rounded-xl text-xs font-black shadow-sm transition-colors ${storeSettings.dealsOfDayEnabled === true ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'}`}
+                  className={`px-4 py-2 rounded-xl text-xs font-black shadow-sm transition-colors ${storeSettings.dealsOfDayEnabled === true ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-700'}`}
                 >
                   Deals section: {storeSettings.dealsOfDayEnabled === true ? 'ON' : 'OFF'}
                 </button>
@@ -1652,7 +1652,7 @@ export function AdminUploadApp({
               <div className="flex items-center justify-between gap-2 text-xs">
                 <span className="font-bold text-slate-700">{(storeSettings.dealProductIds || []).length} product(s) selected</span>
                 <div className="flex gap-2">
-                  <button type="button" onClick={() => onSaveSettings({ ...storeSettings, dealProductIds: products.filter(p => p.inStock).map(p => p.id) })} className="text-emerald-700 font-bold hover:underline">Select in-stock</button>
+                  <button type="button" onClick={() => onSaveSettings({ ...storeSettings, dealProductIds: products.filter(p => p.inStock).map(p => p.id) })} className="text-blue-700 font-bold hover:underline">Select in-stock</button>
                   <button type="button" onClick={() => onSaveSettings({ ...storeSettings, dealProductIds: [] })} className="text-rose-700 font-bold hover:underline">Clear all</button>
                 </div>
               </div>
@@ -1697,7 +1697,7 @@ export function AdminUploadApp({
                   value={adminSearch}
                   onChange={(e) => setAdminSearch(e.target.value)}
                   placeholder="Filter inventory by name or category..."
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -1734,7 +1734,7 @@ export function AdminUploadApp({
                     setEditingProduct(null);
                     setAdminTab('add');
                   }}
-                  className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 whitespace-nowrap shrink-0 shadow-xs cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 whitespace-nowrap shrink-0 shadow-xs cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add Item</span>
@@ -1754,7 +1754,7 @@ export function AdminUploadApp({
                       setAdminSearch('');
                       setAdminCategoryFilter('all');
                     }}
-                    className="px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-bold cursor-pointer"
+                    className="px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-bold cursor-pointer"
                   >
                     Show All Products
                   </button>
@@ -1826,7 +1826,7 @@ export function AdminUploadApp({
 
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 flex-wrap text-xs text-slate-500">
-                            <span className="font-bold uppercase tracking-wider text-emerald-700">
+                            <span className="font-bold uppercase tracking-wider text-blue-700">
                               {product.category}
                             </span>
                             {product.badge && (
@@ -1838,7 +1838,7 @@ export function AdminUploadApp({
                               </>
                             )}
                             {itemDiscount.hasDiscount && (
-                              <span className="font-bold text-emerald-800 bg-emerald-100/80 px-1.5 py-0.5 rounded tabular-nums">
+                              <span className="font-bold text-blue-800 bg-blue-100/80 px-1.5 py-0.5 rounded tabular-nums">
                                 {itemDiscount.discountPercent}% OFF (Save ₹{itemDiscount.savedAmount})
                               </span>
                             )}
@@ -1978,7 +1978,7 @@ export function AdminUploadApp({
                                   [product.id]: e.target.value,
                                 }))
                               }
-                              className="w-full pl-6 pr-2 py-2 rounded-xl border border-slate-300 font-extrabold text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white tabular-nums"
+                              className="w-full pl-6 pr-2 py-2 rounded-xl border border-slate-300 font-extrabold text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white tabular-nums"
                             />
                           </div>
                           {hasPriceChanged && (
@@ -1986,7 +1986,7 @@ export function AdminUploadApp({
                               type="button"
                               aria-label={`Save price for ${product.name}`}
                               onClick={() => handleInlinePriceSave(product)}
-                              className="px-3 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 shadow-xs cursor-pointer whitespace-nowrap"
+                              className="px-3 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 shadow-xs cursor-pointer whitespace-nowrap"
                             >
                               Save ₹
                             </button>
@@ -2036,13 +2036,13 @@ export function AdminUploadApp({
                           onClick={() => handleToggleStock(product)}
                           className={`px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                             product.inStock
-                              ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300'
+                              ? 'bg-blue-100 text-blue-800 hover:bg-blue-200 border border-blue-300'
                               : 'bg-red-100 text-red-700 hover:bg-red-200 border border-red-200'
                           }`}
                         >
                           {product.inStock ? (
                             <>
-                              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                              <CheckCircle2 className="w-4 h-4 text-blue-600" />
                               <span>In Stock</span>
                             </>
                           ) : (
@@ -2109,21 +2109,21 @@ export function AdminUploadApp({
         {/* ========================================== */}
         {adminTab === 'christmasSpecials' && (
           <section className="space-y-5">
-            <div className="overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-950 via-emerald-800 to-red-900 p-5 text-white shadow-lg sm:p-7">
-              <div className="flex items-center gap-3"><span className="text-4xl">🎄</span><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-emerald-200">Seasonal collection</p><h2 className="text-2xl font-black">Christmas Specials</h2><p className="mt-1 text-xs text-emerald-100">Choose the products customers see when they tap the Christmas banner.</p></div></div>
+            <div className="overflow-hidden rounded-3xl bg-gradient-to-r from-blue-950 via-blue-800 to-red-900 p-5 text-white shadow-lg sm:p-7">
+              <div className="flex items-center gap-3"><span className="text-4xl">🎄</span><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-blue-200">Seasonal collection</p><h2 className="text-2xl font-black">Christmas Specials</h2><p className="mt-1 text-xs text-blue-100">Choose the products customers see when they tap the Christmas banner.</p></div></div>
               <div className="mt-4 rounded-full bg-white/15 px-3 py-2 text-xs font-bold inline-flex">{(storeSettings.christmasSpecialProductIds || []).length} selected products</div>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-              <div className="mb-3 flex flex-wrap items-center justify-between gap-2"><h3 className="font-extrabold text-slate-900">Select Christmas products</h3><div className="flex gap-3 text-xs"><button type="button" onClick={() => onSaveSettings({...storeSettings, christmasSpecialProductIds: products.filter(p => p.inStock).map(p => p.id)})} className="font-bold text-emerald-700">Select all available</button><button type="button" onClick={() => onSaveSettings({...storeSettings, christmasSpecialProductIds: []})} className="font-bold text-rose-700">Clear selection</button></div></div>
-              <input type="search" value={christmasSearch} onChange={e => setChristmasSearch(e.target.value)} placeholder="Search products…" className="mb-3 w-full rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-emerald-500"/>
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2"><h3 className="font-extrabold text-slate-900">Select Christmas products</h3><div className="flex gap-3 text-xs"><button type="button" onClick={() => onSaveSettings({...storeSettings, christmasSpecialProductIds: products.filter(p => p.inStock).map(p => p.id)})} className="font-bold text-blue-700">Select all available</button><button type="button" onClick={() => onSaveSettings({...storeSettings, christmasSpecialProductIds: []})} className="font-bold text-rose-700">Clear selection</button></div></div>
+              <input type="search" value={christmasSearch} onChange={e => setChristmasSearch(e.target.value)} placeholder="Search products…" className="mb-3 w-full rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-blue-500"/>
               <div className="grid max-h-[65vh] grid-cols-1 gap-2 overflow-y-auto sm:grid-cols-2">
                 {products.filter(p => !christmasSearch.trim() || [p.name,p.category].some(v => String(v || '').toLowerCase().includes(christmasSearch.trim().toLowerCase()))).map(product => {
                   const selected=(storeSettings.christmasSpecialProductIds || []).includes(product.id);
-                  return <label key={product.id} className={'flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition ' + (selected ? 'border-emerald-400 bg-emerald-50' : 'border-slate-100 bg-white')}>
-                    <input type="checkbox" checked={selected} onChange={e => { const ids=new Set(storeSettings.christmasSpecialProductIds || []); if(e.target.checked) ids.add(product.id); else ids.delete(product.id); onSaveSettings({...storeSettings, christmasSpecialProductIds:Array.from(ids)}); }} className="h-4 w-4 accent-emerald-700"/>
+                  return <label key={product.id} className={'flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition ' + (selected ? 'border-blue-400 bg-blue-50' : 'border-slate-100 bg-white')}>
+                    <input type="checkbox" checked={selected} onChange={e => { const ids=new Set(storeSettings.christmasSpecialProductIds || []); if(e.target.checked) ids.add(product.id); else ids.delete(product.id); onSaveSettings({...storeSettings, christmasSpecialProductIds:Array.from(ids)}); }} className="h-4 w-4 accent-blue-700"/>
                     <span className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-lg bg-slate-50 text-2xl">{product.imageUrl ? <img src={product.imageUrl} alt="" className="h-full w-full object-contain"/> : product.emoji}</span>
                     <span className="min-w-0 flex-1"><strong className="block truncate text-sm text-slate-900">{product.name}</strong><span className="text-xs text-slate-500">₹{product.price} · {product.inStock ? 'In stock' : 'Out of stock'}</span></span>
-                    {selected && <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600"/>}
+                    {selected && <CheckCircle2 className="h-5 w-5 shrink-0 text-blue-600"/>}
                   </label>;
                 })}
               </div>
@@ -2159,10 +2159,10 @@ export function AdminUploadApp({
                 </div>
               </div>
             </section>
-            <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 sm:p-5">
+            <div className="mb-6 rounded-2xl border border-blue-200 bg-blue-50 p-4 sm:p-5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-start gap-3"><span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-emerald-200 text-xl">🛠️</span><div><h3 className="text-sm font-black text-slate-900">Store maintenance mode</h3><p className="mt-1 text-xs leading-5 text-slate-600">When ON, customers see a maintenance screen and cannot browse, add items or place orders. Your owner portal stays available.</p><p className="mt-2 text-xs font-extrabold text-emerald-700">Currently {maintenanceMode ? 'ON • Storefront paused' : 'OFF • Storefront live'}</p></div></div>
-                <button type="button" role="switch" aria-checked={maintenanceMode} aria-label="Toggle store maintenance mode" onClick={onToggleMaintenance} className={'relative inline-flex h-10 w-[76px] shrink-0 items-center rounded-full p-1 transition-colors ' + (maintenanceMode ? 'bg-amber-500' : 'bg-emerald-600')}><span className={'grid h-8 w-8 place-items-center rounded-full bg-white text-[10px] font-black text-slate-900 shadow transition-transform ' + (maintenanceMode ? 'translate-x-9' : 'translate-x-0')}>{maintenanceMode ? 'ON' : 'OFF'}</span></button>
+                <div className="flex items-start gap-3"><span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-blue-200 text-xl">🛠️</span><div><h3 className="text-sm font-black text-slate-900">Store maintenance mode</h3><p className="mt-1 text-xs leading-5 text-slate-600">When ON, customers see a maintenance screen and cannot browse, add items or place orders. Your owner portal stays available.</p><p className="mt-2 text-xs font-extrabold text-blue-700">Currently {maintenanceMode ? 'ON • Storefront paused' : 'OFF • Storefront live'}</p></div></div>
+                <button type="button" role="switch" aria-checked={maintenanceMode} aria-label="Toggle store maintenance mode" onClick={onToggleMaintenance} className={'relative inline-flex h-10 w-[76px] shrink-0 items-center rounded-full p-1 transition-colors ' + (maintenanceMode ? 'bg-amber-500' : 'bg-blue-600')}><span className={'grid h-8 w-8 place-items-center rounded-full bg-white text-[10px] font-black text-slate-900 shadow transition-transform ' + (maintenanceMode ? 'translate-x-9' : 'translate-x-0')}>{maintenanceMode ? 'ON' : 'OFF'}</span></button>
               </div>
               <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 space-y-3">
                 <div>
@@ -2330,7 +2330,7 @@ export function AdminUploadApp({
                     onChange={(e) =>
                       setSettingsForm({ ...settingsForm, autoSchedule: e.target.checked })
                     }
-                    className="w-5 h-5 accent-emerald-600 rounded"
+                    className="w-5 h-5 accent-blue-600 rounded"
                   />
                 </label>
 
@@ -2348,7 +2348,7 @@ export function AdminUploadApp({
                       onChange={(e) =>
                         setSettingsForm({ ...settingsForm, isOpen: e.target.checked })
                       }
-                      className="w-5 h-5 accent-emerald-600 rounded"
+                      className="w-5 h-5 accent-blue-600 rounded"
                     />
                   </label>
                 )}
@@ -2378,7 +2378,7 @@ export function AdminUploadApp({
                           showOccasionBanner: e.target.checked,
                         })
                       }
-                      className="w-4 h-4 accent-emerald-600 rounded"
+                      className="w-4 h-4 accent-blue-600 rounded"
                     />
                   </label>
                 </div>
@@ -2511,7 +2511,7 @@ export function AdminUploadApp({
                           onClick={() => occasionFileInputRef.current?.click()}
                           className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-xs font-bold text-slate-800 flex items-center gap-1.5 cursor-pointer shadow-2xs"
                         >
-                          <Camera className="w-3.5 h-3.5 text-emerald-600" />
+                          <Camera className="w-3.5 h-3.5 text-blue-600" />
                           <span>Choose from Gallery</span>
                         </button>
 
@@ -2536,11 +2536,11 @@ export function AdminUploadApp({
               </div>
 
               {/* Store Scanner (QR Code) Settings — Upload Scanner Pic OR Convert Website Link */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-emerald-50/70 border-2 border-emerald-200 space-y-4">
+              <div className="p-4 sm:p-5 rounded-2xl bg-blue-50/70 border-2 border-blue-200 space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
-                    <h3 className="font-extrabold text-sm text-emerald-950 flex items-center gap-1.5">
-                      <QrCode className="w-4 h-4 text-emerald-700" />
+                    <h3 className="font-extrabold text-sm text-blue-950 flex items-center gap-1.5">
+                      <QrCode className="w-4 h-4 text-blue-700" />
                       <span>Store Scanner (QR Code) — Website Link to Scanner or Upload Pic</span>
                     </h3>
                     <p className="text-xs text-slate-600 mt-0.5">
@@ -2550,7 +2550,7 @@ export function AdminUploadApp({
                   <button
                     type="button"
                     onClick={() => setIsQrModalOpen(true)}
-                    className="px-3 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                    className="px-3 py-1.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-2xs"
                   >
                     <QrCode className="w-3.5 h-3.5" />
                     <span>Open Printable Scanner</span>
@@ -2564,11 +2564,11 @@ export function AdminUploadApp({
                     onClick={() => setSettingsForm({ ...settingsForm, scannerMode: 'link' })}
                     className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-2.5 ${
                       (settingsForm.scannerMode || 'link') === 'link'
-                        ? 'bg-white border-emerald-600 ring-2 ring-emerald-500/30 shadow-2xs'
+                        ? 'bg-white border-blue-600 ring-2 ring-blue-500/30 shadow-2xs'
                         : 'bg-white/60 border-slate-200 hover:bg-white'
                     }`}
                   >
-                    <div className="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                    <div className="w-9 h-9 rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center shrink-0">
                       <Globe className="w-5 h-5" />
                     </div>
                     <div>
@@ -2586,7 +2586,7 @@ export function AdminUploadApp({
                     onClick={() => setSettingsForm({ ...settingsForm, scannerMode: 'upload' })}
                     className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-2.5 ${
                       settingsForm.scannerMode === 'upload'
-                        ? 'bg-white border-emerald-600 ring-2 ring-emerald-500/30 shadow-2xs'
+                        ? 'bg-white border-blue-600 ring-2 ring-blue-500/30 shadow-2xs'
                         : 'bg-white/60 border-slate-200 hover:bg-white'
                     }`}
                   >
@@ -2605,9 +2605,9 @@ export function AdminUploadApp({
                 </div>
 
                 {/* Live Scanner Preview + Controls */}
-                <div className="p-3.5 rounded-2xl bg-white border border-emerald-200 flex flex-col sm:flex-row items-center gap-4">
+                <div className="p-3.5 rounded-2xl bg-white border border-blue-200 flex flex-col sm:flex-row items-center gap-4">
                   {/* Live QR / Uploaded Scanner Preview Box */}
-                  <div className="w-32 h-32 rounded-2xl bg-slate-50 border-2 border-emerald-200 p-2 flex flex-col items-center justify-center shrink-0">
+                  <div className="w-32 h-32 rounded-2xl bg-slate-50 border-2 border-blue-200 p-2 flex flex-col items-center justify-center shrink-0">
                     {settingsForm.scannerMode === 'upload' && settingsForm.scannerImageUrl ? (
                       <img
                         src={settingsForm.scannerImageUrl}
@@ -2641,7 +2641,7 @@ export function AdminUploadApp({
                                     y={rIdx}
                                     width={1}
                                     height={1}
-                                    fill="#064e3b"
+                                    fill="#172554"
                                   />
                                 ) : null
                               )
@@ -2695,7 +2695,7 @@ export function AdminUploadApp({
                               });
                               showToast('Current store website link converted to QR Scanner!');
                             }}
-                            className="px-3 py-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-900 text-xs font-bold cursor-pointer whitespace-nowrap"
+                            className="px-3 py-2 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-900 text-xs font-bold cursor-pointer whitespace-nowrap"
                           >
                             Use Current Website Link
                           </button>
@@ -2721,7 +2721,7 @@ export function AdminUploadApp({
                           <button
                             type="button"
                             onClick={() => scannerFileInputRef.current?.click()}
-                            className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                            className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-2xs"
                           >
                             <Camera className="w-3.5 h-3.5" />
                             <span>Choose from Gallery</span>
@@ -2767,12 +2767,12 @@ export function AdminUploadApp({
               </div>
 
               {/* Owner-Only Secret Access Explanation Card */}
-              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 space-y-1">
+              <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-xs text-blue-950 space-y-1">
                 <div className="font-extrabold flex items-center gap-1.5">
-                  <Lock className="w-4 h-4 text-emerald-700" />
+                  <Lock className="w-4 h-4 text-blue-700" />
                   <span>Owner-Only Hidden Login Active (Customers Cannot See Admin Login)</span>
                 </div>
-                <p className="text-emerald-800 leading-relaxed">
+                <p className="text-blue-800 leading-relaxed">
                   Owner changes require your authorised Supabase account. Open this portal by tapping the top <strong>Shop Name (Parbati Bhandar)</strong> 5 times, then sign in.
                 </p>
               </div>
@@ -2780,7 +2780,7 @@ export function AdminUploadApp({
               <div className="pt-3 flex items-center gap-3">
                 <button
                   type="submit"
-                  className="flex-1 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm cursor-pointer"
+                  className="flex-1 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-sm cursor-pointer"
                 >
                   Save Parbati Bhandar Settings
                 </button>
