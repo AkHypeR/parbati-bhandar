@@ -51,8 +51,8 @@ interface AdminUploadAppProps {
   onToggleMaintenance: () => void;
   onSetMaintenanceTimer: (durationMinutes: number) => void;
   maintenanceUntil: number | null;
-  adminTab: 'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders';
-  setAdminTab: (tab: 'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders') => void;
+  adminTab: 'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders' | 'reviews';
+  setAdminTab: (tab: 'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders' | 'reviews') => void;
   adminSearch: string;
   setAdminSearch: (q: string) => void;
   adminCategoryFilter: string;
@@ -195,6 +195,32 @@ export function AdminUploadApp({
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
   const [delayMinutes, setDelayMinutes] = useState('30');
+  type ProductReview = { id: string; product_id: string; customer_name: string; rating: number; comment: string; status: 'pending' | 'approved' | 'rejected'; created_at: number };
+  const [productReviews, setProductReviews] = useState<ProductReview[]>([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [reviewActionId, setReviewActionId] = useState<string | null>(null);
+  const loadProductReviews = async () => {
+    setReviewsLoading(true);
+    try {
+      const response = await fetch('/api/reviews', { credentials: 'same-origin', cache: 'no-store' });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Could not load reviews.');
+      setProductReviews(Array.isArray(data.reviews) ? data.reviews : []);
+    } catch (error) { showToast((error as Error).message, 'error'); }
+    finally { setReviewsLoading(false); }
+  };
+  useEffect(() => { if (adminTab === 'reviews') void loadProductReviews(); }, [adminTab]);
+  const moderateProductReview = async (id: string, status: 'approved' | 'rejected') => {
+    setReviewActionId(id);
+    try {
+      const response = await fetch('/api/reviews', { method: 'PATCH', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status }) });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'Could not update review.');
+      setProductReviews(prev => prev.map(review => review.id === id ? { ...review, status } : review));
+      showToast(status === 'approved' ? 'Review approved and visible to customers.' : 'Review rejected.');
+    } catch (error) { showToast((error as Error).message, 'error'); }
+    finally { setReviewActionId(null); }
+  };
   const loadCustomerOrders = async (silent = false) => {
     if (!silent) setOrdersLoading(true);
     try {
@@ -678,6 +704,7 @@ export function AdminUploadApp({
             <button type="button" onClick={() => { setEditingProduct(null); setAdminTab('add'); }} aria-current={adminTab === 'add' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'add' ? 'bg-emerald-700 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-emerald-50 hover:text-emerald-900'}`}><Plus className="h-4 w-4" /> Add product</button>
             <button type="button" onClick={() => setAdminTab('settings')} aria-current={adminTab === 'settings' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'settings' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><Settings className="h-4 w-4" /> Store settings</button>
             <button type="button" onClick={() => setAdminTab('quickReplies')} aria-current={adminTab === 'quickReplies' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'quickReplies' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><MessageCircle className="h-4 w-4" /> WhatsApp replies</button>
+            <button type="button" onClick={() => setAdminTab('reviews')} aria-current={adminTab === 'reviews' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'reviews' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><Star className="h-4 w-4" /> Reviews {productReviews.filter(review => review.status === 'pending').length > 0 && <span className="rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] text-white">{productReviews.filter(review => review.status === 'pending').length}</span>}</button>
           </nav>
           <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500">
             <span>Choose a section to manage your store. Changes sync to the customer website.</span>
@@ -708,6 +735,29 @@ export function AdminUploadApp({
               </div>
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_2px_10px_rgba(15,23,42,.04)] sm:p-6"><h3 className="font-extrabold text-slate-900">Quick actions</h3><p className="mt-1 text-xs text-slate-500">Common tasks, one tap away.</p><div className="mt-4 grid gap-2"><button type="button" onClick={() => { setEditingProduct(null); setAdminTab('add'); }} className="flex items-center gap-3 rounded-xl border border-emerald-100 bg-emerald-50 p-3 text-left hover:bg-emerald-100"><span className="grid h-9 w-9 place-items-center rounded-lg bg-emerald-700 text-white"><Plus className="h-4 w-4" /></span><span><strong className="block text-xs text-emerald-950">Add a product</strong><span className="text-[11px] text-emerald-800">Add a new item to your catalogue</span></span></button><button type="button" onClick={() => setAdminTab('inventory')} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-left hover:bg-slate-100"><span className="grid h-9 w-9 place-items-center rounded-lg bg-slate-800 text-white"><Package className="h-4 w-4" /></span><span><strong className="block text-xs text-slate-900">Update prices & stock</strong><span className="text-[11px] text-slate-600">Review availability and low-stock items</span></span></button><button type="button" onClick={() => setAdminTab('settings')} className="flex items-center gap-3 rounded-xl border border-amber-100 bg-amber-50 p-3 text-left hover:bg-amber-100"><span className="grid h-9 w-9 place-items-center rounded-lg bg-amber-500 text-white"><Settings className="h-4 w-4" /></span><span><strong className="block text-xs text-amber-950">Store settings</strong><span className="text-[11px] text-amber-800">Hours, deals and store controls</span></span></button><button type="button" onClick={() => setAdminTab('quickReplies')} className="flex items-center gap-3 rounded-xl border border-sky-100 bg-sky-50 p-3 text-left hover:bg-sky-100"><span className="grid h-9 w-9 place-items-center rounded-lg bg-sky-700 text-white"><MessageCircle className="h-4 w-4" /></span><span><strong className="block text-xs text-sky-950">Customer replies</strong><span className="text-[11px] text-sky-800">Prepare WhatsApp responses</span></span></button></div></div>
             </div>
+          </section>
+        )}
+
+        {adminTab === 'reviews' && (
+          <section className="space-y-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div><h2 className="text-xl font-black text-slate-900">Customer reviews</h2><p className="mt-1 text-sm text-slate-500">Approve genuine purchase reviews before they appear on product cards.</p></div>
+              <button type="button" onClick={() => void loadProductReviews()} disabled={reviewsLoading} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 disabled:opacity-50"><RefreshCw className={`h-4 w-4 ${reviewsLoading ? 'animate-spin' : ''}`}/> Refresh</button>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {(['pending','approved','rejected'] as const).map(status => <div key={status} className="rounded-xl border border-slate-200 bg-white p-3"><p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">{status}</p><p className="mt-1 text-xl font-black text-slate-900">{productReviews.filter(review => review.status === status).length}</p></div>)}
+            </div>
+            {reviewsLoading ? <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">Loading reviews…</div> : productReviews.length === 0 ? <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center"><Star className="mx-auto h-8 w-8 text-slate-300"/><p className="mt-3 font-bold text-slate-700">No customer reviews yet</p><p className="mt-1 text-xs text-slate-500">Reviews submitted by signed-in customers will appear here.</p></div> : <div className="space-y-3">
+              {productReviews.map(review => {
+                const product = products.find(item => item.id === review.product_id);
+                return <article key={review.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><p className="font-extrabold text-slate-900">{product?.name || 'Product no longer in catalogue'}</p><p className="mt-1 text-xs text-slate-500">By {review.customer_name} · {new Date(review.created_at).toLocaleDateString('en-IN')}</p></div><span className={`rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase ${review.status === 'pending' ? 'bg-amber-100 text-amber-800' : review.status === 'approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}`}>{review.status}</span></div>
+                  <div className="mt-3 flex items-center gap-1 text-amber-500">{[1,2,3,4,5].map(star => <Star key={star} className={`h-4 w-4 ${star <= review.rating ? 'fill-current' : 'text-slate-200'}`}/>) }<span className="ml-1 text-xs font-bold text-slate-600">{review.rating}/5</span></div>
+                  {review.comment && <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-700">{review.comment}</p>}
+                  {review.status === 'pending' && <div className="mt-4 flex flex-wrap gap-2"><button type="button" disabled={reviewActionId === review.id} onClick={() => void moderateProductReview(review.id,'approved')} className="rounded-xl bg-emerald-700 px-4 py-2.5 text-xs font-extrabold text-white disabled:opacity-50">Approve</button><button type="button" disabled={reviewActionId === review.id} onClick={() => void moderateProductReview(review.id,'rejected')} className="rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-xs font-extrabold text-red-700 disabled:opacity-50">Reject</button></div>}
+                </article>;
+              })}
+            </div>}
           </section>
         )}
 
