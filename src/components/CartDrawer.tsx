@@ -11,6 +11,7 @@ import {
   AlertCircle,
   FileText,
   UserCheck,
+  ShieldCheck,
 } from 'lucide-react';
 import { CartItem, Product } from '../utils/storeLogic';
 
@@ -79,6 +80,7 @@ export function CartDrawer({
   const [phoneError, setPhoneError] = useState(false);
   const [savingOrder, setSavingOrder] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState('');
+  const [captchaError, setCaptchaError] = useState('');
   const [pushSubscription, setPushSubscription] = useState<PushSubscriptionJSON | null>(null);
   const [pushState, setPushState] = useState<'off' | 'working' | 'on' | 'unsupported' | 'error'>('off');
   const [timerNow, setTimerNow] = useState(Date.now());
@@ -502,8 +504,9 @@ export function CartDrawer({
               <div><p className="text-sm font-extrabold text-slate-900">Secure order verification</p><p className="text-[11px] text-slate-500">A quick check to keep automated orders away</p></div>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white p-3">
-              <TurnstileWidget action="order" onVerify={setTurnstileToken} />
+              <TurnstileWidget action="order" onVerify={(token) => { setTurnstileToken(token); setCaptchaError(''); }} />
               {turnstileToken ? <p className="mt-2 text-xs font-bold text-emerald-700">✓ Security check completed</p> : <p className="mt-2 text-[11px] text-slate-500">Complete the verification above to securely place your order.</p>}
+              {captchaError && <p role="alert" className="mt-2 text-xs font-bold text-rose-700">{captchaError}</p>}
             </div>
           </div>}
         </div>
@@ -543,6 +546,7 @@ export function CartDrawer({
                     if (orderNumber !== null) {
                       clearCart();
                       setTurnstileToken('');
+                      setCaptchaError('');
                       if (popup) {
                         try {
                           const whatsapp = new URL(whatsAppUrl);
