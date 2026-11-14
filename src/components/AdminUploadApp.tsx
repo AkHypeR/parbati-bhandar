@@ -734,7 +734,6 @@ export function AdminUploadApp({
                       {order.estimatedReadyAt && <button type="button" disabled={updatingOrderId === order.id} onClick={() => void updateCustomerOrder(order.id, order.status, undefined, null)} className="mt-2 text-xs font-bold text-amber-900 underline disabled:opacity-50">Clear estimate</button>}
                       {!['new','processing'].includes(order.status) && <p className="mt-2 text-[11px] text-slate-500">Estimates can be changed while an order is received or being prepared.</p>}
                     </div>
-                    </div>
                     <div className="rounded-xl border border-slate-200 p-4">
                       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                         <h3 className="text-sm font-extrabold uppercase tracking-wide text-slate-500">Items ordered · Set item availability</h3>
