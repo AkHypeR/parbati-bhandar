@@ -39,7 +39,8 @@ export const onRequestPost: PagesFunction<Env> = async ({request,env}) => {
   if(!id||!["cancel","edit"].includes(action))return json({error:"Invalid order action."},400);
   const order=await env.DB.prepare("SELECT id,customer_id,items_json,total,status,stock_deducted FROM customer_orders WHERE id=? AND customer_id=? AND archived_at IS NULL").bind(id,customer.id).first<any>();
   if(!order)return json({error:"Order not found in your account."},404);
-  if(order.status!=="new")return json({error:"Orders can only be changed before the store starts processing them."},409);
+  if(action==="cancel" && order.status!=="new")return json({error:"Orders can only be cancelled before the store starts processing them."},409);
+  if(action==="edit" && !["new","processing"].includes(String(order.status)))return json({error:"Orders can only be edited until the store marks them ready."},409);
   const original:Item[]=JSON.parse(order.items_json||"[]");
   if(!original.length)return json({error:"This order has no editable items."},409);
   const now=Date.now(), actionId=crypto.randomUUID();
@@ -60,7 +61,7 @@ export const onRequestPost: PagesFunction<Env> = async ({request,env}) => {
       matching.forEach(x=>x.stockRefunded=true);
     }
     const statements:any[]=[
-      env.DB.prepare("UPDATE customer_orders SET stock_deducted=3 WHERE id=? AND customer_id=? AND status='new' AND stock_deducted=1 AND items_json=?").bind(id,customer.id,order.items_json),
+      env.DB.prepare("UPDATE customer_orders SET stock_deducted=3 WHERE id=? AND customer_id=? AND status IN ('new','processing') AND stock_deducted=1 AND items_json=?").bind(id,customer.id,order.items_json),
       env.DB.prepare("INSERT INTO customer_order_action_guard(action_id,expected_count,actual_count) SELECT ?,1,changes()").bind(actionId+":lock")
     ];
     for(const [productId,quantity] of refundMap){
@@ -104,7 +105,7 @@ export const onRequestPost: PagesFunction<Env> = async ({request,env}) => {
     if(Math.abs(delta)>0.00001)deltas.set(productId,delta);
   }
   const statements:any[]=[
-    env.DB.prepare("UPDATE customer_orders SET stock_deducted=3 WHERE id=? AND customer_id=? AND status='new' AND stock_deducted=1 AND items_json=?").bind(id,customer.id,order.items_json),
+    env.DB.prepare("UPDATE customer_orders SET stock_deducted=3 WHERE id=? AND customer_id=? AND status IN ('new','processing') AND stock_deducted=1 AND items_json=?").bind(id,customer.id,order.items_json),
     env.DB.prepare("INSERT INTO customer_order_action_guard(action_id,expected_count,actual_count) SELECT ?,1,changes()").bind(actionId+":lock")
   ];
   for(const [productId,delta] of deltas){
@@ -124,7 +125,7 @@ export const onRequestPost: PagesFunction<Env> = async ({request,env}) => {
     ...Array.from(productIds).map(productId=>desired.has(productId)
       ? env.DB.prepare("INSERT INTO order_stock_deductions(order_id,product_id,quantity) VALUES(?,?,?) ON CONFLICT(order_id,product_id) DO UPDATE SET quantity=excluded.quantity").bind(id,productId,desired.get(productId))
       : env.DB.prepare("DELETE FROM order_stock_deductions WHERE order_id=? AND product_id=?").bind(id,productId)),
-    env.DB.prepare("UPDATE customer_orders SET items_json=?,total=?,updated_at=?,stock_deducted=1 WHERE id=? AND customer_id=? AND status='new' AND stock_deducted=3").bind(JSON.stringify(revised),revised.reduce((sum,item)=>sum+item.price*item.quantity,0),now,id,customer.id)
+    env.DB.prepare("UPDATE customer_orders SET items_json=?,total=?,updated_at=?,stock_deducted=1 WHERE id=? AND customer_id=? AND status IN ('new','processing') AND stock_deducted=3").bind(JSON.stringify(revised),revised.reduce((sum,item)=>sum+item.price*item.quantity,0),now,id,customer.id)
   );
   try{const result=await env.DB.batch(statements);if(!result[result.length-1]?.meta?.changes)return json({error:"The order changed while it was being edited. Refresh and try again."},409);}
   catch(error){console.error("Customer order edit transaction failed",error);return json({error:"Could not safely update your order or inventory. Please try again."},409);}
