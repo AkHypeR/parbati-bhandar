@@ -51,8 +51,8 @@ interface AdminUploadAppProps {
   onToggleMaintenance: () => void;
   onSetMaintenanceTimer: (durationMinutes: number) => void;
   maintenanceUntil: number | null;
-  adminTab: 'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders';
-  setAdminTab: (tab: 'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders') => void;
+  adminTab: 'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders' | 'christmasSpecials';
+  setAdminTab: (tab: 'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders' | 'christmasSpecials') => void;
   adminSearch: string;
   setAdminSearch: (q: string) => void;
   adminCategoryFilter: string;
@@ -171,6 +171,7 @@ export function AdminUploadApp({
   const [allowCustomWeights, setAllowCustomWeights] = useState(false);
   const [varietyRows, setVarietyRows] = useState<VarietyFormRow[]>([]);
   const [maintenanceHours, setMaintenanceHours] = useState('2');
+  const [christmasSearch, setChristmasSearch] = useState('');
   const [replyCustomerName, setReplyCustomerName] = useState('');
   const [replyCustomerPhone, setReplyCustomerPhone] = useState('');
   const [missingProducts, setMissingProducts] = useState('');
@@ -671,12 +672,13 @@ export function AdminUploadApp({
           </div>
 
           {/* Owner workspace navigation */}
-          <nav aria-label="Owner workspace sections" className="mt-5 grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm sm:grid-cols-3 xl:grid-cols-6">
+          <nav aria-label="Owner workspace sections" className="mt-5 grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm sm:grid-cols-3 xl:grid-cols-7">
             <button type="button" onClick={() => setAdminTab('dashboard')} aria-current={adminTab === 'dashboard' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'dashboard' ? 'bg-emerald-800 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-emerald-50 hover:text-emerald-900'}`}><Layers className="h-4 w-4" /> Overview</button>
             <button type="button" onClick={() => setAdminTab('orders')} aria-current={adminTab === 'orders' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'orders' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><BellRing className="h-4 w-4" /> Orders {newOrdersCount > 0 && <span className="rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] text-white">{newOrdersCount}</span>}</button>
             <button type="button" onClick={() => setAdminTab('inventory')} aria-current={adminTab === 'inventory' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'inventory' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><Package className="h-4 w-4" /> Inventory</button>
             <button type="button" onClick={() => { setEditingProduct(null); setAdminTab('add'); }} aria-current={adminTab === 'add' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'add' ? 'bg-emerald-700 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-emerald-50 hover:text-emerald-900'}`}><Plus className="h-4 w-4" /> Add product</button>
             <button type="button" onClick={() => setAdminTab('settings')} aria-current={adminTab === 'settings' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'settings' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><Settings className="h-4 w-4" /> Store settings</button>
+            <button type="button" onClick={() => setAdminTab('christmasSpecials')} aria-current={adminTab === 'christmasSpecials' ? 'page' : undefined} className={adminTab === 'christmasSpecials' ? 'flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold bg-red-700 text-white shadow-sm' : 'flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold bg-white text-slate-700 hover:bg-red-50'}>🎄 Christmas Specials</button>
             <button type="button" onClick={() => setAdminTab('quickReplies')} aria-current={adminTab === 'quickReplies' ? 'page' : undefined} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-extrabold transition ${adminTab === 'quickReplies' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-emerald-50'}`}><MessageCircle className="h-4 w-4" /> WhatsApp replies</button>
           </div>
         </div>
@@ -2105,6 +2107,30 @@ export function AdminUploadApp({
         {/* ========================================== */}
         {/* TAB 3: STORE DETAILS & SETTINGS            */}
         {/* ========================================== */}
+        {adminTab === 'christmasSpecials' && (
+          <section className="space-y-5">
+            <div className="overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-950 via-emerald-800 to-red-900 p-5 text-white shadow-lg sm:p-7">
+              <div className="flex items-center gap-3"><span className="text-4xl">🎄</span><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-emerald-200">Seasonal collection</p><h2 className="text-2xl font-black">Christmas Specials</h2><p className="mt-1 text-xs text-emerald-100">Choose the products customers see when they tap the Christmas banner.</p></div></div>
+              <div className="mt-4 rounded-full bg-white/15 px-3 py-2 text-xs font-bold inline-flex">{(storeSettings.christmasSpecialProductIds || []).length} selected products</div>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2"><h3 className="font-extrabold text-slate-900">Select Christmas products</h3><div className="flex gap-3 text-xs"><button type="button" onClick={() => onSaveSettings({...storeSettings, christmasSpecialProductIds: products.filter(p => p.inStock).map(p => p.id)})} className="font-bold text-emerald-700">Select all available</button><button type="button" onClick={() => onSaveSettings({...storeSettings, christmasSpecialProductIds: []})} className="font-bold text-rose-700">Clear selection</button></div></div>
+              <input type="search" value={christmasSearch} onChange={e => setChristmasSearch(e.target.value)} placeholder="Search products…" className="mb-3 w-full rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-emerald-500"/>
+              <div className="grid max-h-[65vh] grid-cols-1 gap-2 overflow-y-auto sm:grid-cols-2">
+                {products.filter(p => !christmasSearch.trim() || [p.name,p.category].some(v => String(v || '').toLowerCase().includes(christmasSearch.trim().toLowerCase()))).map(product => {
+                  const selected=(storeSettings.christmasSpecialProductIds || []).includes(product.id);
+                  return <label key={product.id} className={'flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition ' + (selected ? 'border-emerald-400 bg-emerald-50' : 'border-slate-100 bg-white')}>
+                    <input type="checkbox" checked={selected} onChange={e => { const ids=new Set(storeSettings.christmasSpecialProductIds || []); if(e.target.checked) ids.add(product.id); else ids.delete(product.id); onSaveSettings({...storeSettings, christmasSpecialProductIds:Array.from(ids)}); }} className="h-4 w-4 accent-emerald-700"/>
+                    <span className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-lg bg-slate-50 text-2xl">{product.imageUrl ? <img src={product.imageUrl} alt="" className="h-full w-full object-contain"/> : product.emoji}</span>
+                    <span className="min-w-0 flex-1"><strong className="block truncate text-sm text-slate-900">{product.name}</strong><span className="text-xs text-slate-500">₹{product.price} · {product.inStock ? 'In stock' : 'Out of stock'}</span></span>
+                    {selected && <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600"/>}
+                  </label>;
+                })}
+              </div>
+              <p className="mt-3 text-[11px] leading-relaxed text-slate-500">Selections save automatically. Out-of-stock products are hidden from customers until available again.</p>
+            </div>
+          </section>
+        )}
         {adminTab === 'settings' && (
           <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-5 sm:p-7 max-w-2xl mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
