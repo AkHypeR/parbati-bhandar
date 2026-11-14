@@ -27,6 +27,7 @@ import {
 import { CustomerStorefront } from './components/CustomerStorefront';
 import { CartDrawer } from './components/CartDrawer';
 import { CustomerAccount } from './components/CustomerAccount';
+import { CustomerNotifications } from './components/CustomerNotifications';
 import { CustomerOrders } from './components/CustomerOrders';
 import { TermsAndConditions } from './components/TermsAndConditions';
 import { OwnerPinGate } from './components/OwnerPinGate';
@@ -1136,7 +1137,9 @@ export default function App() {
           </div>
         ) : (
         <>
-          {currentPath === '/terms-and-conditions' ? (
+          {currentPath === '/notifications' ? (
+            <CustomerNotifications customer={customerAccount} onBack={() => navigateToPath('/')} onSignIn={() => navigateToPath('/account')} />
+          ) : currentPath === '/terms-and-conditions' ? (
             <TermsAndConditions onBack={() => navigateToPath('/')} />
           ) : currentPath === '/orders' || (currentPath.startsWith('/orders/') && Number.isInteger(Number(currentPath.split('/')[2]))) ? (
             customerAccount ? (
