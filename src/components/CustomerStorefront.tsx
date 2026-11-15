@@ -120,13 +120,15 @@ export function CustomerStorefront({
 }: CustomerStorefrontProps) {
   const [showWelcomePromo, setShowWelcomePromo] = useState(false);
   useEffect(() => {
-    // Only show on the initial homepage load. Route changes back to Home must not reopen it.
-    if (currentPage !== 'home') return;
-    const timer = window.setTimeout(() => setShowWelcomePromo(true), 650);
+    // Open the welcome banner whenever the customer enters Home, without requiring a refresh.
+    // Closing it keeps it closed until the user leaves Home and enters Home again.
+    if (currentPage !== 'home') {
+      setShowWelcomePromo(false);
+      return;
+    }
+    const timer = window.setTimeout(() => setShowWelcomePromo(true), 250);
     return () => window.clearTimeout(timer);
-    // Intentionally run once per page load; a browser refresh mounts a fresh instance.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currentPage]);
   const closeWelcomePromo = () => setShowWelcomePromo(false);
   const [trackingOrderNumber, setTrackingOrderNumber] = useState(lastOrderNumber);
   const [dealsSearch, setDealsSearch] = useState('');
