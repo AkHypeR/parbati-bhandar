@@ -171,7 +171,7 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
   };
 
   return (
-    <main className="relative min-h-dvh w-full flex-1 overflow-x-clip bg-[#f5f8f2] px-3 py-4 sm:px-4 sm:py-10">
+    <main className="pb-customer-account relative min-h-dvh w-full flex-1 overflow-x-clip bg-[#f5f8f2] px-3 py-4 sm:px-4 sm:py-10">
       <div aria-hidden="true" className="pointer-events-none absolute -left-24 -top-24 hidden h-72 w-72 rounded-full bg-emerald-200/50 blur-3xl md:block" />
       <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 -right-16 hidden h-80 w-80 rounded-full bg-amber-100/80 blur-3xl md:block" />
       <div className="relative mx-auto w-full min-w-0 max-w-5xl">
