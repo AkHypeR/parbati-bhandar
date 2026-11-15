@@ -687,23 +687,23 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       {/* STICKY SEARCH BAR & CATEGORY RIBBON (Follows User on Scroll)          */}
       {/* ===================================================================== */}
-      <div className="sticky top-0 z-40 border-b border-pink-200/80 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,.88),transparent_58%),linear-gradient(135deg,#ffe0e8_0%,#fff1f3_48%,#ffe6dc_100%)] shadow-[0_8px_24px_rgba(110,35,55,0.10)] backdrop-blur-xl">
+      <div className="sticky top-0 z-40 border-b border-emerald-100 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,.98),transparent_58%),linear-gradient(135deg,#f0fdf4_0%,#ffffff_52%,#ecfdf5_100%)] shadow-[0_8px_24px_rgba(6,78,59,0.08)] backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-3.5 sm:px-6 py-2.5 space-y-2.5">
           {/* Marketplace-style quick links, inspired by Flipkart's top shortcut row */}
           <nav aria-label="Quick shopping shortcuts" className="grid grid-cols-4 gap-2">
-            <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); bestItemsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[18px] border border-white/90 bg-white px-1.5 py-2.5 text-slate-800 shadow-[0_3px_10px_rgba(95,40,55,.10)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(95,40,55,.18)] active:scale-[.98]">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-amber-100 text-amber-700"><Sparkles className="h-5 w-5" /></span>
+            <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); bestItemsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[18px] border border-emerald-100 bg-white px-1.5 py-2.5 text-slate-800 shadow-[0_3px_10px_rgba(6,78,59,.07)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(6,78,59,.13)] active:scale-[.98]">
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-emerald-100 text-emerald-700"><Sparkles className="h-5 w-5" /></span>
               <span className="truncate text-[11px] font-extrabold sm:text-xs">Best Deals</span>
             </button>
-            <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[18px] border border-white/90 bg-white px-1.5 py-2.5 text-slate-800 shadow-[0_3px_10px_rgba(95,40,55,.10)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(95,40,55,.18)] active:scale-[.98]">
+            <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[18px] border border-emerald-100 bg-white px-1.5 py-2.5 text-slate-800 shadow-[0_3px_10px_rgba(6,78,59,.07)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(6,78,59,.13)] active:scale-[.98]">
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-emerald-100 text-emerald-700"><ShoppingCart className="h-5 w-5" /></span>
               <span className="truncate text-[11px] font-extrabold sm:text-xs">Groceries</span>
             </button>
-            <button type="button" onClick={() => onNavigate('/track-order')} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[18px] border border-white/90 bg-white px-1.5 py-2.5 text-slate-800 shadow-[0_3px_10px_rgba(95,40,55,.10)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(95,40,55,.18)] active:scale-[.98]">
+            <button type="button" onClick={() => onNavigate('/track-order')} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[18px] border border-emerald-100 bg-white px-1.5 py-2.5 text-slate-800 shadow-[0_3px_10px_rgba(6,78,59,.07)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(6,78,59,.13)] active:scale-[.98]">
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-sky-100 text-sky-700"><ClipboardList className="h-5 w-5" /></span>
               <span className="truncate text-[11px] font-extrabold sm:text-xs">Track Order</span>
             </button>
-            <button type="button" onClick={() => onNavigate('/cart')} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[18px] border border-white/90 bg-white px-1.5 py-2.5 text-slate-800 shadow-[0_3px_10px_rgba(95,40,55,.10)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(95,40,55,.18)] active:scale-[.98]">
+            <button type="button" onClick={() => onNavigate('/cart')} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[18px] border border-emerald-100 bg-white px-1.5 py-2.5 text-slate-800 shadow-[0_3px_10px_rgba(6,78,59,.07)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(6,78,59,.13)] active:scale-[.98]">
               <span className="relative grid h-9 w-9 place-items-center rounded-xl bg-violet-100 text-violet-700"><ShoppingCart className="h-5 w-5" />{cartTotalItems > 0 && <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-rose-500 px-1 text-[9px] font-black text-white">{cartTotalItems}</span>}</span>
               <span className="truncate text-[11px] font-extrabold sm:text-xs">My Cart</span>
             </button>
@@ -729,7 +729,7 @@ export function CustomerStorefront({
                     onChange={(e) => handleSearchInputChange(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Escape') setShowSearchSuggestions(false); }}
                     placeholder='Search rice, atta, oil, biscuits...'
-                    className="w-full rounded-2xl border-2 border-sky-300 bg-white py-3 pl-10 pr-9 text-xs font-medium text-slate-900 shadow-[0_3px_10px_rgba(15,60,100,.08)] placeholder:text-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100 sm:text-sm"
+                    className="w-full rounded-2xl border-2 border-emerald-100 bg-white py-3 pl-10 pr-9 text-xs font-medium text-slate-900 shadow-[0_3px_10px_rgba(6,78,59,.06)] placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-100 sm:text-sm"
                     autoComplete="off"
                   />
                   {searchQuery && <button type="button" aria-label="Clear search query" onClick={() => { setSearchQuery(''); setIsSearchSubmitted(false); setShowSearchSuggestions(false); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"><X className="w-4 h-4" /></button>}
@@ -757,11 +757,11 @@ export function CustomerStorefront({
               type="button"
               onClick={() => onNavigate('/cart')}
               aria-label="Open My Order List"
-              className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-[#ffd814] hover:bg-[#f7ca00] text-slate-950 font-extrabold text-xs shadow-2xs cursor-pointer shrink-0 tabular-nums"
+              className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-[#087a55] hover:bg-[#066847] text-white font-extrabold text-xs shadow-2xs cursor-pointer shrink-0 tabular-nums"
             >
               <ShoppingCart className="w-4 h-4" />
               <span className="hidden sm:inline">My Order</span>
-              <span className="px-1.5 py-0.5 rounded-full bg-slate-950 text-white text-[10px] font-black">
+              <span className="px-1.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-black">
                 {cartTotalItems}
               </span>
             </button>
@@ -784,7 +784,7 @@ export function CustomerStorefront({
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
                     isActive
                       ? 'bg-[#087a55] text-white shadow-2xs'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
                   }`}
                 >
                   <span className="text-sm">{cat.icon}</span>
@@ -807,7 +807,7 @@ export function CustomerStorefront({
         return <div className="pb-promo-overlay fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-md" role="dialog" aria-modal="true" aria-label="Welcome to Parbati Bhandar" onMouseDown={event => { if (event.target === event.currentTarget) closeWelcomePromo(); }}>
           <div className="pb-promo-card relative mx-auto flex max-h-[88dvh] w-full max-w-[420px] flex-col overflow-hidden rounded-[30px] border border-white/70 bg-white shadow-[0_28px_90px_rgba(0,0,0,.38)]">
             <button type="button" onClick={closeWelcomePromo} aria-label="Close welcome promotion" className="absolute right-3 top-3 z-30 grid h-10 w-10 place-items-center rounded-full border border-white/50 bg-slate-950/65 text-white shadow-lg transition hover:rotate-90 hover:bg-slate-900"><X className="h-5 w-5"/></button>
-            <div className="relative min-h-[270px] overflow-hidden bg-[#172554] sm:min-h-[300px]">
+            <div className="relative min-h-[270px] overflow-hidden bg-[#07543b] sm:min-h-[300px]">
               <img src="https://india.neelamfoodland.in/cdn/shop/files/timeline-5.jpg?crop=center&height=900&v=1751950729&width=1200" alt="Indian grocery shop with shelves stocked with packaged foods, cooking oils, spices and everyday essentials" className="absolute inset-0 h-full w-full object-cover" loading="eager"/>
               <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#0b1530]/95 via-[#172554]/55 to-black/10"/>
               <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-amber-300 via-white to-emerald-300"/>
@@ -846,7 +846,7 @@ export function CustomerStorefront({
             {/* Top Slider Header Bar: Shows Slide Counter, Rank Info & Auto-Slide Toggle */}
             <div className="flex items-center justify-between gap-2 px-1">
               <div className="flex items-center gap-2 min-w-0">
-                <span className="w-6 h-6 rounded-lg bg-amber-400 text-slate-950 flex items-center justify-center shadow-2xs shrink-0">
+                <span className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shadow-2xs shrink-0">
                   <Sparkles className="w-3.5 h-3.5 fill-slate-950" />
                 </span>
                 <div className="min-w-0">
@@ -876,14 +876,14 @@ export function CustomerStorefront({
                     </>
                   )}
                 </button>
-                <span className="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-amber-100 text-amber-950 border border-amber-300">
+                <span className="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-100">
                   {safeSlideIndex + 1} / {heroSlides.length}
                 </span>
               </div>
             </div>
 
             {/* Main Peek-Framed Slider Stage with Prev / Next Controls */}
-            <div className="relative flex items-center justify-center gap-2 sm:gap-3 overflow-hidden rounded-[28px] bg-gradient-to-br from-[#ecfdf5] via-white to-[#eaf1ff] p-1.5 sm:p-3 shadow-[0_14px_40px_rgba(5,90,48,0.12)]">
+            <div className="relative flex items-center justify-center gap-2 sm:gap-3 overflow-hidden rounded-[28px] bg-gradient-to-br from-[#ecfdf5] via-white to-[#d1fae5] p-1.5 sm:p-3 shadow-[0_14px_40px_rgba(5,90,48,0.12)]">
               {/* Left Peek Edge Card (Visual Framing like the mobile screenshot) */}
               <div
                 aria-hidden="true"
@@ -923,13 +923,13 @@ export function CustomerStorefront({
                       else catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  className={`pb-christmas-banner ${isChhathSeason ? "pb-chhath-banner" : isAutomaticFestivalSeason ? "pb-festival-banner" : ""} relative w-full max-w-3xl mx-auto min-h-[250px] rounded-[24px] overflow-hidden shadow-[0_22px_55px_rgba(8,35,25,.28)] border border-amber-200/50 cursor-pointer group select-none`}
+                  className={`pb-christmas-banner ${isChhathSeason ? "pb-chhath-banner" : isAutomaticFestivalSeason ? "pb-festival-banner" : ""} relative w-full max-w-3xl mx-auto min-h-[250px] rounded-[24px] overflow-hidden shadow-[0_22px_55px_rgba(8,35,25,.28)] border border-emerald-100 cursor-pointer group select-none`}
                 >
                   {!isChhathSeason && <img src="https://images.unsplash.com/photo-1767005608325-0ff075fca106?auto=format&fit=crop&w=1600&q=85" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"/>}
                   {isChhathSeason && <div className="pb-chhath-sunrise absolute inset-0" aria-hidden="true"><span className="pb-chhath-sun"/><span className="pb-chhath-horizon"/><span className="pb-chhath-ghat">🌴　🛕　🌴</span><span className="pb-chhath-water"/></div>}
-                  <div className={`absolute inset-0 ${isChhathSeason ? "bg-gradient-to-b from-orange-500/25 via-orange-950/55 to-sky-950/95" : "bg-gradient-to-b from-[#101a33]/35 via-[#172554]/65 to-[#0b1530]/95"}`}/>
+                  <div className={`absolute inset-0 ${isChhathSeason ? "bg-gradient-to-b from-orange-500/25 via-orange-950/55 to-sky-950/95" : "bg-gradient-to-b from-[#064e3b]/25 via-[#07543b]/65 to-[#052e22]/95"}`}/>
                   <div className="pb-christmas-glow absolute -right-12 -top-12 h-56 w-56 rounded-full bg-amber-300/25 blur-3xl"/>
-                  <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-red-500 via-amber-300 to-emerald-300"/>
+                  <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-emerald-300 via-white to-lime-300"/>
                   {isChhathSeason ? <div className="pb-chhath-toran absolute left-0 right-0 top-3 flex justify-around px-2 text-lg sm:text-xl" aria-hidden="true"><span>🌼</span><span>🌿</span><span>🪔</span><span>🌼</span><span>🌿</span><span>🪔</span><span>🌼</span><span>🌿</span></div> : <div className="pb-christmas-garland absolute left-0 right-0 top-3 flex justify-around px-2 text-lg sm:text-xl" aria-hidden="true"><span>🔴</span><span>🟡</span><span>🟢</span><span>🔴</span><span>🟡</span><span>🟢</span><span>🔴</span><span>🟡</span></div>}
                   <div className="relative z-10 flex min-h-[250px] flex-col items-center justify-center px-5 pb-7 pt-12 text-center">
                     <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[9px] font-black uppercase tracking-[.22em] text-emerald-100 backdrop-blur-sm">{isChhathSeason ? "🪔" : isAutomaticFestivalSeason ? (automaticFestivalTheme?.emoji || "🎉") : "🎄"} {currentSlide.tag}</span>
@@ -939,7 +939,7 @@ export function CustomerStorefront({
                     <p className="mt-1 text-[9px] font-black uppercase tracking-[.25em] text-amber-200">{isChhathSeason ? "Parbati Bhandar • সূর্য অর্ঘ্যের পবিত্র উৎসব" : isAutomaticFestivalSeason ? "Parbati Bhandar celebrates with you" : "Parbati Bhandar wishes you"}</p>
                     <h3 className="mt-2 text-4xl font-black leading-tight tracking-tight text-white drop-shadow-[0_4px_14px_rgba(0,0,0,.65)] sm:text-5xl">{currentSlide.title}</h3>
                     <p className="mt-2 max-w-[290px] text-xs font-semibold leading-relaxed text-emerald-50/90 sm:text-sm">{currentSlide.subtitle}</p>
-                    <button type="button" onClick={() => { const section=document.getElementById('christmas-special-products'); if(section) section.scrollIntoView({behavior:'smooth',block:'start'}); else catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#facc15] px-5 py-2.5 text-xs font-black text-emerald-950 shadow-lg transition hover:-translate-y-0.5">{isChhathSeason || isAutomaticFestivalSeason ? "Shop Festival Essentials" : `Shop ${storeSettings.seasonalCollectionTitle || 'Christmas Specials'}`} <ChevronRight className="h-4 w-4"/></button>
+                    <button type="button" onClick={() => { const section=document.getElementById('christmas-special-products'); if(section) section.scrollIntoView({behavior:'smooth',block:'start'}); else catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-xs font-black text-emerald-800 ring-1 ring-emerald-100 shadow-lg transition hover:-translate-y-0.5">{isChhathSeason || isAutomaticFestivalSeason ? "Shop Festival Essentials" : `Shop ${storeSettings.seasonalCollectionTitle || 'Christmas Specials'}`} <ChevronRight className="h-4 w-4"/></button>
                     <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-3 text-sm opacity-90" aria-hidden="true">{isChhathSeason ? <><span>🌼</span><span>🪔</span><span>🌾</span><span>🪔</span><span>🌼</span></> : <><span>✨</span><span>⭐</span><span>🎄</span><span>⭐</span><span>✨</span></>}</div>
                   </div>
                                 </div>
@@ -1269,7 +1269,7 @@ export function CustomerStorefront({
               className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
                 inStockOnly
                   ? 'bg-[#087a55] text-white'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
               }`}
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
@@ -1444,7 +1444,7 @@ export function CustomerStorefront({
                                     isSelected
                                       ? 'bg-[#087a55] text-white shadow-2xs'
                                       : v.inStock
-                                      ? 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                      ? 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
                                       : 'bg-slate-100 text-slate-400 line-through'
                                   }`}
                                 >
@@ -1500,7 +1500,7 @@ export function CustomerStorefront({
                                   className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer tabular-nums ${
                                     isSelected
                                       ? 'bg-[#087a55] text-white shadow-2xs'
-                                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                      : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
                                   }`}
                                 >
                                   {wOpt.label}
