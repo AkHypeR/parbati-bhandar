@@ -1,6 +1,6 @@
-# Parbati Bhandar
+# Parbati Vandar
 
-Parbati Bhandar is a React + TypeScript grocery storefront with a separate owner portal and customer account experience.
+Parbati Vandar is a React + TypeScript grocery storefront with a separate owner portal and customer account experience.
 
 ## Production architecture — selected for a zero-hosting-cost target
 
