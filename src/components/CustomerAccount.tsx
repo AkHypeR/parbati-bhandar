@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   ArrowLeft, Eye, EyeOff, UserRound, Phone, Package, LogOut,
   UserPlus, LogIn, ShoppingBasket, Sparkles, CheckCircle2, Clock3,
-  LockKeyhole, ArrowRight, ShieldCheck, ChevronRight, ReceiptText, Bell, BellRing, BellOff, RefreshCw
+  LockKeyhole, ArrowRight, ShieldCheck, ChevronRight, ReceiptText, Bell, BellRing, BellOff, RefreshCw, Download
 } from 'lucide-react';
 import { TurnstileWidget } from './TurnstileWidget';
 
@@ -277,6 +277,21 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
                 <div className="mt-6 flex items-center justify-center gap-2 text-xs font-medium text-slate-400"><CheckCircle2 className="h-4 w-4 text-emerald-600"/> Simple sign-in • Your details stay with your account</div>
               </>
             )}
+            <section aria-label="Download the Parbati Bhandar Android app" className="mt-6 rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-50 to-lime-50 p-4 sm:p-5">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex min-w-0 items-start gap-3">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-emerald-700 text-white"><Download className="h-5 w-5"/></span>
+                  <div className="min-w-0">
+                    <h3 className="font-extrabold text-slate-900">Download Parbati Bhandar App</h3>
+                    <p className="mt-1 text-xs leading-5 text-slate-600">Get the Android app for convenient grocery shopping from your phone.</p>
+                    <span className="mt-2 inline-flex rounded-full bg-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-800">Android APK · Version 1.0.0</span>
+                  </div>
+                </div>
+                <a href="https://expo.dev/artifacts/eas/Ygu8qZWb165XkroJ4GTELlXIdaK91YVxbeTbMvxDzeI.apk" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-700/20 sm:w-auto">
+                  <Download className="h-4 w-4"/> Download app
+                </a>
+              </div>
+            </section>
           </div>
         </section>
         <p className="mt-5 text-center text-xs font-medium text-slate-500">Parbati Bhandar · Everyday essentials, closer to home</p>
