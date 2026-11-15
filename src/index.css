@@ -1885,3 +1885,15 @@ html.pb-dark .pb-customer-orders .pb-orders-cancelled-notice * {
   color:#FFE0DA !important;
   -webkit-text-fill-color:#FFE0DA !important;
 }
+
+
+/* Popular groceries thumbnails currently include vivid blue baked-in backgrounds.
+   Desaturate only these thumbnails for a calmer, neutral storefront treatment. */
+.pb-popular-grocery-image {
+  filter: grayscale(1) sepia(.16) contrast(.96) !important;
+  mix-blend-mode:multiply;
+}
+html.pb-dark .pb-popular-grocery-image {
+  filter: grayscale(1) sepia(.12) brightness(.88) contrast(.94) !important;
+  mix-blend-mode:normal;
+}
