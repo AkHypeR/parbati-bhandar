@@ -422,7 +422,7 @@ export function CustomerStorefront({
   const isAutomaticFestivalSeason = Boolean(automaticFestivalTheme) && !isChhathSeason && !isChristmasSeason;
 
   return (
-    <div className={`pb-storefront-root flex-1 flex flex-col bg-[#F5F7FB] text-[#172554] pb-32 sm:pb-28 ${isChhathSeason ? "pb-chhath-page" : isChristmasSeason ? "pb-christmas-page" : isAutomaticFestivalSeason ? "pb-festival-page" : ""}`}>
+    <div className={`pb-storefront-root ${darkMode ? "pb-theme-dark" : "pb-theme-light"} flex-1 flex flex-col bg-[#F5F7FB] text-[#172554] pb-32 sm:pb-28 ${isChhathSeason ? "pb-chhath-page" : isChristmasSeason ? "pb-christmas-page" : isAutomaticFestivalSeason ? "pb-festival-page" : ""}`}>
 
       {/* ===================================================================== */}
       {/* TOP MOBILE-FIRST APP BAR WITH SHOP NAME                               */}
@@ -731,9 +731,17 @@ export function CustomerStorefront({
 
       {showWelcomePromo && currentPage === 'home' && !isSearchSubmitted && !searchQuery.trim() && (() => {
         return <div className="pb-promo-overlay fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-md" role="dialog" aria-modal="true" aria-label="Welcome to Parbati Vandar" onMouseDown={event => { if (event.target === event.currentTarget) closeWelcomePromo(); }}>
-          <div className="pb-promo-card relative mx-auto flex max-h-[88dvh] w-full max-w-[420px] flex-col overflow-hidden rounded-[30px] border border-white/70 bg-white shadow-[0_28px_90px_rgba(0,0,0,.38)]">
+          <div className={`pb-promo-card ${isChristmasSeason ? "pb-christmas-welcome" : ""} relative mx-auto flex max-h-[88dvh] w-full max-w-[420px] flex-col overflow-hidden rounded-[30px] border border-white/70 bg-white shadow-[0_28px_90px_rgba(0,0,0,.38)]` }>
             <button type="button" onClick={closeWelcomePromo} aria-label="Close welcome promotion" className="absolute right-3 top-3 z-30 grid h-10 w-10 place-items-center rounded-full border border-white/50 bg-slate-950/65 text-white shadow-lg transition hover:rotate-90 hover:bg-slate-900"><X className="h-5 w-5"/></button>
             <div className="relative min-h-[270px] overflow-hidden bg-[#07543b] sm:min-h-[300px]">
+              {isChristmasSeason && <div className="pb-welcome-christmas-decor absolute inset-0 z-[2] pointer-events-none overflow-hidden" aria-hidden="true">
+                <div className="pb-welcome-lights">✦　✧　✦　✧　✦　✧　✦</div>
+                <span className="pb-welcome-snowman pb-welcome-snowman-left">☃️</span><span className="pb-welcome-snowman pb-welcome-snowman-right">☃️</span>
+                <div className="pb-welcome-trees"><span>🎄</span><span>🎄</span><span>🎄</span><span>🎄</span><span>🎄</span></div>
+                {Array.from({length:22},(_,i)=><span key={i} className="pb-welcome-snowflake" style={{left: `${(i*43+7)%97}%`,animationDelay: `${(i%8)*-.7}s`,animationDuration: `${4+(i%5)*1.1}s`}}>❄</span>)}
+              </div>
+              }
+
               <img src="https://india.neelamfoodland.in/cdn/shop/files/timeline-5.jpg?crop=center&height=900&v=1751950729&width=1200" alt="Indian grocery shop with shelves stocked with packaged foods, cooking oils, spices and everyday essentials" className="absolute inset-0 h-full w-full object-cover" loading="eager"/>
               <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#0b1530]/95 via-[#172554]/55 to-black/10"/>
               <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-amber-300 via-white to-emerald-300"/>
@@ -893,7 +901,7 @@ export function CustomerStorefront({
                       else catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  className={`pb-christmas-banner ${isChhathSeason ? "pb-chhath-banner" : isAutomaticFestivalSeason ? "pb-festival-banner" : ""} relative w-full max-w-3xl mx-auto min-h-[250px] rounded-[24px] overflow-hidden shadow-[0_22px_55px_rgba(8,35,25,.28)] border border-emerald-100 cursor-pointer group select-none`}
+                  className={`pb-christmas-banner hidden ${isChhathSeason ? "pb-chhath-banner" : isAutomaticFestivalSeason ? "pb-festival-banner" : ""} relative w-full max-w-3xl mx-auto min-h-[250px] rounded-[24px] overflow-hidden shadow-[0_22px_55px_rgba(8,35,25,.28)] border border-emerald-100 cursor-pointer group select-none`}
                 >
                   {!isChhathSeason && <img src="https://images.unsplash.com/photo-1767005608325-0ff075fca106?auto=format&fit=crop&w=1600&q=85" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"/>}
                   {isChhathSeason && <div className="pb-chhath-sunrise absolute inset-0" aria-hidden="true"><span className="pb-chhath-sun"/><span className="pb-chhath-horizon"/><span className="pb-chhath-ghat">🌴　🛕　🌴</span><span className="pb-chhath-water"/></div>}
