@@ -1082,3 +1082,93 @@ button[class*="bg-emerald-600"]:hover,
 .pb-christmas-page .pb-christmas-banner p { color:#F0FDF4 !important; }
 .pb-christmas-page .pb-christmas-banner .text-amber-200 { color:#FDE68A !important; }
 @media (prefers-reduced-motion: reduce) { .pb-christmas-snow span { animation:none !important; } }
+
+
+/* ---- Contrast and theme corrections from the uploaded UI review ---- */
+
+/* Storefront dark mode: a complete, readable dark palette, not dark cards on a white page. */
+.pb-storefront-root.pb-theme-dark {
+  --pb-page:#101820; --pb-surface:#18232E; --pb-surface-soft:#202D39;
+  --pb-ink:#F5F7FA; --pb-muted:#C2CCD5; --pb-border:#344453;
+  background:#101820 !important; color:#F5F7FA !important;
+}
+.pb-storefront-root.pb-theme-dark :where(h1,h2,h3,h4,h5,strong,label) { color:#F5F7FA !important; }
+.pb-storefront-root.pb-theme-dark :where(p,small,li) { color:#D5DDE5; }
+.pb-storefront-root.pb-theme-dark .pb-editorial-header { background:#131921 !important; color:#FFFFFF !important; border-color:#344453 !important; }
+.pb-storefront-root.pb-theme-dark .pb-editorial-header :where(h1,h2,h3,p,span,a,button) { color:#FFFFFF !important; }
+.pb-storefront-root.pb-theme-dark .pb-editorial-hero-card { background:#232F3E !important; }
+.pb-storefront-root.pb-theme-dark .pb-editorial-hero-card :where(h1,p,span) { color:#FFFFFF !important; }
+.pb-storefront-root.pb-theme-dark .pb-sticky-search { background:#18232E !important; border-color:#344453 !important; }
+.pb-storefront-root.pb-theme-dark .pb-sticky-search input { background:#FFFFFF !important; color:#0F1111 !important; border-color:#A6A6A6 !important; }
+.pb-storefront-root.pb-theme-dark .pb-sticky-search input::placeholder { color:#565959 !important; }
+.pb-storefront-root.pb-theme-dark .pb-category-section { background:#101820 !important; color:#F5F7FA !important; }
+.pb-storefront-root.pb-theme-dark .pb-category-section :where(h2,p) { color:#F5F7FA !important; }
+.pb-storefront-root.pb-theme-dark .pb-category-chip { background:#202D39 !important; color:#F5F7FA !important; border-color:#465767 !important; }
+.pb-storefront-root.pb-theme-dark .pb-category-chip:hover { background:#2A3A49 !important; }
+.pb-storefront-root.pb-theme-dark .pb-category-chip.is-active { background:#FFD814 !important; color:#0F1111 !important; border-color:#FFD814 !important; }
+.pb-storefront-root.pb-theme-dark .pb-category-count { color:#C2CCD5 !important; }
+.pb-storefront-root.pb-theme-dark .pb-product-card { background:#18232E !important; border-color:#344453 !important; box-shadow:0 2px 8px rgba(0,0,0,.25) !important; }
+.pb-storefront-root.pb-theme-dark .pb-product-card :where(h3,h4,p,span,small,label) { color:#F5F7FA !important; }
+.pb-storefront-root.pb-theme-dark .pb-product-card .pb-product-image { background:#FFFFFF !important; border-color:#344453 !important; }
+.pb-storefront-root.pb-theme-dark .pb-product-card > div:last-child { background:#202D39 !important; border-color:#344453 !important; }
+.pb-storefront-root.pb-theme-dark .pb-product-card button[class*="bg-emerald-"],
+.pb-storefront-root.pb-theme-dark .pb-product-card button[class*="bg-green-"],
+.pb-storefront-root.pb-theme-dark .pb-product-card button[class*="bg-[#087a55]"] { background:#FFD814 !important; color:#0F1111 !important; }
+.pb-storefront-root.pb-theme-dark .pb-product-card [class*="text-slate-"],
+.pb-storefront-root.pb-theme-dark .pb-product-card [class*="text-gray-"] { color:#D5DDE5 !important; }
+.pb-storefront-root.pb-theme-dark [class*="bg-white"]:not(.pb-promo-card):not(.pb-promo-card *) { background-color:#18232E !important; }
+.pb-storefront-root.pb-theme-dark [class*="bg-slate-50"],
+.pb-storefront-root.pb-theme-dark [class*="bg-gray-50"] { background:#202D39 !important; }
+.pb-storefront-root.pb-theme-dark [class*="text-slate-900"],
+.pb-storefront-root.pb-theme-dark [class*="text-slate-800"],
+.pb-storefront-root.pb-theme-dark [class*="text-gray-900"],
+.pb-storefront-root.pb-theme-dark [class*="text-gray-800"] { color:#F5F7FA !important; }
+.pb-storefront-root.pb-theme-dark [class*="text-slate-600"],
+.pb-storefront-root.pb-theme-dark [class*="text-slate-500"],
+.pb-storefront-root.pb-theme-dark [class*="text-gray-600"],
+.pb-storefront-root.pb-theme-dark [class*="text-gray-500"] { color:#C2CCD5 !important; }
+.pb-storefront-root.pb-theme-dark [class*="border-slate-"],
+.pb-storefront-root.pb-theme-dark [class*="border-gray-"] { border-color:#344453 !important; }
+.pb-storefront-root.pb-theme-dark footer { background:#131921 !important; color:#FFFFFF !important; }
+
+/* Cart drawer: explicitly style the actual drawer surface and summary controls. */
+.pb-cart-overlay > div { background:#FFFFFF !important; color:#0F1111 !important; }
+.pb-cart-overlay .pb-cart-summary { background:#FFFFFF !important; color:#0F1111 !important; border-color:#D5D9D9 !important; }
+.pb-cart-overlay .pb-cart-summary :where(p,span) { color:#0F1111; }
+.pb-cart-overlay .pb-cart-summary > div:first-child > span:last-child { color:#067D62 !important; }
+.pb-cart-overlay .pb-cart-summary button.bg-emerald-700,
+.pb-cart-overlay .pb-cart-summary button.bg-emerald-800 { background:#FFD814 !important; color:#0F1111 !important; border:1px solid #FCD200 !important; }
+.pb-cart-overlay .pb-cart-summary button.text-emerald-700 { background:transparent !important; color:#007185 !important; }
+.pb-cart-overlay .pb-cart-summary button.text-emerald-700:hover { color:#C7511F !important; background:#F0F2F2 !important; }
+.pb-cart-overlay .pb-cart-content { background:#FFFFFF !important; color:#0F1111 !important; }
+.pb-cart-overlay .pb-cart-content :where(p,span,h3,h4,label) { color:#0F1111; }
+
+/* Owner access gate: preserve white copy on the dark brand panel; don't turn glass cards white. */
+.pb-owner-pin-gate section:first-child { background:linear-gradient(135deg,#131921,#232F3E) !important; color:#FFFFFF !important; }
+.pb-owner-pin-gate section:first-child :where(h1,p) { color:#FFFFFF !important; }
+.pb-owner-pin-gate section:first-child p.text-emerald-200,
+.pb-owner-pin-gate section:first-child p.text-emerald-100\/90,
+.pb-owner-pin-gate section:first-child p.text-emerald-100\/80 { color:#E8EEF4 !important; }
+.pb-owner-pin-gate section:first-child > div:last-child { background:rgba(255,255,255,.10) !important; border-color:rgba(255,255,255,.18) !important; }
+.pb-owner-pin-gate section:first-child > div:last-child p { color:#FFFFFF !important; }
+.pb-owner-pin-gate section:last-child :where(h2,p,label) { color:#0F1111; }
+.pb-owner-pin-gate section:last-child p.text-slate-500 { color:#565959 !important; }
+.pb-owner-pin-gate section:last-child p.text-slate-400 { color:#626B70 !important; }
+.pb-owner-pin-gate section:last-child button[type="submit"] { background:#2162A1 !important; color:#FFFFFF !important; }
+
+/* Christmas welcome popup: snowmen on both sides, trees along the snowy bottom and soft lights. */
+.pb-christmas-welcome .relative.min-h-\[270px\] { background:#12372D !important; }
+.pb-christmas-welcome .pb-welcome-christmas-decor { background:radial-gradient(ellipse at 50% 35%,rgba(255,223,143,.18),transparent 56%); }
+.pb-welcome-lights { position:absolute; top:10px; left:0; right:0; text-align:center; color:#FFE7A3; font-size:20px; letter-spacing:5px; text-shadow:0 0 8px #FFE7A3,0 0 20px #F6C85F; animation:pbWelcomeGlow 2.6s ease-in-out infinite alternate; }
+.pb-welcome-snowman { position:absolute; top:40%; font-size:clamp(38px,9vw,64px); filter:drop-shadow(0 4px 8px rgba(0,0,0,.35)); animation:pbWelcomeBob 3s ease-in-out infinite; }
+.pb-welcome-snowman-left { left:3%; }
+.pb-welcome-snowman-right { right:3%; animation-delay:-1.5s; }
+.pb-welcome-trees { position:absolute; left:0; right:0; bottom:-3px; display:flex; justify-content:space-around; align-items:flex-end; font-size:clamp(24px,6vw,42px); filter:drop-shadow(0 0 8px rgba(255,255,255,.35)); }
+.pb-welcome-trees span:nth-child(even) { font-size:.78em; }
+.pb-welcome-snowflake { position:absolute; top:-24px; color:#FFFFFF; font-size:14px; opacity:.85; text-shadow:0 0 8px #FFFFFF; animation:pbSnowFall linear infinite; }
+@keyframes pbWelcomeGlow { from {opacity:.65;filter:brightness(.9)} to {opacity:1;filter:brightness(1.35)} }
+@keyframes pbWelcomeBob { 0%,100% {transform:translateY(0)} 50% {transform:translateY(-7px)} }
+@keyframes pbSnowFall { to { transform:translateY(340px) rotate(180deg); opacity:.1; } }
+@media (prefers-reduced-motion:reduce) {
+ .pb-welcome-lights,.pb-welcome-snowman,.pb-welcome-snowflake { animation:none !important; }
+}
