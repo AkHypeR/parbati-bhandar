@@ -22,7 +22,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       id: row.id,
       orderNumber: Number(row.order_number),
       status: row.status,
-      total: (JSON.parse(row.items_json || "[]") as any[]).filter(item => !item.unavailable).reduce((sum,item) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0),
+      total: row.status === "cancelled" ? 0 : (JSON.parse(row.items_json || "[]") as any[]).filter(item => !item.unavailable).reduce((sum,item) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0),
       unavailableDeduction: (JSON.parse(row.items_json || "[]") as any[]).filter(item => item.unavailable).reduce((sum,item) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0),
       confirmedAt: row.confirmed_at || null,
       readyAt: row.ready_at || row.confirmed_at || null,
@@ -42,6 +42,6 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   if (!row || String(row.customer_phone || "").replace(/\D/g, "") !== phone) return json({error:"No matching order was found. Check the details and try again."},404);
   const items = (JSON.parse(row.items_json || "[]") as any[]).map(item => ({name:item.name,quantity:item.quantity,unit:item.unit,price:Number(item.price || 0),lineTotal:Number(item.price || 0)*Number(item.quantity || 0),unavailable:!!item.unavailable}));
   const unavailableDeduction = items.filter((item:any) => item.unavailable).reduce((sum:number,item:any) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0);
-  const finalTotal = items.filter((item:any) => !item.unavailable).reduce((sum:number,item:any) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0);
+  const finalTotal = row.status === "cancelled" ? 0 : items.filter((item:any) => !item.unavailable).reduce((sum:number,item:any) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0);
   return json({id:row.id,orderNumber:Number(row.order_number),status:row.status,total:finalTotal,originalTotal:Number(row.total || 0),unavailableDeduction,confirmedAt:row.confirmed_at || null,readyAt:row.ready_at || row.confirmed_at || null,estimatedReadyAt:row.estimated_ready_at || null,items,createdAt:row.created_at,updatedAt:row.updated_at},200,{"cache-control":"no-store"});
 };
