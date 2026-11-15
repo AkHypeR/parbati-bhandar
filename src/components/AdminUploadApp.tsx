@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 
 const SEASONAL_COLLECTION_ICONS = [
   { label: 'Diwali', icon: '🪔' }, { label: 'Holi', icon: '🎨' }, { label: 'Durga Puja', icon: '🌺' },
@@ -257,6 +257,20 @@ export function AdminUploadApp({
   const [orderSearch, setOrderSearch] = useState('');
   const [orderStatusFilter, setOrderStatusFilter] = useState('all');
   const [dealSearch, setDealSearch] = useState('');
+  // Keep the deal picker lightweight: show saved selections by default and
+  // limit live search results so large inventories do not create hundreds of DOM rows.
+  const dealPickerProducts = useMemo(() => {
+    const term = dealSearch.trim().toLowerCase();
+    const matches = term
+      ? products.filter(product => [product.name, product.category].some(value => String(value || '').toLowerCase().includes(term)))
+      : products.filter(product => (storeSettings.dealProductIds || []).includes(product.id));
+    return matches.slice(0, 40);
+  }, [products, dealSearch, storeSettings.dealProductIds]);
+  const dealPickerHasMore = useMemo(() => {
+    const term = dealSearch.trim().toLowerCase();
+    if (!term) return false;
+    return products.filter(product => [product.name, product.category].some(value => String(value || '').toLowerCase().includes(term))).length > 40;
+  }, [products, dealSearch]);
   const visibleCustomerOrders = customerOrders.filter(order => {
     const term = orderSearch.trim().toLowerCase();
     const matchesSearch = !term || [order.customerName, order.customerPhone, String(order.orderNumber)].some(value => value.toLowerCase().includes(term));
@@ -1818,11 +1832,15 @@ export function AdminUploadApp({
               <label className="block text-xs font-bold text-slate-700">Find a product
                 <input type="search" value={dealSearch} onChange={e => setDealSearch(e.target.value)} placeholder="Search product name or category…" className="mt-1.5 w-full rounded-xl border border-rose-200 bg-white px-3 py-2.5 text-sm font-medium outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-100" />
               </label>
-              <div className="max-h-64 overflow-y-auto rounded-xl border border-rose-100 bg-white divide-y divide-slate-100">
-                {products.filter(product => !dealSearch.trim() || [product.name, product.category].some(value => String(value || "").toLowerCase().includes(dealSearch.trim().toLowerCase()))).length === 0 ? <p className="p-4 text-center text-xs text-slate-500">No products match your search.</p> : products.filter(product => !dealSearch.trim() || [product.name, product.category].some(value => String(value || "").toLowerCase().includes(dealSearch.trim().toLowerCase()))).map(product => {
+              <div className="max-h-64 overflow-y-auto rounded-xl border border-slate-200 bg-white divide-y divide-slate-100">
+                {dealPickerProducts.length === 0 ? (
+                  <p className="p-4 text-center text-xs text-slate-500">
+                    {dealSearch.trim() ? 'No products match your search.' : 'No deals selected yet. Search for a product above to add one.'}
+                  </p>
+                ) : dealPickerProducts.map(product => {
                   const selected = (storeSettings.dealProductIds || []).includes(product.id);
                   return (
-                    <label key={product.id} className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-rose-50">
+                    <label key={product.id} className="flex min-h-12 items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-slate-50">
                       <input
                         type="checkbox"
                         checked={selected}
@@ -1833,16 +1851,17 @@ export function AdminUploadApp({
                             : current.filter(id => id !== product.id);
                           onSaveSettings({ ...storeSettings, dealProductIds: nextIds });
                         }}
-                        className="w-4 h-4 accent-rose-600 shrink-0"
+                        className="w-4 h-4 accent-[#315B7D] shrink-0"
                       />
                       <span className="text-lg">{product.emoji || '🛍️'}</span>
-                      <span className="min-w-0 flex-1 text-xs font-bold text-slate-800 truncate">{product.name}</span>
-                      <span className="text-xs font-extrabold text-slate-900">₹{product.price}</span>
-                      {!product.inStock && <span className="text-[9px] font-bold text-rose-600">OUT OF STOCK</span>}
+                      <span className="min-w-0 flex-1 text-xs font-semibold text-slate-800 truncate">{product.name}</span>
+                      <span className="text-xs font-bold text-slate-900 tabular-nums">₹{product.price}</span>
+                      {!product.inStock && <span className="text-[9px] font-bold text-rose-600 whitespace-nowrap">OUT OF STOCK</span>}
                     </label>
                   );
                 })}
               </div>
+              {dealPickerHasMore && <p className="text-[10px] text-slate-500">Showing the first 40 matches. Refine your search to narrow the list.</p>}
               <p className="text-[10px] text-slate-500">Turn the section ON when ready. Your selected products stay saved when you turn it OFF.</p>
             </div>
 
