@@ -431,7 +431,7 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       {/* TOP MOBILE-FIRST APP BAR WITH SHOP NAME                               */}
       {/* ===================================================================== */}
-      <header className={`text-white border-b shadow-sm ${isChhathSeason ? "pb-chhath-header" : isAutomaticFestivalSeason ? "pb-festival-header" : "bg-[#1d4ed8] border-blue-900/20"}`}>
+      <header className={`text-white border-b shadow-sm ${isChhathSeason ? "pb-chhath-header" : isAutomaticFestivalSeason ? "pb-festival-header" : "bg-gradient-to-r from-[#075b43] via-[#087653] to-[#064e3b] border-emerald-900/20"}`}>
         <div className="max-w-5xl mx-auto px-3.5 sm:px-6 pt-3 pb-2">
           {/* Row 1: Profile | Shop Name (5-tap secret owner access) | Quick Actions */}
           <div className="flex items-center justify-between gap-2">
@@ -492,18 +492,6 @@ export function CustomerStorefront({
                 title="Call Parbati Bhandar: 097347 65207"
               >
                 <Phone className="w-4 h-4" />
-              </a>
-              <a
-                href={`https://wa.me/${storeSettings.whatsappNumber || '919734765207'}?text=${encodeURIComponent(
-                  'নমস্কার পার্বতী ভান্ডার (Parbati Bhandar), আমি কিছু মুদিখানার জিনিসের খোঁজ নিতে চাই।'
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="WhatsApp Store"
-                className="w-9 h-9 rounded-full bg-[#f6c744] hover:bg-[#f0b91f] text-blue-950 flex items-center justify-center shadow-2xs transition-colors"
-                title="WhatsApp Parbati Bhandar"
-              >
-                <MessageCircle className="w-4 h-4" />
               </a>
               <button
                 type="button"
@@ -699,28 +687,28 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       {/* STICKY SEARCH BAR & CATEGORY RIBBON (Follows User on Scroll)          */}
       {/* ===================================================================== */}
-      <div className="sticky top-0 z-40 bg-[#fff7f8]/95 backdrop-blur-xl border-b border-pink-100 shadow-[0_8px_24px_rgba(15,23,42,0.08)]">
+      <div className="sticky top-0 z-40 border-b border-pink-200/80 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,.88),transparent_58%),linear-gradient(135deg,#ffe0e8_0%,#fff1f3_48%,#ffe6dc_100%)] shadow-[0_8px_24px_rgba(110,35,55,0.10)] backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-3.5 sm:px-6 py-2.5 space-y-2.5">
           {/* Marketplace-style quick links, inspired by Flipkart's top shortcut row */}
           <nav aria-label="Quick shopping shortcuts" className="grid grid-cols-4 gap-2">
-            <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); bestItemsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-2xl border border-amber-100 bg-gradient-to-b from-amber-50 to-white px-1.5 py-2.5 text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md active:scale-[.98]">
+            <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); bestItemsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[18px] border border-white/90 bg-white px-1.5 py-2.5 text-slate-800 shadow-[0_3px_10px_rgba(95,40,55,.10)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(95,40,55,.18)] active:scale-[.98]">
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-amber-100 text-amber-700"><Sparkles className="h-5 w-5" /></span>
               <span className="truncate text-[11px] font-extrabold sm:text-xs">Best Deals</span>
             </button>
-            <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-2xl border border-emerald-100 bg-gradient-to-b from-emerald-50 to-white px-1.5 py-2.5 text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md active:scale-[.98]">
+            <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[18px] border border-white/90 bg-white px-1.5 py-2.5 text-slate-800 shadow-[0_3px_10px_rgba(95,40,55,.10)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(95,40,55,.18)] active:scale-[.98]">
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-emerald-100 text-emerald-700"><ShoppingCart className="h-5 w-5" /></span>
               <span className="truncate text-[11px] font-extrabold sm:text-xs">Groceries</span>
             </button>
-            <button type="button" onClick={() => onNavigate('/track-order')} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-2xl border border-sky-100 bg-gradient-to-b from-sky-50 to-white px-1.5 py-2.5 text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md active:scale-[.98]">
+            <button type="button" onClick={() => onNavigate('/track-order')} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[18px] border border-white/90 bg-white px-1.5 py-2.5 text-slate-800 shadow-[0_3px_10px_rgba(95,40,55,.10)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(95,40,55,.18)] active:scale-[.98]">
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-sky-100 text-sky-700"><ClipboardList className="h-5 w-5" /></span>
               <span className="truncate text-[11px] font-extrabold sm:text-xs">Track Order</span>
             </button>
-            <button type="button" onClick={() => onNavigate('/cart')} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-2xl border border-violet-100 bg-gradient-to-b from-violet-50 to-white px-1.5 py-2.5 text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md active:scale-[.98]">
+            <button type="button" onClick={() => onNavigate('/cart')} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[18px] border border-white/90 bg-white px-1.5 py-2.5 text-slate-800 shadow-[0_3px_10px_rgba(95,40,55,.10)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(95,40,55,.18)] active:scale-[.98]">
               <span className="relative grid h-9 w-9 place-items-center rounded-xl bg-violet-100 text-violet-700"><ShoppingCart className="h-5 w-5" />{cartTotalItems > 0 && <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-rose-500 px-1 text-[9px] font-black text-white">{cartTotalItems}</span>}</span>
               <span className="truncate text-[11px] font-extrabold sm:text-xs">My Cart</span>
             </button>
           </nav>
-          <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[11px] font-semibold text-slate-600">
+          <div className="flex items-center gap-2 rounded-xl border border-white/90 bg-white/75 px-3 py-2 text-[11px] font-semibold text-slate-600 shadow-sm">
             <MapPin className="h-4 w-4 shrink-0 text-blue-700" />
             <span className="truncate">Delivering from <strong className="text-slate-800">Parbati Bhandar</strong> · {storeSettings.address || 'Swasti Pally, Burdwan'}</span>
             <span className={`ml-auto shrink-0 rounded-full px-2 py-1 text-[9px] font-extrabold ${liveIsOpen ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-700'}`}>{liveIsOpen ? 'OPEN' : 'CLOSED'}</span>
@@ -741,7 +729,7 @@ export function CustomerStorefront({
                     onChange={(e) => handleSearchInputChange(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Escape') setShowSearchSuggestions(false); }}
                     placeholder='Search rice, atta, oil, biscuits...'
-                    className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-white text-slate-900 placeholder-slate-400 text-xs sm:text-sm font-medium border border-blue-200 shadow-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                    className="w-full rounded-2xl border-2 border-sky-300 bg-white py-3 pl-10 pr-9 text-xs font-medium text-slate-900 shadow-[0_3px_10px_rgba(15,60,100,.08)] placeholder:text-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-100 sm:text-sm"
                     autoComplete="off"
                   />
                   {searchQuery && <button type="button" aria-label="Clear search query" onClick={() => { setSearchQuery(''); setIsSearchSubmitted(false); setShowSearchSuggestions(false); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"><X className="w-4 h-4" /></button>}
@@ -935,7 +923,7 @@ export function CustomerStorefront({
                       else catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  className={`pb-christmas-banner ${isChhathSeason ? "pb-chhath-banner" : isAutomaticFestivalSeason ? "pb-festival-banner" : ""} relative w-full max-w-3xl mx-auto min-h-[390px] rounded-[28px] overflow-hidden shadow-[0_22px_55px_rgba(8,35,25,.28)] border border-amber-200/50 cursor-pointer group select-none`}
+                  className={`pb-christmas-banner ${isChhathSeason ? "pb-chhath-banner" : isAutomaticFestivalSeason ? "pb-festival-banner" : ""} relative w-full max-w-3xl mx-auto min-h-[250px] rounded-[24px] overflow-hidden shadow-[0_22px_55px_rgba(8,35,25,.28)] border border-amber-200/50 cursor-pointer group select-none`}
                 >
                   {!isChhathSeason && <img src="https://images.unsplash.com/photo-1767005608325-0ff075fca106?auto=format&fit=crop&w=1600&q=85" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"/>}
                   {isChhathSeason && <div className="pb-chhath-sunrise absolute inset-0" aria-hidden="true"><span className="pb-chhath-sun"/><span className="pb-chhath-horizon"/><span className="pb-chhath-ghat">🌴　🛕　🌴</span><span className="pb-chhath-water"/></div>}
@@ -943,7 +931,7 @@ export function CustomerStorefront({
                   <div className="pb-christmas-glow absolute -right-12 -top-12 h-56 w-56 rounded-full bg-amber-300/25 blur-3xl"/>
                   <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-red-500 via-amber-300 to-blue-300"/>
                   {isChhathSeason ? <div className="pb-chhath-toran absolute left-0 right-0 top-3 flex justify-around px-2 text-lg sm:text-xl" aria-hidden="true"><span>🌼</span><span>🌿</span><span>🪔</span><span>🌼</span><span>🌿</span><span>🪔</span><span>🌼</span><span>🌿</span></div> : <div className="pb-christmas-garland absolute left-0 right-0 top-3 flex justify-around px-2 text-lg sm:text-xl" aria-hidden="true"><span>🔴</span><span>🟡</span><span>🟢</span><span>🔴</span><span>🟡</span><span>🟢</span><span>🔴</span><span>🟡</span></div>}
-                  <div className="relative z-10 flex min-h-[390px] flex-col items-center justify-center px-5 pb-7 pt-12 text-center">
+                  <div className="relative z-10 flex min-h-[250px] flex-col items-center justify-center px-5 pb-7 pt-12 text-center">
                     <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[9px] font-black uppercase tracking-[.22em] text-blue-100 backdrop-blur-sm">{isChhathSeason ? "🪔" : isAutomaticFestivalSeason ? (automaticFestivalTheme?.emoji || "🎉") : "🎄"} {currentSlide.tag}</span>
                     <div className="relative mt-3 flex h-28 w-full items-center justify-center gap-2 sm:h-32" aria-hidden="true">
                       {isChhathSeason ? <><span className="pb-chhath-float text-5xl sm:text-6xl">🪔</span><span className="pb-chhath-float text-6xl sm:text-7xl" style={{animationDelay:"-.7s"}}>🧺</span><span className="pb-chhath-float text-5xl sm:text-6xl" style={{animationDelay:"-1.3s"}}>🌾</span><span className="absolute left-[15%] top-1 text-xl">🌼</span><span className="absolute right-[15%] bottom-0 text-xl">✨</span></> : <><span className="pb-christmas-sway text-6xl drop-shadow-lg sm:text-7xl">🎄</span><span className="pb-christmas-gift text-4xl sm:text-5xl">🎁</span><span className="pb-christmas-sway text-5xl sm:text-6xl" style={{animationDelay:"-.8s"}}>🧸</span><span className="absolute left-[18%] top-1 text-xl">✨</span><span className="absolute right-[17%] bottom-0 text-xl">✨</span></>}
@@ -990,9 +978,9 @@ export function CustomerStorefront({
                         }));
 
                   return (
-                    <div className="group relative w-full max-w-[760px] mx-auto h-[min(520px,70vh)] min-h-[390px] sm:min-h-[460px] lg:min-h-[500px] rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-xl border-2 border-blue-200 bg-gradient-to-br from-[#eff6ff] via-white to-[#dbeafe] select-none animate-[fadeIn_550ms_ease-out]">
+                    <div className="group relative w-full max-w-[760px] mx-auto h-[min(360px,48vh)] min-h-[290px] sm:min-h-[340px] lg:min-h-[360px] rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-xl border-2 border-blue-200 bg-gradient-to-br from-[#eff6ff] via-white to-[#dbeafe] select-none animate-[fadeIn_550ms_ease-out]">
                       {/* Large product artwork, styled like a storefront campaign banner */}
-                      <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6 lg:p-8 pb-44 sm:pb-48 lg:pb-52">
+                      <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6 lg:p-8 pb-36 sm:pb-40 lg:pb-40">
                         {item.imageUrl ? (
                           <img
                             src={item.imageUrl}
@@ -1202,8 +1190,8 @@ export function CustomerStorefront({
           </article>;
         };
         return <section aria-label="Deal Zone and featured products" className="mx-auto mb-5 w-full max-w-6xl overflow-hidden px-3.5 sm:px-6">
-          <div className="overflow-hidden rounded-[26px] bg-gradient-to-br from-[#eaf2ff] via-[#f4f7ff] to-[#f1efff] px-3.5 pb-4 pt-5 shadow-sm sm:px-5 sm:pt-6">
-            <div className="relative overflow-hidden rounded-[22px] bg-gradient-to-r from-[#dbeafe] via-[#eff6ff] to-[#e9eaff] px-4 py-5 sm:px-7 sm:py-7">
+          <div className="overflow-hidden rounded-[24px] bg-gradient-to-br from-[#fff0f4] via-[#fff8f0] to-[#eef6ff] px-3.5 pb-4 pt-4 shadow-sm sm:px-5 sm:pt-6">
+            <div className="relative overflow-hidden rounded-[20px] bg-gradient-to-r from-[#ffe2e9] via-[#fff1e8] to-[#e8f4ff] px-4 py-4 sm:px-7 sm:py-5">
               <div aria-hidden="true" className="absolute -right-8 -top-12 h-44 w-44 rounded-full border-[22px] border-white/35"/>
               <div className="relative z-10 flex items-center justify-between gap-3">
                 <div><p className="text-[10px] font-black uppercase tracking-[.2em] text-sky-800 sm:text-xs">Parbati Bhandar specials</p><h2 className="mt-1 text-3xl font-black leading-none tracking-tight text-[#172554] sm:text-5xl">DEAL ZONE</h2><p className="mt-2 max-w-[230px] text-xs font-semibold text-sky-900/75 sm:text-sm">Real savings and handpicked grocery offers.</p></div>
@@ -1752,79 +1740,15 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       {/* STICKY BOTTOM CART BAR (Product Thumbnails + Total + Yellow Proceed)  */}
       {/* ===================================================================== */}
-      <div
-        aria-label="Sticky Shopping Cart Bar"
-        className="pb-mobile-bottom-cart fixed bottom-0 inset-x-0 z-40 bg-white border-t border-slate-200 shadow-[0_-8px_24px_rgba(15,23,42,0.1)]"
-      >
-        <div className="max-w-3xl mx-auto">
-          {/* Product Thumbnails + Total & Saved + Yellow "Proceed" Pill Button */}
-          <div className="px-3.5 sm:px-5 py-2.5 flex items-center justify-between gap-3 tabular-nums">
-            <button
-              type="button"
-              onClick={() => onNavigate('/cart')}
-              aria-label="Review items in order list"
-              className="flex items-center gap-3 text-left cursor-pointer group min-w-0"
-            >
-              {/* Overlapping Circular Item Thumbnails */}
-              <div className="flex items-center -space-x-2.5 shrink-0">
-                {cartItemsList.length > 0 ? (
-                  cartItemsList.slice(0, 3).map((entry) => (
-                    <div
-                      key={entry.cartKey}
-                      className="w-10 h-10 rounded-full bg-slate-100 border-2 border-white shadow-xs flex items-center justify-center text-lg overflow-hidden"
-                    >
-                      {entry.product.imageUrl ? (
-                        <img
-                          src={entry.product.imageUrl}
-                          alt={entry.product.name}
-                          referrerPolicy="no-referrer"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span>{entry.product.emoji || '🛍️'}</span>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-slate-100 border-2 border-white shadow-xs flex items-center justify-center text-slate-600">
-                    <ShoppingCart className="w-4 h-4" />
-                  </div>
-                )}
-              </div>
-
-              {/* Price + Saved + Item Count ^ */}
-              <div className="min-w-0">
-                <div className="flex items-baseline gap-1.5 flex-wrap">
-                  <span className="text-base sm:text-lg font-black text-slate-950">
-                    ₹{cartTotalPrice}
-                  </span>
-                  {cartTotalSaved > 0 && (
-                    <span className="text-xs font-extrabold text-blue-700">
-                      ₹{cartTotalSaved} saved
-                    </span>
-                  )}
-                </div>
-                <div className="text-xs text-slate-500 font-semibold flex items-center gap-1 group-hover:text-slate-800">
-                  <span>
-                    {cartTotalItems} {cartTotalItems === 1 ? 'item' : 'items'}
-                  </span>
-                  <ChevronUp className="w-3.5 h-3.5" />
-                </div>
-              </div>
-            </button>
-
-            {/* Bright Yellow Pill "Proceed" Button (Matches Screenshot) */}
-            <button
-              type="button"
-              onClick={() => onNavigate('/cart')}
-              aria-label="Proceed to Order List"
-              className="px-7 sm:px-9 py-3 rounded-full bg-[#ffd814] hover:bg-[#f7ca00] active:scale-98 text-slate-950 font-black text-sm sm:text-base shadow-sm transition-all cursor-pointer shrink-0"
-            >
-              Proceed
-            </button>
-          </div>
+      <nav aria-label="Main navigation" className="fixed bottom-3 left-1/2 z-50 w-[calc(100%-24px)] max-w-[620px] -translate-x-1/2 rounded-full border border-slate-200/90 bg-white/95 p-1.5 shadow-[0_8px_30px_rgba(15,23,42,.18)] backdrop-blur-xl">
+        <div className="grid grid-cols-5 items-center">
+          <button type="button" onClick={() => { onNavigate('/'); setSearchQuery(''); setIsSearchSubmitted(false); setSelectedCategory('all'); }} className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full bg-blue-50 px-1 py-2 text-blue-700"><Store className="h-5 w-5" /><span className="text-[10px] font-extrabold">Home</span></button>
+          <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); bestItemsSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-slate-600 transition hover:bg-slate-50 hover:text-blue-700"><Sparkles className="h-5 w-5" /><span className="text-[10px] font-semibold">Offers</span></button>
+          <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-slate-600 transition hover:bg-slate-50 hover:text-blue-700"><Package className="h-5 w-5" /><span className="text-[10px] font-semibold">Categories</span></button>
+          <button type="button" onClick={() => onNavigate('/account')} className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-slate-600 transition hover:bg-slate-50 hover:text-blue-700"><User className="h-5 w-5" /><span className="text-[10px] font-semibold">Account</span></button>
+          <button type="button" onClick={() => onNavigate('/cart')} className="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-slate-700 transition hover:bg-slate-50 hover:text-blue-700"><span className="relative"><ShoppingCart className="h-5 w-5" />{cartTotalItems > 0 && <span className="absolute -right-2 -top-2 grid h-4 min-w-4 place-items-center rounded-full bg-rose-500 px-1 text-[9px] font-black text-white">{cartTotalItems}</span>}</span><span className="text-[10px] font-semibold">Cart</span></button>
         </div>
-      </div>
+      </nav>
       </>)}
     </div>
   );
