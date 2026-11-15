@@ -9,15 +9,20 @@
    Use one dominant brand hue, one action hue and one warm accent; avoid green as a brand colour.
 */
 :root {
-  --pb-brand: #07543b;
-  --pb-primary: #087a55;
-  --pb-primary-hover: #066847;
-  --pb-accent: #a3cf45;
-  --pb-canvas: #f7faf8;
-  --pb-surface: #ffffff;
-  --pb-text: #0f172a;
-  --pb-muted: #64748b;
-  --pb-border: #dcebe2;
+  /* Parbati Vandar — Sage / Off-White / Whistler / Tomato Red */
+  --pb-brand: #64765F;
+  --pb-primary: #788B72;
+  --pb-primary-hover: #5F735A;
+  --pb-accent: #E8412C;
+  --pb-canvas: #F8F7F2;
+  --pb-surface: #FFFEFA;
+  --pb-text: #30352F;
+  --pb-muted: #73786F;
+  --pb-border: #D8DAD2;
+  --pb-sage: #788B72;
+  --pb-off-white: #F8F7F2;
+  --pb-whistler: #D8DAD2;
+  --pb-tomato: #E8412C;
 }
 
 
@@ -350,3 +355,56 @@ html.pb-dark .text-blue-950 { color:#dbeafe !important; }
   .pb-product-card { transition: none !important; }
   .pb-product-card:hover { transform: none; }
 }
+
+
+/* Unified Sage + Off-White + Whistler + Tomato Red brand refresh.
+   Sage is the primary brand/action colour; tomato is reserved for key CTAs,
+   offer highlights and important attention states. */
+:root { color-scheme: light; }
+body { background: var(--pb-canvas); color: var(--pb-text); }
+#root { background: var(--pb-canvas); }
+.pb-cart-header { background: var(--pb-brand) !important; }
+.pb-product-card { background: var(--pb-surface); border-color: var(--pb-whistler) !important; }
+.pb-product-card:hover { border-color: var(--pb-sage) !important; }
+.pb-product-image { background: var(--pb-off-white) !important; }
+.pb-mobile-bottom-cart, nav[aria-label="Main navigation"] { border-color: var(--pb-whistler) !important; }
+.pb-loader-track { background: linear-gradient(90deg, var(--pb-off-white), var(--pb-whistler)); }
+.pb-loader-product { border-color: var(--pb-whistler); box-shadow: 0 4px 12px rgba(100,118,95,.08); }
+.pb-welcome-glow {
+  background:
+    radial-gradient(ellipse at 8% 0%, rgba(120,139,114,.18), transparent 38%),
+    radial-gradient(ellipse at 100% 100%, rgba(232,65,44,.10), transparent 34%);
+}
+.pb-cart-qty { background: var(--pb-off-white) !important; }
+.pb-cart-recommendation { border-color: var(--pb-whistler) !important; }
+.pb-cart-summary { background: var(--pb-surface); }
+.pb-cart-summary button,
+.pb-product-grid button[class*="bg-emerald-600"],
+button[class*="bg-emerald-600"] { background-color: var(--pb-tomato) !important; }
+button[class*="bg-emerald-600"]:hover,
+.pb-product-grid button[class*="bg-emerald-600"]:hover { background-color: #CE3524 !important; }
+
+/* Replace common Tailwind brand-green surfaces and accents without changing layout. */
+[class*="bg-emerald-50"], [class*="bg-green-50"] { background-color: #EEF1E9 !important; }
+[class*="bg-emerald-100"], [class*="bg-green-100"] { background-color: #E4E9DF !important; }
+[class*="bg-emerald-500"], [class*="bg-green-500"],
+[class*="bg-emerald-600"], [class*="bg-green-600"],
+[class*="bg-emerald-700"], [class*="bg-green-700"] { background-color: var(--pb-sage) !important; }
+[class*="text-emerald-"], [class*="text-green-"] { color: var(--pb-brand) !important; }
+[class*="border-emerald-"], [class*="border-green-"] { border-color: var(--pb-whistler) !important; }
+[class*="ring-emerald-"], [class*="ring-green-"] { --tw-ring-color: var(--pb-sage) !important; }
+[class*="from-emerald-"] { --tw-gradient-from: var(--pb-brand) var(--tw-gradient-from-position) !important; }
+[class*="via-emerald-"] { --tw-gradient-via: var(--pb-sage) var(--tw-gradient-via-position) !important; }
+[class*="to-emerald-"] { --tw-gradient-to: var(--pb-primary) var(--tw-gradient-to-position) !important; }
+
+/* Tomato red is the focused accent, not a second dominant brand colour. */
+[class*="bg-rose-"], [class*="bg-red-"]:not([class*="bg-red-50"]):not([class*="bg-red-100"]) {
+  background-color: var(--pb-tomato) !important;
+}
+[class*="text-rose-"], [class*="text-red-"] { color: var(--pb-tomato) !important; }
+[class*="border-rose-"], [class*="border-red-"] { border-color: rgba(232,65,44,.25) !important; }
+
+/* Soft neutral surfaces */
+[class*="bg-slate-50"], [class*="bg-gray-50"] { background-color: var(--pb-off-white) !important; }
+[class*="border-slate-100"], [class*="border-slate-200"],
+[class*="border-gray-100"], [class*="border-gray-200"] { border-color: var(--pb-whistler) !important; }
