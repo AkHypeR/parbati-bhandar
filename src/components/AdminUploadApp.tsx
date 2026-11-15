@@ -1028,13 +1028,13 @@ export function AdminUploadApp({
           </section>
         )}
         {adminTab === 'notifications' && (
-          <>
+          <div className="pb-owner-notifications">
             <div className="mx-auto mb-4 grid max-w-2xl grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm" role="tablist" aria-label="Notification options">
               <button type="button" role="tab" aria-selected={notificationView === 'send'} onClick={() => setNotificationView('send')} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-extrabold transition ${notificationView === 'send' ? 'bg-blue-800 text-white shadow-sm' : 'bg-slate-50 text-slate-700 hover:bg-blue-50'}`}><Send className="h-4 w-4"/> Send notification</button>
               <button type="button" role="tab" aria-selected={notificationView === 'history'} onClick={() => setNotificationView('history')} className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-extrabold transition ${notificationView === 'history' ? 'bg-blue-800 text-white shadow-sm' : 'bg-slate-50 text-slate-700 hover:bg-blue-50'}`}><ClipboardList className="h-4 w-4"/> Sent history</button>
             </div>
             {notificationView === 'send' && (
-          <section className="mx-auto max-w-2xl overflow-hidden rounded-3xl border border-[#DDE3DA] bg-white shadow-sm">
+          <section className="pb-owner-notification-card mx-auto max-w-2xl overflow-hidden rounded-3xl border border-[#DDE3DA] bg-white shadow-sm">
             <div className="bg-gradient-to-r from-[#304735] via-[#405B43] to-[#64765F] p-5 text-white sm:p-7">
               <div className="flex items-center gap-3"><span className="grid h-12 w-12 place-items-center rounded-2xl bg-white/15"><Megaphone className="h-6 w-6"/></span><div><p className="text-xs font-bold uppercase tracking-wider text-[#E8DDBB]">Customer communication</p><h2 className="text-xl font-black">Send a store notification</h2></div></div>
               <p className="mt-3 text-sm leading-6 text-[#F0F2E9]">Share an important update, offer or store announcement with your customers.</p>
@@ -1076,6 +1076,7 @@ export function AdminUploadApp({
           </section>
             )}
           </>
+          </div>
         )}
         {adminTab === 'quickReplies' && (
           <section className="mx-auto max-w-2xl rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
@@ -2379,7 +2380,7 @@ export function AdminUploadApp({
         {/* TAB 3: STORE DETAILS & SETTINGS            */}
         {/* ========================================== */}
         {adminTab === 'christmasSpecials' && (
-          <section className="space-y-5">
+          <section className="pb-owner-seasonal space-y-5">
             <div className="overflow-hidden rounded-3xl border border-[#D9CBA8] bg-gradient-to-r from-[#304735] via-[#405B43] to-[#64765F] p-5 text-white shadow-sm sm:p-7">
               <div className="flex items-center gap-3"><span className="text-4xl">{storeSettings.seasonalCollectionIcon || "🎄"}</span><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-[#E8DDBB]">Homepage festival &amp; seasonal shelf</p><h2 className="text-2xl font-black">{storeSettings.seasonalCollectionTitle || 'Christmas Specials'}</h2><p className="mt-1 text-xs text-[#F0F2E9]">Choose the products customers see when they tap the seasonal banner.</p></div></div>
               <div className="mt-4 inline-flex rounded-full border border-white/25 bg-white/15 px-3 py-2 text-xs font-bold text-white">{(storeSettings.christmasSpecialProductIds || []).length} selected products</div>
