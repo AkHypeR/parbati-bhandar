@@ -209,6 +209,12 @@ export function AdminUploadApp({
   const [ownerCustomerOrders, setOwnerCustomerOrders] = useState<OwnerCustomerOrder[]>([]);
   const [ownerCustomerOrdersLoading, setOwnerCustomerOrdersLoading] = useState(false);
   const [ownerCustomerOrdersError, setOwnerCustomerOrdersError] = useState('');
+  const [ownerCustomers, setOwnerCustomers] = useState<OwnerCustomer[]>([]);
+  const [ownerCustomersLoading, setOwnerCustomersLoading] = useState(false);
+  const [ownerCustomersError, setOwnerCustomersError] = useState('');
+  const [customerSearch, setCustomerSearch] = useState('');
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
+
   useEffect(() => {
     if (!selectedCustomerId || adminTab !== 'dashboard') { setOwnerCustomerOrders([]); return; }
     let active = true;
@@ -220,11 +226,6 @@ export function AdminUploadApp({
       .finally(() => { if (active) setOwnerCustomerOrdersLoading(false); });
     return () => { active = false; };
   }, [selectedCustomerId, adminTab]);
-  const [ownerCustomers, setOwnerCustomers] = useState<OwnerCustomer[]>([]);
-  const [ownerCustomersLoading, setOwnerCustomersLoading] = useState(false);
-  const [ownerCustomersError, setOwnerCustomersError] = useState('');
-  const [customerSearch, setCustomerSearch] = useState('');
-  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
   const loadOwnerCustomers = async () => {
     setOwnerCustomersLoading(true); setOwnerCustomersError('');
     try {
