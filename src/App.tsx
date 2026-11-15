@@ -7,6 +7,11 @@ import {
   Unlock,
   AlertCircle,
   CheckCircle2,
+  Home,
+  Sparkles,
+  Package,
+  UserRound,
+  ShoppingCart,
 } from 'lucide-react';
 import {
   INITIAL_SAMPLE_PRODUCTS,
@@ -1237,6 +1242,7 @@ export default function App() {
             }}
           />}
           <CartDrawer
+            darkMode={darkMode}
             isOpen={currentPath === '/cart'}
             customerAuthenticated={!!customerAccount}
             onRequireLogin={() => { setAccountReturnPath('/cart'); navigateToPath('/account'); }}
@@ -1254,6 +1260,27 @@ export default function App() {
             updateCartQty={updateCartQty}
             clearCart={() => setCart({})}
           />
+          {currentPath !== '/cart' && (
+            <nav aria-label="Customer navigation" className={`pb-customer-bottom-nav ${darkMode ? 'is-dark' : ''}`}>
+              <div className="pb-customer-bottom-nav-inner">
+                <button type="button" aria-current={currentPath === '/' ? 'page' : undefined} onClick={() => navigateToPath('/')} className={`pb-customer-nav-item ${currentPath === '/' ? 'is-active' : ''}`}>
+                  <Home/><span>Home</span>
+                </button>
+                <button type="button" onClick={() => { if (currentPath !== '/') { navigateToPath('/'); window.setTimeout(() => document.getElementById('pb-best-five-section')?.scrollIntoView({behavior:'smooth',block:'start'}), 180); } else document.getElementById('pb-best-five-section')?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="pb-customer-nav-item">
+                  <Sparkles/><span>Offers</span>
+                </button>
+                <button type="button" onClick={() => { if (currentPath !== '/') { navigateToPath('/'); window.setTimeout(() => document.getElementById('pb-category-section')?.scrollIntoView({behavior:'smooth',block:'start'}), 180); } else document.getElementById('pb-category-section')?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="pb-customer-nav-item">
+                  <Package/><span>Categories</span>
+                </button>
+                <button type="button" aria-current={currentPath === '/account' ? 'page' : undefined} onClick={() => navigateToPath('/account')} className={`pb-customer-nav-item ${currentPath === '/account' ? 'is-active' : ''}`}>
+                  <UserRound/><span>Account</span>
+                </button>
+                <button type="button" aria-current={currentPath === '/cart' ? 'page' : undefined} onClick={() => navigateToPath('/cart')} className="pb-customer-nav-item">
+                  <span className="pb-customer-nav-cart-icon"><ShoppingCart/>{cartTotalItems > 0 && <span>{cartTotalItems}</span>}</span><span>Cart</span>
+                </button>
+              </div>
+            </nav>
+          )}
         </>
         )
       ) : !isOwnerUnlocked ? (
