@@ -1064,3 +1064,21 @@ button[class*="bg-emerald-600"]:hover,
     transition-duration: .01ms !important;
   }
 }
+
+
+/* Christmas campaign currently active in place of the November Chhath theme. */
+.pb-christmas-page { background:linear-gradient(180deg,#F0F7F4 0%,#F8FAFC 48%,#FFFFFF 100%) !important; }
+.pb-christmas-header { background:linear-gradient(105deg,#12372D 0%,#176044 52%,#12372D 100%) !important; border-color:rgba(245,210,125,.55) !important; color:#FFFFFF !important; }
+.pb-christmas-header button { color:#FFFFFF !important; }
+.pb-christmas-snow { isolation:isolate; }
+.pb-christmas-snow span { position:absolute; top:-28px; color:rgba(255,255,255,.8); font-size:clamp(10px,1.5vw,17px); text-shadow:0 1px 8px rgba(255,255,255,.35); animation:pbSnowFall linear infinite; }
+.pb-christmas-page .pb-christmas-banner { background:linear-gradient(145deg,#12372D 0%,#176044 52%,#0F2924 100%) !important; border-color:rgba(245,210,125,.65) !important; }
+.pb-christmas-page .pb-christmas-banner > img { opacity:.24; }
+.pb-christmas-page .pb-christmas-banner > div:nth-of-type(2) { background:linear-gradient(180deg,rgba(18,55,45,.16),rgba(9,35,28,.88)) !important; }
+.pb-christmas-page .pb-christmas-garland { color:#FFFFFF; }
+.pb-christmas-page .pb-christmas-banner button { background:#FFD814 !important; color:#0F1111 !important; border-color:#FCD200 !important; }
+.pb-christmas-page .pb-christmas-banner button:hover { background:#F7CA00 !important; }
+.pb-christmas-page .pb-christmas-banner h3 { color:#FFFFFF !important; }
+.pb-christmas-page .pb-christmas-banner p { color:#F0FDF4 !important; }
+.pb-christmas-page .pb-christmas-banner .text-amber-200 { color:#FDE68A !important; }
+@media (prefers-reduced-motion: reduce) { .pb-christmas-snow span { animation:none !important; } }
