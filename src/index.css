@@ -2426,3 +2426,76 @@ html.pb-dark .pb-owner-portal [class*="text-yellow-"] { color:#E8CC91 !important
     transition-duration:.01ms !important; scroll-behavior:auto !important;
   }
 }
+
+/* Owner mode shell: consistent theme across every /owner route. */
+.pb-owner-mode {
+  --owner-bg:#F3F4ED; --owner-surface:#FFFEFA; --owner-surface-soft:#F7F8F2;
+  --owner-ink:#26352B; --owner-muted:#657267; --owner-border:#DCE3D7;
+  --owner-sage:#647B62; --owner-forest:#405B43; --owner-sage-soft:#E8EFE4;
+  background:var(--owner-bg) !important; color:var(--owner-ink) !important;
+}
+.pb-owner-mode > .bg-slate-900 {
+  background:#304735 !important; border-color:#405B43 !important; color:#F7F8F2 !important;
+}
+.pb-owner-mode > .bg-slate-900 :where(p,span) { color:#E2EBDD; }
+.pb-owner-mode > .bg-slate-900 button {
+  background:#405B43 !important; color:#FFFFFF !important; border-color:#617B62 !important;
+}
+.pb-owner-mode > .bg-slate-900 button:hover { background:#526D54 !important; }
+.pb-owner-mode > .bg-slate-900 button:last-child {
+  background:#DCE8D5 !important; color:#304735 !important; border-color:#DCE8D5 !important;
+}
+.pb-owner-mode > .bg-slate-900 button:last-child:hover { background:#C9D9C2 !important; }
+.pb-owner-mode .pb-owner-pin-gate { background:var(--owner-bg) !important; color:var(--owner-ink) !important; }
+.pb-owner-mode .pb-owner-pin-gate > .relative.mx-auto {
+  border-color:var(--owner-border) !important; background:var(--owner-surface) !important;
+  box-shadow:0 22px 65px rgba(38,53,43,.10) !important;
+}
+.pb-owner-mode .pb-owner-pin-gate section:first-child {
+  background:linear-gradient(145deg,#304735 0%,#405B43 65%,#627A60 100%) !important;
+}
+.pb-owner-mode .pb-owner-pin-gate section:first-child :where(p) { color:#E2EBDD !important; }
+.pb-owner-mode .pb-owner-pin-gate section:first-child .bg-amber-300 {
+  background:#D9C18B !important; color:#304735 !important;
+}
+.pb-owner-mode .pb-owner-pin-gate section:last-child :where(h2) { color:#26352B !important; }
+.pb-owner-mode .pb-owner-pin-gate section:last-child :where(p,label) { color:#657267 !important; }
+.pb-owner-mode .pb-owner-pin-gate section:last-child .bg-emerald-50 {
+  background:#E8EFE4 !important; color:#405B43 !important;
+}
+.pb-owner-mode .pb-owner-pin-gate section:last-child input {
+  background:#F7F8F2 !important; border-color:#CAD5C7 !important; color:#26352B !important;
+}
+.pb-owner-mode .pb-owner-pin-gate section:last-child input:focus {
+  border-color:#647B62 !important; box-shadow:0 0 0 4px rgba(100,123,98,.15) !important;
+}
+.pb-owner-mode .pb-owner-pin-gate section:last-child form button[type="submit"] {
+  background:#405B43 !important; color:#FFFFFF !important; box-shadow:0 8px 18px rgba(48,71,53,.14) !important;
+}
+.pb-owner-mode .pb-owner-pin-gate section:last-child form button[type="submit"]:hover { background:#304735 !important; }
+.pb-owner-mode .pb-owner-pin-gate section:last-child > button { color:#657267 !important; }
+.pb-owner-mode > .flex-1.grid { background:var(--owner-bg) !important; }
+.pb-owner-mode > .flex-1.grid p { color:var(--owner-ink) !important; }
+.pb-owner-mode > .flex-1.grid .border-emerald-600 { border-color:#647B62 !important; }
+
+html.pb-dark .pb-owner-mode {
+  --owner-bg:#171F19; --owner-surface:#202B23; --owner-surface-soft:#263229;
+  --owner-ink:#E8EEE5; --owner-muted:#B0BDB0; --owner-border:#3A493C;
+  --owner-sage:#9AAF91; --owner-forest:#526C55; --owner-sage-soft:#2B3A2E;
+  background:var(--owner-bg) !important; color:var(--owner-ink) !important;
+}
+html.pb-dark .pb-owner-mode > .bg-slate-900 { background:#202B23 !important; border-color:#3A493C !important; }
+html.pb-dark .pb-owner-mode > .bg-slate-900 button {
+  background:#2B3A2E !important; color:#E8EEE5 !important; border-color:#526453 !important;
+}
+html.pb-dark .pb-owner-mode > .bg-slate-900 button:last-child { background:#DCE8D5 !important; color:#26352B !important; }
+html.pb-dark .pb-owner-mode .pb-owner-pin-gate { background:#171F19 !important; }
+html.pb-dark .pb-owner-mode .pb-owner-pin-gate > .relative.mx-auto {
+  background:#202B23 !important; border-color:#3A493C !important;
+}
+html.pb-dark .pb-owner-mode .pb-owner-pin-gate section:last-child :where(h2) { color:#E8EEE5 !important; }
+html.pb-dark .pb-owner-mode .pb-owner-pin-gate section:last-child :where(p,label) { color:#B0BDB0 !important; }
+html.pb-dark .pb-owner-mode .pb-owner-pin-gate section:last-child input {
+  background:#1B251E !important; color:#E8EEE5 !important; border-color:#526453 !important;
+}
+html.pb-dark .pb-owner-mode > .flex-1.grid { background:#171F19 !important; }
