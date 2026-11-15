@@ -784,7 +784,7 @@ export function CustomerStorefront({
             {/* Top Slider Header Bar: Shows Slide Counter, Rank Info & Auto-Slide Toggle */}
             <div className="flex items-center justify-between gap-2 px-1">
               <div className="flex items-center gap-2 min-w-0">
-                <span className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shadow-2xs shrink-0">
+                <span className="pb-best-five-icon w-6 h-6 rounded-lg flex items-center justify-center shadow-2xs shrink-0">
                   <Sparkles className="w-3.5 h-3.5 fill-slate-950" />
                 </span>
                 <div className="min-w-0">
@@ -814,7 +814,7 @@ export function CustomerStorefront({
                     </>
                   )}
                 </button>
-                <span className="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-100">
+                <span className="pb-best-five-counter text-[11px] font-extrabold px-2 py-0.5 rounded-full border">
                   {safeSlideIndex + 1} / {heroSlides.length}
                 </span>
               </div>
@@ -916,7 +916,7 @@ export function CustomerStorefront({
                         }));
 
                   return (
-                    <div className="group relative w-full max-w-[760px] mx-auto h-[min(360px,48vh)] min-h-[290px] sm:min-h-[340px] lg:min-h-[360px] rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-xl border-2 border-emerald-200 bg-gradient-to-br from-[#ecfdf5] via-white to-[#d1fae5] select-none animate-[fadeIn_550ms_ease-out]">
+                    <div className="pb-best-five-spotlight group relative w-full max-w-[760px] mx-auto h-[min(360px,48vh)] min-h-[290px] sm:min-h-[340px] lg:min-h-[360px] rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-xl border-2 select-none animate-[fadeIn_550ms_ease-out]">
                       {/* Large product artwork, styled like a storefront campaign banner */}
                       <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6 lg:p-8 pb-36 sm:pb-40 lg:pb-40">
                         {item.imageUrl ? (
@@ -938,7 +938,7 @@ export function CustomerStorefront({
                           <span>#{rankNum} Best Pick</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          {item.badge && <span className="px-3 py-1.5 rounded-full bg-emerald-700 text-white font-extrabold text-xs shadow-md">{item.badge}</span>}
+                          {item.badge && <span className="pb-best-five-product-badge px-3 py-1.5 rounded-full font-extrabold text-xs shadow-md">{item.badge}</span>}
                           {hasDiscount && <span className="px-3 py-1.5 rounded-full bg-amber-400 text-slate-950 font-black text-xs shadow-md">{discountPercent}% OFF</span>}
                         </div>
                       </div>
@@ -1161,7 +1161,7 @@ export function CustomerStorefront({
               const quantity = cart[makeCartKey(product.id, product.unit)]?.qty || 0;
               return <article key={product.id} className="w-[148px] shrink-0 snap-start overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-sm sm:w-[176px]">
                 <button type="button" onClick={() => {setSearchQuery(product.name);setIsSearchSubmitted(true);setSelectedCategory('all');setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),50);}} className="flex w-full flex-col items-center p-3 text-left">
-                  <div className="flex h-24 w-full items-center justify-center rounded-xl bg-[#F3F2EA] p-2">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" style={{filter:"grayscale(1) brightness(1.28) contrast(.78)",mixBlendMode:"multiply"}} className="h-full w-full object-contain"/> : <span className="text-4xl">{product.emoji || '🛒'}</span>}</div>
+                  <div className="flex h-24 w-full items-center justify-center rounded-xl bg-[#F3F2EA] p-2">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/> : <span className="text-4xl">{product.emoji || '🛒'}</span>}</div>
                   <p className="mt-2 line-clamp-2 min-h-9 w-full text-xs font-extrabold leading-4 text-slate-800">{product.name}</p>
                   <p className="mt-1 w-full text-sm font-black text-slate-900">₹{product.price}<span className="ml-1 text-[10px] font-medium text-slate-500">/ {product.unit}</span></p>
                 </button>
