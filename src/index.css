@@ -1782,3 +1782,39 @@ html.pb-dark .pb-customer-orders .pb-order-track-meta > span {
   background:rgba(255,255,255,.10) !important;
   border-color:rgba(255,255,255,.20) !important; color:#F1F5F0 !important;
 }
+
+
+/* Cancellation is destructive but must remain plainly readable: never render as a solid red CTA. */
+.pb-customer-orders button.pb-orders-danger,
+.pb-customer-orders button.pb-orders-danger:visited {
+  display:inline-flex !important; align-items:center !important; justify-content:center !important;
+  min-height:42px !important; min-width:112px !important;
+  padding:10px 16px !important; border-radius:12px !important;
+  background:#FCEBE8 !important; background-color:#FCEBE8 !important;
+  color:#A12D24 !important; -webkit-text-fill-color:#A12D24 !important;
+  border:1px solid #E9B9B2 !important;
+  font-size:12px !important; font-weight:800 !important; line-height:1.35 !important;
+  letter-spacing:.01em !important; text-shadow:none !important;
+  box-shadow:none !important; opacity:1 !important;
+  white-space:nowrap !important; text-decoration:none !important;
+}
+.pb-customer-orders button.pb-orders-danger:hover:not(:disabled) {
+  background:#F7DAD5 !important; background-color:#F7DAD5 !important;
+  color:#84251E !important; -webkit-text-fill-color:#84251E !important;
+  border-color:#DFA49B !important;
+}
+.pb-customer-orders button.pb-orders-danger:focus-visible {
+  outline:3px solid rgba(232,65,44,.28) !important; outline-offset:2px !important;
+}
+.pb-customer-orders button.pb-orders-danger:disabled {
+  opacity:.65 !important; cursor:not-allowed !important;
+}
+html.pb-dark .pb-customer-orders button.pb-orders-danger {
+  background:#3A2424 !important; background-color:#3A2424 !important;
+  color:#FFD0C9 !important; -webkit-text-fill-color:#FFD0C9 !important;
+  border-color:#70413B !important;
+}
+html.pb-dark .pb-customer-orders button.pb-orders-danger:hover:not(:disabled) {
+  background:#4A2B29 !important; color:#FFE1DC !important;
+  -webkit-text-fill-color:#FFE1DC !important;
+}
