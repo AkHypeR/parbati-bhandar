@@ -699,9 +699,9 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       {/* STICKY SEARCH BAR & CATEGORY RIBBON (Follows User on Scroll)          */}
       {/* ===================================================================== */}
-      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-slate-200/80 shadow-[0_8px_24px_rgba(15,23,42,0.08)]">
+      <div className="sticky top-0 z-40 bg-[#fff7f8]/95 backdrop-blur-xl border-b border-pink-100 shadow-[0_8px_24px_rgba(15,23,42,0.08)]">
         <div className="max-w-6xl mx-auto px-3.5 sm:px-6 py-2.5 space-y-2.5">
-          {/* Flipkart-style floating quick-access ribbon */}
+          {/* Marketplace-style quick links, inspired by Flipkart's top shortcut row */}
           <nav aria-label="Quick shopping shortcuts" className="grid grid-cols-4 gap-2">
             <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); bestItemsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-2xl border border-amber-100 bg-gradient-to-b from-amber-50 to-white px-1.5 py-2.5 text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md active:scale-[.98]">
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-amber-100 text-amber-700"><Sparkles className="h-5 w-5" /></span>
@@ -715,10 +715,10 @@ export function CustomerStorefront({
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-sky-100 text-sky-700"><ClipboardList className="h-5 w-5" /></span>
               <span className="truncate text-[11px] font-extrabold sm:text-xs">Track Order</span>
             </button>
-            <a href={`https://wa.me/${storeSettings.whatsappNumber || '919734765207'}?text=${encodeURIComponent('নমস্কার পার্বতী ভান্ডার, আমি অর্ডার করতে চাই।')}`} target="_blank" rel="noopener noreferrer" aria-label="Order on WhatsApp" className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-2xl border border-green-100 bg-gradient-to-b from-green-50 to-white px-1.5 py-2.5 text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md active:scale-[.98]">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-green-100 text-green-700"><MessageCircle className="h-5 w-5" /></span>
-              <span className="truncate text-[11px] font-extrabold sm:text-xs">WhatsApp</span>
-            </a>
+            <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-2xl border border-violet-100 bg-gradient-to-b from-violet-50 to-white px-1.5 py-2.5 text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md active:scale-[.98]">
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-violet-100 text-violet-700"><Store className="h-5 w-5" /></span>
+              <span className="truncate text-[11px] font-extrabold sm:text-xs">Shop All</span>
+            </button>
           </nav>
           <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[11px] font-semibold text-slate-600">
             <MapPin className="h-4 w-4 shrink-0 text-blue-700" />
