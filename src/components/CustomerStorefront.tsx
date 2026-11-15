@@ -422,7 +422,7 @@ export function CustomerStorefront({
   const isAutomaticFestivalSeason = Boolean(automaticFestivalTheme) && !isChhathSeason && !isChristmasSeason;
 
   return (
-    <div className={`flex-1 flex flex-col bg-[#f7faf8] text-slate-900 pb-32 sm:pb-28 ${isChhathSeason ? "pb-chhath-page" : isAutomaticFestivalSeason ? "pb-festival-page" : ""}`}>
+    <div className={`pb-storefront-root flex-1 flex flex-col bg-[#F5F7FB] text-[#172554] pb-32 sm:pb-28 ${isChhathSeason ? "pb-chhath-page" : isAutomaticFestivalSeason ? "pb-festival-page" : ""}`}>
 
       {/* ===================================================================== */}
       {/* TOP MOBILE-FIRST APP BAR WITH SHOP NAME                               */}
@@ -752,7 +752,7 @@ export function CustomerStorefront({
 
       {!searchQuery.trim() && !isSearchSubmitted && currentPage === 'home' && (
         <section className="pb-editorial-hero mx-auto w-full max-w-6xl px-3.5 pt-5 sm:px-6 sm:pt-7">
-          <div className="pb-editorial-hero-card relative isolate grid min-h-[390px] overflow-hidden rounded-[26px] sm:min-h-[430px] lg:grid-cols-[.92fr_1.08fr]">
+          <div className="pb-editorial-hero-card relative isolate grid min-h-[390px] overflow-hidden rounded-[26px] sm:min-h-[430px] lg:grid-cols-[.92fr_1.08fr]" style={{background:"#172554"}}>
             <div className="relative z-10 flex flex-col items-start justify-center px-6 py-9 sm:px-10 sm:py-12 lg:px-14">
               <span className="mb-5 inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.22em] text-[#596d55]">
                 <span className="h-px w-7 bg-[#788B72]"/> Your neighbourhood grocery store
@@ -779,14 +779,14 @@ export function CustomerStorefront({
             <div className="pb-editorial-hero-image relative min-h-[240px] overflow-hidden lg:min-h-full">
               <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1500&q=88" alt="Fresh produce and grocery essentials at a market" className="absolute inset-0 h-full w-full object-cover"/>
               <div className="absolute inset-0 bg-gradient-to-t from-[#263626]/45 via-transparent to-[#263626]/10 lg:bg-gradient-to-r lg:from-[#788B72]/15 lg:via-transparent lg:to-[#263626]/20"/>
-              <div className="absolute bottom-5 left-5 right-5 rounded-2xl border border-white/60 bg-[#fffefa]/95 p-4 shadow-xl backdrop-blur-md sm:bottom-7 sm:left-7 sm:right-7 sm:max-w-[330px]">
+              <div className="absolute bottom-5 left-5 right-5 rounded-2xl border border-[#D9E0EC] bg-white p-4 shadow-xl sm:bottom-7 sm:left-7 sm:right-7 sm:max-w-[330px]">
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-[10px] font-extrabold uppercase tracking-[.16em] text-[#64765F]">Parbati Vandar</span>
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-[#eaf0e6] px-2.5 py-1 text-[10px] font-bold text-[#52684d]"><span className={`h-1.5 w-1.5 rounded-full ${liveIsOpen ? 'bg-[#788B72]' : 'bg-[#E8412C]'}`}/>{liveIsOpen ? 'Open today' : 'Currently closed'}</span>
                 </div>
-                <p className="mt-2 text-lg font-semibold tracking-tight text-[#30352F]">Your daily basket, all in one place.</p>
+                <p className="mt-2 text-lg font-semibold tracking-tight" style={{color:"#172554"}}>Your daily basket, all in one place.</p>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {['Rice & pulses','Fresh snacks','Kitchen essentials'].map((label)=><span key={label} className="rounded-full border border-[#d8dad2] px-2.5 py-1 text-[10px] font-semibold text-[#62685f]">{label}</span>)}
+                  {['Rice & pulses','Fresh snacks','Kitchen essentials'].map((label)=><span key={label} className="rounded-full border border-[#D9E0EC] bg-[#F5F7FB] px-2.5 py-1 text-[10px] font-semibold text-[#334155]">{label}</span>)}
                 </div>
               </div>
             </div>
