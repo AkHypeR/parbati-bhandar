@@ -1300,3 +1300,110 @@ button[class*="bg-emerald-600"]:hover,
 @media (prefers-reduced-motion:reduce) {
   .pb-customer-nav-item { transition:none !important; }
 }
+
+
+/* Recent orders: semantic status colours and restrained actions.
+   Yellow is reserved for high-priority shopping actions, not account utilities. */
+.pb-customer-account .pb-recent-orders-card {
+  background:#FFFEFA !important; color:#30352F !important;
+  border-color:#D8DAD2 !important;
+}
+.pb-customer-account .pb-recent-orders-card > div:first-child {
+  background:#F8F7F2 !important; border-color:#D8DAD2 !important;
+}
+.pb-customer-account .pb-recent-orders-card h3 { color:#30352F !important; }
+.pb-customer-account .pb-recent-orders-card p { color:#73786F !important; }
+.pb-customer-account .pb-recent-orders-card .pb-orders-refresh {
+  background:#EAF0E7 !important; color:#43583F !important;
+  border:1px solid #C9D5C3 !important; box-shadow:none !important;
+}
+.pb-customer-account .pb-recent-orders-card .pb-orders-refresh:hover {
+  background:#DDE8D8 !important; color:#34472F !important;
+}
+.pb-customer-account .pb-recent-orders-card .pb-orders-view-all {
+  background:#F4F5F0 !important; color:#43583F !important;
+  border-color:#D8DAD2 !important;
+}
+.pb-customer-account .pb-recent-orders-card .pb-orders-view-all:hover {
+  background:#E9EEE5 !important; color:#34472F !important;
+}
+.pb-customer-account .pb-recent-orders-card > div.divide-y > button:hover {
+  background:#F6F8F3 !important;
+}
+.pb-customer-account .pb-recent-orders-card .pb-order-status {
+  display:inline-flex; align-items:center; white-space:nowrap;
+  border:1px solid transparent !important; line-height:1.35;
+}
+.pb-customer-account .pb-recent-orders-card .pb-order-status--cancelled {
+  background:#FDECEC !important; color:#A52822 !important;
+  border-color:#F3C7C3 !important;
+}
+.pb-customer-account .pb-recent-orders-card .pb-order-status--ready {
+  background:#E8F3EA !important; color:#27613A !important;
+  border-color:#C8E1CE !important;
+}
+.pb-customer-account .pb-recent-orders-card .pb-order-status--completed {
+  background:#F0F2F2 !important; color:#414B4B !important;
+  border-color:#D5D9D9 !important;
+}
+.pb-customer-account .pb-recent-orders-card .pb-order-status--processing {
+  background:#FFF4DD !important; color:#805500 !important;
+  border-color:#F0D99C !important;
+}
+.pb-customer-account .pb-recent-orders-card .pb-order-status--received {
+  background:#EAF1FA !important; color:#28517A !important;
+  border-color:#CEDCEC !important;
+}
+.pb-customer-account .pb-recent-orders-card .pb-order-status--attention {
+  background:#FFF4DD !important; color:#805500 !important;
+  border-color:#F0D99C !important;
+}
+
+/* Dark mode: preserve the same status meaning without neon or unreadable contrast. */
+html.pb-dark .pb-customer-account .pb-recent-orders-card {
+  background:#18232E !important; color:#F1F5F4 !important; border-color:#344453 !important;
+}
+html.pb-dark .pb-customer-account .pb-recent-orders-card > div:first-child {
+  background:#202D39 !important; border-color:#344453 !important;
+}
+html.pb-dark .pb-customer-account .pb-recent-orders-card h3,
+html.pb-dark .pb-customer-account .pb-recent-orders-card strong,
+html.pb-dark .pb-customer-account .pb-recent-orders-card .text-slate-900 {
+  color:#F1F5F4 !important;
+}
+html.pb-dark .pb-customer-account .pb-recent-orders-card p,
+html.pb-dark .pb-customer-account .pb-recent-orders-card .text-slate-500,
+html.pb-dark .pb-customer-account .pb-recent-orders-card .text-slate-400 {
+  color:#B9C5C2 !important;
+}
+html.pb-dark .pb-customer-account .pb-recent-orders-card .pb-orders-refresh {
+  background:#2B3B32 !important; color:#DCEBDD !important;
+  border-color:#49634F !important;
+}
+html.pb-dark .pb-customer-account .pb-recent-orders-card .pb-orders-refresh:hover {
+  background:#354A3C !important; color:#FFFFFF !important;
+}
+html.pb-dark .pb-customer-account .pb-recent-orders-card .pb-orders-view-all {
+  background:#202D39 !important; color:#C6DDC3 !important;
+  border-color:#344453 !important;
+}
+html.pb-dark .pb-customer-account .pb-recent-orders-card .pb-orders-view-all:hover,
+html.pb-dark .pb-customer-account .pb-recent-orders-card > div.divide-y > button:hover {
+  background:#293A35 !important; color:#FFFFFF !important;
+}
+html.pb-dark .pb-customer-account .pb-recent-orders-card .pb-order-status--cancelled {
+  background:#3A2226 !important; color:#FFB4AB !important; border-color:#704047 !important;
+}
+html.pb-dark .pb-customer-account .pb-recent-orders-card .pb-order-status--ready {
+  background:#1F382B !important; color:#A9D8B5 !important; border-color:#365E45 !important;
+}
+html.pb-dark .pb-customer-account .pb-recent-orders-card .pb-order-status--completed {
+  background:#29343A !important; color:#D2DDE0 !important; border-color:#46545B !important;
+}
+html.pb-dark .pb-customer-account .pb-recent-orders-card .pb-order-status--processing,
+html.pb-dark .pb-customer-account .pb-recent-orders-card .pb-order-status--attention {
+  background:#3A3020 !important; color:#F2D18B !important; border-color:#66512B !important;
+}
+html.pb-dark .pb-customer-account .pb-recent-orders-card .pb-order-status--received {
+  background:#1E3045 !important; color:#B7D4F2 !important; border-color:#385675 !important;
+}
