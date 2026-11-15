@@ -110,7 +110,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
           <ArrowLeft className="h-4 w-4"/> {orderNumber ? 'All orders' : 'Back to account'}
         </button>
         <section className="min-w-0 overflow-hidden rounded-2xl border border-white bg-white shadow-[0_12px_36px_-24px_rgba(6,78,59,.22)] sm:rounded-[2rem]">
-          <header className="relative overflow-hidden bg-gradient-to-br from-[#064e3b] via-[#087256] to-[#0e8063] px-6 py-8 text-white sm:px-9 sm:py-10">
+          <header className="pb-order-track-header relative overflow-hidden bg-gradient-to-br from-[#064e3b] via-[#087256] to-[#0e8063] px-6 py-8 text-white sm:px-9 sm:py-10">
             <div aria-hidden="true" className="absolute -right-10 -top-20 h-56 w-56 rounded-full border-[30px] border-white/[.07]"/>
             <div className="relative flex items-start justify-between gap-4">
               <div>
@@ -120,7 +120,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
               </div>
               <span className="hidden h-14 w-14 shrink-0 place-items-center rounded-2xl border border-white/20 bg-white/10 text-amber-200 sm:grid"><PackageCheck className="h-7 w-7"/></span>
             </div>
-            <div className="relative mt-6 flex flex-wrap gap-2 text-xs font-bold text-emerald-50">
+            <div className="pb-order-track-meta relative mt-6 flex flex-wrap gap-2 text-xs font-bold text-emerald-50">
               <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><CheckCircle2 className="mr-1.5 inline h-3.5 w-3.5"/> Auto-refreshes every 15 seconds</span>
               <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5"><ShieldCheck className="mr-1.5 inline h-3.5 w-3.5"/> Private to your signed-in account</span>
             </div>
