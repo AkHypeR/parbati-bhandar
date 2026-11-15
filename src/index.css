@@ -9,15 +9,15 @@
    Use one dominant brand hue, one action hue and one warm accent; avoid green as a brand colour.
 */
 :root {
-  --pb-brand: #172554;
-  --pb-primary: #2563eb;
-  --pb-primary-hover: #1d4ed8;
-  --pb-accent: #f6c744;
-  --pb-canvas: #f5f7fb;
+  --pb-brand: #07543b;
+  --pb-primary: #087a55;
+  --pb-primary-hover: #066847;
+  --pb-accent: #a3cf45;
+  --pb-canvas: #f7faf8;
   --pb-surface: #ffffff;
   --pb-text: #0f172a;
   --pb-muted: #64748b;
-  --pb-border: #e2e8f0;
+  --pb-border: #dcebe2;
 }
 
 
@@ -328,3 +328,25 @@ html.pb-dark .text-blue-950 { color:#dbeafe !important; }
 
 .pb-festival-banner { background:linear-gradient(155deg,#f59e0b 0%,#c2410c 48%,#172554 100%) !important; border-color:rgba(253,230,138,.8) !important; }
 .pb-festival-banner > img { display:none !important; }
+
+
+/* Parbati Bhandar customer storefront: calm green, warm white and crisp retail cards. */
+.pb-product-card {
+  border-color: #e3eee7 !important;
+  border-radius: 18px !important;
+  box-shadow: 0 3px 14px rgba(6, 78, 59, .055) !important;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.pb-product-card:hover {
+  transform: translateY(-3px);
+  border-color: #b7ddc5 !important;
+  box-shadow: 0 12px 26px rgba(6, 78, 59, .11) !important;
+}
+.pb-product-image { background: #f8fbf8 !important; }
+.pb-mobile-bottom-cart, nav[aria-label="Main navigation"] {
+  border-color: #dcebe2 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pb-product-card { transition: none !important; }
+  .pb-product-card:hover { transform: none; }
+}
