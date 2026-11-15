@@ -1249,6 +1249,7 @@ export default function App() {
             liveIsOpen={liveIsOpen}
             products={products}
             onClose={() => navigateToPath('/')}
+            onNavigate={navigateToPath}
             cartItemsList={cartItemsList}
             cartTotalItems={cartTotalItems}
             cartTotalPrice={cartTotalPrice}
