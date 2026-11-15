@@ -52,6 +52,8 @@ import {
 } from '../utils/storeLogic';
 
 interface CustomerStorefrontProps {
+  welcomePromoPending: boolean;
+  onWelcomePromoConsumed: () => void;
   darkMode: boolean;
   onToggleDarkMode: () => void;
   storeSettings: StoreSettings;
@@ -88,6 +90,8 @@ interface CustomerStorefrontProps {
 }
 
 export function CustomerStorefront({
+  welcomePromoPending,
+  onWelcomePromoConsumed,
   darkMode,
   onToggleDarkMode,
   storeSettings,
@@ -120,15 +124,15 @@ export function CustomerStorefront({
 }: CustomerStorefrontProps) {
   const [showWelcomePromo, setShowWelcomePromo] = useState(false);
   useEffect(() => {
-    // Open the welcome banner whenever the customer enters Home, without requiring a refresh.
-    // Closing it keeps it closed until the user leaves Home and enters Home again.
-    if (currentPage !== 'home') {
-      setShowWelcomePromo(false);
-      return;
-    }
-    const timer = window.setTimeout(() => setShowWelcomePromo(true), 250);
+    // Show once per full browser load. App keeps this flag while customer pages
+    // mount and unmount during in-app navigation.
+    if (currentPage !== 'home' || !welcomePromoPending) return;
+    const timer = window.setTimeout(() => {
+      setShowWelcomePromo(true);
+      onWelcomePromoConsumed();
+    }, 650);
     return () => window.clearTimeout(timer);
-  }, [currentPage]);
+  }, [currentPage, welcomePromoPending, onWelcomePromoConsumed]);
   const closeWelcomePromo = () => setShowWelcomePromo(false);
   const [trackingOrderNumber, setTrackingOrderNumber] = useState(lastOrderNumber);
   const [dealsSearch, setDealsSearch] = useState('');
