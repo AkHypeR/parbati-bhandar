@@ -872,16 +872,9 @@ export function buildHeroSlides(
   date = new Date()
 ): HeroSlide[] {
   const slides: HeroSlide[] = [];
-  const occasionImage = settings.occasionImageUrl || '';
-  const autoFestival = getAutomaticFestivalTheme(date);
-  const settingsText = [settings.occasionTitle, settings.occasionSubtitle, settings.occasionTag, occasionImage].join(' ');
-  const isChhathOccasion = autoFestival?.id === 'chhath-puja' || /chhath|ছট\s*(পূজা|পুজো)?/i.test(settingsText);
-  const hasCustomOccasion = Boolean(settings.occasionTitle?.trim() || occasionImage.trim());
-  const shouldShowOccasion = isChhathOccasion || settings.showOccasionBanner === true || !hasCustomOccasion || Boolean(autoFestival);
-  if (shouldShowOccasion) {
-    const fallback = autoFestival || { title:'Welcome to Parbati Vandar', subtitle:'Your neighbourhood grocery store • Everyday essentials with care', tag:'Fresh essentials, friendly service', emoji:'🛍️' };
-    slides.push({ type:'festive', id:'festive-banner', title:autoFestival?.title || settings.occasionTitle?.trim() || fallback.title, subtitle:autoFestival?.subtitle || settings.occasionSubtitle?.trim() || fallback.subtitle, tag:autoFestival?.tag || settings.occasionTag?.trim() || fallback.tag, imageUrl:occasionImage });
-  }
+  // Seasonal greetings are presented in the welcome popup, not as a carousel banner.
+  void settings;
+  void date;
   const orderedBest = getBestItems(products, 5);
   orderedBest.forEach((product, idx) => {
     slides.push({
