@@ -252,15 +252,23 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
 
                 <section className="rounded-lg border border-slate-200 bg-white px-4 py-4">
                   <h2 className="mb-3 text-sm font-black">Bill summary</h2>
-                  <div className="space-y-2 text-xs">
-                    <div className="flex justify-between gap-3"><span className="text-slate-600">Items total</span><span className="font-bold">₹{selected.originalTotal ?? (selected.total + Number(selected.unavailableDeduction || 0))}</span></div>
-                    {Number(selected.unavailableDeduction || 0) > 0 && <div className="flex justify-between gap-3 text-amber-700"><span>Unavailable items deduction</span><span className="font-bold">−₹{selected.unavailableDeduction}</span></div>}
-                    <div className="flex justify-between gap-3"><span className="text-slate-600">Handling fee</span><span className="font-bold text-blue-700">FREE</span></div>
-                    <div className="flex justify-between gap-3"><span className="text-slate-600">Delivery fee</span><span className="font-bold text-blue-700">FREE</span></div>
-                  </div>
-                  <div className="mt-3 border-t border-slate-200 pt-3">
-                    <div className="flex items-center justify-between gap-3"><div><p className="text-sm font-black">You pay</p><p className="text-[10px] text-slate-500">Final amount after availability updates</p></div><p className="text-xl font-black text-blue-800">₹{selected.total}</p></div>
-                  </div>
+                  {selected.status === 'cancelled' ? (
+                    <div className="rounded-lg bg-emerald-50 px-3 py-3 text-center">
+                      <p className="text-sm font-extrabold text-emerald-800">No payment due</p>
+                      <p className="mt-1 text-xs text-emerald-700">This order was cancelled. You do not need to pay for it.</p>
+                      <p className="mt-2 text-lg font-black text-emerald-900">₹0</p>
+                    </div>
+                  ) : <>
+                    <div className="space-y-2 text-xs">
+                      <div className="flex justify-between gap-3"><span className="text-slate-600">Items total</span><span className="font-bold">₹{selected.originalTotal ?? (selected.total + Number(selected.unavailableDeduction || 0))}</span></div>
+                      {Number(selected.unavailableDeduction || 0) > 0 && <div className="flex justify-between gap-3 text-amber-700"><span>Unavailable items deduction</span><span className="font-bold">−₹{selected.unavailableDeduction}</span></div>}
+                      <div className="flex justify-between gap-3"><span className="text-slate-600">Handling fee</span><span className="font-bold text-blue-700">FREE</span></div>
+                      <div className="flex justify-between gap-3"><span className="text-slate-600">Delivery fee</span><span className="font-bold text-blue-700">FREE</span></div>
+                    </div>
+                    <div className="mt-3 border-t border-slate-200 pt-3">
+                      <div className="flex items-center justify-between gap-3"><div><p className="text-sm font-black">You pay</p><p className="text-[10px] text-slate-500">Final amount after availability updates</p></div><p className="text-xl font-black text-blue-800">₹{selected.total}</p></div>
+                    </div>
+                  </>}
                 </section>
 
                 <button type="button" onClick={() => onNavigate('/')} className="pb-orders-continue flex min-h-11 w-full items-center justify-center rounded-full bg-amber-400 px-5 py-3 text-xs font-black text-slate-950 shadow-sm transition hover:bg-amber-300">Continue shopping</button>
