@@ -427,7 +427,7 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       {/* TOP MOBILE-FIRST APP BAR WITH SHOP NAME                               */}
       {/* ===================================================================== */}
-      <header className={`relative isolate overflow-hidden text-white border-b shadow-sm ${isChhathSeason ? "pb-chhath-header" : isAutomaticFestivalSeason ? "pb-festival-header" : "bg-gradient-to-r from-[#075b43] via-[#087653] to-[#064e3b] border-emerald-900/20"}`}>
+      <header className={`pb-editorial-header relative isolate overflow-hidden border-b shadow-sm ${isChhathSeason ? "pb-chhath-header" : isAutomaticFestivalSeason ? "pb-festival-header" : "bg-[#F8F7F2] border-[#D8DAD2] text-[#30352F]"}`}>
         {isChhathSeason && <div className="pb-chhath-sky absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
           {Array.from({length:9},(_,i)=><span key={i} className="pb-chhath-diya" style={{left:`${(i*29+7)%96}%`,animationDelay:`${(i%5)*-1.7}s`,animationDuration:`${7+(i%4)*1.5}s`}}>🪔</span>)}
           <span className="pb-chhath-petal absolute left-[12%] top-[28%]">🌼</span><span className="pb-chhath-petal absolute right-[10%] top-[58%]">✨</span>
@@ -824,6 +824,50 @@ export function CustomerStorefront({
           </div>
         </div>;
       })()}
+
+      {!searchQuery.trim() && !isSearchSubmitted && currentPage === 'home' && (
+        <section className="pb-editorial-hero mx-auto w-full max-w-6xl px-3.5 pt-5 sm:px-6 sm:pt-7">
+          <div className="pb-editorial-hero-card relative isolate grid min-h-[390px] overflow-hidden rounded-[26px] sm:min-h-[430px] lg:grid-cols-[.92fr_1.08fr]">
+            <div className="relative z-10 flex flex-col items-start justify-center px-6 py-9 sm:px-10 sm:py-12 lg:px-14">
+              <span className="mb-5 inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.22em] text-[#596d55]">
+                <span className="h-px w-7 bg-[#788B72]"/> Your neighbourhood grocery store
+              </span>
+              <h1 className="max-w-xl font-serif text-[clamp(2.65rem,6vw,4.6rem)] leading-[.98] tracking-[-.055em] text-[#30352F]">
+                Everyday essentials,<br/><em className="font-normal text-[#64765F]">made simple.</em>
+              </h1>
+              <p className="mt-5 max-w-md text-sm leading-7 text-[#62685f] sm:text-base">
+                Fresh picks, trusted brands and all your daily needs — thoughtfully brought together at Parbati Vandar.
+              </p>
+              <div className="mt-7 flex flex-wrap items-center gap-3">
+                <button type="button" onClick={() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'})} className="inline-flex min-h-12 items-center gap-2 rounded-full bg-[#E8412C] px-6 py-3 text-sm font-bold text-white shadow-[0_8px_20px_rgba(232,65,44,.2)] transition hover:-translate-y-0.5 hover:bg-[#cf3826]">
+                  Shop groceries <ArrowRight className="h-4 w-4"/>
+                </button>
+                <button type="button" onClick={() => bestItemsSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'})} className="inline-flex min-h-12 items-center rounded-full border border-[#aeb8a8] px-6 py-3 text-sm font-semibold text-[#4e6049] transition hover:bg-white/60">
+                  Explore best picks
+                </button>
+              </div>
+              <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] font-semibold text-[#687064]">
+                <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-[#788B72]"/> Carefully selected essentials</span>
+                <span className="inline-flex items-center gap-1.5"><MapPin className="h-4 w-4 text-[#788B72]"/> Gangpur, Burdwan</span>
+              </div>
+            </div>
+            <div className="pb-editorial-hero-image relative min-h-[240px] overflow-hidden lg:min-h-full">
+              <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1500&q=88" alt="Fresh produce and grocery essentials at a market" className="absolute inset-0 h-full w-full object-cover"/>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#263626]/45 via-transparent to-[#263626]/10 lg:bg-gradient-to-r lg:from-[#788B72]/15 lg:via-transparent lg:to-[#263626]/20"/>
+              <div className="absolute bottom-5 left-5 right-5 rounded-2xl border border-white/60 bg-[#fffefa]/95 p-4 shadow-xl backdrop-blur-md sm:bottom-7 sm:left-7 sm:right-7 sm:max-w-[330px]">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[10px] font-extrabold uppercase tracking-[.16em] text-[#64765F]">Parbati Vandar</span>
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#eaf0e6] px-2.5 py-1 text-[10px] font-bold text-[#52684d]"><span className={`h-1.5 w-1.5 rounded-full ${liveIsOpen ? 'bg-[#788B72]' : 'bg-[#E8412C]'}`}/>{liveIsOpen ? 'Open today' : 'Currently closed'}</span>
+                </div>
+                <p className="mt-2 text-lg font-semibold tracking-tight text-[#30352F]">Your daily basket, all in one place.</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {['Rice & pulses','Fresh snacks','Kitchen essentials'].map((label)=><span key={label} className="rounded-full border border-[#d8dad2] px-2.5 py-1 text-[10px] font-semibold text-[#62685f]">{label}</span>)}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ===================================================================== */}
       {/* SPECIAL OCCASION BANNER + ADMIN "BEST ITEMS" HOVER / PEEK SHOWCASE    */}
