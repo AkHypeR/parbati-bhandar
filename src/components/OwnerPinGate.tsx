@@ -13,7 +13,7 @@ interface OwnerPinGateProps {
 export function OwnerPinGate({ password, setPassword, pinError, loading, onSubmit, onBackToCustomer }: OwnerPinGateProps) {
   const [showPassword, setShowPassword] = useState(false);
   return (
-    <main className="relative flex-1 overflow-hidden bg-[#f4f7f4] px-4 py-10 sm:py-16">
+    <main className="pb-owner-pin-gate relative flex-1 overflow-hidden bg-[#f4f7f4] px-4 py-10 sm:py-16">
       <div aria-hidden="true" className="pointer-events-none absolute -left-24 -top-28 h-80 w-80 rounded-full bg-emerald-200/50 blur-3xl" />
       <div aria-hidden="true" className="pointer-events-none absolute -bottom-28 -right-20 h-96 w-96 rounded-full bg-amber-100/70 blur-3xl" />
       <div className="relative mx-auto grid min-h-[520px] max-w-5xl overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.10)] md:grid-cols-[1fr_1.05fr]">
