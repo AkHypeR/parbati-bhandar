@@ -203,6 +203,30 @@ export function AdminUploadApp({
   const [broadcastResult,setBroadcastResult] = useState('');
   type OwnerBroadcast = { id: string; title: string; body: string; createdAt: number; recipientCount: number; unreadCount: number };
   const [ownerBroadcasts, setOwnerBroadcasts] = useState<OwnerBroadcast[]>([]);
+  type OwnerCustomer = { id:string; name:string; phone:string; createdAt:number; lastLoginAt:number; orderCount:number; lastOrderAt:number|null; totalOrderValue:number };
+  const [ownerCustomers, setOwnerCustomers] = useState<OwnerCustomer[]>([]);
+  const [ownerCustomersLoading, setOwnerCustomersLoading] = useState(false);
+  const [ownerCustomersError, setOwnerCustomersError] = useState('');
+  const [customerSearch, setCustomerSearch] = useState('');
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
+  const loadOwnerCustomers = async () => {
+    setOwnerCustomersLoading(true); setOwnerCustomersError('');
+    try {
+      const response = await fetch('/api/owner-customers', { credentials:'same-origin', cache:'no-store', headers:{ Accept:'application/json' } });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'Could not load customer details.');
+      const customers = Array.isArray(data.customers) ? data.customers : [];
+      setOwnerCustomers(customers);
+      setSelectedCustomerId(current => current && customers.some((customer:OwnerCustomer) => customer.id === current) ? current : customers[0]?.id || null);
+    } catch (error) {
+      setOwnerCustomersError((error as Error).message || 'Could not load customer details.');
+    } finally { setOwnerCustomersLoading(false); }
+  };
+  useEffect(() => { if (adminTab === 'dashboard') void loadOwnerCustomers(); }, [adminTab]);
+  const filteredOwnerCustomers = ownerCustomers.filter(customer =>
+    [customer.name, customer.phone].some(value => String(value || '').toLowerCase().includes(customerSearch.trim().toLowerCase()))
+  );
+  const selectedOwnerCustomer = ownerCustomers.find(customer => customer.id === selectedCustomerId) || null;
   const [ownerBroadcastsLoading, setOwnerBroadcastsLoading] = useState(false);
   const [ownerBroadcastsError, setOwnerBroadcastsError] = useState('');
   const [deletingBroadcastId, setDeletingBroadcastId] = useState('');
@@ -829,6 +853,43 @@ export function AdminUploadApp({
               </div>
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_2px_10px_rgba(15,23,42,.04)] sm:p-6"><h3 className="font-extrabold text-slate-900">Quick actions</h3><p className="mt-1 text-xs text-slate-500">Common tasks, one tap away.</p><div className="mt-4 grid gap-2"><button type="button" onClick={() => { setEditingProduct(null); setAdminTab('add'); }} className="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 p-3 text-left hover:bg-blue-100"><span className="grid h-9 w-9 place-items-center rounded-lg bg-blue-700 text-white"><Plus className="h-4 w-4" /></span><span><strong className="block text-xs text-blue-950">Add a product</strong><span className="text-[11px] text-blue-800">Add a new item to your catalogue</span></span></button><button type="button" onClick={() => setAdminTab('inventory')} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-left hover:bg-slate-100"><span className="grid h-9 w-9 place-items-center rounded-lg bg-slate-800 text-white"><Package className="h-4 w-4" /></span><span><strong className="block text-xs text-slate-900">Update prices & stock</strong><span className="text-[11px] text-slate-600">Review availability and low-stock items</span></span></button><button type="button" onClick={() => setAdminTab('settings')} className="flex items-center gap-3 rounded-xl border border-amber-100 bg-amber-50 p-3 text-left hover:bg-amber-100"><span className="grid h-9 w-9 place-items-center rounded-lg bg-amber-500 text-white"><Settings className="h-4 w-4" /></span><span><strong className="block text-xs text-amber-950">Store settings</strong><span className="text-[11px] text-amber-800">Hours, deals and store controls</span></span></button><button type="button" onClick={() => setAdminTab('quickReplies')} className="flex items-center gap-3 rounded-xl border border-sky-100 bg-sky-50 p-3 text-left hover:bg-sky-100"><span className="grid h-9 w-9 place-items-center rounded-lg bg-sky-700 text-white"><MessageCircle className="h-4 w-4" /></span><span><strong className="block text-xs text-sky-950">Customer replies</strong><span className="text-[11px] text-sky-800">Prepare WhatsApp responses</span></span></button><button type="button" onClick={() => setAdminTab('notifications')} aria-label="Open customer notifications" className="flex items-center gap-3 rounded-xl border border-indigo-100 bg-indigo-50 p-3 text-left transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"><span className="grid h-9 w-9 place-items-center rounded-lg bg-indigo-700 text-white"><Megaphone className="h-4 w-4" /></span><span><strong className="block text-xs text-indigo-950">Push notifications</strong><span className="text-[11px] text-indigo-800">Send updates to customer accounts and opted-in devices</span></span><span className="ml-auto text-indigo-700" aria-hidden="true">→</span></button></div></div>
             </div>
+            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div><p className="text-xs font-black uppercase tracking-[0.14em] text-blue-700">Customer directory</p><h3 className="mt-1 text-xl font-extrabold text-slate-950">Your customers</h3><p className="mt-1 text-sm text-slate-500">Registered customer accounts and their store activity.</p></div>
+                <button type="button" onClick={() => void loadOwnerCustomers()} disabled={ownerCustomersLoading} className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-50">{ownerCustomersLoading ? 'Refreshing…' : 'Refresh'}</button>
+              </div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4"><span className="text-xs font-semibold text-slate-500">Total registered customers</span><strong className="mt-1 block text-3xl font-black text-slate-950">{ownerCustomers.length}</strong></div>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4"><span className="text-xs font-semibold text-slate-500">Customers who ordered</span><strong className="mt-1 block text-3xl font-black text-slate-950">{ownerCustomers.filter(customer => Number(customer.orderCount)>0).length}</strong></div>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4"><span className="text-xs font-semibold text-slate-500">Total customer orders</span><strong className="mt-1 block text-3xl font-black text-slate-950">{ownerCustomers.reduce((sum,customer)=>sum+Number(customer.orderCount||0),0)}</strong></div>
+              </div>
+              {ownerCustomersError && <p role="alert" className="mt-4 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm font-semibold text-rose-800">{ownerCustomersError}</p>}
+              <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+                <div className="min-w-0">
+                  <label htmlFor="owner-customer-search" className="mb-2 block text-xs font-bold text-slate-700">Find a customer</label>
+                  <input id="owner-customer-search" value={customerSearch} onChange={event=>setCustomerSearch(event.target.value)} placeholder="Search by name or mobile number" className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400" />
+                  <div className="mt-3 max-h-80 space-y-2 overflow-y-auto pr-1">
+                    {ownerCustomersLoading && !ownerCustomers.length ? <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">Loading customer accounts…</p> : filteredOwnerCustomers.length ? filteredOwnerCustomers.map(customer=><button key={customer.id} type="button" onClick={()=>setSelectedCustomerId(customer.id)} aria-pressed={selectedCustomerId===customer.id} className={`flex w-full items-center justify-between gap-3 rounded-xl border p-3 text-left transition ${selectedCustomerId===customer.id?'border-emerald-700 bg-emerald-50':'border-slate-200 bg-white hover:bg-slate-50'}`}><span className="min-w-0"><strong className="block truncate text-sm text-slate-900">{customer.name}</strong><span className="mt-0.5 block text-xs text-slate-500">{customer.phone}</span></span><span className="shrink-0 text-right"><strong className="block text-sm text-slate-900">{Number(customer.orderCount||0)}</strong><span className="text-[10px] text-slate-500">orders</span></span></button>) : <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">{ownerCustomers.length?'No matching customers.':'No registered customer accounts yet.'}</p>}
+                  </div>
+                </div>
+                <div className="min-w-0 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5">
+                  {selectedOwnerCustomer ? <>
+                    <div className="flex items-start justify-between gap-3"><div><p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Customer profile</p><h4 className="mt-1 text-xl font-extrabold text-slate-950">{selectedOwnerCustomer.name}</h4></div><span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-bold text-emerald-800">Registered</span></div>
+                    <a href={`tel:${selectedOwnerCustomer.phone}`} className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-blue-700"><Phone className="h-4 w-4"/>{selectedOwnerCustomer.phone}</a>
+                    <div className="mt-4 grid grid-cols-2 gap-2">
+                      <div className="rounded-xl border border-slate-200 bg-white p-3"><span className="text-[11px] font-semibold text-slate-500">Orders placed</span><strong className="mt-1 block text-xl font-black text-slate-900">{Number(selectedOwnerCustomer.orderCount||0)}</strong></div>
+                      <div className="rounded-xl border border-slate-200 bg-white p-3"><span className="text-[11px] font-semibold text-slate-500">Order value*</span><strong className="mt-1 block text-xl font-black text-slate-900">₹{Number(selectedOwnerCustomer.totalOrderValue||0).toLocaleString('en-IN')}</strong></div>
+                    </div>
+                    <dl className="mt-4 space-y-3 text-xs">
+                      <div className="flex justify-between gap-3"><dt className="text-slate-500">Account created</dt><dd className="text-right font-semibold text-slate-800">{selectedOwnerCustomer.createdAt?new Date(selectedOwnerCustomer.createdAt).toLocaleDateString('en-IN'):'—'}</dd></div>
+                      <div className="flex justify-between gap-3"><dt className="text-slate-500">Last sign-in</dt><dd className="text-right font-semibold text-slate-800">{selectedOwnerCustomer.lastLoginAt?new Date(selectedOwnerCustomer.lastLoginAt).toLocaleString('en-IN'):'—'}</dd></div>
+                      <div className="flex justify-between gap-3"><dt className="text-slate-500">Last order</dt><dd className="text-right font-semibold text-slate-800">{selectedOwnerCustomer.lastOrderAt?new Date(selectedOwnerCustomer.lastOrderAt).toLocaleDateString('en-IN'):'No orders yet'}</dd></div>
+                    </dl>
+                    <p className="mt-4 border-t border-slate-200 pt-3 text-[10px] leading-5 text-slate-500">*Total excludes cancelled and unavailable orders. Passwords and private sign-in credentials are never displayed.</p>
+                  </> : <div className="grid min-h-48 place-items-center text-center"><div><Users className="mx-auto h-8 w-8 text-slate-400"/><p className="mt-2 text-sm font-bold text-slate-700">Select a customer</p><p className="mt-1 text-xs text-slate-500">Their account details will appear here.</p></div></div>}
+                </div>
+              </div>
+            </section>
           </section>
         )}
 
