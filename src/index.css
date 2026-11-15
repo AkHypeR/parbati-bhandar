@@ -1721,3 +1721,64 @@ html.pb-dark .pb-customer-orders :where(.text-slate-600,.text-slate-500,.text-sl
   .pb-cart-bottom-nav { padding-left:5px; padding-right:5px; }
   .pb-cart-bottom-nav .pb-customer-nav-item { min-height:46px; font-size:9px; }
 }
+
+
+/* TRACK YOUR ORDER — premium sage/off-white order-tracking hero. */
+.pb-customer-orders .pb-order-track-header {
+  background:linear-gradient(118deg,#526B50 0%,#667F60 58%,#7F9475 100%) !important;
+  color:#FFFFFF !important;
+  padding:clamp(24px,4vw,38px) !important;
+  border-bottom:4px solid #E8412C !important;
+}
+.pb-customer-orders .pb-order-track-header::after {
+  content:""; position:absolute; right:0; bottom:0; width:42%; height:4px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55));
+  pointer-events:none;
+}
+.pb-customer-orders .pb-order-track-header > div[aria-hidden="true"] {
+  border-color:rgba(255,255,255,.13) !important;
+  background:radial-gradient(circle,rgba(255,255,255,.10),transparent 68%);
+}
+.pb-customer-orders .pb-order-track-header h1 {
+  color:#FFFFFF !important; font-weight:800; letter-spacing:-.035em;
+  line-height:1.08; text-wrap:balance;
+}
+.pb-customer-orders .pb-order-track-header p {
+  color:#F1F4EC !important;
+}
+.pb-customer-orders .pb-order-track-header > div.relative > span {
+  color:#FFFFFF !important; background:rgba(255,255,255,.13) !important;
+  border:1px solid rgba(255,255,255,.26) !important;
+  box-shadow:0 8px 24px rgba(29,49,29,.12);
+}
+.pb-customer-orders .pb-order-track-meta {
+  gap:9px !important; margin-top:22px !important;
+}
+.pb-customer-orders .pb-order-track-meta > span {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:8px 12px !important; border-radius:999px !important;
+  background:rgba(255,255,255,.13) !important;
+  border:1px solid rgba(255,255,255,.25) !important;
+  color:#FFFFFF !important; font-size:11px !important;
+  line-height:1.4; font-weight:650 !important;
+  backdrop-filter:blur(8px);
+}
+.pb-customer-orders .pb-order-track-meta svg { color:#E5F0DE !important; flex:none; }
+@media (max-width:520px) {
+  .pb-customer-orders .pb-order-track-header { padding:23px 19px !important; }
+  .pb-customer-orders .pb-order-track-header h1 { font-size:29px !important; }
+  .pb-customer-orders .pb-order-track-meta { display:grid !important; grid-template-columns:1fr !important; }
+  .pb-customer-orders .pb-order-track-meta > span { width:fit-content; max-width:100%; }
+}
+
+/* Dark theme keeps the hero distinct without glowing neon colours. */
+html.pb-dark .pb-customer-orders .pb-order-track-header {
+  background:linear-gradient(118deg,#263C32 0%,#304C3D 58%,#3D5947 100%) !important;
+  border-bottom-color:#E8412C !important;
+}
+html.pb-dark .pb-customer-orders .pb-order-track-header h1,
+html.pb-dark .pb-customer-orders .pb-order-track-header p { color:#FFFFFF !important; }
+html.pb-dark .pb-customer-orders .pb-order-track-meta > span {
+  background:rgba(255,255,255,.10) !important;
+  border-color:rgba(255,255,255,.20) !important; color:#F1F5F0 !important;
+}
