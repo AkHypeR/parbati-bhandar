@@ -1161,7 +1161,7 @@ export function CustomerStorefront({
               const quantity = cart[makeCartKey(product.id, product.unit)]?.qty || 0;
               return <article key={product.id} className="w-[148px] shrink-0 snap-start overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-sm sm:w-[176px]">
                 <button type="button" onClick={() => {setSearchQuery(product.name);setIsSearchSubmitted(true);setSelectedCategory('all');setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),50);}} className="flex w-full flex-col items-center p-3 text-left">
-                  <div className="flex h-24 w-full items-center justify-center rounded-xl bg-emerald-50/70 p-2">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="pb-popular-grocery-image h-full w-full object-contain"/> : <span className="text-4xl">{product.emoji || '🛒'}</span>}</div>
+                  <div className="flex h-24 w-full items-center justify-center rounded-xl bg-[#F3F2EA] p-2">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" style={{filter:"grayscale(1) brightness(1.28) contrast(.78)",mixBlendMode:"multiply"}} className="h-full w-full object-contain"/> : <span className="text-4xl">{product.emoji || '🛒'}</span>}</div>
                   <p className="mt-2 line-clamp-2 min-h-9 w-full text-xs font-extrabold leading-4 text-slate-800">{product.name}</p>
                   <p className="mt-1 w-full text-sm font-black text-slate-900">₹{product.price}<span className="ml-1 text-[10px] font-medium text-slate-500">/ {product.unit}</span></p>
                 </button>
