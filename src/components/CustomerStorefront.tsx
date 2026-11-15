@@ -518,14 +518,14 @@ export function CustomerStorefront({
           </div>
 
           {/* Customer / Burdwan Location Line */}
-          <div className="mt-3 flex items-center gap-2.5 rounded-xl bg-white/10 border border-white/15 px-3 py-2">
+          <div className="pb-header-location mt-3 flex items-center gap-2.5 rounded-xl px-3 py-2">
             <button
               type="button"
               onClick={() => setIsAddressExpanded(!isAddressExpanded)}
               className="flex-1 min-w-0 text-left group cursor-pointer"
             >
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-2 py-0.5 rounded bg-white/15 text-white font-extrabold text-xs tracking-tight">
+                <span className="pb-header-location-name px-2 py-0.5 rounded font-extrabold text-xs tracking-tight">
                   Swasti Pally - BURDWAN
                 </span>
                 <span
@@ -544,13 +544,13 @@ export function CustomerStorefront({
                 </span>
               </div>
               <div className="flex items-center justify-between gap-1 mt-0.5">
-                <p className="text-xs sm:text-sm text-emerald-50 font-medium truncate">
+                <p className="pb-header-location-address text-xs sm:text-sm font-semibold truncate">
                   {storeSettings.address || 'Swasti Pally, Gangpur, Dis-Burdwan, 713103, BURD...'}
                 </p>
                 {isAddressExpanded ? (
-                  <ChevronUp className="w-4 h-4 text-slate-700 shrink-0" />
+                  <ChevronUp className="pb-header-location-chevron w-4 h-4 shrink-0" />
                 ) : (
-                  <ChevronDown className="w-4 h-4 text-slate-700 shrink-0" />
+                  <ChevronDown className="pb-header-location-chevron w-4 h-4 shrink-0" />
                 )}
               </div>
             </button>
