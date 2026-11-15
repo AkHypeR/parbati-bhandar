@@ -747,8 +747,8 @@ export function CustomerStorefront({
               <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-amber-300 via-white to-emerald-300"/>
               <div className="relative z-10 flex min-h-[270px] flex-col items-center justify-end px-5 pb-7 pt-12 text-center sm:min-h-[300px]">
                 <span className="inline-flex rounded-full border border-white/40 bg-black/25 px-3 py-1 text-[9px] font-black uppercase tracking-[.2em] text-white shadow-sm backdrop-blur-sm">Your neighbourhood store</span>
-                <h2 className="mt-3 text-[32px] font-black leading-[1.02] tracking-tight text-white drop-shadow-lg sm:text-4xl">Freshness for<br/><span className="text-amber-300">every home.</span></h2>
-                <p className="mt-2 text-xs font-bold text-white/95 drop-shadow">Parbati Vandar · Swasti Pally, Burdwan</p>
+                {isChristmasSeason ? <h2 className="mt-3 text-[32px] font-black leading-[1.02] tracking-tight text-white drop-shadow-lg sm:text-4xl">Merry Christmas<br/><span className="text-amber-300">from our family.</span></h2> : <h2 className="mt-3 text-[32px] font-black leading-[1.02] tracking-tight text-white drop-shadow-lg sm:text-4xl">Freshness for<br/><span className="text-amber-300">every home.</span></h2>}
+                <p className="mt-2 text-xs font-bold text-white/95 drop-shadow">{isChristmasSeason ? "Warm wishes, joyful moments and festive cheer." : "Parbati Vandar · Swasti Pally, Burdwan"}</p>
               </div>
             </div>
             <div className="bg-white px-5 pb-5 pt-4">
