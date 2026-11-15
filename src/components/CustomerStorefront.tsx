@@ -461,19 +461,19 @@ export function CustomerStorefront({
             <button
               type="button"
               onClick={handleSecretLogoTap}
-              aria-label="Parbati Bhandar Shop Name"
+              aria-label="Parbati Vandar Shop Name"
               className="flex flex-col items-center justify-center select-none cursor-pointer group focus:outline-none min-w-0 px-1 text-center"
-              title={storeSettings.storeName || 'Parbati Bhandar (পার্বতী ভান্ডার)'}
+              title={storeSettings.storeName || 'Parbati Vandar (পার্বতী ভান্ডার)'}
             >
               <div className="flex items-center justify-center gap-1.5 min-w-0">
-                <svg viewBox="0 0 100 100" className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-lg bg-white p-1" role="img" aria-label="Parbati Bhandar P leaf logo"><path d="M24 82V18h34c18 0 29 10 29 26S76 70 58 70H42v12H24Zm18-28h15c8 0 12-3 12-10s-4-10-12-10H42v20Z" fill="#087a55"/><path d="M59 22C64 9 77 6 91 9c-2 14-11 23-26 23" fill="#65a30d"/></svg>
+                <svg viewBox="0 0 100 100" className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-lg bg-white p-1" role="img" aria-label="Parbati Vandar P leaf logo"><path d="M24 82V18h34c18 0 29 10 29 26S76 70 58 70H42v12H24Zm18-28h15c8 0 12-3 12-10s-4-10-12-10H42v20Z" fill="#087a55"/><path d="M59 22C64 9 77 6 91 9c-2 14-11 23-26 23" fill="#65a30d"/></svg>
                 <span className="text-base sm:text-xl font-black tracking-tight text-white leading-tight">
-                  {(storeSettings.storeName || 'Parbati Bhandar (পার্বতী ভান্ডার)')
+                  {(storeSettings.storeName || 'Parbati Vandar (পার্বতী ভান্ডার)')
                     .replace(/\s*\(.*\)\s*$/, '')}
                 </span>
               </div>
               <span className="text-[11px] sm:text-xs font-extrabold text-emerald-100 leading-tight">
-                {(storeSettings.storeName || 'Parbati Bhandar (পার্বতী ভান্ডার)').match(
+                {(storeSettings.storeName || 'Parbati Vandar (পার্বতী ভান্ডার)').match(
                   /\((.*)\)/
                 )?.[1] || 'পার্বতী ভান্ডার'}
               </span>
@@ -489,7 +489,7 @@ export function CustomerStorefront({
                 href={`tel:${(storeSettings.phone || '+919734765207').replace(/\s+/g, '')}`}
                 aria-label="Call Store"
                 className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 text-white border border-white/20 flex items-center justify-center transition-colors"
-                title="Call Parbati Bhandar: 097347 65207"
+                title="Call Parbati Vandar: 097347 65207"
               >
                 <Phone className="w-4 h-4" />
               </a>
@@ -599,7 +599,7 @@ export function CustomerStorefront({
                 <div>
                   <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[.16em] text-emerald-100"><Package className="h-3.5 w-3.5" /> Customer order centre</div>
                   <h2 className="mt-3 text-2xl font-black tracking-tight sm:text-3xl">Your orders, in one place.</h2>
-                  <p className="mt-1.5 max-w-lg text-xs leading-5 text-emerald-50/80 sm:text-sm">Follow an order's progress or review your recent purchases from Parbati Bhandar.</p>
+                  <p className="mt-1.5 max-w-lg text-xs leading-5 text-emerald-50/80 sm:text-sm">Follow an order's progress or review your recent purchases from Parbati Vandar.</p>
                 </div>
                 <button type="button" onClick={() => onNavigate('/')} aria-label="Close orders" className="relative rounded-full border border-white/15 bg-white/10 p-2 text-white transition hover:bg-white/20"><X className="h-4 w-4" /></button>
               </div>
@@ -710,7 +710,7 @@ export function CustomerStorefront({
           </nav>
           <div className="flex items-center gap-2 rounded-xl border border-white/90 bg-white/75 px-3 py-2 text-[11px] font-semibold text-slate-600 shadow-sm">
             <MapPin className="h-4 w-4 shrink-0 text-emerald-700" />
-            <span className="truncate">Delivering from <strong className="text-slate-800">Parbati Bhandar</strong> · {storeSettings.address || 'Swasti Pally, Burdwan'}</span>
+            <span className="truncate">Delivering from <strong className="text-slate-800">Parbati Vandar</strong> · {storeSettings.address || 'Swasti Pally, Burdwan'}</span>
             <span className={`ml-auto shrink-0 rounded-full px-2 py-1 text-[9px] font-extrabold ${liveIsOpen ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-700'}`}>{liveIsOpen ? 'OPEN' : 'CLOSED'}</span>
           </div>
           <div className="flex items-center gap-2">
@@ -804,7 +804,7 @@ export function CustomerStorefront({
       </div>
 
       {showWelcomePromo && currentPage === 'home' && !isSearchSubmitted && !searchQuery.trim() && (() => {
-        return <div className="pb-promo-overlay fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-md" role="dialog" aria-modal="true" aria-label="Welcome to Parbati Bhandar" onMouseDown={event => { if (event.target === event.currentTarget) closeWelcomePromo(); }}>
+        return <div className="pb-promo-overlay fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-md" role="dialog" aria-modal="true" aria-label="Welcome to Parbati Vandar" onMouseDown={event => { if (event.target === event.currentTarget) closeWelcomePromo(); }}>
           <div className="pb-promo-card relative mx-auto flex max-h-[88dvh] w-full max-w-[420px] flex-col overflow-hidden rounded-[30px] border border-white/70 bg-white shadow-[0_28px_90px_rgba(0,0,0,.38)]">
             <button type="button" onClick={closeWelcomePromo} aria-label="Close welcome promotion" className="absolute right-3 top-3 z-30 grid h-10 w-10 place-items-center rounded-full border border-white/50 bg-slate-950/65 text-white shadow-lg transition hover:rotate-90 hover:bg-slate-900"><X className="h-5 w-5"/></button>
             <div className="relative min-h-[270px] overflow-hidden bg-[#07543b] sm:min-h-[300px]">
@@ -814,11 +814,11 @@ export function CustomerStorefront({
               <div className="relative z-10 flex min-h-[270px] flex-col items-center justify-end px-5 pb-7 pt-12 text-center sm:min-h-[300px]">
                 <span className="inline-flex rounded-full border border-white/40 bg-black/25 px-3 py-1 text-[9px] font-black uppercase tracking-[.2em] text-white shadow-sm backdrop-blur-sm">Your neighbourhood store</span>
                 <h2 className="mt-3 text-[32px] font-black leading-[1.02] tracking-tight text-white drop-shadow-lg sm:text-4xl">Freshness for<br/><span className="text-amber-300">every home.</span></h2>
-                <p className="mt-2 text-xs font-bold text-white/95 drop-shadow">Parbati Bhandar · Swasti Pally, Burdwan</p>
+                <p className="mt-2 text-xs font-bold text-white/95 drop-shadow">Parbati Vandar · Swasti Pally, Burdwan</p>
               </div>
             </div>
             <div className="bg-white px-5 pb-5 pt-4">
-              <p className="text-center text-xs leading-relaxed text-slate-600">Everything happens right here on the Parbati Bhandar website. Browse products, place your orders and check your order updates—all in one place for a smooth and convenient shopping experience.</p>
+              <p className="text-center text-xs leading-relaxed text-slate-600">Everything happens right here on the Parbati Vandar website. Browse products, place your orders and check your order updates—all in one place for a smooth and convenient shopping experience.</p>
               <button type="button" onClick={() => { closeWelcomePromo(); window.setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),100); }} className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#0b8f63] px-4 py-3 text-sm font-black text-white shadow-lg shadow-emerald-900/15 transition hover:-translate-y-0.5 hover:bg-[#066847] active:scale-[.98]">Start shopping <ChevronRight className="h-5 w-5"/></button>
             </div>
           </div>
@@ -936,7 +936,7 @@ export function CustomerStorefront({
                     <div className="relative mt-3 flex h-28 w-full items-center justify-center gap-2 sm:h-32" aria-hidden="true">
                       {isChhathSeason ? <><span className="pb-chhath-float text-5xl sm:text-6xl">🪔</span><span className="pb-chhath-float text-6xl sm:text-7xl" style={{animationDelay:"-.7s"}}>🧺</span><span className="pb-chhath-float text-5xl sm:text-6xl" style={{animationDelay:"-1.3s"}}>🌾</span><span className="absolute left-[15%] top-1 text-xl">🌼</span><span className="absolute right-[15%] bottom-0 text-xl">✨</span></> : <><span className="pb-christmas-sway text-6xl drop-shadow-lg sm:text-7xl">🎄</span><span className="pb-christmas-gift text-4xl sm:text-5xl">🎁</span><span className="pb-christmas-sway text-5xl sm:text-6xl" style={{animationDelay:"-.8s"}}>🧸</span><span className="absolute left-[18%] top-1 text-xl">✨</span><span className="absolute right-[17%] bottom-0 text-xl">✨</span></>}
                     </div>
-                    <p className="mt-1 text-[9px] font-black uppercase tracking-[.25em] text-amber-200">{isChhathSeason ? "Parbati Bhandar • সূর্য অর্ঘ্যের পবিত্র উৎসব" : isAutomaticFestivalSeason ? "Parbati Bhandar celebrates with you" : "Parbati Bhandar wishes you"}</p>
+                    <p className="mt-1 text-[9px] font-black uppercase tracking-[.25em] text-amber-200">{isChhathSeason ? "Parbati Vandar • সূর্য অর্ঘ্যের পবিত্র উৎসব" : isAutomaticFestivalSeason ? "Parbati Vandar celebrates with you" : "Parbati Vandar wishes you"}</p>
                     <h3 className="mt-2 text-4xl font-black leading-tight tracking-tight text-white drop-shadow-[0_4px_14px_rgba(0,0,0,.65)] sm:text-5xl">{currentSlide.title}</h3>
                     <p className="mt-2 max-w-[290px] text-xs font-semibold leading-relaxed text-emerald-50/90 sm:text-sm">{currentSlide.subtitle}</p>
                     <button type="button" onClick={() => { const section=document.getElementById('christmas-special-products'); if(section) section.scrollIntoView({behavior:'smooth',block:'start'}); else catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-xs font-black text-emerald-800 ring-1 ring-emerald-100 shadow-lg transition hover:-translate-y-0.5">{isChhathSeason || isAutomaticFestivalSeason ? "Shop Festival Essentials" : `Shop ${storeSettings.seasonalCollectionTitle || 'Christmas Specials'}`} <ChevronRight className="h-4 w-4"/></button>
@@ -1194,7 +1194,7 @@ export function CustomerStorefront({
             <div className="relative overflow-hidden rounded-[20px] bg-gradient-to-r from-[#ffe2e9] via-[#fff1e8] to-[#e8f4ff] px-4 py-4 sm:px-7 sm:py-5">
               <div aria-hidden="true" className="absolute -right-8 -top-12 h-44 w-44 rounded-full border-[22px] border-white/35"/>
               <div className="relative z-10 flex items-center justify-between gap-3">
-                <div><p className="text-[10px] font-black uppercase tracking-[.2em] text-sky-800 sm:text-xs">Parbati Bhandar specials</p><h2 className="mt-1 text-3xl font-black leading-none tracking-tight text-[#172554] sm:text-5xl">DEAL ZONE</h2><p className="mt-2 max-w-[230px] text-xs font-semibold text-sky-900/75 sm:text-sm">Real savings and handpicked grocery offers.</p></div>
+                <div><p className="text-[10px] font-black uppercase tracking-[.2em] text-sky-800 sm:text-xs">Parbati Vandar specials</p><h2 className="mt-1 text-3xl font-black leading-none tracking-tight text-[#172554] sm:text-5xl">DEAL ZONE</h2><p className="mt-2 max-w-[230px] text-xs font-semibold text-sky-900/75 sm:text-sm">Real savings and handpicked grocery offers.</p></div>
                 <div className="pb-deal-burst grid h-20 w-20 shrink-0 place-items-center rounded-full border-4 border-white/70 bg-gradient-to-br from-amber-300 to-orange-400 text-4xl shadow-lg sm:h-28 sm:w-28 sm:text-6xl">🎁</div>
               </div>
             </div>
@@ -1240,7 +1240,7 @@ export function CustomerStorefront({
         if (storeSettings.showOccasionBanner === false && !christmasProducts.length) return null;
         return <section id="christmas-special-products" className="scroll-mt-24 mx-auto mb-7 w-full max-w-7xl px-4 sm:px-6">
           <div className="overflow-hidden rounded-3xl border border-red-100 bg-gradient-to-br from-red-50 via-white to-emerald-50 p-4 shadow-sm sm:p-5">
-            <div className="mb-4 flex items-center justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-red-700">Seasonal picks</p><h2 className="text-xl font-black text-emerald-950 sm:text-2xl">{storeSettings.seasonalCollectionIcon || '🎄'} {storeSettings.seasonalCollectionTitle || 'Christmas Specials'}</h2><p className="mt-1 text-xs text-slate-600">Featured picks selected by Parbati Bhandar</p></div><span className="text-3xl">🎁</span></div>
+            <div className="mb-4 flex items-center justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-red-700">Seasonal picks</p><h2 className="text-xl font-black text-emerald-950 sm:text-2xl">{storeSettings.seasonalCollectionIcon || '🎄'} {storeSettings.seasonalCollectionTitle || 'Christmas Specials'}</h2><p className="mt-1 text-xs text-slate-600">Featured picks selected by Parbati Vandar</p></div><span className="text-3xl">🎁</span></div>
             {christmasProducts.length ? <div className="flex gap-3 overflow-x-auto pb-2">{christmasProducts.map(product => {const qty=cart[makeCartKey(product.id,product.unit)]?.qty||cart[product.id]?.qty||0;return <article key={product.id} className="w-36 shrink-0 overflow-hidden rounded-2xl border border-white bg-white shadow-sm sm:w-44"><div className="flex h-28 items-center justify-center bg-gradient-to-br from-red-50 to-emerald-50">{product.imageUrl?<img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/>:<span className="text-4xl">{product.emoji}</span>}</div><div className="p-3"><p className="line-clamp-2 min-h-9 text-xs font-extrabold text-slate-900">{product.name}</p><p className="mt-1 text-sm font-black text-emerald-800">₹{product.price}<span className="text-[10px] font-medium text-slate-500"> / {product.unit}</span></p>{qty>0?<div className="mt-2 flex h-9 items-center justify-between overflow-hidden rounded-lg bg-emerald-700 text-white"><button type="button" aria-label={`Remove one ${product.name}`} onClick={()=>updateCartQty(product,-1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp??null})} className="grid h-9 w-10 place-items-center hover:bg-emerald-800"><Minus className="h-4 w-4"/></button><span className="text-xs font-black tabular-nums">{qty}</span><button type="button" aria-label={`Add one ${product.name}`} onClick={()=>updateCartQty(product,1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp??null})} className="grid h-9 w-10 place-items-center hover:bg-emerald-800"><Plus className="h-4 w-4"/></button></div>:<button type="button" onClick={()=>updateCartQty(product,1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp??null})} className="mt-2 w-full rounded-lg bg-emerald-700 px-2 py-2 text-xs font-bold text-white hover:bg-emerald-800">Add</button>}</div></article>})}</div> : <p className="rounded-2xl border border-dashed border-red-200 bg-white/80 px-4 py-6 text-center text-sm text-slate-600">Seasonal products are being selected. Please check back soon.</p>}
           </div>
         </section>;
