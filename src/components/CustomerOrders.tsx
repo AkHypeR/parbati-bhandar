@@ -106,7 +106,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
   return (
     <main className="pb-customer-orders min-h-dvh w-full overflow-x-clip bg-[#f5f8f2] px-3 py-4 sm:px-4 sm:py-10">
       <div className="mx-auto w-full min-w-0 max-w-4xl">
-        <button type="button" onClick={orderNumber ? () => onNavigate('/orders') : onBack} className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-900/10 bg-white px-4 py-2 text-sm font-bold text-emerald-900 shadow-sm hover:bg-emerald-50">
+        <button type="button" onClick={orderNumber ? () => onNavigate('/orders') : onBack} className="pb-orders-back mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-900/10 bg-white px-4 py-2 text-sm font-bold text-emerald-900 shadow-sm hover:bg-emerald-50">
           <ArrowLeft className="h-4 w-4"/> {orderNumber ? 'All orders' : 'Back to account'}
         </button>
         <section className="min-w-0 overflow-hidden rounded-2xl border border-white bg-white shadow-[0_12px_36px_-24px_rgba(6,78,59,.22)] sm:rounded-[2rem]">
@@ -128,7 +128,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
 
           <div className="min-w-0 p-3 sm:p-8">
             <div className="mb-4 flex justify-end">
-              <button type="button" onClick={() => void load()} disabled={loading || refreshing} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2.5 text-sm font-extrabold text-emerald-800 shadow-sm transition hover:bg-emerald-50 disabled:opacity-60"><RefreshCw className={'h-4 w-4 ' + (refreshing ? 'animate-spin' : '')}/>{refreshing ? 'Refreshing…' : 'Refresh order details'}</button>
+              <button type="button" onClick={() => void load()} disabled={loading || refreshing} className="pb-orders-refresh inline-flex min-h-11 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2.5 text-sm font-extrabold text-emerald-800 shadow-sm transition hover:bg-emerald-50 disabled:opacity-60"><RefreshCw className={'h-4 w-4 ' + (refreshing ? 'animate-spin' : '')}/>{refreshing ? 'Refreshing…' : 'Refresh order details'}</button>
             </div>
             {loading && <div className="py-16 text-center text-sm font-semibold text-slate-500"><span className="mx-auto mb-3 block h-8 w-8 animate-spin rounded-full border-4 border-emerald-600 border-t-transparent"/>Loading your orders…</div>}
             {!loading && error && <div role="alert" className="rounded-2xl border border-rose-200 bg-rose-50 p-5 text-sm font-semibold text-rose-700">{error}<button type="button" onClick={() => onNavigate('/account')} className="mt-3 block font-extrabold underline">Go to sign in</button></div>}
@@ -147,13 +147,13 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
             {!loading && !error && !orderNumber && orders.length > 0 && (
               <div className="space-y-3">
                 {orders.map(order => (
-                  <button type="button" key={order.orderNumber} onClick={() => onNavigate('/orders/' + order.orderNumber)} className="group flex w-full flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-lg sm:flex-row sm:items-center sm:justify-between sm:p-5">
+                  <button type="button" key={order.orderNumber} onClick={() => onNavigate('/orders/' + order.orderNumber)} className="pb-orders-list-row group flex w-full flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-lg sm:flex-row sm:items-center sm:justify-between sm:p-5">
                     <span className="flex min-w-0 items-center gap-3">
                       <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-emerald-50 text-emerald-800"><ShoppingBag className="h-5 w-5"/></span>
                       <span className="min-w-0">
                         <span className="flex flex-wrap items-center gap-2">
                           <strong className="text-base text-slate-900">Your grocery order</strong>
-                          <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-extrabold text-emerald-800">{statusLabel(order.status)}</span>
+                          <span className={`pb-orders-status pb-orders-status--${order.status} rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-extrabold text-emerald-800`}>{statusLabel(order.status)}</span>
                         </span>
                         <span className="mt-1 block truncate text-xs text-slate-500">{order.items.slice(0,3).map(item => item.name + ' × ' + item.quantity).join(' · ')}{order.items.length > 3 ? ' · + ' + (order.items.length - 3) + ' more' : ''}</span>
                         <span className="mt-1 flex items-center gap-1 text-[11px] text-slate-400"><Clock3 className="h-3 w-3"/>{formatDate(order.createdAt)}</span>{order.estimatedReadyAt && <span className="mt-1 block text-xs font-bold text-amber-700">Estimated ready: {formatTime(order.estimatedReadyAt)}</span>}
@@ -161,7 +161,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
                     </span>
                     <span className="flex items-center justify-between gap-3 sm:justify-end">
                       <strong className="text-lg font-black text-slate-900">₹{order.total}</strong>
-                      <span className="inline-flex items-center gap-1 rounded-xl bg-emerald-700 px-3 py-2 text-xs font-extrabold text-white">Track <ArrowRight className="h-3.5 w-3.5"/></span>
+                      <span className="pb-orders-track inline-flex items-center gap-1 rounded-xl bg-emerald-700 px-3 py-2 text-xs font-extrabold text-white">Track <ArrowRight className="h-3.5 w-3.5"/></span>
                     </span>
                   </button>
                 ))}
@@ -193,7 +193,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
                 {actionMessage && <p role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs font-bold text-emerald-800">{actionMessage}</p>}
                 {['new','review','processing'].includes(selected.status) && <section className="rounded-2xl border border-blue-200 bg-blue-50 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-sm font-black text-slate-900">Change your order</h2><p className="mt-1 text-xs text-slate-600">You can edit until the order is ready. Cancellation is available before processing starts.</p></div>
-                    {!editing ? <div className="flex gap-2"><button type="button" onClick={()=>{setEditQuantities(selected.items.map(item=>Number(item.quantity)||1));setEditAdditions([]);setAddProductSearch('');setEditing(true);setActionMessage('');}} className="rounded-xl border border-blue-200 bg-white px-4 py-2.5 text-xs font-extrabold text-blue-800">Edit order</button>{['new','review'].includes(selected.status) && <button type="button" onClick={()=>void cancelOrder()} disabled={savingAction} className="rounded-xl bg-rose-600 px-4 py-2.5 text-xs font-extrabold text-white disabled:opacity-60">{savingAction?'Please wait…':'Cancel order'}</button>}</div> : <button type="button" onClick={()=>setEditing(false)} className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700">Close editor</button>}
+                    {!editing ? <div className="flex gap-2"><button type="button" onClick={()=>{setEditQuantities(selected.items.map(item=>Number(item.quantity)||1));setEditAdditions([]);setAddProductSearch('');setEditing(true);setActionMessage('');}} className="rounded-xl border border-blue-200 bg-white px-4 py-2.5 text-xs font-extrabold text-blue-800">Edit order</button>{['new','review'].includes(selected.status) && <button type="button" onClick={()=>void cancelOrder()} disabled={savingAction} className="pb-orders-danger rounded-xl bg-rose-600 px-4 py-2.5 text-xs font-extrabold text-white disabled:opacity-60">{savingAction?'Please wait…':'Cancel order'}</button>}</div> : <button type="button" onClick={()=>setEditing(false)} className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700">Close editor</button>}
                   </div>
                   {editing && <div className="mt-4 space-y-3">
                     {selected.items.map((item,index)=><div key={index} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3">
@@ -223,7 +223,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
                       <p className="mt-2 text-[10px] leading-4 text-slate-500">New items are checked against live prices and stock before your changes are saved.</p>
                     </div>
                     <div className="flex items-center justify-between gap-3 border-t border-blue-100 pt-3"><span className="text-xs font-bold text-slate-600">Revised estimate</span><strong className="text-lg font-black text-slate-900">₹{selected.items.reduce((sum,item,index)=>sum+(Number(item.price)||0)*(editQuantities[index]||0),0)+editAdditions.reduce((sum,addition)=>{const product=products.find(item=>item.id===addition.productId);return sum+(Number(product?.price)||0)*addition.quantity;},0)}</strong></div>
-                    <button type="button" onClick={()=>void saveOrderEdit()} disabled={savingAction||(editQuantities.every(q=>q===0)&&editAdditions.length===0)} className="w-full rounded-xl bg-blue-800 px-4 py-3 text-sm font-extrabold text-white disabled:opacity-50">{savingAction?'Saving changes…':'Save order changes'}</button>
+                    <button type="button" onClick={()=>void saveOrderEdit()} disabled={savingAction||(editQuantities.every(q=>q===0)&&editAdditions.length===0)} className="pb-orders-save w-full rounded-xl bg-blue-800 px-4 py-3 text-sm font-extrabold text-white disabled:opacity-50">{savingAction?'Saving changes…':'Save order changes'}</button>
                   </div>}
                 </section>}
                 {['processing'].includes(selected.status) && <p className="rounded-xl bg-amber-50 p-3 text-[11px] font-semibold text-amber-800">Processing has started, so cancellation is locked. You can still edit quantities until the order is marked ready.</p>}{['ready','completed','cancelled','unavailable'].includes(selected.status) && <p className="rounded-xl bg-slate-50 p-3 text-[11px] font-semibold text-slate-500">Order editing and cancellation are locked at this stage.</p>}
@@ -263,7 +263,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
                   </div>
                 </section>
 
-                <button type="button" onClick={() => onNavigate('/')} className="flex min-h-11 w-full items-center justify-center rounded-full bg-amber-400 px-5 py-3 text-xs font-black text-slate-950 shadow-sm transition hover:bg-amber-300">Continue shopping</button>
+                <button type="button" onClick={() => onNavigate('/')} className="pb-orders-continue flex min-h-11 w-full items-center justify-center rounded-full bg-amber-400 px-5 py-3 text-xs font-black text-slate-950 shadow-sm transition hover:bg-amber-300">Continue shopping</button>
                 <section className="rounded-lg bg-slate-50 px-4 py-3">
                   <p className="text-[10px] font-bold text-slate-600">Order ID</p><p className="mt-1 text-xs text-slate-700">#{selected.orderNumber}</p>
                   <p className="mt-2 text-[10px] text-slate-500">Last updated {formatDate(selected.updatedAt || selected.createdAt)}</p>
