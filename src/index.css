@@ -1887,27 +1887,6 @@ html.pb-dark .pb-customer-orders .pb-orders-cancelled-notice * {
 }
 
 
-/* Popular groceries thumbnails currently include vivid blue baked-in backgrounds.
-   Desaturate only these thumbnails for a calmer, neutral storefront treatment. */
-.pb-popular-grocery-image {
-  filter: grayscale(1) sepia(.16) contrast(.96) !important;
-  mix-blend-mode:multiply;
-}
-html.pb-dark .pb-popular-grocery-image {
-  filter: grayscale(1) sepia(.12) brightness(.88) contrast(.94) !important;
-  mix-blend-mode:normal;
-}
-
-
-/* Keep the Popular groceries image tile neutral even when source images contain a blue backdrop. */
-.pb-customer-storefront [aria-label="Popular groceries"] img {
-  filter:grayscale(1) brightness(1.28) contrast(.78) !important;
-  mix-blend-mode:multiply !important;
-}
-html.pb-dark .pb-customer-storefront [aria-label="Popular groceries"] img {
-  filter:grayscale(1) brightness(.82) contrast(.88) !important;
-  mix-blend-mode:normal !important;
-}
 
 
 /* Storefront stock controls and availability labels use the sage status palette, not blue. */
@@ -1966,4 +1945,42 @@ html.pb-dark .pb-storefront-root .pb-availability-badge {
   background:#E8EFE4 !important; background-color:#E8EFE4 !important;
   color:#496447 !important; -webkit-text-fill-color:#496447 !important;
   border:1px solid #D1DDC9 !important;
+}
+
+
+/* Best 5 spotlight: remove stray blue accents and align all controls with the sage brand palette. */
+.pb-storefront-root .pb-best-five-section .pb-best-five-icon {
+  background:#E8EFE4 !important; color:#496447 !important;
+}
+.pb-storefront-root .pb-best-five-section .pb-best-five-counter {
+  background:#E8EFE4 !important; color:#496447 !important; border-color:#D1DDC9 !important;
+}
+.pb-storefront-root .pb-best-five-section .pb-best-five-spotlight {
+  border-color:#C8D8C1 !important;
+  background:linear-gradient(135deg,#F0F6EC 0%,#FFFFFF 52%,#E5EFE0 100%) !important;
+}
+.pb-storefront-root .pb-best-five-section .pb-best-five-product-badge {
+  background:#64765F !important; color:#FFFFFF !important;
+}
+.pb-storefront-root .pb-best-five-section button[aria-label="Previous spotlight slide"],
+.pb-storefront-root .pb-best-five-section button[aria-label="Next spotlight slide"] {
+  background:#FFFFFF !important; color:#496447 !important; border-color:#D6DDCF !important;
+}
+html.pb-dark .pb-storefront-root .pb-best-five-section .pb-best-five-icon,
+html.pb-dark .pb-storefront-root .pb-best-five-section .pb-best-five-counter {
+  background:#293A30 !important; color:#DCEBDD !important; border-color:#4C654F !important;
+}
+html.pb-dark .pb-storefront-root .pb-best-five-section .pb-best-five-spotlight {
+  background:linear-gradient(135deg,#24342B 0%,#1B2922 52%,#293A30 100%) !important;
+  border-color:#526A53 !important;
+}
+html.pb-dark .pb-storefront-root .pb-best-five-section .pb-best-five-product-badge {
+  background:#64765F !important; color:#FFFFFF !important;
+}
+
+/* Restore the original full-colour product photography in Popular groceries. */
+.pb-storefront-root [aria-label="Popular groceries"] img,
+.pb-storefront-root .pb-popular-grocery-image {
+  filter:none !important;
+  mix-blend-mode:normal !important;
 }
