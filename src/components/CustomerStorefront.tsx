@@ -422,12 +422,13 @@ export function CustomerStorefront({
   const isAutomaticFestivalSeason = Boolean(automaticFestivalTheme) && !isChhathSeason && !isChristmasSeason;
 
   return (
-    <div className={`pb-storefront-root flex-1 flex flex-col bg-[#F5F7FB] text-[#172554] pb-32 sm:pb-28 ${isChhathSeason ? "pb-chhath-page" : isAutomaticFestivalSeason ? "pb-festival-page" : ""}`}>
+    <div className={`pb-storefront-root flex-1 flex flex-col bg-[#F5F7FB] text-[#172554] pb-32 sm:pb-28 ${isChhathSeason ? "pb-chhath-page" : isChristmasSeason ? "pb-christmas-page" : isAutomaticFestivalSeason ? "pb-festival-page" : ""}`}>
 
       {/* ===================================================================== */}
       {/* TOP MOBILE-FIRST APP BAR WITH SHOP NAME                               */}
       {/* ===================================================================== */}
-      <header className={`pb-editorial-header relative isolate overflow-hidden border-b shadow-sm ${isChhathSeason ? "pb-chhath-header" : isAutomaticFestivalSeason ? "pb-festival-header" : "bg-[#F8F7F2] border-[#D8DAD2] text-[#30352F]"}`}>
+      <header className={`pb-editorial-header relative isolate overflow-hidden border-b shadow-sm ${isChhathSeason ? "pb-chhath-header" : isChristmasSeason ? "pb-christmas-header" : isAutomaticFestivalSeason ? "pb-festival-header" : "bg-[#F8F7F2] border-[#D8DAD2] text-[#30352F]"}`}>
+        {isChristmasSeason && <div className="pb-christmas-snow absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">{Array.from({length:18},(_,i)=><span key={i} style={{left: `${(i*37+11)%98}%`,animationDelay: `${(i%7)*-.9}s`,animationDuration: `${5+(i%5)*1.2}s`}}>❄</span>)}</div>}
         {isChhathSeason && <div className="pb-chhath-sky absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
           {Array.from({length:9},(_,i)=><span key={i} className="pb-chhath-diya" style={{left:`${(i*29+7)%96}%`,animationDelay:`${(i%5)*-1.7}s`,animationDuration:`${7+(i%4)*1.5}s`}}>🪔</span>)}
           <span className="pb-chhath-petal absolute left-[12%] top-[28%]">🌼</span><span className="pb-chhath-petal absolute right-[10%] top-[58%]">✨</span>
