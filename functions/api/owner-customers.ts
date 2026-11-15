@@ -22,7 +22,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       SELECT a.id, a.name, a.phone, a.created_at AS createdAt, a.updated_at AS lastLoginAt,
         COUNT(o.id) AS orderCount,
         MAX(o.created_at) AS lastOrderAt,
-        COALESCE(SUM(CASE WHEN o.status NOT IN ('cancelled','unavailable') THEN o.total ELSE 0 END),0) AS totalOrderValue
+        COALESCE(SUM(o.total),0) AS totalOrderValue
       FROM customer_accounts a
       LEFT JOIN customer_orders o ON o.customer_id=a.id AND o.archived_at IS NULL
       GROUP BY a.id, a.name, a.phone, a.created_at, a.updated_at
