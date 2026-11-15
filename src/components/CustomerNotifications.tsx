@@ -85,7 +85,7 @@ export function CustomerNotifications({ customer, onBack, onSignIn }: {
   const unreadCount = items.filter(item => !item.readAt).length;
 
   return (
-    <main className="min-h-dvh flex-1 bg-[#f4f7fc] px-3 py-5 sm:px-6 sm:py-8">
+    <main className="pb-customer-notifications min-h-dvh flex-1 bg-[#f4f7fc] px-3 py-5 sm:px-6 sm:py-8">
       <div className="mx-auto max-w-3xl">
         <button type="button" onClick={onBack} className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50">
           <ArrowLeft className="h-4 w-4" /> Back to store
