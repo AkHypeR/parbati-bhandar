@@ -1849,3 +1849,39 @@ html.pb-dark .pb-customer-orders button.pb-orders-danger:hover:not(:disabled) {
   color:#FFFFFF !important; -webkit-text-fill-color:#FFFFFF !important;
   border-color:#668A68 !important;
 }
+
+
+/* Cancelled-order messaging: soft status treatment with high-contrast text in both themes. */
+.pb-customer-orders .pb-orders-cancelled-title {
+  color:#8A3028 !important;
+  -webkit-text-fill-color:#8A3028 !important;
+}
+.pb-customer-orders .pb-orders-cancelled-notice {
+  background:#FFF1EE !important;
+  background-color:#FFF1EE !important;
+  border:1px solid #E8BDB6 !important;
+  color:#71332D !important;
+  -webkit-text-fill-color:#71332D !important;
+  line-height:1.55 !important;
+  text-shadow:none !important;
+  opacity:1 !important;
+}
+.pb-customer-orders .pb-orders-cancelled-notice * {
+  color:#71332D !important;
+  -webkit-text-fill-color:#71332D !important;
+}
+html.pb-dark .pb-customer-orders .pb-orders-cancelled-title {
+  color:#FFD0C9 !important;
+  -webkit-text-fill-color:#FFD0C9 !important;
+}
+html.pb-dark .pb-customer-orders .pb-orders-cancelled-notice {
+  background:#382725 !important;
+  background-color:#382725 !important;
+  border-color:#70413B !important;
+  color:#FFE0DA !important;
+  -webkit-text-fill-color:#FFE0DA !important;
+}
+html.pb-dark .pb-customer-orders .pb-orders-cancelled-notice * {
+  color:#FFE0DA !important;
+  -webkit-text-fill-color:#FFE0DA !important;
+}
