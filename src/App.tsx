@@ -36,7 +36,7 @@ const CustomerOrders = lazy(() => import('./components/CustomerOrders').then(mod
 const TermsAndConditions = lazy(() => import('./components/TermsAndConditions').then(module => ({ default: module.TermsAndConditions })));
 import { OwnerPinGate } from './components/OwnerPinGate';
 const AdminUploadApp = lazy(() => import('./components/AdminUploadApp').then(module => ({ default: module.AdminUploadApp })));
-import { QrPosterModal, SetupGuideModal } from './components/Modals';
+import { QrPosterModal } from './components/Modals';
 import { fetchCloudCatalog, saveCloudProducts, deleteCloudProducts, saveCloudSettings } from './lib/cloudStore';
 
 const STORAGE_KEYS = {
@@ -222,9 +222,8 @@ export default function App() {
     return () => { cancelled = true; };
   }, []);
 
-  // Modals: QR Poster & Free Hosting Guide
+  // QR poster modal
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
-  const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
 
   // Customer View Filter States
   const [searchQuery, setSearchQuery] = useState('');
@@ -1337,7 +1336,7 @@ export default function App() {
       )}
 
       {/* ========================================== */}
-      {/* MODALS: QR POSTER & ₹0 SETUP GUIDE         */}
+      {/* MODALS: QR POSTER                         */}
       {/* ========================================== */}
       <QrPosterModal
         isOpen={isQrModalOpen}
@@ -1345,10 +1344,6 @@ export default function App() {
         storeSettings={storeSettings}
       />
 
-      <SetupGuideModal
-        isOpen={isGuideModalOpen}
-        onClose={() => setIsGuideModalOpen(false)}
-      />
     </div>
     </Suspense>
   );
