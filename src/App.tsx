@@ -163,6 +163,8 @@ export default function App() {
   const adminRouteTabs = { '/owner': 'dashboard', '/owner/dashboard': 'dashboard', '/owner/inventory': 'inventory', '/owner/add-product': 'add', '/owner/orders': 'orders', '/owner/settings': 'settings', '/owner/whatsapp-replies': 'quickReplies', '/owner/christmas-specials': 'christmasSpecials', '/owner/notifications': 'notifications' } as const;
   const getAdminTabFromPath = () => adminRouteTabs[getAppPath() as keyof typeof adminRouteTabs] || 'inventory';
   const [currentPath, setCurrentPath] = useState(() => getAppPath());
+  // Welcome promotion is eligible once per full browser load, not on SPA navigation.
+  const [welcomePromoPending, setWelcomePromoPending] = useState(true);
   const navigateToPath = (path: string) => {
     if (getAppPath() !== path) window.history.pushState({}, '', path);
     setCurrentPath(path);
@@ -1193,6 +1195,8 @@ export default function App() {
               onViewOrders={() => navigateToPath('/orders')}
             />
           ) : <CustomerStorefront
+            welcomePromoPending={welcomePromoPending}
+            onWelcomePromoConsumed={() => setWelcomePromoPending(false)}
             darkMode={darkMode}
             onToggleDarkMode={() => setDarkMode((current) => !current)}
             storeSettings={storeSettings}
