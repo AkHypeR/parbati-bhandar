@@ -1422,3 +1422,144 @@ html.pb-dark .pb-customer-account .pb-recent-orders-card .pb-recent-order-row {
 html.pb-dark .pb-customer-account .pb-recent-orders-card .pb-recent-order-row:hover {
   background:#293A35 !important; color:#FFFFFF !important;
 }
+
+
+/* ORDER HISTORY + TRACKING — local semantic palette.
+   This intentionally overrides legacy broad emerald/amber button rules above. */
+.pb-customer-orders { background:#F4F5EF !important; color:#30352F !important; }
+.pb-customer-orders > div > section {
+  background:#FFFEFA !important; border-color:#D8DED3 !important;
+  box-shadow:0 12px 36px -24px rgba(35,55,39,.20) !important;
+}
+.pb-customer-orders > div > section > header {
+  background:linear-gradient(120deg,#526B50 0%,#687F62 100%) !important;
+  color:#FFFFFF !important;
+}
+.pb-customer-orders > div > section > header :where(h1,p,span) { color:#FFFFFF !important; }
+.pb-customer-orders > div > section > header :where(.text-emerald-100,.text-emerald-50) { color:#F0F4EA !important; }
+.pb-customer-orders .pb-orders-back,
+.pb-customer-orders .pb-orders-refresh {
+  background:#EEF2E9 !important; color:#40563C !important;
+  border:1px solid #D2DDCC !important; box-shadow:none !important;
+}
+.pb-customer-orders .pb-orders-back:hover,
+.pb-customer-orders .pb-orders-refresh:hover {
+  background:#E2EADB !important; color:#30472E !important;
+}
+.pb-customer-orders .pb-orders-list-row {
+  background:#FFFFFF !important; color:#30352F !important; border-color:#D8DED3 !important;
+}
+.pb-customer-orders .pb-orders-list-row:hover {
+  background:#F8FAF5 !important; border-color:#A8B99F !important;
+}
+.pb-customer-orders .pb-orders-list-row :where(strong) { color:#30352F !important; }
+.pb-customer-orders .pb-orders-track,
+.pb-customer-orders .pb-orders-primary {
+  background:#526B50 !important; color:#FFFFFF !important; border:1px solid #526B50 !important;
+}
+.pb-customer-orders .pb-orders-track:hover,
+.pb-customer-orders .pb-orders-primary:hover {
+  background:#40563C !important; color:#FFFFFF !important;
+}
+.pb-customer-orders .pb-orders-danger {
+  background:#FCEBE8 !important; color:#A63227 !important;
+  border:1px solid #F1C7C1 !important; box-shadow:none !important;
+}
+.pb-customer-orders .pb-orders-danger:hover { background:#F8DAD5 !important; color:#85251D !important; }
+.pb-customer-orders .pb-orders-save {
+  background:#526B50 !important; color:#FFFFFF !important; border:1px solid #526B50 !important;
+}
+.pb-customer-orders .pb-orders-save:hover { background:#40563C !important; }
+.pb-customer-orders .pb-orders-continue {
+  background:#526B50 !important; color:#FFFFFF !important; border:1px solid #526B50 !important;
+}
+.pb-customer-orders .pb-orders-continue:hover { background:#40563C !important; }
+.pb-customer-orders .pb-orders-status {
+  display:inline-flex; align-items:center; white-space:nowrap; border:1px solid transparent !important;
+}
+.pb-customer-orders .pb-orders-status--cancelled {
+  background:#FCEBE8 !important; color:#A63227 !important; border-color:#F1C7C1 !important;
+}
+.pb-customer-orders .pb-orders-status--ready,
+.pb-customer-orders .pb-orders-status--completed {
+  background:#E8F1E5 !important; color:#365B36 !important; border-color:#CBDCC5 !important;
+}
+.pb-customer-orders .pb-orders-status--processing,
+.pb-customer-orders .pb-orders-status--review {
+  background:#FFF3D9 !important; color:#76520B !important; border-color:#EED9A8 !important;
+}
+.pb-customer-orders .pb-orders-status--new {
+  background:#EAF1F8 !important; color:#31577A !important; border-color:#CFDDEB !important;
+}
+.pb-customer-orders .pb-orders-status--unavailable {
+  background:#FFF3D9 !important; color:#76520B !important; border-color:#EED9A8 !important;
+}
+.pb-customer-orders :where(section.rounded-lg,section.rounded-2xl,section.rounded-xl) {
+  border-color:#D8DED3 !important;
+}
+.pb-customer-orders input:not([type="checkbox"]):not([type="radio"]) {
+  background:#FFFFFF !important; color:#30352F !important; border-color:#CDD5C8 !important;
+}
+.pb-customer-orders input::placeholder { color:#858D81 !important; }
+.pb-customer-orders :where(.text-slate-900,.text-slate-800) { color:#30352F !important; }
+.pb-customer-orders :where(.text-slate-700,.text-slate-600) { color:#535E51 !important; }
+.pb-customer-orders :where(.text-slate-500,.text-slate-400) { color:#737D70 !important; }
+
+/* Order page dark mode: surfaces, text, controls and statuses all change together. */
+html.pb-dark .pb-customer-orders { background:#101820 !important; color:#F1F5F4 !important; }
+html.pb-dark .pb-customer-orders > div > section {
+  background:#18232E !important; border-color:#344453 !important;
+}
+html.pb-dark .pb-customer-orders > div > section > header {
+  background:linear-gradient(120deg,#263C32 0%,#304C3D 100%) !important; color:#FFFFFF !important;
+}
+html.pb-dark .pb-customer-orders > div > section > header :where(h1,p,span) { color:#FFFFFF !important; }
+html.pb-dark .pb-customer-orders .pb-orders-back,
+html.pb-dark .pb-customer-orders .pb-orders-refresh {
+  background:#26372F !important; color:#DDEBDD !important; border-color:#49604D !important;
+}
+html.pb-dark .pb-customer-orders .pb-orders-back:hover,
+html.pb-dark .pb-customer-orders .pb-orders-refresh:hover { background:#32483A !important; color:#FFFFFF !important; }
+html.pb-dark .pb-customer-orders .pb-orders-list-row {
+  background:#202D39 !important; color:#F1F5F4 !important; border-color:#3B4B58 !important;
+}
+html.pb-dark .pb-customer-orders .pb-orders-list-row:hover { background:#293A35 !important; border-color:#58745B !important; }
+html.pb-dark .pb-customer-orders .pb-orders-list-row :where(strong) { color:#F1F5F4 !important; }
+html.pb-dark .pb-customer-orders .pb-orders-track,
+html.pb-dark .pb-customer-orders .pb-orders-primary,
+html.pb-dark .pb-customer-orders .pb-orders-save,
+html.pb-dark .pb-customer-orders .pb-orders-continue {
+  background:#58775A !important; color:#FFFFFF !important; border-color:#58775A !important;
+}
+html.pb-dark .pb-customer-orders .pb-orders-track:hover,
+html.pb-dark .pb-customer-orders .pb-orders-primary:hover,
+html.pb-dark .pb-customer-orders .pb-orders-save:hover,
+html.pb-dark .pb-customer-orders .pb-orders-continue:hover { background:#668A68 !important; color:#FFFFFF !important; }
+html.pb-dark .pb-customer-orders .pb-orders-danger {
+  background:#3A2424 !important; color:#FFB9AE !important; border-color:#70413B !important;
+}
+html.pb-dark .pb-customer-orders .pb-orders-danger:hover { background:#4A2B29 !important; color:#FFD2CA !important; }
+html.pb-dark .pb-customer-orders .pb-orders-status--cancelled {
+  background:#3A2226 !important; color:#FFB4AB !important; border-color:#704047 !important;
+}
+html.pb-dark .pb-customer-orders .pb-orders-status--ready,
+html.pb-dark .pb-customer-orders .pb-orders-status--completed {
+  background:#1F382B !important; color:#A9D8B5 !important; border-color:#365E45 !important;
+}
+html.pb-dark .pb-customer-orders .pb-orders-status--processing,
+html.pb-dark .pb-customer-orders .pb-orders-status--review,
+html.pb-dark .pb-customer-orders .pb-orders-status--unavailable {
+  background:#3A3020 !important; color:#F2D18B !important; border-color:#66512B !important;
+}
+html.pb-dark .pb-customer-orders .pb-orders-status--new {
+  background:#1E3045 !important; color:#B7D4F2 !important; border-color:#385675 !important;
+}
+html.pb-dark .pb-customer-orders :where(section.rounded-lg,section.rounded-2xl,section.rounded-xl) {
+  background:#202D39 !important; border-color:#3B4B58 !important;
+}
+html.pb-dark .pb-customer-orders input:not([type="checkbox"]):not([type="radio"]) {
+  background:#FFFFFF !important; color:#17212B !important; border-color:#718096 !important;
+}
+html.pb-dark .pb-customer-orders input::placeholder { color:#667085 !important; }
+html.pb-dark .pb-customer-orders :where(.text-slate-900,.text-slate-800,.text-slate-700) { color:#F1F5F4 !important; }
+html.pb-dark .pb-customer-orders :where(.text-slate-600,.text-slate-500,.text-slate-400) { color:#B9C5C2 !important; }
