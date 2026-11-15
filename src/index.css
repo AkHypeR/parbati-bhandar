@@ -2076,3 +2076,50 @@ html.pb-dark .pb-storefront-root .pb-best-five-section .pb-best-five-product-bad
   -webkit-text-fill-color:#E6FFF2 !important;
   border:1px solid rgba(230,255,242,.25) !important;
 }
+
+
+/* Expandable store information: translucent glass surface with clear contrast */
+.pb-store-info-card {
+  position: relative;
+  isolation: isolate;
+  color: #30352F;
+  background: rgba(255, 254, 250, .76) !important;
+  border: 1px solid rgba(120, 139, 114, .30) !important;
+  box-shadow: 0 8px 24px rgba(48, 53, 47, .08);
+  -webkit-backdrop-filter: blur(16px) saturate(1.25);
+  backdrop-filter: blur(16px) saturate(1.25);
+}
+.pb-store-info-name { color: #30352F !important; }
+.pb-store-info-tagline { color: #555D52 !important; line-height: 1.55; }
+.pb-store-info-meta { color: #424B40 !important; line-height: 1.5; }
+.pb-store-info-meta svg { color: #64765F !important; flex: 0 0 auto; }
+.pb-store-info-map { color: #536C4D !important; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.pb-store-info-badge {
+  color: #66501E !important;
+  background: rgba(246, 231, 190, .72) !important;
+  border: 1px solid rgba(177, 145, 69, .25);
+}
+.pb-store-info-title { min-width: 0; }
+@supports not ((backdrop-filter: blur(1px))) {
+  .pb-store-info-card { background: rgba(255, 254, 250, .96) !important; }
+}
+html.pb-dark .pb-store-info-card {
+  color: #F0F1E9 !important;
+  background: rgba(35, 42, 35, .82) !important;
+  border-color: rgba(174, 192, 164, .25) !important;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, .22);
+}
+html.pb-dark .pb-store-info-name { color: #F3F4EC !important; }
+html.pb-dark .pb-store-info-tagline { color: #D0D8C9 !important; }
+html.pb-dark .pb-store-info-meta { color: #E0E6DA !important; }
+html.pb-dark .pb-store-info-meta svg { color: #B5C8A9 !important; }
+html.pb-dark .pb-store-info-map { color: #C1D5B5 !important; }
+html.pb-dark .pb-store-info-badge {
+  color: #F5E7BD !important;
+  background: rgba(104, 83, 39, .42) !important;
+  border-color: rgba(213, 183, 111, .22);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .pb-store-info-card { background: rgba(255, 254, 250, .97) !important; }
+  html.pb-dark .pb-store-info-card { background: rgba(35, 42, 35, .97) !important; }
+}
