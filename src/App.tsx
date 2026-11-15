@@ -107,30 +107,33 @@ function loadInitialCart(): CartMap {
 }
 function InitialLoadingScreen() {
   return (
-    <div className="fixed inset-0 z-[200] flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[#f8fbf8] px-6" role="status" aria-live="polite">
-      <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-emerald-100/70 blur-3xl" />
-      <div className="absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-amber-100/70 blur-3xl" />
-      <div className="relative flex flex-col items-center">
-        <div className="pb-loader-mark grid h-20 w-20 place-items-center rounded-[26px] bg-[#087a55] text-3xl font-black text-white shadow-xl shadow-emerald-900/15">PB</div>
-        <h1 className="mt-4 text-xl font-black tracking-tight text-[#07543b]">Parbati Bhandar</h1>
-        <p className="mt-1 text-xs font-semibold text-slate-500">Fresh essentials, closer to home</p>
-        <div className="mt-8 flex items-center gap-2"><span className="pb-loader-dot h-2 w-2 rounded-full bg-emerald-600"/><span className="pb-loader-dot h-2 w-2 rounded-full bg-emerald-600"/><span className="pb-loader-dot h-2 w-2 rounded-full bg-emerald-600"/></div>
-        <p className="mt-3 text-[11px] font-bold tracking-wide text-emerald-800">Preparing your store…</p>
-      </div>
-      <div className="relative mt-12 w-full max-w-sm overflow-hidden rounded-[26px] border border-emerald-100 bg-white/90 p-4 shadow-xl shadow-emerald-900/10">
-        <div className="flex items-center justify-between"><span className="text-[10px] font-black uppercase tracking-[.18em] text-emerald-800">Getting your basket ready</span><span className="text-lg">🛒</span></div>
-        <div className="pb-loader-track mt-4">
-          <div className="pb-loader-runner">
-            {['🍎','🥛','🍞','🥬','🍊','🧃','🥕','🛍️','🍎','🥛','🍞','🥬','🍊','🧃','🥕','🛍️'].map((item,index)=><span key={index} className="pb-loader-product">{item}</span>)}
-          </div>
+    <div className="fixed inset-0 z-[200] flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[#fbfdf9] px-6 text-center" role="status" aria-live="polite">
+      <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-emerald-100/50 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-28 -right-20 h-80 w-80 rounded-full bg-lime-100/45 blur-3xl" />
+
+      <div className="relative flex w-full max-w-sm flex-col items-center">
+        <div className="pb-loader-mark relative grid h-24 w-24 place-items-center rounded-[30px] bg-white shadow-[0_12px_36px_rgba(6,78,59,0.12)] ring-1 ring-emerald-100">
+          <svg viewBox="0 0 100 100" className="h-[66px] w-[66px]" role="img" aria-label="Parbati Bhandar P leaf logo">
+            <path d="M27 79V21h29c17 0 27 9 27 24S73 69 56 69H43v10H27Zm16-24h12c8 0 12-3 12-10s-4-10-12-10H43v20Z" fill="#087a55" />
+            <path d="M59 24C62 11 74 7 88 9c-2 14-10 23-25 22" fill="#65a30d" />
+            <path d="M62 29c7-7 14-11 23-17" fill="none" stroke="#f7fdf8" strokeWidth="2.5" strokeLinecap="round" />
+          </svg>
         </div>
-        <div className="mt-3 flex items-center justify-between text-[10px] font-bold text-slate-500"><span>Fresh groceries</span><span>Almost there…</span></div>
-        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-emerald-50"><div className="pb-loader-progress h-full w-1/3 rounded-full bg-gradient-to-r from-emerald-500 to-lime-400"/></div>
+
+        <h1 className="mt-7 text-[28px] font-extrabold tracking-tight text-[#07543b]">Parbati Bhandar</h1>
+        <p className="mt-1 font-['Noto_Sans_Bengali'] text-lg font-semibold text-[#087a55]">পার্বতী ভান্ডার</p>
+        <p className="mt-3 text-sm font-medium tracking-wide text-slate-500">Fresh essentials, closer to home</p>
+
+        <div className="mt-10 flex items-center gap-2.5" aria-hidden="true">
+          <span className="pb-loader-dot h-2.5 w-2.5 rounded-full bg-emerald-300" />
+          <span className="pb-loader-dot h-2.5 w-2.5 rounded-full bg-emerald-500" />
+          <span className="pb-loader-dot h-2.5 w-2.5 rounded-full bg-emerald-700" />
+        </div>
+        <p className="mt-4 text-sm font-semibold text-emerald-800">Preparing your store...</p>
       </div>
     </div>
   );
 }
-
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(() => { try { return localStorage.getItem('pb_site_theme') === 'dark'; } catch { return false; } });
