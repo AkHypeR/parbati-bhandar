@@ -687,119 +687,44 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       {/* STICKY SEARCH BAR & CATEGORY RIBBON (Follows User on Scroll)          */}
       {/* ===================================================================== */}
-      <div className="sticky top-0 z-40 border-b border-emerald-100 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,.98),transparent_58%),linear-gradient(135deg,#f0fdf4_0%,#ffffff_52%,#ecfdf5_100%)] shadow-[0_8px_24px_rgba(6,78,59,0.08)] backdrop-blur-xl">
-        <div className="max-w-6xl mx-auto px-3.5 sm:px-6 py-2.5 space-y-2.5">
-          {/* Marketplace-style quick links, inspired by Flipkart's top shortcut row */}
-          <nav aria-label="Quick shopping shortcuts" className="grid grid-cols-4 gap-2">
-            <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); bestItemsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[18px] border border-emerald-100 bg-white px-1.5 py-2.5 text-slate-800 shadow-[0_3px_10px_rgba(6,78,59,.07)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(6,78,59,.13)] active:scale-[.98]">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-emerald-100 text-emerald-700"><Sparkles className="h-5 w-5" /></span>
-              <span className="truncate text-[11px] font-extrabold sm:text-xs">Best Deals</span>
-            </button>
-            <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[18px] border border-emerald-100 bg-white px-1.5 py-2.5 text-slate-800 shadow-[0_3px_10px_rgba(6,78,59,.07)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(6,78,59,.13)] active:scale-[.98]">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-emerald-100 text-emerald-700"><ShoppingCart className="h-5 w-5" /></span>
-              <span className="truncate text-[11px] font-extrabold sm:text-xs">Groceries</span>
-            </button>
-            <button type="button" onClick={() => onNavigate('/track-order')} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[18px] border border-emerald-100 bg-white px-1.5 py-2.5 text-slate-800 shadow-[0_3px_10px_rgba(6,78,59,.07)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(6,78,59,.13)] active:scale-[.98]">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-sky-100 text-sky-700"><ClipboardList className="h-5 w-5" /></span>
-              <span className="truncate text-[11px] font-extrabold sm:text-xs">Track Order</span>
-            </button>
-            <button type="button" onClick={() => onNavigate('/cart')} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[18px] border border-emerald-100 bg-white px-1.5 py-2.5 text-slate-800 shadow-[0_3px_10px_rgba(6,78,59,.07)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_10px_22px_rgba(6,78,59,.13)] active:scale-[.98]">
-              <span className="relative grid h-9 w-9 place-items-center rounded-xl bg-violet-100 text-violet-700"><ShoppingCart className="h-5 w-5" />{cartTotalItems > 0 && <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-rose-500 px-1 text-[9px] font-black text-white">{cartTotalItems}</span>}</span>
-              <span className="truncate text-[11px] font-extrabold sm:text-xs">My Cart</span>
-            </button>
-          </nav>
-          <div className="flex items-center gap-2 rounded-xl border border-white/90 bg-white/75 px-3 py-2 text-[11px] font-semibold text-slate-600 shadow-sm">
-            <MapPin className="h-4 w-4 shrink-0 text-emerald-700" />
-            <span className="truncate">Delivering from <strong className="text-slate-800">Parbati Vandar</strong> · {storeSettings.address || 'Swasti Pally, Burdwan'}</span>
-            <span className={`ml-auto shrink-0 rounded-full px-2 py-1 text-[9px] font-extrabold ${liveIsOpen ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-700'}`}>{liveIsOpen ? 'OPEN' : 'CLOSED'}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            {/* Rounded Pill Search Bar (like "Search for 'Coffee'" in screenshot) */}
-            <div className="relative flex-1">
-              <form className="flex items-center gap-1.5" role="search" onSubmit={(e) => { e.preventDefault(); submitSearch(); }}>
-                <div className="relative min-w-0 flex-1">
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <input
-                    type="text"
-                    aria-label="Search store products"
-                    aria-autocomplete="list"
-                    aria-expanded={showSearchSuggestions && searchSuggestions.length > 0}
-                    value={searchQuery}
-                    onFocus={() => { if (searchQuery.trim() && !isSearchSubmitted) setShowSearchSuggestions(true); }}
-                    onChange={(e) => handleSearchInputChange(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Escape') setShowSearchSuggestions(false); }}
-                    placeholder='Search rice, atta, oil, biscuits...'
-                    className="w-full rounded-2xl border-2 border-emerald-100 bg-white py-3 pl-10 pr-9 text-xs font-medium text-slate-900 shadow-[0_3px_10px_rgba(6,78,59,.06)] placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-100 sm:text-sm"
-                    autoComplete="off"
-                  />
-                  {searchQuery && <button type="button" aria-label="Clear search query" onClick={() => { setSearchQuery(''); setIsSearchSubmitted(false); setShowSearchSuggestions(false); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"><X className="w-4 h-4" /></button>}
-                </div>
-                <button type="submit" aria-label="Search" className="inline-flex min-h-[42px] shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#066847] px-3 sm:px-4 text-xs font-extrabold text-white shadow-sm hover:bg-emerald-800 active:scale-[.98]">
-                  <Search className="h-4 w-4" /><span className="hidden sm:inline">Search</span>
-                </button>
-              </form>
-              {showSearchSuggestions && searchSuggestions.length > 0 && <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl" role="listbox" aria-label="Product and related category suggestions">
-                {directSearchMatches.slice(0, 4).map(product => <button key={product.id} type="button" role="option" aria-selected="false" onClick={() => submitSearch(product.name)} className="flex w-full items-center gap-3 border-b border-slate-100 px-3 py-2.5 text-left last:border-0 hover:bg-emerald-50">
-                  <Search className="h-4 w-4 shrink-0 text-slate-400" /><span className="min-w-0 flex-1 truncate text-xs font-semibold text-slate-800">{product.name}</span><ArrowRight className="h-3.5 w-3.5 shrink-0 text-slate-400"/>
+      <div className="pb-sticky-search sticky top-0 z-40 border-b border-[#D8DAD2] bg-[#F8F7F2]/95 shadow-[0_4px_16px_rgba(48,53,47,.07)] backdrop-blur-xl">
+        <div className="mx-auto max-w-6xl px-3.5 py-2 sm:px-6 sm:py-2.5">
+          <div className="relative">
+            <form className="flex items-center gap-2" role="search" onSubmit={(e) => { e.preventDefault(); submitSearch(); }}>
+              <div className="relative min-w-0 flex-1">
+                <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#788B72]" />
+                <input
+                  type="text"
+                  aria-label="Search store products"
+                  aria-autocomplete="list"
+                  aria-expanded={showSearchSuggestions && searchSuggestions.length > 0}
+                  value={searchQuery}
+                  onFocus={() => { if (searchQuery.trim() && !isSearchSubmitted) setShowSearchSuggestions(true); }}
+                  onChange={(e) => handleSearchInputChange(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Escape') setShowSearchSuggestions(false); }}
+                  placeholder="Search rice, atta, oil, biscuits..."
+                  className="w-full rounded-full border border-[#D8DAD2] bg-[#FFFEFA] py-3 pl-10 pr-10 text-sm font-medium text-[#30352F] shadow-sm placeholder:text-[#858b80] focus:border-[#788B72] focus:outline-none focus:ring-2 focus:ring-[#788B72]/20"
+                  autoComplete="off"
+                />
+                {searchQuery && <button type="button" aria-label="Clear search query" onClick={() => { setSearchQuery(''); setIsSearchSubmitted(false); setShowSearchSuggestions(false); }} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-[#788B72] hover:bg-[#EEF1E9]"><X className="h-4 w-4"/></button>}
+              </div>
+              <button type="submit" aria-label="Search" className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#E8412C] text-white shadow-sm transition hover:bg-[#cf3826] active:scale-95 sm:h-12 sm:w-12">
+                <Search className="h-4.5 w-4.5"/>
+              </button>
+            </form>
+            {showSearchSuggestions && searchSuggestions.length > 0 && <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-[#D8DAD2] bg-[#FFFEFA] shadow-xl" role="listbox" aria-label="Product and related category suggestions">
+              {directSearchMatches.slice(0, 4).map(product => <button key={product.id} type="button" role="option" aria-selected="false" onClick={() => submitSearch(product.name)} className="flex w-full items-center gap-3 border-b border-[#D8DAD2]/70 px-3 py-3 text-left last:border-0 hover:bg-[#EEF1E9]">
+                <Search className="h-4 w-4 shrink-0 text-[#788B72]"/><span className="min-w-0 flex-1 truncate text-sm font-semibold text-[#30352F]">{product.name}</span><ArrowRight className="h-3.5 w-3.5 shrink-0 text-[#788B72]"/>
+              </button>)}
+              {sameCategorySuggestions.length > 0 && <>
+                <div className="border-t border-[#D8DAD2] bg-[#EEF1E9] px-3 py-2 text-[10px] font-extrabold uppercase tracking-wider text-[#64765F]">More from {matchedCategory}</div>
+                {sameCategorySuggestions.slice(0, Math.max(0, 6 - Math.min(4, directSearchMatches.length))).map(product => <button key={product.id} type="button" role="option" aria-selected="false" onClick={() => submitSearch(product.name)} className="flex w-full items-center gap-3 border-b border-[#D8DAD2]/70 px-3 py-3 text-left last:border-0 hover:bg-[#EEF1E9]">
+                  <Package className="h-4 w-4 shrink-0 text-[#788B72]"/><span className="min-w-0 flex-1 truncate text-sm font-semibold text-[#30352F]">{product.name}</span><ArrowRight className="h-3.5 w-3.5 shrink-0 text-[#788B72]"/>
                 </button>)}
-                {sameCategorySuggestions.length > 0 && <>
-                  <div className="border-t border-slate-100 bg-emerald-50/70 px-3 py-2 text-[10px] font-extrabold uppercase tracking-wider text-emerald-800">More from {matchedCategory}</div>
-                  {sameCategorySuggestions.slice(0, Math.max(0, 6 - Math.min(4, directSearchMatches.length))).map(product => <button key={product.id} type="button" role="option" aria-selected="false" onClick={() => submitSearch(product.name)} className="flex w-full items-center gap-3 border-b border-slate-100 px-3 py-2.5 text-left last:border-0 hover:bg-emerald-50">
-                    <Package className="h-4 w-4 shrink-0 text-emerald-500" /><span className="min-w-0 flex-1 truncate text-xs font-semibold text-slate-800">{product.name}</span><ArrowRight className="h-3.5 w-3.5 shrink-0 text-slate-400"/>
-                  </button>)}
-                </>}
-                <button type="button" onClick={() => submitSearch()} className="w-full bg-slate-50 px-3 py-2.5 text-left text-xs font-extrabold text-emerald-800 hover:bg-emerald-50">See all results for “{searchQuery.trim()}”</button>
-              </div>}
-            </div>
-
-            {/* Compact My Order Button in Sticky Header */}
-            <button
-              type="button"
-              onClick={() => onNavigate('/cart')}
-              aria-label="Open My Order List"
-              className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-[#087a55] hover:bg-[#066847] text-white font-extrabold text-xs shadow-2xs cursor-pointer shrink-0 tabular-nums"
-            >
-              <ShoppingCart className="w-4 h-4" />
-              <span className="hidden sm:inline">My Order</span>
-              <span className="px-1.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-black">
-                {cartTotalItems}
-              </span>
-            </button>
+              </>}
+              <button type="button" onClick={() => submitSearch()} className="w-full bg-[#F8F7F2] px-3 py-3 text-left text-xs font-extrabold text-[#64765F] hover:bg-[#EEF1E9]">See all results for “{searchQuery.trim()}”</button>
+            </div>}
           </div>
-
-          {/* Keep the category ribbon out of focused search results. */}
-          {!searchQuery.trim() && !isSearchSubmitted && <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
-            {CATEGORIES.map((cat) => {
-              const isActive = selectedCategory === cat.id;
-              const count =
-                cat.id === 'all'
-                  ? products.length
-                  : products.filter((p) => p.category === cat.id).length;
-
-              return (
-                <button
-                  type="button"
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
-                    isActive
-                      ? 'bg-[#087a55] text-white shadow-2xs'
-                      : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
-                  }`}
-                >
-                  <span className="text-sm">{cat.icon}</span>
-                  <span>{cat.name}</span>
-                  <span
-                    className={`text-[10px] px-1.5 py-0.2 rounded-full tabular-nums ${
-                      isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-600'
-                    }`}
-                  >
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>}
         </div>
       </div>
 
