@@ -558,28 +558,28 @@ export function CustomerStorefront({
 
           {/* Expandable Store Info Card when Location Row is tapped */}
           {isAddressExpanded && (
-            <div className="mt-2.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-2">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="font-extrabold text-slate-900 text-sm flex items-center gap-1.5">
+            <div className="pb-store-info-card mt-2.5 p-3.5 rounded-2xl text-xs space-y-2">
+              <div className="pb-store-info-title flex flex-wrap items-center justify-between gap-2">
+                <div className="pb-store-info-name font-extrabold text-sm flex items-center gap-1.5">
                   <Store className="w-4 h-4 text-emerald-700" />
                   <span>{storeSettings.storeName}</span>
                 </div>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-bold text-[11px]">
+                <span className="pb-store-info-badge inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-bold text-[11px]">
                   <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
                   <span>Local grocery • {inStockCount} Items Live</span>
                 </span>
               </div>
-              <p className="text-slate-600">{storeSettings.tagline}</p>
-              <div className="flex flex-wrap items-center gap-4 text-slate-700 font-medium pt-1">
+              <p className="pb-store-info-tagline">{storeSettings.tagline}</p>
+              <div className="pb-store-info-meta flex flex-wrap items-center gap-4 font-medium pt-1">
                 <span className="flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-emerald-700" />
+                  <Clock className="w-3.5 h-3.5" />
                   {storeSettings.timings}
                 </span>
                 <a
                   href={'https://maps.app.goo.gl/yrXRW4uuwWjaEzQi6?g_st=ac'}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-emerald-700 font-bold hover:underline"
+                  className="pb-store-info-map inline-flex items-center gap-1 font-bold hover:underline"
                 >
                   <Navigation className="w-3.5 h-3.5" />
                   <span>Open in Google Maps</span>
