@@ -422,7 +422,7 @@ export function CustomerStorefront({
   const isAutomaticFestivalSeason = Boolean(automaticFestivalTheme) && !isChhathSeason && !isChristmasSeason;
 
   return (
-    <div className={`flex-1 flex flex-col bg-[#f4f7fc] text-slate-900 pb-32 sm:pb-28 ${isChhathSeason ? "pb-chhath-page" : isAutomaticFestivalSeason ? "pb-festival-page" : ""}`}>
+    <div className={`flex-1 flex flex-col bg-[#f7faf8] text-slate-900 pb-32 sm:pb-28 ${isChhathSeason ? "pb-chhath-page" : isAutomaticFestivalSeason ? "pb-festival-page" : ""}`}>
 
       {/* ===================================================================== */}
       {/* TOP MOBILE-FIRST APP BAR WITH SHOP NAME                               */}
@@ -466,13 +466,13 @@ export function CustomerStorefront({
               title={storeSettings.storeName || 'Parbati Bhandar (পার্বতী ভান্ডার)'}
             >
               <div className="flex items-center justify-center gap-1.5 min-w-0">
-                <Store className="w-4 h-4 sm:w-5 sm:h-5 text-[#1e40af] shrink-0" />
+                <svg viewBox="0 0 100 100" className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-lg bg-white p-1" role="img" aria-label="Parbati Bhandar P leaf logo"><path d="M24 82V18h34c18 0 29 10 29 26S76 70 58 70H42v12H24Zm18-28h15c8 0 12-3 12-10s-4-10-12-10H42v20Z" fill="#087a55"/><path d="M59 22C64 9 77 6 91 9c-2 14-11 23-26 23" fill="#65a30d"/></svg>
                 <span className="text-base sm:text-xl font-black tracking-tight text-white leading-tight">
                   {(storeSettings.storeName || 'Parbati Bhandar (পার্বতী ভান্ডার)')
                     .replace(/\s*\(.*\)\s*$/, '')}
                 </span>
               </div>
-              <span className="text-[11px] sm:text-xs font-extrabold text-blue-100 leading-tight">
+              <span className="text-[11px] sm:text-xs font-extrabold text-emerald-100 leading-tight">
                 {(storeSettings.storeName || 'Parbati Bhandar (পার্বতী ভান্ডার)').match(
                   /\((.*)\)/
                 )?.[1] || 'পার্বতী ভান্ডার'}
@@ -529,20 +529,20 @@ export function CustomerStorefront({
                 <span
                   className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
                     liveIsOpen
-                      ? 'bg-sky-100 text-blue-900'
+                      ? 'bg-sky-100 text-emerald-900'
                       : 'bg-red-100 text-red-700'
                   }`}
                 >
                   <span
                     className={`w-1.5 h-1.5 rounded-full ${
-                      liveIsOpen ? 'bg-blue-600' : 'bg-red-500'
+                      liveIsOpen ? 'bg-emerald-600' : 'bg-red-500'
                     }`}
                   />
                   {liveIsOpen ? 'Open • খোলা আছে' : 'Closed'}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-1 mt-0.5">
-                <p className="text-xs sm:text-sm text-blue-50 font-medium truncate">
+                <p className="text-xs sm:text-sm text-emerald-50 font-medium truncate">
                   {storeSettings.address || 'Swasti Pally, Gangpur, Dis-Burdwan, 713103, BURD...'}
                 </p>
                 {isAddressExpanded ? (
@@ -559,7 +559,7 @@ export function CustomerStorefront({
             <div className="mt-2.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-2">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="font-extrabold text-slate-900 text-sm flex items-center gap-1.5">
-                  <Store className="w-4 h-4 text-blue-700" />
+                  <Store className="w-4 h-4 text-emerald-700" />
                   <span>{storeSettings.storeName}</span>
                 </div>
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-bold text-[11px]">
@@ -570,14 +570,14 @@ export function CustomerStorefront({
               <p className="text-slate-600">{storeSettings.tagline}</p>
               <div className="flex flex-wrap items-center gap-4 text-slate-700 font-medium pt-1">
                 <span className="flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-blue-700" />
+                  <Clock className="w-3.5 h-3.5 text-emerald-700" />
                   {storeSettings.timings}
                 </span>
                 <a
                   href={'https://maps.app.goo.gl/yrXRW4uuwWjaEzQi6?g_st=ac'}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-blue-700 font-bold hover:underline"
+                  className="inline-flex items-center gap-1 text-emerald-700 font-bold hover:underline"
                 >
                   <Navigation className="w-3.5 h-3.5" />
                   <span>Open in Google Maps</span>
@@ -594,16 +594,16 @@ export function CustomerStorefront({
           <div className="overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-[0_18px_50px_rgba(15,23,42,.08)]">
             <div className="relative overflow-hidden bg-[#172554] px-5 py-5 text-white sm:px-7 sm:py-6">
               <div aria-hidden="true" className="absolute -right-12 -top-20 h-56 w-56 rounded-full border border-white/10" />
-              <div aria-hidden="true" className="absolute -right-2 -top-12 h-40 w-40 rounded-full bg-blue-300/10 blur-2xl" />
+              <div aria-hidden="true" className="absolute -right-2 -top-12 h-40 w-40 rounded-full bg-emerald-300/10 blur-2xl" />
               <div className="relative flex items-start justify-between gap-3">
                 <div>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[.16em] text-blue-100"><Package className="h-3.5 w-3.5" /> Customer order centre</div>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[.16em] text-emerald-100"><Package className="h-3.5 w-3.5" /> Customer order centre</div>
                   <h2 className="mt-3 text-2xl font-black tracking-tight sm:text-3xl">Your orders, in one place.</h2>
-                  <p className="mt-1.5 max-w-lg text-xs leading-5 text-blue-50/80 sm:text-sm">Follow an order's progress or review your recent purchases from Parbati Bhandar.</p>
+                  <p className="mt-1.5 max-w-lg text-xs leading-5 text-emerald-50/80 sm:text-sm">Follow an order's progress or review your recent purchases from Parbati Bhandar.</p>
                 </div>
                 <button type="button" onClick={() => onNavigate('/')} aria-label="Close orders" className="relative rounded-full border border-white/15 bg-white/10 p-2 text-white transition hover:bg-white/20"><X className="h-4 w-4" /></button>
               </div>
-              <div className="relative mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-semibold text-blue-100/90">
+              <div className="relative mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-semibold text-emerald-100/90">
                 <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-sky-300" /> Private order lookup</span>
                 <span className="inline-flex items-center gap-1.5"><Clock className="h-4 w-4 text-sky-300" /> History available for 7 days</span>
               </div>
@@ -611,24 +611,24 @@ export function CustomerStorefront({
 
             <div className="p-4 sm:p-6">
               {lastOrderCreatedAt > 0 && (
-                <div className="mb-4 flex items-center gap-3 rounded-2xl border border-blue-200 bg-blue-50/80 p-3.5">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-blue-100 text-blue-800"><CheckCircle2 className="h-5 w-5" /></span>
-                  <div className="min-w-0"><p className="text-[10px] font-extrabold uppercase tracking-wider text-blue-800">Latest order received</p><p className="text-sm font-bold text-slate-900">{new Date(lastOrderCreatedAt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Kolkata'})}</p></div>
+                <div className="mb-4 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-3.5">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-100 text-emerald-800"><CheckCircle2 className="h-5 w-5" /></span>
+                  <div className="min-w-0"><p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800">Latest order received</p><p className="text-sm font-bold text-slate-900">{new Date(lastOrderCreatedAt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Kolkata'})}</p></div>
                 </div>
               )}
 
               <div className="grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1.5" role="tablist" aria-label="Order options">
-                <button type="button" role="tab" aria-selected={ordersView === 'track'} onClick={() => onNavigate('/track-order')} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${ordersView === 'track' ? 'bg-white text-[#1e3a8a] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}><Package className="h-4 w-4" /> Track order</button>
-                <button type="button" role="tab" aria-selected={ordersView === 'history'} onClick={() => { onNavigate('/previous-orders'); if (!historyLoaded && trackingPhone.replace(/\D/g, '').length >= 10) void loadOrderHistory(); }} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${ordersView === 'history' ? 'bg-white text-[#1e3a8a] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}><ClipboardList className="h-4 w-4" /> Previous orders</button>
+                <button type="button" role="tab" aria-selected={ordersView === 'track'} onClick={() => onNavigate('/track-order')} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${ordersView === 'track' ? 'bg-white text-[#07543b] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}><Package className="h-4 w-4" /> Track order</button>
+                <button type="button" role="tab" aria-selected={ordersView === 'history'} onClick={() => { onNavigate('/previous-orders'); if (!historyLoaded && trackingPhone.replace(/\D/g, '').length >= 10) void loadOrderHistory(); }} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${ordersView === 'history' ? 'bg-white text-[#07543b] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}><ClipboardList className="h-4 w-4" /> Previous orders</button>
               </div>
 
               {ordersView === 'track' ? (
                 <div className="pt-5">
                   <div className="mb-4"><h3 className="text-lg font-black text-slate-900">Track your order</h3><p className="mt-1 text-xs leading-5 text-slate-500">Enter the order number and the same phone number you used at checkout.</p></div>
                   <form onSubmit={trackOrder} className="grid gap-3 sm:grid-cols-[1fr_1.2fr_auto]">
-                    <label className="block"><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Order number</span><input required inputMode="numeric" value={trackingOrderNumber} onChange={e=>setTrackingOrderNumber(e.target.value)} placeholder="e.g. 1024" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm font-semibold text-slate-900 outline-none transition placeholder:font-normal focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10" /></label>
-                    <label className="block"><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Checkout phone number</span><input required inputMode="tel" value={trackingPhone} onChange={e=>setTrackingPhone(e.target.value)} placeholder="10-digit mobile number" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm font-semibold text-slate-900 outline-none transition placeholder:font-normal focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10" /></label>
-                    <button disabled={trackingLoading} className="self-end inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl bg-[#1d4ed8] px-5 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#1e40af] disabled:cursor-not-allowed disabled:opacity-60">{trackingLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : 'Track order'} <ArrowRight className="h-4 w-4" /></button>
+                    <label className="block"><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Order number</span><input required inputMode="numeric" value={trackingOrderNumber} onChange={e=>setTrackingOrderNumber(e.target.value)} placeholder="e.g. 1024" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm font-semibold text-slate-900 outline-none transition placeholder:font-normal focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10" /></label>
+                    <label className="block"><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Checkout phone number</span><input required inputMode="tel" value={trackingPhone} onChange={e=>setTrackingPhone(e.target.value)} placeholder="10-digit mobile number" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm font-semibold text-slate-900 outline-none transition placeholder:font-normal focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10" /></label>
+                    <button disabled={trackingLoading} className="self-end inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl bg-[#066847] px-5 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#087a55] disabled:cursor-not-allowed disabled:opacity-60">{trackingLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : 'Track order'} <ArrowRight className="h-4 w-4" /></button>
                   </form>
                   {trackingError && <p role="alert" className="mt-3 flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />{trackingError}</p>}
 
@@ -636,16 +636,16 @@ export function CustomerStorefront({
                     <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">
                       <div className="flex flex-wrap items-start justify-between gap-3 bg-slate-50 px-4 py-4 sm:px-5">
                         <div><p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Order details</p><h4 className="mt-1 text-xl font-black text-slate-900">Order #{trackingResult.orderNumber}</h4><p className="mt-1 text-[11px] text-slate-500">Placed {new Date(trackingResult.createdAt).toLocaleString()}</p></div>
-                        <div className="text-right"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Final payable</p><p className="mt-1 text-xl font-black tabular-nums text-[#1e3a8a]">₹{Number(trackingResult.total || 0).toFixed(2)}</p>{Number(trackingResult.unavailableDeduction || 0)>0&&<p className="mt-1 text-[10px] font-bold text-amber-800">−₹{Number(trackingResult.unavailableDeduction).toFixed(2)} unavailable items</p>}<span className="mt-1 inline-flex items-center gap-1 text-[10px] font-semibold text-blue-700"><RefreshCw className="h-3 w-3" /> Live status updates</span></div>
+                        <div className="text-right"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Final payable</p><p className="mt-1 text-xl font-black tabular-nums text-[#07543b]">₹{Number(trackingResult.total || 0).toFixed(2)}</p>{Number(trackingResult.unavailableDeduction || 0)>0&&<p className="mt-1 text-[10px] font-bold text-amber-800">−₹{Number(trackingResult.unavailableDeduction).toFixed(2)} unavailable items</p>}<span className="mt-1 inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700"><RefreshCw className="h-3 w-3" /> Live status updates</span></div>
                       </div>
                       {trackingResult.status === 'cancelled' ? (
                         <div className="m-4 flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm font-semibold text-rose-700"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0" /> This order was cancelled. The items were not processed. Please contact the store if you need help.</div>
                       ) : (
                         <div className="px-4 pt-5 sm:px-5">
                           <div className="grid grid-cols-4 gap-1.5">
-                            {['Received','Preparing','Ready','Completed'].map((label,index)=>{const active=trackingStep>=index;return <div key={label} className="min-w-0 text-center"><div className={`mx-auto grid h-7 w-7 place-items-center rounded-full text-xs font-black ${active?'bg-blue-700 text-white':'bg-slate-100 text-slate-400'}`}>{active?<CheckCircle2 className="h-4 w-4"/>:index+1}</div><p className={`mt-2 text-[9px] font-bold sm:text-[11px] ${active?'text-blue-800':'text-slate-400'}`}>{label}</p></div>})}
+                            {['Received','Preparing','Ready','Completed'].map((label,index)=>{const active=trackingStep>=index;return <div key={label} className="min-w-0 text-center"><div className={`mx-auto grid h-7 w-7 place-items-center rounded-full text-xs font-black ${active?'bg-emerald-700 text-white':'bg-slate-100 text-slate-400'}`}>{active?<CheckCircle2 className="h-4 w-4"/>:index+1}</div><p className={`mt-2 text-[9px] font-bold sm:text-[11px] ${active?'text-emerald-800':'text-slate-400'}`}>{label}</p></div>})}
                           </div>
-                          <div className="relative mt-[-13px] mx-[12.5%] -z-0 h-1 rounded-full bg-slate-100"><div className="h-full rounded-full bg-blue-600 transition-all" style={{width:`${Math.max(0,Math.min(100,trackingStep/3*100))}%`}} /></div>
+                          <div className="relative mt-[-13px] mx-[12.5%] -z-0 h-1 rounded-full bg-slate-100"><div className="h-full rounded-full bg-emerald-600 transition-all" style={{width:`${Math.max(0,Math.min(100,trackingStep/3*100))}%`}} /></div>
                         </div>
                       )}
                       {trackingResult.items.some((item:any) => item.unavailable) && <div className="mx-4 mt-3 flex items-start gap-3 rounded-2xl border border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 p-4 shadow-sm sm:mx-5"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-100 text-amber-800"><AlertCircle className="h-5 w-5"/></span><div className="min-w-0"><p className="text-sm font-extrabold text-amber-950">A product update was made to your order</p><p className="mt-1 text-xs leading-5 text-amber-900">The store marked one or more items unavailable. Their cost has been deducted from your payable amount below.</p></div></div>}
@@ -653,7 +653,7 @@ export function CustomerStorefront({
                       <div className="px-4 pb-4 pt-4 sm:px-5">
                         <div className="mb-2 flex items-center justify-between"><h5 className="text-sm font-extrabold text-slate-900">Items in this order</h5><span className="text-[10px] font-semibold text-slate-400">{trackingResult.items.length} item(s)</span></div>
                         <div className="divide-y divide-slate-100 rounded-xl border border-slate-100">
-                          {trackingResult.items.map((item:any,index:number)=><div key={index} className={`flex items-center justify-between gap-3 px-3 py-3 ${item.unavailable?'bg-amber-50/70':''}`}><div className="min-w-0"><p className={`text-sm font-bold ${item.unavailable?'text-slate-500 line-through':'text-slate-800'}`}>{item.name}</p><p className="mt-0.5 text-[11px] text-slate-500">{item.quantity} {item.unit} × ₹{Number(item.price || 0).toFixed(2)}</p><span className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[9px] font-bold ${trackingResult.status==='cancelled'?'bg-slate-100 text-slate-500':item.unavailable?'bg-amber-100 text-amber-900':'bg-blue-50 text-blue-700'}`}>{trackingResult.status==='cancelled'?'Not processed':item.unavailable?'Unavailable · Deducted':'Available'}</span></div><div className="shrink-0 text-right">{item.unavailable?<><p className="text-sm font-bold tabular-nums text-slate-400 line-through">₹{Number(item.lineTotal ?? Number(item.price || 0)*Number(item.quantity || 0)).toFixed(2)}</p><p className="text-[10px] font-extrabold text-amber-800">− Deducted</p></>:<p className="text-sm font-extrabold tabular-nums text-slate-900">₹{Number(item.lineTotal ?? Number(item.price || 0)*Number(item.quantity || 0)).toFixed(2)}</p>}</div></div>)}
+                          {trackingResult.items.map((item:any,index:number)=><div key={index} className={`flex items-center justify-between gap-3 px-3 py-3 ${item.unavailable?'bg-amber-50/70':''}`}><div className="min-w-0"><p className={`text-sm font-bold ${item.unavailable?'text-slate-500 line-through':'text-slate-800'}`}>{item.name}</p><p className="mt-0.5 text-[11px] text-slate-500">{item.quantity} {item.unit} × ₹{Number(item.price || 0).toFixed(2)}</p><span className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[9px] font-bold ${trackingResult.status==='cancelled'?'bg-slate-100 text-slate-500':item.unavailable?'bg-amber-100 text-amber-900':'bg-emerald-50 text-emerald-700'}`}>{trackingResult.status==='cancelled'?'Not processed':item.unavailable?'Unavailable · Deducted':'Available'}</span></div><div className="shrink-0 text-right">{item.unavailable?<><p className="text-sm font-bold tabular-nums text-slate-400 line-through">₹{Number(item.lineTotal ?? Number(item.price || 0)*Number(item.quantity || 0)).toFixed(2)}</p><p className="text-[10px] font-extrabold text-amber-800">− Deducted</p></>:<p className="text-sm font-extrabold tabular-nums text-slate-900">₹{Number(item.lineTotal ?? Number(item.price || 0)*Number(item.quantity || 0)).toFixed(2)}</p>}</div></div>)}
                         </div>
                         <p className="mt-3 text-center text-[10px] text-slate-400">Order status refreshes automatically every 15 seconds while in progress.</p>
                       </div>
@@ -664,15 +664,15 @@ export function CustomerStorefront({
                 <div className="pt-5">
                   <div className="mb-4 flex flex-wrap items-end justify-between gap-2"><div><h3 className="text-lg font-black text-slate-900">Your previous orders</h3><p className="mt-1 text-xs text-slate-500">Orders placed using this phone number.</p></div><span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-extrabold text-amber-800"><CalendarDays className="h-3.5 w-3.5" /> Last 7 days</span></div>
                   <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
-                    <label><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Checkout phone number</span><input inputMode="tel" value={trackingPhone} onChange={e=>setTrackingPhone(e.target.value)} placeholder="Enter your 10-digit phone number" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10" /></label>
-                    <button type="button" onClick={()=>void loadOrderHistory()} disabled={historyLoading || trackingPhone.replace(/\D/g,'').length<10} className="self-end inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-5 py-3 text-sm font-extrabold text-blue-800 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50">{historyLoading?<RefreshCw className="h-4 w-4 animate-spin"/>:<RefreshCw className="h-4 w-4"/>} Refresh history</button>
+                    <label><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Checkout phone number</span><input inputMode="tel" value={trackingPhone} onChange={e=>setTrackingPhone(e.target.value)} placeholder="Enter your 10-digit phone number" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10" /></label>
+                    <button type="button" onClick={()=>void loadOrderHistory()} disabled={historyLoading || trackingPhone.replace(/\D/g,'').length<10} className="self-end inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-extrabold text-emerald-800 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50">{historyLoading?<RefreshCw className="h-4 w-4 animate-spin"/>:<RefreshCw className="h-4 w-4"/>} Refresh history</button>
                   </div>
                   {historyError && <p role="alert" className="mt-3 flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0"/>{historyError}</p>}
                   {historyLoading && <div className="mt-5 flex items-center justify-center gap-2 rounded-xl bg-slate-50 py-8 text-sm font-semibold text-slate-500"><RefreshCw className="h-4 w-4 animate-spin"/> Loading your order history…</div>}
-                  {historyLoaded && !historyLoading && (orderHistory.length===0 ? <div className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center"><ClipboardList className="mx-auto h-8 w-8 text-slate-300"/><p className="mt-2 text-sm font-bold text-slate-700">No recent orders found</p><p className="mt-1 text-xs text-slate-500">There are no orders for this phone number in the last 7 days.</p></div> : <div className="mt-4 space-y-3">{orderHistory.map((order:any)=><article key={order.orderNumber} className="overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:border-blue-200 hover:shadow-sm">
-                    <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50/80 px-4 py-3"><div><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Order reference</p><p className="text-base font-black text-slate-900">#{order.orderNumber}</p></div><span className={`rounded-full px-3 py-1.5 text-[10px] font-extrabold ${order.status==='completed'?'bg-blue-100 text-blue-800':order.status==='cancelled'?'bg-rose-100 text-rose-700':order.status==='ready'?'bg-sky-100 text-sky-800':'bg-amber-100 text-amber-800'}`}>{({new:'Order received',review:'Order received',ready:'Ready for pickup',completed:'Completed',unavailable:'Availability update',cancelled:'Cancelled'} as Record<string,string>)[order.status] || order.status}</span></div>
-                    <div className="px-4 py-3"><div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500"><span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5"/>{new Date(order.createdAt).toLocaleString()}</span><span className="text-base font-black tabular-nums text-[#1e3a8a]">₹{Number(order.total||0).toFixed(2)}</span></div>
-                      <div className="mt-3 flex flex-wrap items-center justify-between gap-2"><span className="text-[11px] font-semibold text-slate-500">{order.items.length} item(s) · {order.items.reduce((sum:number,item:any)=>sum+Number(item.quantity||0),0)} total quantity</span><button type="button" onClick={async()=>{setTrackingOrderNumber(String(order.orderNumber));setOrdersView('track');setTrackingError('');setTrackingResult(null);setTrackingLoading(true);try{setTrackingResult(await fetchTrackedOrder(String(order.orderNumber),trackingPhone));}catch(error){setTrackingError((error as Error).message);}finally{setTrackingLoading(false);}}} className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 bg-white px-3 py-2 text-xs font-extrabold text-blue-800 transition hover:bg-blue-50">Track this order <ArrowRight className="h-3.5 w-3.5"/></button></div>
+                  {historyLoaded && !historyLoading && (orderHistory.length===0 ? <div className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center"><ClipboardList className="mx-auto h-8 w-8 text-slate-300"/><p className="mt-2 text-sm font-bold text-slate-700">No recent orders found</p><p className="mt-1 text-xs text-slate-500">There are no orders for this phone number in the last 7 days.</p></div> : <div className="mt-4 space-y-3">{orderHistory.map((order:any)=><article key={order.orderNumber} className="overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:border-emerald-200 hover:shadow-sm">
+                    <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50/80 px-4 py-3"><div><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Order reference</p><p className="text-base font-black text-slate-900">#{order.orderNumber}</p></div><span className={`rounded-full px-3 py-1.5 text-[10px] font-extrabold ${order.status==='completed'?'bg-emerald-100 text-emerald-800':order.status==='cancelled'?'bg-rose-100 text-rose-700':order.status==='ready'?'bg-sky-100 text-sky-800':'bg-amber-100 text-amber-800'}`}>{({new:'Order received',review:'Order received',ready:'Ready for pickup',completed:'Completed',unavailable:'Availability update',cancelled:'Cancelled'} as Record<string,string>)[order.status] || order.status}</span></div>
+                    <div className="px-4 py-3"><div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500"><span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5"/>{new Date(order.createdAt).toLocaleString()}</span><span className="text-base font-black tabular-nums text-[#07543b]">₹{Number(order.total||0).toFixed(2)}</span></div>
+                      <div className="mt-3 flex flex-wrap items-center justify-between gap-2"><span className="text-[11px] font-semibold text-slate-500">{order.items.length} item(s) · {order.items.reduce((sum:number,item:any)=>sum+Number(item.quantity||0),0)} total quantity</span><button type="button" onClick={async()=>{setTrackingOrderNumber(String(order.orderNumber));setOrdersView('track');setTrackingError('');setTrackingResult(null);setTrackingLoading(true);try{setTrackingResult(await fetchTrackedOrder(String(order.orderNumber),trackingPhone));}catch(error){setTrackingError((error as Error).message);}finally{setTrackingLoading(false);}}} className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-white px-3 py-2 text-xs font-extrabold text-emerald-800 transition hover:bg-emerald-50">Track this order <ArrowRight className="h-3.5 w-3.5"/></button></div>
                     </div>
                   </article>)}</div>)}
                   {!historyLoaded && !historyLoading && <div className="mt-4 rounded-xl bg-slate-50 p-4 text-center text-xs text-slate-500">Enter your checkout phone number and select <strong>Refresh history</strong> to find your recent purchases.</div>}
@@ -709,7 +709,7 @@ export function CustomerStorefront({
             </button>
           </nav>
           <div className="flex items-center gap-2 rounded-xl border border-white/90 bg-white/75 px-3 py-2 text-[11px] font-semibold text-slate-600 shadow-sm">
-            <MapPin className="h-4 w-4 shrink-0 text-blue-700" />
+            <MapPin className="h-4 w-4 shrink-0 text-emerald-700" />
             <span className="truncate">Delivering from <strong className="text-slate-800">Parbati Bhandar</strong> · {storeSettings.address || 'Swasti Pally, Burdwan'}</span>
             <span className={`ml-auto shrink-0 rounded-full px-2 py-1 text-[9px] font-extrabold ${liveIsOpen ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-700'}`}>{liveIsOpen ? 'OPEN' : 'CLOSED'}</span>
           </div>
@@ -734,21 +734,21 @@ export function CustomerStorefront({
                   />
                   {searchQuery && <button type="button" aria-label="Clear search query" onClick={() => { setSearchQuery(''); setIsSearchSubmitted(false); setShowSearchSuggestions(false); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"><X className="w-4 h-4" /></button>}
                 </div>
-                <button type="submit" aria-label="Search" className="inline-flex min-h-[42px] shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#1d4ed8] px-3 sm:px-4 text-xs font-extrabold text-white shadow-sm hover:bg-blue-800 active:scale-[.98]">
+                <button type="submit" aria-label="Search" className="inline-flex min-h-[42px] shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#066847] px-3 sm:px-4 text-xs font-extrabold text-white shadow-sm hover:bg-emerald-800 active:scale-[.98]">
                   <Search className="h-4 w-4" /><span className="hidden sm:inline">Search</span>
                 </button>
               </form>
               {showSearchSuggestions && searchSuggestions.length > 0 && <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl" role="listbox" aria-label="Product and related category suggestions">
-                {directSearchMatches.slice(0, 4).map(product => <button key={product.id} type="button" role="option" aria-selected="false" onClick={() => submitSearch(product.name)} className="flex w-full items-center gap-3 border-b border-slate-100 px-3 py-2.5 text-left last:border-0 hover:bg-blue-50">
+                {directSearchMatches.slice(0, 4).map(product => <button key={product.id} type="button" role="option" aria-selected="false" onClick={() => submitSearch(product.name)} className="flex w-full items-center gap-3 border-b border-slate-100 px-3 py-2.5 text-left last:border-0 hover:bg-emerald-50">
                   <Search className="h-4 w-4 shrink-0 text-slate-400" /><span className="min-w-0 flex-1 truncate text-xs font-semibold text-slate-800">{product.name}</span><ArrowRight className="h-3.5 w-3.5 shrink-0 text-slate-400"/>
                 </button>)}
                 {sameCategorySuggestions.length > 0 && <>
-                  <div className="border-t border-slate-100 bg-blue-50/70 px-3 py-2 text-[10px] font-extrabold uppercase tracking-wider text-blue-800">More from {matchedCategory}</div>
-                  {sameCategorySuggestions.slice(0, Math.max(0, 6 - Math.min(4, directSearchMatches.length))).map(product => <button key={product.id} type="button" role="option" aria-selected="false" onClick={() => submitSearch(product.name)} className="flex w-full items-center gap-3 border-b border-slate-100 px-3 py-2.5 text-left last:border-0 hover:bg-blue-50">
-                    <Package className="h-4 w-4 shrink-0 text-blue-500" /><span className="min-w-0 flex-1 truncate text-xs font-semibold text-slate-800">{product.name}</span><ArrowRight className="h-3.5 w-3.5 shrink-0 text-slate-400"/>
+                  <div className="border-t border-slate-100 bg-emerald-50/70 px-3 py-2 text-[10px] font-extrabold uppercase tracking-wider text-emerald-800">More from {matchedCategory}</div>
+                  {sameCategorySuggestions.slice(0, Math.max(0, 6 - Math.min(4, directSearchMatches.length))).map(product => <button key={product.id} type="button" role="option" aria-selected="false" onClick={() => submitSearch(product.name)} className="flex w-full items-center gap-3 border-b border-slate-100 px-3 py-2.5 text-left last:border-0 hover:bg-emerald-50">
+                    <Package className="h-4 w-4 shrink-0 text-emerald-500" /><span className="min-w-0 flex-1 truncate text-xs font-semibold text-slate-800">{product.name}</span><ArrowRight className="h-3.5 w-3.5 shrink-0 text-slate-400"/>
                   </button>)}
                 </>}
-                <button type="button" onClick={() => submitSearch()} className="w-full bg-slate-50 px-3 py-2.5 text-left text-xs font-extrabold text-blue-800 hover:bg-blue-50">See all results for “{searchQuery.trim()}”</button>
+                <button type="button" onClick={() => submitSearch()} className="w-full bg-slate-50 px-3 py-2.5 text-left text-xs font-extrabold text-emerald-800 hover:bg-emerald-50">See all results for “{searchQuery.trim()}”</button>
               </div>}
             </div>
 
@@ -783,7 +783,7 @@ export function CustomerStorefront({
                   onClick={() => setSelectedCategory(cat.id)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-[#1e40af] text-white shadow-2xs'
+                      ? 'bg-[#087a55] text-white shadow-2xs'
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
@@ -810,7 +810,7 @@ export function CustomerStorefront({
             <div className="relative min-h-[270px] overflow-hidden bg-[#172554] sm:min-h-[300px]">
               <img src="https://india.neelamfoodland.in/cdn/shop/files/timeline-5.jpg?crop=center&height=900&v=1751950729&width=1200" alt="Indian grocery shop with shelves stocked with packaged foods, cooking oils, spices and everyday essentials" className="absolute inset-0 h-full w-full object-cover" loading="eager"/>
               <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#0b1530]/95 via-[#172554]/55 to-black/10"/>
-              <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-amber-300 via-white to-blue-300"/>
+              <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-amber-300 via-white to-emerald-300"/>
               <div className="relative z-10 flex min-h-[270px] flex-col items-center justify-end px-5 pb-7 pt-12 text-center sm:min-h-[300px]">
                 <span className="inline-flex rounded-full border border-white/40 bg-black/25 px-3 py-1 text-[9px] font-black uppercase tracking-[.2em] text-white shadow-sm backdrop-blur-sm">Your neighbourhood store</span>
                 <h2 className="mt-3 text-[32px] font-black leading-[1.02] tracking-tight text-white drop-shadow-lg sm:text-4xl">Freshness for<br/><span className="text-amber-300">every home.</span></h2>
@@ -819,7 +819,7 @@ export function CustomerStorefront({
             </div>
             <div className="bg-white px-5 pb-5 pt-4">
               <p className="text-center text-xs leading-relaxed text-slate-600">Everything happens right here on the Parbati Bhandar website. Browse products, place your orders and check your order updates—all in one place for a smooth and convenient shopping experience.</p>
-              <button type="button" onClick={() => { closeWelcomePromo(); window.setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),100); }} className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#2563eb] px-4 py-3 text-sm font-black text-white shadow-lg shadow-blue-900/15 transition hover:-translate-y-0.5 hover:bg-[#1d4ed8] active:scale-[.98]">Start shopping <ChevronRight className="h-5 w-5"/></button>
+              <button type="button" onClick={() => { closeWelcomePromo(); window.setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),100); }} className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#0b8f63] px-4 py-3 text-sm font-black text-white shadow-lg shadow-emerald-900/15 transition hover:-translate-y-0.5 hover:bg-[#066847] active:scale-[.98]">Start shopping <ChevronRight className="h-5 w-5"/></button>
             </div>
           </div>
         </div>;
@@ -883,7 +883,7 @@ export function CustomerStorefront({
             </div>
 
             {/* Main Peek-Framed Slider Stage with Prev / Next Controls */}
-            <div className="relative flex items-center justify-center gap-2 sm:gap-3 overflow-hidden rounded-[28px] bg-gradient-to-br from-[#eff6ff] via-white to-[#eaf1ff] p-1.5 sm:p-3 shadow-[0_14px_40px_rgba(5,90,48,0.12)]">
+            <div className="relative flex items-center justify-center gap-2 sm:gap-3 overflow-hidden rounded-[28px] bg-gradient-to-br from-[#ecfdf5] via-white to-[#eaf1ff] p-1.5 sm:p-3 shadow-[0_14px_40px_rgba(5,90,48,0.12)]">
               {/* Left Peek Edge Card (Visual Framing like the mobile screenshot) */}
               <div
                 aria-hidden="true"
@@ -929,17 +929,17 @@ export function CustomerStorefront({
                   {isChhathSeason && <div className="pb-chhath-sunrise absolute inset-0" aria-hidden="true"><span className="pb-chhath-sun"/><span className="pb-chhath-horizon"/><span className="pb-chhath-ghat">🌴　🛕　🌴</span><span className="pb-chhath-water"/></div>}
                   <div className={`absolute inset-0 ${isChhathSeason ? "bg-gradient-to-b from-orange-500/25 via-orange-950/55 to-sky-950/95" : "bg-gradient-to-b from-[#101a33]/35 via-[#172554]/65 to-[#0b1530]/95"}`}/>
                   <div className="pb-christmas-glow absolute -right-12 -top-12 h-56 w-56 rounded-full bg-amber-300/25 blur-3xl"/>
-                  <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-red-500 via-amber-300 to-blue-300"/>
+                  <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-red-500 via-amber-300 to-emerald-300"/>
                   {isChhathSeason ? <div className="pb-chhath-toran absolute left-0 right-0 top-3 flex justify-around px-2 text-lg sm:text-xl" aria-hidden="true"><span>🌼</span><span>🌿</span><span>🪔</span><span>🌼</span><span>🌿</span><span>🪔</span><span>🌼</span><span>🌿</span></div> : <div className="pb-christmas-garland absolute left-0 right-0 top-3 flex justify-around px-2 text-lg sm:text-xl" aria-hidden="true"><span>🔴</span><span>🟡</span><span>🟢</span><span>🔴</span><span>🟡</span><span>🟢</span><span>🔴</span><span>🟡</span></div>}
                   <div className="relative z-10 flex min-h-[250px] flex-col items-center justify-center px-5 pb-7 pt-12 text-center">
-                    <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[9px] font-black uppercase tracking-[.22em] text-blue-100 backdrop-blur-sm">{isChhathSeason ? "🪔" : isAutomaticFestivalSeason ? (automaticFestivalTheme?.emoji || "🎉") : "🎄"} {currentSlide.tag}</span>
+                    <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[9px] font-black uppercase tracking-[.22em] text-emerald-100 backdrop-blur-sm">{isChhathSeason ? "🪔" : isAutomaticFestivalSeason ? (automaticFestivalTheme?.emoji || "🎉") : "🎄"} {currentSlide.tag}</span>
                     <div className="relative mt-3 flex h-28 w-full items-center justify-center gap-2 sm:h-32" aria-hidden="true">
                       {isChhathSeason ? <><span className="pb-chhath-float text-5xl sm:text-6xl">🪔</span><span className="pb-chhath-float text-6xl sm:text-7xl" style={{animationDelay:"-.7s"}}>🧺</span><span className="pb-chhath-float text-5xl sm:text-6xl" style={{animationDelay:"-1.3s"}}>🌾</span><span className="absolute left-[15%] top-1 text-xl">🌼</span><span className="absolute right-[15%] bottom-0 text-xl">✨</span></> : <><span className="pb-christmas-sway text-6xl drop-shadow-lg sm:text-7xl">🎄</span><span className="pb-christmas-gift text-4xl sm:text-5xl">🎁</span><span className="pb-christmas-sway text-5xl sm:text-6xl" style={{animationDelay:"-.8s"}}>🧸</span><span className="absolute left-[18%] top-1 text-xl">✨</span><span className="absolute right-[17%] bottom-0 text-xl">✨</span></>}
                     </div>
                     <p className="mt-1 text-[9px] font-black uppercase tracking-[.25em] text-amber-200">{isChhathSeason ? "Parbati Bhandar • সূর্য অর্ঘ্যের পবিত্র উৎসব" : isAutomaticFestivalSeason ? "Parbati Bhandar celebrates with you" : "Parbati Bhandar wishes you"}</p>
                     <h3 className="mt-2 text-4xl font-black leading-tight tracking-tight text-white drop-shadow-[0_4px_14px_rgba(0,0,0,.65)] sm:text-5xl">{currentSlide.title}</h3>
-                    <p className="mt-2 max-w-[290px] text-xs font-semibold leading-relaxed text-blue-50/90 sm:text-sm">{currentSlide.subtitle}</p>
-                    <button type="button" onClick={() => { const section=document.getElementById('christmas-special-products'); if(section) section.scrollIntoView({behavior:'smooth',block:'start'}); else catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#facc15] px-5 py-2.5 text-xs font-black text-blue-950 shadow-lg transition hover:-translate-y-0.5">{isChhathSeason || isAutomaticFestivalSeason ? "Shop Festival Essentials" : `Shop ${storeSettings.seasonalCollectionTitle || 'Christmas Specials'}`} <ChevronRight className="h-4 w-4"/></button>
+                    <p className="mt-2 max-w-[290px] text-xs font-semibold leading-relaxed text-emerald-50/90 sm:text-sm">{currentSlide.subtitle}</p>
+                    <button type="button" onClick={() => { const section=document.getElementById('christmas-special-products'); if(section) section.scrollIntoView({behavior:'smooth',block:'start'}); else catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#facc15] px-5 py-2.5 text-xs font-black text-emerald-950 shadow-lg transition hover:-translate-y-0.5">{isChhathSeason || isAutomaticFestivalSeason ? "Shop Festival Essentials" : `Shop ${storeSettings.seasonalCollectionTitle || 'Christmas Specials'}`} <ChevronRight className="h-4 w-4"/></button>
                     <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-3 text-sm opacity-90" aria-hidden="true">{isChhathSeason ? <><span>🌼</span><span>🪔</span><span>🌾</span><span>🪔</span><span>🌼</span></> : <><span>✨</span><span>⭐</span><span>🎄</span><span>⭐</span><span>✨</span></>}</div>
                   </div>
                                 </div>
@@ -978,7 +978,7 @@ export function CustomerStorefront({
                         }));
 
                   return (
-                    <div className="group relative w-full max-w-[760px] mx-auto h-[min(360px,48vh)] min-h-[290px] sm:min-h-[340px] lg:min-h-[360px] rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-xl border-2 border-blue-200 bg-gradient-to-br from-[#eff6ff] via-white to-[#dbeafe] select-none animate-[fadeIn_550ms_ease-out]">
+                    <div className="group relative w-full max-w-[760px] mx-auto h-[min(360px,48vh)] min-h-[290px] sm:min-h-[340px] lg:min-h-[360px] rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-xl border-2 border-emerald-200 bg-gradient-to-br from-[#ecfdf5] via-white to-[#d1fae5] select-none animate-[fadeIn_550ms_ease-out]">
                       {/* Large product artwork, styled like a storefront campaign banner */}
                       <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6 lg:p-8 pb-36 sm:pb-40 lg:pb-40">
                         {item.imageUrl ? (
@@ -1000,14 +1000,14 @@ export function CustomerStorefront({
                           <span>#{rankNum} Best Pick</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          {item.badge && <span className="px-3 py-1.5 rounded-full bg-blue-700 text-white font-extrabold text-xs shadow-md">{item.badge}</span>}
+                          {item.badge && <span className="px-3 py-1.5 rounded-full bg-emerald-700 text-white font-extrabold text-xs shadow-md">{item.badge}</span>}
                           {hasDiscount && <span className="px-3 py-1.5 rounded-full bg-amber-400 text-slate-950 font-black text-xs shadow-md">{discountPercent}% OFF</span>}
                         </div>
                       </div>
 
                       {/* Product details slide over the image on hover; remain visible on touch screens */}
                       <div className="absolute inset-x-0 bottom-0 z-10 p-4 sm:p-5 lg:p-7 bg-gradient-to-t from-slate-950 via-slate-950/95 to-slate-950/0 text-white sm:translate-y-2 sm:opacity-95 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 transition-all duration-300">
-                        <div className="text-[11px] font-extrabold uppercase tracking-wider text-blue-300">{item.category}</div>
+                        <div className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-300">{item.category}</div>
                         <h3 className="text-xl sm:text-2xl font-black leading-tight mt-1 line-clamp-2">{item.name}</h3>
 
                         {quickOptions.length > 0 && (
@@ -1037,7 +1037,7 @@ export function CustomerStorefront({
                             <div className="flex flex-wrap items-baseline gap-2">
                               <span className="text-2xl sm:text-3xl font-black text-white">₹{activeOpt.price}</span>
                               {hasDiscount && activeOpt.mrp && <span className="text-sm text-white/60 line-through font-semibold">₹{activeOpt.mrp}</span>}
-                              {hasDiscount && savedAmount > 0 && <span className="text-xs font-extrabold text-blue-300">Save ₹{savedAmount}</span>}
+                              {hasDiscount && savedAmount > 0 && <span className="text-xs font-extrabold text-emerald-300">Save ₹{savedAmount}</span>}
                             </div>
                           </div>
 
@@ -1052,10 +1052,10 @@ export function CustomerStorefront({
                               <span>Add to Order</span>
                             </button>
                           ) : (
-                            <div className="flex items-center bg-blue-600 text-white rounded-2xl overflow-hidden text-sm font-black shadow-lg shrink-0">
-                              <button type="button" aria-label={`Decrease quantity of ${item.name}`} onClick={() => updateCartQty(item, -1, { selectedUnit: activeOpt.label, unitPrice: activeOpt.price, unitMrp: activeOpt.mrp })} className="px-3 py-2.5 hover:bg-blue-700 cursor-pointer">-</button>
+                            <div className="flex items-center bg-emerald-600 text-white rounded-2xl overflow-hidden text-sm font-black shadow-lg shrink-0">
+                              <button type="button" aria-label={`Decrease quantity of ${item.name}`} onClick={() => updateCartQty(item, -1, { selectedUnit: activeOpt.label, unitPrice: activeOpt.price, unitMrp: activeOpt.mrp })} className="px-3 py-2.5 hover:bg-emerald-700 cursor-pointer">-</button>
                               <span className="px-2.5">{inCartQty}</span>
-                              <button type="button" aria-label={`Increase quantity of ${item.name}`} disabled={getRemainingStock(item) <= 0} onClick={() => updateCartQty(item, 1, { selectedUnit: activeOpt.label, unitPrice: activeOpt.price, unitMrp: activeOpt.mrp })} className="px-3 py-2.5 hover:bg-blue-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">+</button>
+                              <button type="button" aria-label={`Increase quantity of ${item.name}`} disabled={getRemainingStock(item) <= 0} onClick={() => updateCartQty(item, 1, { selectedUnit: activeOpt.label, unitPrice: activeOpt.price, unitMrp: activeOpt.mrp })} className="px-3 py-2.5 hover:bg-emerald-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">+</button>
                             </div>
                           )}
                         </div>
@@ -1155,7 +1155,7 @@ export function CustomerStorefront({
                       <span className="max-w-[115px] truncate">{shortName}</span>
                       <span
                         className={`text-[11px] font-extrabold ${
-                          isActive ? 'text-amber-300' : 'text-blue-700'
+                          isActive ? 'text-amber-300' : 'text-emerald-700'
                         }`}
                       >
                         ₹{slide.product.price}
@@ -1182,11 +1182,11 @@ export function CustomerStorefront({
           const discount = calculateDiscountDetails(product.price, product.mrp);
           const qty = cart[makeCartKey(product.id, product.unit)]?.qty || cart[product.id]?.qty || 0;
           return <article key={product.id} className="pb-deal-product-card group relative w-[148px] shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-200 hover:z-10 hover:border-pink-200 hover:shadow-[0_12px_24px_rgba(190,60,100,.16)] sm:w-[176px]">
-            <div className={`relative flex h-28 items-center justify-center overflow-hidden ${['bg-rose-50','bg-amber-50','bg-sky-50','bg-blue-50'][index%4]}`}>
+            <div className={`relative flex h-28 items-center justify-center overflow-hidden ${['bg-rose-50','bg-amber-50','bg-sky-50','bg-emerald-50'][index%4]}`}>
               {product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain p-2 transition-transform duration-500 group-hover:scale-110"/> : <span className="text-5xl">{product.emoji || '🛍️'}</span>}
               <span className="absolute left-2 top-2 rounded-full bg-[#e91e63] px-2 py-1 text-[9px] font-black text-white">{discount.hasDiscount ? `${discount.discountPercent}% OFF` : 'SPECIAL PICK'}</span>
             </div>
-            <div className="p-2.5"><h3 className="line-clamp-2 min-h-9 text-[11px] font-extrabold leading-4 text-slate-800">{product.name}</h3><p className="mt-1 text-[10px] text-slate-500">{product.unit}</p><div className="mt-1 flex items-baseline gap-1.5"><b className="text-sm text-slate-900">₹{product.price}</b>{discount.hasDiscount && <span className="text-[10px] text-slate-400 line-through">₹{product.mrp}</span>}</div>{qty > 0 ? <div className="mt-2 flex min-h-9 items-center justify-between overflow-hidden rounded-xl bg-[#2563eb] text-white"><button type="button" aria-label={`Remove one ${product.name}`} onClick={() => updateCartQty(product,-1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp ?? null})} className="grid h-9 w-11 place-items-center hover:bg-[#1e40af]"><Minus className="h-4 w-4"/></button><span className="text-xs font-black tabular-nums">{qty}</span><button type="button" aria-label={`Add one ${product.name}`} disabled={!product.inStock || getRemainingStock(product) <= 0} onClick={() => updateCartQty(product,1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp ?? null})} className="grid h-9 w-11 place-items-center hover:bg-[#1e40af] disabled:opacity-40"><Plus className="h-4 w-4"/></button></div> : <button type="button" disabled={!product.inStock || getRemainingStock(product) <= 0} onClick={() => updateCartQty(product,1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp ?? null})} className="mt-2 flex min-h-9 w-full items-center justify-center gap-1 rounded-xl bg-[#2563eb] px-2 py-2 text-[11px] font-black text-white transition hover:bg-[#1e40af] active:scale-[.97] disabled:opacity-50"><Plus className="h-3.5 w-3.5"/>Quick add</button>}</div>
+            <div className="p-2.5"><h3 className="line-clamp-2 min-h-9 text-[11px] font-extrabold leading-4 text-slate-800">{product.name}</h3><p className="mt-1 text-[10px] text-slate-500">{product.unit}</p><div className="mt-1 flex items-baseline gap-1.5"><b className="text-sm text-slate-900">₹{product.price}</b>{discount.hasDiscount && <span className="text-[10px] text-slate-400 line-through">₹{product.mrp}</span>}</div>{qty > 0 ? <div className="mt-2 flex min-h-9 items-center justify-between overflow-hidden rounded-xl bg-[#0b8f63] text-white"><button type="button" aria-label={`Remove one ${product.name}`} onClick={() => updateCartQty(product,-1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp ?? null})} className="grid h-9 w-11 place-items-center hover:bg-[#087a55]"><Minus className="h-4 w-4"/></button><span className="text-xs font-black tabular-nums">{qty}</span><button type="button" aria-label={`Add one ${product.name}`} disabled={!product.inStock || getRemainingStock(product) <= 0} onClick={() => updateCartQty(product,1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp ?? null})} className="grid h-9 w-11 place-items-center hover:bg-[#087a55] disabled:opacity-40"><Plus className="h-4 w-4"/></button></div> : <button type="button" disabled={!product.inStock || getRemainingStock(product) <= 0} onClick={() => updateCartQty(product,1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp ?? null})} className="mt-2 flex min-h-9 w-full items-center justify-center gap-1 rounded-xl bg-[#0b8f63] px-2 py-2 text-[11px] font-black text-white transition hover:bg-[#087a55] active:scale-[.97] disabled:opacity-50"><Plus className="h-3.5 w-3.5"/>Quick add</button>}</div>
           </article>;
         };
         return <section aria-label="Deal Zone and featured products" className="mx-auto mb-5 w-full max-w-6xl overflow-hidden px-3.5 sm:px-6">
@@ -1202,7 +1202,7 @@ export function CustomerStorefront({
             {dealProducts.length > 0 ? <div className="mt-3 -mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 py-3 pb-4">{dealProducts.slice(0,10).map(productCard)}</div> : <p className="mt-3 rounded-2xl border border-dashed border-sky-200 bg-white/70 px-4 py-5 text-center text-xs font-semibold text-slate-600">New offers will appear here when products are discounted or selected in the owner portal.</p>}
             <div className="mt-5 border-t border-white/80 pt-4">
               <div className="mb-3 flex items-center gap-3"><h3 className="shrink-0 text-lg font-black text-slate-900">Featured</h3><div className="h-px flex-1 border-t border-dashed border-slate-300"/></div>
-              <div className="-mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 py-3 pb-4">{featuredProducts.slice(0,8).map(product => <button type="button" key={product.id} onClick={() => {setSearchQuery(product.name);setIsSearchSubmitted(true);setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),60);}} className="relative w-[142px] shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-100 bg-white text-left shadow-sm transition duration-200 hover:z-10 hover:border-blue-200 hover:shadow-[0_12px_24px_rgba(37,99,235,.14)] sm:w-[165px]"><div className="flex h-28 items-center justify-center bg-slate-50 p-3">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/> : <span className="text-5xl">{product.emoji || '🛒'}</span>}</div><div className="p-2.5"><p className="line-clamp-2 min-h-9 text-[11px] font-extrabold text-slate-800">{product.name}</p><p className="mt-1 text-xs font-black text-blue-800">₹{product.price} <span className="font-medium text-slate-400">/ {product.unit}</span></p></div></button>)}</div>
+              <div className="-mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 py-3 pb-4">{featuredProducts.slice(0,8).map(product => <button type="button" key={product.id} onClick={() => {setSearchQuery(product.name);setIsSearchSubmitted(true);setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),60);}} className="relative w-[142px] shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-100 bg-white text-left shadow-sm transition duration-200 hover:z-10 hover:border-emerald-200 hover:shadow-[0_12px_24px_rgba(37,99,235,.14)] sm:w-[165px]"><div className="flex h-28 items-center justify-center bg-slate-50 p-3">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/> : <span className="text-5xl">{product.emoji || '🛒'}</span>}</div><div className="p-2.5"><p className="line-clamp-2 min-h-9 text-[11px] font-extrabold text-slate-800">{product.name}</p><p className="mt-1 text-xs font-black text-emerald-800">₹{product.price} <span className="font-medium text-slate-400">/ {product.unit}</span></p></div></button>)}</div>
             </div>
           </div>
         </section>;
@@ -1217,13 +1217,13 @@ export function CustomerStorefront({
         }
         const picks = shuffled.slice(0, 10);
         return picks.length ? <section aria-label="Popular groceries" className="mx-auto w-full max-w-6xl px-3.5 pb-4 sm:px-6">
-          <div className="mb-3 flex items-end justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[.16em] text-blue-700">Picked for your home</p><h2 className="mt-1 text-lg font-black text-slate-900">Popular groceries</h2><p className="text-xs text-slate-500">Quickly add everyday favourites to your order</p></div><button type="button" onClick={() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'})} className="shrink-0 text-xs font-extrabold text-blue-800">View all <ArrowRight className="ml-1 inline h-3.5 w-3.5"/></button></div>
+          <div className="mb-3 flex items-end justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[.16em] text-emerald-700">Picked for your home</p><h2 className="mt-1 text-lg font-black text-slate-900">Popular groceries</h2><p className="text-xs text-slate-500">Quickly add everyday favourites to your order</p></div><button type="button" onClick={() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'})} className="shrink-0 text-xs font-extrabold text-emerald-800">View all <ArrowRight className="ml-1 inline h-3.5 w-3.5"/></button></div>
           <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory">
             {picks.map(product => {
               const quantity = cart[makeCartKey(product.id, product.unit)]?.qty || 0;
-              return <article key={product.id} className="w-[148px] shrink-0 snap-start overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm sm:w-[176px]">
+              return <article key={product.id} className="w-[148px] shrink-0 snap-start overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-sm sm:w-[176px]">
                 <button type="button" onClick={() => {setSearchQuery(product.name);setIsSearchSubmitted(true);setSelectedCategory('all');setTimeout(() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}),50);}} className="flex w-full flex-col items-center p-3 text-left">
-                  <div className="flex h-24 w-full items-center justify-center rounded-xl bg-blue-50/70 p-2">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/> : <span className="text-4xl">{product.emoji || '🛒'}</span>}</div>
+                  <div className="flex h-24 w-full items-center justify-center rounded-xl bg-emerald-50/70 p-2">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/> : <span className="text-4xl">{product.emoji || '🛒'}</span>}</div>
                   <p className="mt-2 line-clamp-2 min-h-9 w-full text-xs font-extrabold leading-4 text-slate-800">{product.name}</p>
                   <p className="mt-1 w-full text-sm font-black text-slate-900">₹{product.price}<span className="ml-1 text-[10px] font-medium text-slate-500">/ {product.unit}</span></p>
                 </button>
@@ -1239,9 +1239,9 @@ export function CustomerStorefront({
         const christmasProducts=(storeSettings.christmasSpecialProductIds || []).map(id=>products.find(p=>p.id===id)).filter((p): p is Product => Boolean(p && p.inStock));
         if (storeSettings.showOccasionBanner === false && !christmasProducts.length) return null;
         return <section id="christmas-special-products" className="scroll-mt-24 mx-auto mb-7 w-full max-w-7xl px-4 sm:px-6">
-          <div className="overflow-hidden rounded-3xl border border-red-100 bg-gradient-to-br from-red-50 via-white to-blue-50 p-4 shadow-sm sm:p-5">
-            <div className="mb-4 flex items-center justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-red-700">Seasonal picks</p><h2 className="text-xl font-black text-blue-950 sm:text-2xl">{storeSettings.seasonalCollectionIcon || '🎄'} {storeSettings.seasonalCollectionTitle || 'Christmas Specials'}</h2><p className="mt-1 text-xs text-slate-600">Featured picks selected by Parbati Bhandar</p></div><span className="text-3xl">🎁</span></div>
-            {christmasProducts.length ? <div className="flex gap-3 overflow-x-auto pb-2">{christmasProducts.map(product => {const qty=cart[makeCartKey(product.id,product.unit)]?.qty||cart[product.id]?.qty||0;return <article key={product.id} className="w-36 shrink-0 overflow-hidden rounded-2xl border border-white bg-white shadow-sm sm:w-44"><div className="flex h-28 items-center justify-center bg-gradient-to-br from-red-50 to-blue-50">{product.imageUrl?<img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/>:<span className="text-4xl">{product.emoji}</span>}</div><div className="p-3"><p className="line-clamp-2 min-h-9 text-xs font-extrabold text-slate-900">{product.name}</p><p className="mt-1 text-sm font-black text-blue-800">₹{product.price}<span className="text-[10px] font-medium text-slate-500"> / {product.unit}</span></p>{qty>0?<div className="mt-2 flex h-9 items-center justify-between overflow-hidden rounded-lg bg-blue-700 text-white"><button type="button" aria-label={`Remove one ${product.name}`} onClick={()=>updateCartQty(product,-1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp??null})} className="grid h-9 w-10 place-items-center hover:bg-blue-800"><Minus className="h-4 w-4"/></button><span className="text-xs font-black tabular-nums">{qty}</span><button type="button" aria-label={`Add one ${product.name}`} onClick={()=>updateCartQty(product,1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp??null})} className="grid h-9 w-10 place-items-center hover:bg-blue-800"><Plus className="h-4 w-4"/></button></div>:<button type="button" onClick={()=>updateCartQty(product,1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp??null})} className="mt-2 w-full rounded-lg bg-blue-700 px-2 py-2 text-xs font-bold text-white hover:bg-blue-800">Add</button>}</div></article>})}</div> : <p className="rounded-2xl border border-dashed border-red-200 bg-white/80 px-4 py-6 text-center text-sm text-slate-600">Seasonal products are being selected. Please check back soon.</p>}
+          <div className="overflow-hidden rounded-3xl border border-red-100 bg-gradient-to-br from-red-50 via-white to-emerald-50 p-4 shadow-sm sm:p-5">
+            <div className="mb-4 flex items-center justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[.2em] text-red-700">Seasonal picks</p><h2 className="text-xl font-black text-emerald-950 sm:text-2xl">{storeSettings.seasonalCollectionIcon || '🎄'} {storeSettings.seasonalCollectionTitle || 'Christmas Specials'}</h2><p className="mt-1 text-xs text-slate-600">Featured picks selected by Parbati Bhandar</p></div><span className="text-3xl">🎁</span></div>
+            {christmasProducts.length ? <div className="flex gap-3 overflow-x-auto pb-2">{christmasProducts.map(product => {const qty=cart[makeCartKey(product.id,product.unit)]?.qty||cart[product.id]?.qty||0;return <article key={product.id} className="w-36 shrink-0 overflow-hidden rounded-2xl border border-white bg-white shadow-sm sm:w-44"><div className="flex h-28 items-center justify-center bg-gradient-to-br from-red-50 to-emerald-50">{product.imageUrl?<img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-contain"/>:<span className="text-4xl">{product.emoji}</span>}</div><div className="p-3"><p className="line-clamp-2 min-h-9 text-xs font-extrabold text-slate-900">{product.name}</p><p className="mt-1 text-sm font-black text-emerald-800">₹{product.price}<span className="text-[10px] font-medium text-slate-500"> / {product.unit}</span></p>{qty>0?<div className="mt-2 flex h-9 items-center justify-between overflow-hidden rounded-lg bg-emerald-700 text-white"><button type="button" aria-label={`Remove one ${product.name}`} onClick={()=>updateCartQty(product,-1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp??null})} className="grid h-9 w-10 place-items-center hover:bg-emerald-800"><Minus className="h-4 w-4"/></button><span className="text-xs font-black tabular-nums">{qty}</span><button type="button" aria-label={`Add one ${product.name}`} onClick={()=>updateCartQty(product,1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp??null})} className="grid h-9 w-10 place-items-center hover:bg-emerald-800"><Plus className="h-4 w-4"/></button></div>:<button type="button" onClick={()=>updateCartQty(product,1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp??null})} className="mt-2 w-full rounded-lg bg-emerald-700 px-2 py-2 text-xs font-bold text-white hover:bg-emerald-800">Add</button>}</div></article>})}</div> : <p className="rounded-2xl border border-dashed border-red-200 bg-white/80 px-4 py-6 text-center text-sm text-slate-600">Seasonal products are being selected. Please check back soon.</p>}
           </div>
         </section>;
       })()}
@@ -1251,7 +1251,7 @@ export function CustomerStorefront({
         ref={catalogSectionRef}
         className="max-w-6xl mx-auto px-3.5 sm:px-6 py-5 flex-1 w-full"
       >
-        {searchQuery.trim() && <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-white px-4 py-3 shadow-sm"><div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-[.16em] text-blue-700">Your search</p><h2 className="truncate text-base font-extrabold text-slate-900">{searchResultsProducts.length} {searchResultsProducts.length === 1 ? "product" : "products"} found</h2><p className="truncate text-xs text-slate-500">Matching “{searchQuery.trim()}”</p></div><button type="button" onClick={() => {setSearchQuery("");setIsSearchSubmitted(false);setSelectedCategory("all");setInStockOnly(false);}} className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs font-bold text-slate-700 hover:bg-slate-100"><X className="h-3.5 w-3.5"/> Clear</button></div>}
+        {searchQuery.trim() && <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-emerald-100 bg-white px-4 py-3 shadow-sm"><div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-[.16em] text-emerald-700">Your search</p><h2 className="truncate text-base font-extrabold text-slate-900">{searchResultsProducts.length} {searchResultsProducts.length === 1 ? "product" : "products"} found</h2><p className="truncate text-xs text-slate-500">Matching “{searchQuery.trim()}”</p></div><button type="button" onClick={() => {setSearchQuery("");setIsSearchSubmitted(false);setSelectedCategory("all");setInStockOnly(false);}} className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs font-bold text-slate-700 hover:bg-slate-100"><X className="h-3.5 w-3.5"/> Clear</button></div>}
         {/* Search mode shows only the matching product list, without extra filters. */}
         {!searchQuery.trim() && <div className="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
           <div>
@@ -1268,7 +1268,7 @@ export function CustomerStorefront({
               onClick={() => setInStockOnly(!inStockOnly)}
               className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
                 inStockOnly
-                  ? 'bg-[#1e40af] text-white'
+                  ? 'bg-[#087a55] text-white'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
               }`}
             >
@@ -1295,7 +1295,7 @@ export function CustomerStorefront({
 
         {loading ? (
           <div className="py-20 text-center space-y-3">
-            <RefreshCw className="w-8 h-8 text-blue-600 animate-spin mx-auto" />
+            <RefreshCw className="w-8 h-8 text-emerald-600 animate-spin mx-auto" />
             <p className="text-slate-600 font-medium">Loading fresh store catalog...</p>
           </div>
         ) : searchResultsProducts.length === 0 ? (
@@ -1315,7 +1315,7 @@ export function CustomerStorefront({
                 setSelectedCategory('all');
                 setInStockOnly(false);
               }}
-              className="mt-4 px-4 py-2 rounded-xl bg-[#1e40af] text-white text-xs font-bold hover:bg-sky-900 cursor-pointer"
+              className="mt-4 px-4 py-2 rounded-xl bg-[#087a55] text-white text-xs font-bold hover:bg-sky-900 cursor-pointer"
             >
               Show All Store Items
             </button>
@@ -1345,13 +1345,13 @@ export function CustomerStorefront({
                   key={product.id}
                   className={`pb-product-card group bg-white rounded-2xl border border-slate-200 shadow-[0_3px_14px_rgba(15,23,42,0.06)] transition-all flex flex-col justify-between overflow-hidden min-w-0 hover:shadow-lg hover:-translate-y-0.5 ${
                     product.inStock
-                      ? 'border-blue-100 hover:border-blue-400 hover:shadow-md'
+                      ? 'border-emerald-100 hover:border-emerald-400 hover:shadow-md'
                       : 'border-slate-200 opacity-70 bg-slate-50'
                   }`}
                 >
                   <div>
                     {/* Product Visual Box */}
-                    <div className={`pb-product-image relative aspect-[16/9] sm:aspect-square w-full max-h-44 bg-gradient-to-br from-[#f5f8ff] to-[#eaf1ff] flex items-center justify-center p-3 sm:p-4 border-b border-blue-50 ${searchQuery.trim() ? "sm:max-h-40" : ""}`}>
+                    <div className={`pb-product-image relative aspect-[16/9] sm:aspect-square w-full max-h-44 bg-gradient-to-br from-[#f5f8ff] to-[#eaf1ff] flex items-center justify-center p-3 sm:p-4 border-b border-emerald-50 ${searchQuery.trim() ? "sm:max-h-40" : ""}`}>
                       {product.imageUrl ? (
                         <img
                           src={product.imageUrl}
@@ -1373,7 +1373,7 @@ export function CustomerStorefront({
                           </span>
                         )}
                         {product.badge && (
-                          <span className="max-w-full px-2 py-1 rounded-md bg-[#1e40af] text-white font-semibold text-[10px] leading-tight shadow-2xs whitespace-normal break-words">
+                          <span className="max-w-full px-2 py-1 rounded-md bg-[#087a55] text-white font-semibold text-[10px] leading-tight shadow-2xs whitespace-normal break-words">
                             {product.badge}
                           </span>
                         )}
@@ -1388,8 +1388,8 @@ export function CustomerStorefront({
                       {/* Top-Right Availability Badge — reserved space keeps it clear of offer labels */}
                       <div className="absolute top-2.5 right-2.5 max-w-[4.5rem]">
                         {canAddMore ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-300">
-                            <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
                             Available
                           </span>
                         ) : (
@@ -1403,7 +1403,7 @@ export function CustomerStorefront({
                     {/* Product Info */}
                     <div className="pb-product-info p-2.5 sm:p-3.5 space-y-2 sm:space-y-2.5">
                       <div>
-                        <div className="text-[9px] sm:text-[11px] font-semibold text-[#1e40af] uppercase tracking-wider truncate">
+                        <div className="text-[9px] sm:text-[11px] font-semibold text-[#087a55] uppercase tracking-wider truncate">
                           {product.category}
                         </div>
                         <h3 className="pb-product-name font-bold text-slate-900 text-xs sm:text-base line-clamp-2 mt-0.5 min-h-[2.25rem] sm:min-h-[2.5rem]">
@@ -1442,7 +1442,7 @@ export function CustomerStorefront({
                                   }
                                   className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer tabular-nums ${
                                     isSelected
-                                      ? 'bg-[#1e40af] text-white shadow-2xs'
+                                      ? 'bg-[#087a55] text-white shadow-2xs'
                                       : v.inStock
                                       ? 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                                       : 'bg-slate-100 text-slate-400 line-through'
@@ -1461,7 +1461,7 @@ export function CustomerStorefront({
                         <div className="space-y-1.5">
                           <div className="flex items-center justify-between">
                             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
-                              <Scale className="w-3 h-3 text-[#1e40af]" />
+                              <Scale className="w-3 h-3 text-[#087a55]" />
                               Select Weight / Qty:
                             </span>
                             <button
@@ -1472,7 +1472,7 @@ export function CustomerStorefront({
                                   [product.id]: !prev[product.id],
                                 }))
                               }
-                              className="text-[11px] font-bold text-[#1e40af] hover:underline cursor-pointer"
+                              className="text-[11px] font-bold text-[#087a55] hover:underline cursor-pointer"
                             >
                               {isCustomOpen ? 'Close Custom' : '+ Custom Weight'}
                             </button>
@@ -1499,7 +1499,7 @@ export function CustomerStorefront({
                                   }
                                   className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer tabular-nums ${
                                     isSelected
-                                      ? 'bg-[#1e40af] text-white shadow-2xs'
+                                      ? 'bg-[#087a55] text-white shadow-2xs'
                                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                                   }`}
                                 >
@@ -1546,7 +1546,7 @@ export function CustomerStorefront({
                               <button
                                 type="button"
                                 onClick={() => handleApplyCustomWeight(product)}
-                                className="px-2.5 py-1 rounded-lg bg-[#1e40af] text-white text-xs font-bold hover:bg-sky-900 cursor-pointer ml-auto"
+                                className="px-2.5 py-1 rounded-lg bg-[#087a55] text-white text-xs font-bold hover:bg-sky-900 cursor-pointer ml-auto"
                               >
                                 Set
                               </button>
@@ -1575,7 +1575,7 @@ export function CustomerStorefront({
                         )}
                       </div>
                       {hasDiscount && (
-                        <div className="text-[11px] font-bold text-blue-700 tabular-nums">
+                        <div className="text-[11px] font-bold text-emerald-700 tabular-nums">
                           Save ₹{savedAmount} ({discountPercent}% OFF)
                         </div>
                       )}
@@ -1594,13 +1594,13 @@ export function CustomerStorefront({
                               unitMrp: activeOpt.mrp,
                             })
                           }
-                          className="px-2.5 sm:px-4 py-2 rounded-lg border border-blue-600 bg-white hover:bg-blue-50 text-blue-700 font-extrabold text-xs sm:text-sm flex items-center gap-1 shadow-2xs transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                          className="px-2.5 sm:px-4 py-2 rounded-lg border border-emerald-600 bg-white hover:bg-emerald-50 text-emerald-700 font-extrabold text-xs sm:text-sm flex items-center gap-1 shadow-2xs transition-colors cursor-pointer whitespace-nowrap shrink-0"
                         >
                           <Plus className="w-4 h-4" />
                           <span>Add</span>
                         </button>
                       ) : (
-                        <div className="flex w-[112px] min-w-[112px] items-center justify-between bg-blue-700 text-white rounded-xl overflow-hidden shadow-sm ring-1 ring-blue-800/10 shrink-0">
+                        <div className="flex w-[112px] min-w-[112px] items-center justify-between bg-emerald-700 text-white rounded-xl overflow-hidden shadow-sm ring-1 ring-emerald-800/10 shrink-0">
                           <button
                             type="button"
                             aria-label={`Decrease quantity of ${product.name}`}
@@ -1611,7 +1611,7 @@ export function CustomerStorefront({
                                 unitMrp: activeOpt.mrp,
                               })
                             }
-                            className="grid min-h-11 min-w-11 place-items-center hover:bg-blue-700 transition-colors cursor-pointer"
+                            className="grid min-h-11 min-w-11 place-items-center hover:bg-emerald-700 transition-colors cursor-pointer"
                           >
                             <Minus className="w-4 h-4 stroke-[2.8]" />
                           </button>
@@ -1629,7 +1629,7 @@ export function CustomerStorefront({
                                 unitMrp: activeOpt.mrp,
                               })
                             }
-                            className="grid min-h-11 min-w-11 place-items-center hover:bg-blue-700 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                            className="grid min-h-11 min-w-11 place-items-center hover:bg-emerald-700 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                           >
                             <Plus className="w-5 h-5 stroke-[3]" />
                           </button>
@@ -1678,13 +1678,13 @@ export function CustomerStorefront({
                       <div className="flex items-center justify-between gap-1 px-3 pb-3 pt-2">
                         <span className="text-sm font-extrabold tabular-nums text-slate-900">₹{option.price}</span>
                         {quantity > 0 ? (
-                          <div className="flex h-8 items-center overflow-hidden rounded-lg border border-blue-600 bg-white text-blue-700">
+                          <div className="flex h-8 items-center overflow-hidden rounded-lg border border-emerald-600 bg-white text-emerald-700">
                             <button type="button" aria-label={`Remove one ${product.name}`} onClick={() => updateCartQty(product, -1, { selectedUnit: option.label, unitPrice: option.price, unitMrp: option.mrp })} className="grid h-8 w-7 place-items-center font-bold">−</button>
                             <span className="min-w-5 text-center text-xs font-extrabold">{quantity}</span>
                             <button type="button" aria-label={`Add one more ${product.name}`} disabled={!available} onClick={() => updateCartQty(product, 1, { selectedUnit: option.label, unitPrice: option.price, unitMrp: option.mrp })} className="grid h-8 w-7 place-items-center font-bold disabled:opacity-40">+</button>
                           </div>
                         ) : (
-                          <button type="button" disabled={!available} onClick={() => updateCartQty(product, 1, { selectedUnit: option.label, unitPrice: option.price, unitMrp: option.mrp })} className="min-w-[58px] rounded-lg border border-blue-600 bg-blue-50 px-3 py-1.5 text-xs font-extrabold uppercase text-blue-700 hover:bg-blue-100 disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400">
+                          <button type="button" disabled={!available} onClick={() => updateCartQty(product, 1, { selectedUnit: option.label, unitPrice: option.price, unitMrp: option.mrp })} className="min-w-[58px] rounded-lg border border-emerald-600 bg-emerald-50 px-3 py-1.5 text-xs font-extrabold uppercase text-emerald-700 hover:bg-emerald-100 disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400">
                             {available ? 'ADD' : 'Sold out'}
                           </button>
                         )}
@@ -1706,7 +1706,7 @@ export function CustomerStorefront({
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left space-y-1">
             <div className="flex items-center justify-center sm:justify-start gap-2 font-extrabold text-slate-900 text-sm">
-              <Store className="w-4 h-4 text-[#1e40af]" />
+              <Store className="w-4 h-4 text-[#087a55]" />
               <span>{storeSettings.storeName}</span>
             </div>
             <p className="text-xs text-slate-500">
@@ -1722,7 +1722,7 @@ export function CustomerStorefront({
               rel="noopener noreferrer"
               className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-200 font-semibold flex items-center gap-1.5 whitespace-nowrap shrink-0"
             >
-              <MapPin className="w-4 h-4 text-[#1e40af]" />
+              <MapPin className="w-4 h-4 text-[#087a55]" />
               <span>Find on Google Maps</span>
             </a>
             <button
@@ -1730,7 +1730,7 @@ export function CustomerStorefront({
               onClick={() => setIsQrModalOpen(true)}
               className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-200 font-semibold flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0"
             >
-              <QrCode className="w-4 h-4 text-[#1e40af]" />
+              <QrCode className="w-4 h-4 text-[#087a55]" />
               <span>Store QR Code</span>
             </button>
           </div>
@@ -1742,11 +1742,11 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       <nav aria-label="Main navigation" className="fixed bottom-3 left-1/2 z-50 w-[calc(100%-24px)] max-w-[620px] -translate-x-1/2 rounded-full border border-slate-200/90 bg-white/95 p-1.5 shadow-[0_8px_30px_rgba(15,23,42,.18)] backdrop-blur-xl">
         <div className="grid grid-cols-5 items-center">
-          <button type="button" onClick={() => { onNavigate('/'); setSearchQuery(''); setIsSearchSubmitted(false); setSelectedCategory('all'); }} className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full bg-blue-50 px-1 py-2 text-blue-700"><Store className="h-5 w-5" /><span className="text-[10px] font-extrabold">Home</span></button>
-          <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); bestItemsSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-slate-600 transition hover:bg-slate-50 hover:text-blue-700"><Sparkles className="h-5 w-5" /><span className="text-[10px] font-semibold">Offers</span></button>
-          <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-slate-600 transition hover:bg-slate-50 hover:text-blue-700"><Package className="h-5 w-5" /><span className="text-[10px] font-semibold">Categories</span></button>
-          <button type="button" onClick={() => onNavigate('/account')} className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-slate-600 transition hover:bg-slate-50 hover:text-blue-700"><User className="h-5 w-5" /><span className="text-[10px] font-semibold">Account</span></button>
-          <button type="button" onClick={() => onNavigate('/cart')} className="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-slate-700 transition hover:bg-slate-50 hover:text-blue-700"><span className="relative"><ShoppingCart className="h-5 w-5" />{cartTotalItems > 0 && <span className="absolute -right-2 -top-2 grid h-4 min-w-4 place-items-center rounded-full bg-rose-500 px-1 text-[9px] font-black text-white">{cartTotalItems}</span>}</span><span className="text-[10px] font-semibold">Cart</span></button>
+          <button type="button" onClick={() => { onNavigate('/'); setSearchQuery(''); setIsSearchSubmitted(false); setSelectedCategory('all'); }} className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full bg-emerald-50 px-1 py-2 text-emerald-700"><Store className="h-5 w-5" /><span className="text-[10px] font-extrabold">Home</span></button>
+          <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); bestItemsSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-slate-600 transition hover:bg-slate-50 hover:text-emerald-700"><Sparkles className="h-5 w-5" /><span className="text-[10px] font-semibold">Offers</span></button>
+          <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-slate-600 transition hover:bg-slate-50 hover:text-emerald-700"><Package className="h-5 w-5" /><span className="text-[10px] font-semibold">Categories</span></button>
+          <button type="button" onClick={() => onNavigate('/account')} className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-slate-600 transition hover:bg-slate-50 hover:text-emerald-700"><User className="h-5 w-5" /><span className="text-[10px] font-semibold">Account</span></button>
+          <button type="button" onClick={() => onNavigate('/cart')} className="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-slate-700 transition hover:bg-slate-50 hover:text-emerald-700"><span className="relative"><ShoppingCart className="h-5 w-5" />{cartTotalItems > 0 && <span className="absolute -right-2 -top-2 grid h-4 min-w-4 place-items-center rounded-full bg-rose-500 px-1 text-[9px] font-black text-white">{cartTotalItems}</span>}</span><span className="text-[10px] font-semibold">Cart</span></button>
         </div>
       </nav>
       </>)}
