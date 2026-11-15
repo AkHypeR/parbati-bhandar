@@ -61,7 +61,7 @@ function loadInitialSettings(): StoreSettings {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === 'object') {
-        return { ...DEFAULT_STORE_SETTINGS, ...parsed };
+        return { ...DEFAULT_STORE_SETTINGS, ...parsed, storeName: DEFAULT_STORE_SETTINGS.storeName };
       }
     }
   } catch {
@@ -540,7 +540,7 @@ export default function App() {
         const nextProducts = cloudProducts.length ? cloudProducts : INITIAL_SAMPLE_PRODUCTS;
         setProducts(nextProducts);
         previousProductIds.current = nextProducts.map(p => p.id);
-        if (settings) setStoreSettings({ ...DEFAULT_STORE_SETTINGS, ...settings });
+        if (settings) setStoreSettings({ ...DEFAULT_STORE_SETTINGS, ...settings, storeName: DEFAULT_STORE_SETTINGS.storeName });
         setProductSyncStatus('saved');
         setCloudReady(true);
       } catch (error) {
