@@ -2,6 +2,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
   ShoppingCart,
   ShoppingBag,
+  Home,
+  Sparkles,
+  Package,
+  UserRound,
   ArrowLeft,
   X,
   Minus,
@@ -44,6 +48,7 @@ interface CartDrawerProps {
   onRequireLogin: () => void;
   liveIsOpen: boolean;
   onClose: () => void;
+  onNavigate: (path: string) => void;
   cartItemsList: CartItem[];
   products: Product[];
   cartTotalItems: number;
@@ -68,6 +73,7 @@ export function CartDrawer({
   onRequireLogin,
   liveIsOpen,
   onClose,
+  onNavigate,
   cartItemsList,
   products,
   cartTotalItems,
@@ -207,13 +213,6 @@ export function CartDrawer({
               <p className="text-xs text-slate-400 max-w-xs mx-auto">
                 Your cart is currently empty. Browse the store and add groceries to your shopping list.
               </p>
-              <button
-                type="button"
-                onClick={onClose}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-emerald-800"
-              >
-                ← Back to home page
-              </button>
             </div>
           ) : (
             <>
@@ -386,6 +385,34 @@ export function CartDrawer({
           </div>
         )}
 
+        <nav aria-label="Cart navigation" className={`pb-cart-bottom-nav ${darkMode ? 'is-dark' : ''}`}>
+          <div className={`pb-cart-bottom-nav-inner ${checkoutStep === 'checkout' ? 'is-final-step' : ''}`}>
+            <button type="button" onClick={() => onNavigate('/')} className="pb-customer-nav-item">
+              <Home/><span>Home</span>
+            </button>
+            {checkoutStep === 'review' && (
+              <>
+                <button type="button" onClick={() => { onNavigate('/'); window.setTimeout(() => document.getElementById('pb-best-five-section')?.scrollIntoView({behavior:'smooth',block:'start'}), 180); }} className="pb-customer-nav-item">
+                  <Sparkles/><span>Offers</span>
+                </button>
+                <button type="button" onClick={() => { onNavigate('/'); window.setTimeout(() => document.getElementById('pb-category-section')?.scrollIntoView({behavior:'smooth',block:'start'}), 180); }} className="pb-customer-nav-item">
+                  <Package/><span>Categories</span>
+                </button>
+                <button type="button" onClick={() => onNavigate('/account')} className="pb-customer-nav-item">
+                  <UserRound/><span>Account</span>
+                </button>
+                <button type="button" aria-current="page" className="pb-customer-nav-item is-active">
+                  <ShoppingCart/><span>Cart</span>
+                </button>
+              </>
+            )}
+            {checkoutStep === 'checkout' && (
+              <button type="button" onClick={() => onNavigate('/account')} className="pb-customer-nav-item">
+                <UserRound/><span>Account</span>
+              </button>
+            )}
+          </div>
+        </nav>
       </div>
     </div>
   );
