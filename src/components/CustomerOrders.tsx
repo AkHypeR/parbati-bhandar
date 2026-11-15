@@ -173,7 +173,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
                 <section className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3">
                   <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-blue-50 text-blue-700"><Truck className="h-5 w-5"/></span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-extrabold">{selected.status === 'completed' ? 'Your order was delivered!' : selected.status === 'cancelled' ? 'Order cancelled by you' : selected.status === 'ready' ? 'Your order is ready!' : selected.estimatedReadyAt ? 'Estimated ready in ' + Math.max(0, Math.ceil((selected.estimatedReadyAt - Date.now()) / 60000)) + ' minutes' : statusLabel(selected.status)}</p>
+                    <p className={`text-sm font-extrabold ${selected.status === 'cancelled' ? 'pb-orders-cancelled-title' : ''}`}>{selected.status === 'completed' ? 'Your order was delivered!' : selected.status === 'cancelled' ? 'Order cancelled by you' : selected.status === 'ready' ? 'Your order is ready!' : selected.estimatedReadyAt ? 'Estimated ready in ' + Math.max(0, Math.ceil((selected.estimatedReadyAt - Date.now()) / 60000)) + ' minutes' : statusLabel(selected.status)}</p>
                     <p className="mt-0.5 text-[11px] text-slate-500">{selected.readyAt ? 'Ready at ' + formatTime(selected.readyAt) : selected.estimatedReadyAt ? 'Estimated at ' + formatTime(selected.estimatedReadyAt) : 'We’ll update your order status here'}</p>
                   </div>
                   <span className="shrink-0 rounded-md bg-blue-600 px-2.5 py-1.5 text-xs font-black text-white">#{selected.orderNumber}</span>
@@ -189,7 +189,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
                   </ol>
                   <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-emerald-600 transition-all" style={{width:((Math.max(0,currentIndex)/3)*100)+'%'}}/></div>
                 </section>}
-                {selected.status === 'cancelled' && <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm font-bold text-rose-800">Order cancelled by you. Any inventory deducted for this order has been restored.</div>}
+                {selected.status === 'cancelled' && <div role="status" className="pb-orders-cancelled-notice rounded-xl p-4 text-sm font-bold">Order cancelled by you. Any inventory deducted for this order has been restored.</div>}
                 {actionMessage && <p role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs font-bold text-emerald-800">{actionMessage}</p>}
                 {['new','review','processing'].includes(selected.status) && <section className="rounded-2xl border border-blue-200 bg-blue-50 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-sm font-black text-slate-900">Change your order</h2><p className="mt-1 text-xs text-slate-600">You can edit until the order is ready. Cancellation is available before processing starts.</p></div>
