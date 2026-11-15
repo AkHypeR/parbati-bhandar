@@ -2472,3 +2472,41 @@ html.pb-dark .pb-owner-portal :where(h1,h2,h3,h4,[class*="text-slate-900"],[clas
 @media (prefers-reduced-motion:reduce) {
   .pb-customer-orders .pb-order-progress-fill { transition:none !important; }
 }
+
+
+/* High-contrast storefront opening-status pill beside the Burdwan location. */
+.pb-storefront-root .pb-header-location .pb-store-status {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  min-height: 24px !important;
+  padding: 4px 10px !important;
+  border: 1px solid transparent !important;
+  border-radius: 9999px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  letter-spacing: .015em !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+.pb-storefront-root .pb-header-location .pb-store-status.is-closed {
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  background: #B42318 !important;
+  border-color: #8F1D16 !important;
+  box-shadow: 0 1px 3px rgba(127, 29, 29, .22) !important;
+}
+.pb-storefront-root .pb-header-location .pb-store-status.is-open {
+  color: #14532D !important;
+  -webkit-text-fill-color: #14532D !important;
+  background: #DCFCE7 !important;
+  border-color: #86EFAC !important;
+}
+.pb-storefront-root .pb-header-location .pb-store-status.is-closed > span {
+  background: #FFFFFF !important;
+}
+.pb-storefront-root .pb-header-location .pb-store-status.is-open > span {
+  background: #15803D !important;
+}
