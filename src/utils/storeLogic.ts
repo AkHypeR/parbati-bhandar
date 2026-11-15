@@ -455,7 +455,7 @@ export const INITIAL_SAMPLE_PRODUCTS: Product[] = [
 ];
 
 export const DEFAULT_STORE_SETTINGS: StoreSettings = {
-  storeName: 'Parbati Bhandar (পার্বতী ভান্ডার)',
+  storeName: 'Parbati Vandar (পার্বতী ভান্ডার)',
   tagline:
     'Your Trusted Local Kirana & Grocery Store in Swasti Pally, Gangpur • Browse products and place orders on our website • ন্যায্য মূল্যে সেরা মানের মুদিখানার বিশ্বস্ত প্রতিষ্ঠান',
   phone: '+91 97347 65207',
@@ -836,7 +836,7 @@ export function getAutomaticFestivalTheme(date = new Date()): AutomaticFestivalT
   if (inRange(4,14,15)) return { id:'poila-boishakh', title:'শুভ নববর্ষ', subtitle:'নতুন বছর শুরু হোক আনন্দ আর সমৃদ্ধিতে', tag:'Poila Boishakh • Bengali New Year', emoji:'🌼' };
   if (inRange(8,13,15)) return { id:'independence-day', title:'Happy Independence Day', subtitle:'স্বাধীনতার আনন্দে সবাইকে শুভেচ্ছা', tag:'Independence Day', emoji:'🇮🇳' };
   if (inRange(10,1,2)) return { id:'gandhi-jayanti', title:'Gandhi Jayanti', subtitle:'Remembering peace and kindness', tag:'Gandhi Jayanti', emoji:'🕊️' };
-  if (inRange(11,13,16) && date.getFullYear() === 2026) return { id:'chhath-puja', title:'শুভ ছট পূজা', subtitle:'সূর্য অর্ঘ্য • উৎসবের আনন্দে Parbati Bhandar', tag:'Chhath Puja Celebration', emoji:'🪔' };
+  if (inRange(11,13,16) && date.getFullYear() === 2026) return { id:'chhath-puja', title:'শুভ ছট পূজা', subtitle:'সূর্য অর্ঘ্য • উৎসবের আনন্দে Parbati Vandar', tag:'Chhath Puja Celebration', emoji:'🪔' };
   if (inRange(12,20,26)) return { id:'christmas', title:'Merry Christmas', subtitle:'শুভ বড়দিন • Wishing you joy and happiness', tag:'Christmas Celebration', emoji:'🎄' };
   if ((month === 12 && day >= 27) || (month === 1 && day <= 2)) return { id:'new-year', title:'শুভ নববর্ষ • Happy New Year', subtitle:'Fresh essentials and fresh hopes', tag:'New Year Celebration', emoji:'🎉' };
   return null;
@@ -879,7 +879,7 @@ export function buildHeroSlides(
   const hasCustomOccasion = Boolean(settings.occasionTitle?.trim() || occasionImage.trim());
   const shouldShowOccasion = isChhathOccasion || settings.showOccasionBanner === true || !hasCustomOccasion || Boolean(autoFestival);
   if (shouldShowOccasion) {
-    const fallback = autoFestival || { title:'Welcome to Parbati Bhandar', subtitle:'Your neighbourhood grocery store • Everyday essentials with care', tag:'Fresh essentials, friendly service', emoji:'🛍️' };
+    const fallback = autoFestival || { title:'Welcome to Parbati Vandar', subtitle:'Your neighbourhood grocery store • Everyday essentials with care', tag:'Fresh essentials, friendly service', emoji:'🛍️' };
     slides.push({ type:'festive', id:'festive-banner', title:autoFestival?.title || settings.occasionTitle?.trim() || fallback.title, subtitle:autoFestival?.subtitle || settings.occasionSubtitle?.trim() || fallback.subtitle, tag:autoFestival?.tag || settings.occasionTag?.trim() || fallback.tag, imageUrl:occasionImage });
   }
   const orderedBest = getBestItems(products, 5);
