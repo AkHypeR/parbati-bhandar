@@ -33,14 +33,14 @@ export function QrPosterModal({ isOpen, onClose, storeSettings }: QrPosterModalP
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Parbati Bhandar Counter QR Scanner"
+      aria-label="Parbati Vandar Counter QR Scanner"
       className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto"
     >
       <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4 my-8">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2">
             <QrCode className="w-5 h-5 text-emerald-600" />
-            <h3 className="font-extrabold text-slate-900">Parbati Bhandar Store Scanner</h3>
+            <h3 className="font-extrabold text-slate-900">Parbati Vandar Store Scanner</h3>
           </div>
           <button
             type="button"
@@ -181,7 +181,7 @@ export function SetupGuideModal({ isOpen, onClose }: SetupGuideModalProps) {
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-emerald-600" />
             <h3 className="font-extrabold text-lg text-slate-900">
-              100% Free (₹0) Deployment &amp; Usage Guide for Parbati Bhandar
+              100% Free (₹0) Deployment &amp; Usage Guide for Parbati Vandar
             </h3>
           </div>
           <button
@@ -228,7 +228,7 @@ export function SetupGuideModal({ isOpen, onClose }: SetupGuideModalProps) {
                 Step 2: Add Your Link to Your Google Maps Profile (Swasti Pally, Gangpur)
               </span>
               <p>
-                1. Open your <strong>Parbati Bhandar (পার্বতী ভান্ডার)</strong> Google Business
+                1. Open your <strong>Parbati Vandar (পার্বতী ভান্ডার)</strong> Google Business
                 Profile on Google Maps.
                 <br />
                 2. Tap <strong>&ldquo;Edit Profile&rdquo; → &ldquo;Website&rdquo;</strong> and paste
@@ -262,7 +262,7 @@ export function SetupGuideModal({ isOpen, onClose }: SetupGuideModalProps) {
           onClick={onClose}
           className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm cursor-pointer"
         >
-          Got It! Let&apos;s Manage Parbati Bhandar
+          Got It! Let&apos;s Manage Parbati Vandar
         </button>
       </div>
     </div>
