@@ -767,6 +767,7 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       {!searchQuery.trim() && !isSearchSubmitted && <section
         ref={bestItemsSectionRef}
+        id="pb-best-five-section"
         aria-label="Special Occasion and Best Items Showcase"
         className="pb-best-five-section max-w-5xl mx-auto w-full px-3.5 sm:px-6 pt-3 pb-4 space-y-3"
       >
@@ -860,7 +861,7 @@ export function CustomerStorefront({
                       else catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  className={`pb-christmas-banner hidden ${isChhathSeason ? "pb-chhath-banner" : isAutomaticFestivalSeason ? "pb-festival-banner" : ""} relative w-full max-w-3xl mx-auto min-h-[250px] rounded-[24px] overflow-hidden shadow-[0_22px_55px_rgba(8,35,25,.28)] border border-emerald-100 cursor-pointer group select-none`}
+                  className={`pb-christmas-banner ${isChhathSeason ? "pb-chhath-banner" : isAutomaticFestivalSeason ? "pb-festival-banner" : ""} relative w-full max-w-3xl mx-auto min-h-[250px] rounded-[24px] overflow-hidden shadow-[0_22px_55px_rgba(8,35,25,.28)] border border-emerald-100 cursor-pointer group select-none`}
                 >
                   {!isChhathSeason && <img src="https://images.unsplash.com/photo-1767005608325-0ff075fca106?auto=format&fit=crop&w=1600&q=85" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"/>}
                   {isChhathSeason && <div className="pb-chhath-sunrise absolute inset-0" aria-hidden="true"><span className="pb-chhath-sun"/><span className="pb-chhath-horizon"/><span className="pb-chhath-ghat">🌴　🛕　🌴</span><span className="pb-chhath-water"/></div>}
