@@ -691,7 +691,7 @@ export function AdminUploadApp({
   };
 
   return (
-    <div className="min-h-dvh flex-1 bg-[#f5f7fb] pb-16 text-slate-900">
+    <div className="pb-owner-portal min-h-dvh flex-1 pb-16">
       {/* Owner Admin Header */}
       <div className="border-b border-slate-200 bg-white shadow-[0_1px_3px_rgba(15,23,42,.04)]">
         <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-7">
