@@ -990,7 +990,7 @@ export default function App() {
 
   return (
     <Suspense fallback={<InitialLoadingScreen />}>
-    <div className="min-h-screen bg-[#f7faf8] text-slate-900 flex flex-col font-sans">
+    <div className={`${activeMode === 'admin' ? 'pb-owner-mode ' : ''}min-h-screen bg-[#f7faf8] text-slate-900 flex flex-col font-sans`}>
       {(!cloudReady || !initialAuthReady || !initialSettingsReady || !pageModulesReady || !minimumLoaderTimeElapsed) && <InitialLoadingScreen />}
 
       {/* ================================================================= */}
