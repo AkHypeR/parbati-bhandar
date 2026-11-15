@@ -529,101 +529,8 @@ button[class*="bg-emerald-600"]:hover,
 }
 
 
-/* Owner portal: calm, low-glare admin workspace.
-   Intentionally independent from the customer-facing Sage/Tomato storefront. */
-.pb-owner-portal {
-  --owner-canvas: #F3F5F7;
-  --owner-surface: #FFFFFF;
-  --owner-surface-muted: #F7F9FB;
-  --owner-text: #243342;
-  --owner-muted: #617181;
-  --owner-border: #DCE3E9;
-  --owner-primary: #315B7D;
-  --owner-primary-hover: #254966;
-  --owner-primary-soft: #EAF1F6;
-  min-height: 100dvh;
-  background: var(--owner-canvas) !important;
-  color: var(--owner-text) !important;
-  color-scheme: light;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-.pb-owner-portal :where(h1,h2,h3,h4) { color: #243342; letter-spacing: -.018em; }
-.pb-owner-portal :where(p,label,span,small) { text-rendering: optimizeLegibility; }
-.pb-owner-portal [class*="bg-white"] { background-color: var(--owner-surface) !important; }
-.pb-owner-portal [class*="bg-slate-50"],
-.pb-owner-portal [class*="bg-gray-50"] { background-color: var(--owner-surface-muted) !important; }
-.pb-owner-portal [class*="bg-slate-100"],
-.pb-owner-portal [class*="bg-gray-100"] { background-color: #EEF2F5 !important; }
-.pb-owner-portal [class*="text-slate-900"],
-.pb-owner-portal [class*="text-slate-800"],
-.pb-owner-portal [class*="text-gray-900"],
-.pb-owner-portal [class*="text-gray-800"] { color: var(--owner-text) !important; }
-.pb-owner-portal [class*="text-slate-700"],
-.pb-owner-portal [class*="text-slate-600"],
-.pb-owner-portal [class*="text-gray-700"],
-.pb-owner-portal [class*="text-gray-600"] { color: #4D6070 !important; }
-.pb-owner-portal [class*="text-slate-500"],
-.pb-owner-portal [class*="text-slate-400"],
-.pb-owner-portal [class*="text-gray-500"],
-.pb-owner-portal [class*="text-gray-400"] { color: var(--owner-muted) !important; }
-.pb-owner-portal [class*="border-slate-"],
-.pb-owner-portal [class*="border-gray-"] { border-color: var(--owner-border) !important; }
-.pb-owner-portal [class*="bg-blue-50"],
-.pb-owner-portal [class*="bg-sky-50"],
-.pb-owner-portal [class*="bg-indigo-50"] { background-color: var(--owner-primary-soft) !important; }
-.pb-owner-portal [class*="bg-blue-100"],
-.pb-owner-portal [class*="bg-sky-100"],
-.pb-owner-portal [class*="bg-indigo-100"] { background-color: #DDE8F0 !important; }
-.pb-owner-portal [class*="text-blue-"],
-.pb-owner-portal [class*="text-sky-"],
-.pb-owner-portal [class*="text-indigo-"] { color: var(--owner-primary) !important; }
-.pb-owner-portal [class*="border-blue-"],
-.pb-owner-portal [class*="border-sky-"],
-.pb-owner-portal [class*="border-indigo-"] { border-color: #C6D5E1 !important; }
-.pb-owner-portal [class*="bg-blue-700"],
-.pb-owner-portal [class*="bg-blue-800"],
-.pb-owner-portal [class*="bg-indigo-600"],
-.pb-owner-portal [class*="bg-indigo-700"] { background-color: var(--owner-primary) !important; color: #fff !important; }
-.pb-owner-portal [class*="bg-blue-700"]:hover,
-.pb-owner-portal [class*="bg-blue-800"]:hover,
-.pb-owner-portal [class*="bg-indigo-600"]:hover,
-.pb-owner-portal [class*="bg-indigo-700"]:hover { background-color: var(--owner-primary-hover) !important; }
-.pb-owner-portal input:not([type="checkbox"]):not([type="radio"]),
-.pb-owner-portal select,
-.pb-owner-portal textarea {
-  background-color: #fff !important;
-  color: var(--owner-text) !important;
-  border-color: #CBD5DE !important;
-  border-radius: 9px;
-}
-.pb-owner-portal input:focus,
-.pb-owner-portal select:focus,
-.pb-owner-portal textarea:focus {
-  border-color: #6487A3 !important;
-  outline: 3px solid rgba(49,91,125,.13) !important;
-  outline-offset: 1px;
-}
-.pb-owner-portal button { transition-duration: 140ms; }
-.pb-owner-portal button:focus-visible,
-.pb-owner-portal a:focus-visible {
-  outline: 3px solid rgba(49,91,125,.45);
-  outline-offset: 2px;
-}
-.pb-owner-portal [class*="shadow-"] { --tw-shadow-color: rgba(35,55,72,.07); }
-.pb-owner-portal table thead { background: #EEF2F5; color: #34495A; }
-.pb-owner-portal table th { font-weight: 700; letter-spacing: .015em; }
-.pb-owner-portal hr { border-color: var(--owner-border); }
-/* Keep meaning-based feedback colours: green = success, amber = caution,
-   red = destructive/error. These are deliberately not recoloured blue. */
-@media (prefers-reduced-motion: reduce) {
-  .pb-owner-portal *, .pb-owner-portal *::before, .pb-owner-portal *::after {
-    scroll-behavior: auto !important;
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: .01ms !important;
-  }
-}
+/* Owner workspace uses one dedicated palette at the end of this file.
+   Avoid broad utility remapping here so status colours and contrast stay intact. */
 
 /* Owner portal: keep the Unavailable inventory metric as a pale status tile.
    The storefront tomato-red utility mapping must not create a solid red block. */
@@ -2291,3 +2198,76 @@ html.pb-dark .pb-owner-mode .pb-owner-pin-gate section:last-child input {
   border-color:#526453 !important;
 }
 html.pb-dark .pb-owner-mode > .flex-1.grid { background:#171F19 !important; }
+
+
+/* OWNER PORTAL VISIBILITY FIX
+   This final, scoped layer wins over storefront/theme utility overrides.
+   Keep the owner workspace readable in both site themes. */
+.pb-owner-portal {
+  display: block !important;
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  background: #F4F5F0 !important;
+  color: #26352B !important;
+  color-scheme: light;
+}
+.pb-owner-portal > :first-child {
+  background: #FFFFFF !important;
+  color: #26352B !important;
+  border-color: #DDE3DA !important;
+}
+.pb-owner-portal :where(h1,h2,h3,h4) {
+  color: #26352B !important;
+}
+.pb-owner-portal :where(p,label,small,li,td,th) {
+  color: #526052;
+}
+.pb-owner-portal :where([class*="text-slate-900"],[class*="text-slate-800"],[class*="text-gray-900"],[class*="text-gray-800"]) {
+  color: #26352B !important;
+}
+.pb-owner-portal :where([class*="text-slate-700"],[class*="text-slate-600"],[class*="text-gray-700"],[class*="text-gray-600"]) {
+  color: #4B5D4D !important;
+}
+.pb-owner-portal :where([class*="text-slate-500"],[class*="text-slate-400"],[class*="text-gray-500"],[class*="text-gray-400"]) {
+  color: #687568 !important;
+}
+.pb-owner-portal :where([class*="bg-white"]) { background-color: #FFFFFF !important; }
+.pb-owner-portal :where([class*="bg-slate-50"],[class*="bg-gray-50"]) { background-color: #F7F8F4 !important; }
+.pb-owner-portal :where([class*="bg-slate-100"],[class*="bg-gray-100"]) { background-color: #EDF0E9 !important; }
+.pb-owner-portal :where([class*="border-slate-"],[class*="border-gray-"]) { border-color: #DDE3DA !important; }
+.pb-owner-portal input:not([type="checkbox"]):not([type="radio"]),
+.pb-owner-portal select,
+.pb-owner-portal textarea {
+  background: #FFFFFF !important;
+  color: #26352B !important;
+  border-color: #C9D3C8 !important;
+}
+.pb-owner-portal input::placeholder,
+.pb-owner-portal textarea::placeholder { color: #788579 !important; opacity: 1; }
+.pb-owner-portal button:focus-visible,
+.pb-owner-portal a:focus-visible {
+  outline: 3px solid rgba(100,123,98,.42) !important;
+  outline-offset: 2px;
+}
+/* Coloured action surfaces retain white text; semantic amber, green and red
+   feedback remains untouched. */
+.pb-owner-portal button[class*="bg-blue-700"],
+.pb-owner-portal button[class*="bg-blue-800"],
+.pb-owner-portal button[class*="bg-indigo-600"],
+.pb-owner-portal button[class*="bg-indigo-700"],
+.pb-owner-portal button[class*="bg-emerald-700"],
+.pb-owner-portal button[class*="bg-emerald-800"],
+.pb-owner-portal button[class*="bg-[#405B43]"] { color: #FFFFFF !important; }
+html.pb-dark .pb-owner-portal {
+  background: #F4F5F0 !important;
+  color: #26352B !important;
+  color-scheme: light !important;
+}
+html.pb-dark .pb-owner-portal > :first-child,
+html.pb-dark .pb-owner-portal [class*="bg-white"] {
+  background-color: #FFFFFF !important;
+}
+html.pb-dark .pb-owner-portal :where(h1,h2,h3,h4,[class*="text-slate-900"],[class*="text-slate-800"]) {
+  color: #26352B !important;
+}
