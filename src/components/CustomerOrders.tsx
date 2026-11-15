@@ -104,7 +104,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
   };
 
   return (
-    <main className="min-h-dvh w-full overflow-x-clip bg-[#f5f8f2] px-3 py-4 sm:px-4 sm:py-10">
+    <main className="pb-customer-orders min-h-dvh w-full overflow-x-clip bg-[#f5f8f2] px-3 py-4 sm:px-4 sm:py-10">
       <div className="mx-auto w-full min-w-0 max-w-4xl">
         <button type="button" onClick={orderNumber ? () => onNavigate('/orders') : onBack} className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-900/10 bg-white px-4 py-2 text-sm font-bold text-emerald-900 shadow-sm hover:bg-emerald-50">
           <ArrowLeft className="h-4 w-4"/> {orderNumber ? 'All orders' : 'Back to account'}
