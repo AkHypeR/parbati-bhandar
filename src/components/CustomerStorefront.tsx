@@ -1229,7 +1229,7 @@ export function CustomerStorefront({
             <button
               type="button"
               onClick={() => setInStockOnly(!inStockOnly)}
-              className={`pb-stock-filter px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${inStockOnly ? 'is-active' : ''}`}
+              className={`pb-stock-filter px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${inStockOnly ? 'is-active' : ''}`} style={{backgroundColor:inStockOnly ? "#64765F" : "#F0F2EA",color:inStockOnly ? "#FFFFFF" : "#52664D",border:"1px solid #D6DDCF"}}
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>In Stock Only</span>
@@ -1347,7 +1347,7 @@ export function CustomerStorefront({
                       {/* Top-Right Availability Badge — reserved space keeps it clear of offer labels */}
                       <div className="absolute top-2.5 right-2.5 max-w-[4.5rem]">
                         {canAddMore ? (
-                          <span className="pb-availability-badge inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                          <span className="pb-availability-badge inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold" style={{backgroundColor:"#E8EFE4",color:"#496447",border:"1px solid #D1DDC9"}}>
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
                             Available
                           </span>
