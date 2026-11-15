@@ -1028,16 +1028,6 @@ export default function App() {
                 <span className="hidden md:inline">Shop QR Poster</span>
               </button>
 
-              <button
-                type="button"
-                onClick={() => setIsGuideModalOpen(true)}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 text-xs font-semibold cursor-pointer whitespace-nowrap shrink-0"
-                title="How to Publish for ₹0 Free"
-              >
-                <HelpCircle className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">₹0 Free Setup Guide</span>
-              </button>
-
               <div className="flex items-center bg-slate-800 p-1 rounded-xl border border-slate-700 shrink-0">
                 <button
                   type="button"
