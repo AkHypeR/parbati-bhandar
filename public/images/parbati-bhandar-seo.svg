@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="t d">
+<title id="t">Parbati Bhandar grocery store in Gangpur</title>
+<desc id="d">Original illustrated grocery-store banner with rice, lentils, cooking oil, vegetables and the Parbati Bhandar name in English and Bengali.</desc>
+<defs>
+ <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#fff8e8"/><stop offset="1" stop-color="#e8f3d9"/></linearGradient>
+ <linearGradient id="green" x2="0" y2="1"><stop stop-color="#176b36"/><stop offset="1" stop-color="#064522"/></linearGradient>
+ <linearGradient id="gold" x2="0" y2="1"><stop stop-color="#ffd66b"/><stop offset="1" stop-color="#e99a1a"/></linearGradient>
+ <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#254b2b" flood-opacity=".18"/></filter>
+ <pattern id="grain" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="2" cy="3" r="1" fill="#c7a96b" opacity=".22"/><circle cx="12" cy="10" r="1" fill="#c7a96b" opacity=".16"/></pattern>
+</defs>
+<rect width="1200" height="630" rx="28" fill="url(#bg)"/><rect width="1200" height="630" rx="28" fill="url(#grain)"/>
+<circle cx="105" cy="85" r="150" fill="#f3d98a" opacity=".22"/><circle cx="1110" cy="570" r="220" fill="#8bbd72" opacity=".18"/>
+<path d="M0 475 Q210 425 410 480 T820 465 T1200 450 V630 H0Z" fill="#d9e9c7"/>
+<!-- left produce display -->
+<g filter="url(#shadow)">
+ <rect x="48" y="390" width="625" height="150" rx="22" fill="#9a5d2d"/>
+ <rect x="48" y="390" width="625" height="24" rx="12" fill="#c28a4f"/>
+ <path d="M75 414H645M75 463H645M75 512H645" stroke="#75411f" stroke-width="5" opacity=".45"/>
+ <!-- rice sack -->
+ <path d="M82 255 Q98 225 130 230 L245 230 Q276 240 278 275 L294 387 Q280 410 255 414 L93 414 Q70 400 75 375Z" fill="#e7d3a7" stroke="#b58b4e" stroke-width="5"/>
+ <path d="M95 255 Q170 280 265 255" fill="none" stroke="#b58b4e" stroke-width="6"/>
+ <path d="M100 295 Q170 315 260 295" fill="none" stroke="#c6a46c" stroke-width="3"/>
+ <g fill="#fffdf0"><ellipse cx="120" cy="248" rx="8" ry="4"/><ellipse cx="143" cy="243" rx="8" ry="4"/><ellipse cx="165" cy="248" rx="8" ry="4"/><ellipse cx="188" cy="242" rx="8" ry="4"/><ellipse cx="211" cy="248" rx="8" ry="4"/><ellipse cx="235" cy="243" rx="8" ry="4"/></g>
+ <text x="175" y="350" text-anchor="middle" font-family="Arial,sans-serif" font-size="25" font-weight="700" fill="#76502a">RICE</text>
+ <!-- oil bottle -->
+ <rect x="322" y="215" width="95" height="190" rx="24" fill="#e8a91c" stroke="#b97908" stroke-width="5"/>
+ <rect x="348" y="185" width="43" height="39" rx="8" fill="#d49a10"/><rect x="344" y="172" width="51" height="18" rx="5" fill="#176b36"/>
+ <rect x="333" y="275" width="73" height="67" rx="10" fill="#fff3c8"/><text x="369" y="302" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#176b36">COOKING</text><text x="369" y="321" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#176b36">OIL</text>
+ <!-- lentils bowl -->
+ <path d="M445 340 Q555 315 625 340 L602 405 Q530 445 466 405Z" fill="#c56e36"/><ellipse cx="535" cy="340" rx="90" ry="24" fill="#f1d9a5"/>
+ <g fill="#e6a52d"><circle cx="480" cy="335" r="7"/><circle cx="501" cy="326" r="7"/><circle cx="520" cy="340" r="7"/><circle cx="541" cy="328" r="7"/><circle cx="560" cy="340" r="7"/><circle cx="581" cy="329" r="7"/><circle cx="600" cy="340" r="7"/></g>
+ <!-- tomatoes and greens -->
+ <g><path d="M65 390 Q95 330 140 340 Q125 375 65 390M140 390 Q175 310 215 335 Q200 375 140 390M210 390 Q240 320 275 345" fill="none" stroke="#397c3b" stroke-width="13" stroke-linecap="round"/>
+ <circle cx="278" cy="384" r="31" fill="#d94b32"/><path d="M278 352l-9 17 18-6 12 8-4-17" fill="#397c3b"/>
+ <circle cx="292" cy="442" r="28" fill="#d94b32"/><path d="M292 414l-8 16 18-4" fill="#397c3b"/>
+ <circle cx="620" cy="440" r="26" fill="#e5b52d"/><path d="M620 414q-10-20 2-30q15 13 7 30" fill="#397c3b"/></g>
+</g>
+<!-- brand panel -->
+<g>
+ <rect x="705" y="74" width="445" height="475" rx="34" fill="#fffdf5" opacity=".88" stroke="#e4d8b9" stroke-width="2"/>
+ <path d="M755 122h345" stroke="#e6b33c" stroke-width="7" stroke-linecap="round"/>
+ <text x="928" y="215" text-anchor="middle" font-family="Georgia,serif" font-size="68" font-weight="700" fill="#14572d">Parbati</text>
+ <text x="928" y="287" text-anchor="middle" font-family="Georgia,serif" font-size="68" font-weight="700" fill="#14572d">Bhandar</text>
+ <path d="M790 310 Q928 340 1065 310" fill="none" stroke="#e8a928" stroke-width="7" stroke-linecap="round"/>
+ <text x="928" y="372" text-anchor="middle" font-family="sans-serif" font-size="39" font-weight="700" fill="#176b36">পার্বতী ভান্ডার</text>
+ <text x="928" y="414" text-anchor="middle" font-family="Arial,sans-serif" font-size="23" font-weight="600" fill="#59734e">Your Neighbourhood Grocery Store</text>
+ <g transform="translate(765 450)" fill="#176b36"><circle cx="22" cy="22" r="22" fill="#e7f0df"/><path d="M10 13h25l-3 17H14Z" fill="none" stroke="#176b36" stroke-width="3"/><circle cx="17" cy="35" r="3"/><circle cx="30" cy="35" r="3"/><path d="M7 8h5l3 20" fill="none" stroke="#176b36" stroke-width="3" stroke-linecap="round"/></g>
+ <text x="815" y="482" font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#315c36">Everyday essentials</text>
+ <text x="815" y="507" font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#315c36">Easy online ordering</text>
+</g>
+<text x="600" y="590" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" font-weight="600" fill="#426b3b">Swasti Pally, Gangpur · Purba Bardhaman, West Bengal</text>
+</svg>
