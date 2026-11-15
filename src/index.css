@@ -1818,3 +1818,34 @@ html.pb-dark .pb-customer-orders button.pb-orders-danger:hover:not(:disabled) {
   background:#4A2B29 !important; color:#FFE1DC !important;
   -webkit-text-fill-color:#FFE1DC !important;
 }
+
+
+/* Final checkout "Edit order" link: isolate it from the summary's primary-button theme overrides. */
+.pb-cart-panel .pb-cart-summary button.pb-cart-edit-order {
+  display:inline-flex !important; align-items:center !important; justify-content:center !important;
+  min-height:36px !important; padding:7px 12px !important;
+  border:1px solid #CBD7C7 !important; border-radius:10px !important;
+  background:#F3F6F0 !important; background-color:#F3F6F0 !important;
+  color:#496447 !important; -webkit-text-fill-color:#496447 !important;
+  font-size:12px !important; font-weight:800 !important; line-height:1.25 !important;
+  box-shadow:none !important; text-shadow:none !important; opacity:1 !important;
+  white-space:nowrap !important; cursor:pointer !important;
+}
+.pb-cart-panel .pb-cart-summary button.pb-cart-edit-order:hover {
+  background:#E7EEE3 !important; background-color:#E7EEE3 !important;
+  color:#354F35 !important; -webkit-text-fill-color:#354F35 !important;
+  border-color:#AFC2A9 !important;
+}
+.pb-cart-panel .pb-cart-summary button.pb-cart-edit-order:focus-visible {
+  outline:3px solid rgba(88,119,90,.28) !important; outline-offset:2px !important;
+}
+.pb-cart-dark .pb-cart-panel .pb-cart-summary button.pb-cart-edit-order {
+  background:#26372F !important; background-color:#26372F !important;
+  color:#DCEBDD !important; -webkit-text-fill-color:#DCEBDD !important;
+  border-color:#49634F !important;
+}
+.pb-cart-dark .pb-cart-panel .pb-cart-summary button.pb-cart-edit-order:hover {
+  background:#354D3B !important; background-color:#354D3B !important;
+  color:#FFFFFF !important; -webkit-text-fill-color:#FFFFFF !important;
+  border-color:#668A68 !important;
+}
