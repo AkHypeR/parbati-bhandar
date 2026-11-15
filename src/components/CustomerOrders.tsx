@@ -253,10 +253,10 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
                 <section className="rounded-lg border border-slate-200 bg-white px-4 py-4">
                   <h2 className="mb-3 text-sm font-black">Bill summary</h2>
                   {selected.status === 'cancelled' ? (
-                    <div className="rounded-lg bg-emerald-50 px-3 py-3 text-center">
-                      <p className="text-sm font-extrabold text-emerald-800">No payment due</p>
-                      <p className="mt-1 text-xs text-emerald-700">This order was cancelled. You do not need to pay for it.</p>
-                      <p className="mt-2 text-lg font-black text-emerald-900">₹0</p>
+                    <div className="rounded-lg border border-emerald-300 bg-[#EAF4EC] px-4 py-4 text-center shadow-sm">
+                      <p className="text-sm font-extrabold leading-6 text-[#174B32]">No payment due</p>
+                      <p className="mx-auto mt-1 max-w-sm text-xs font-medium leading-5 text-[#315C43]">This order was cancelled. You do not need to pay for it.</p>
+                      <p className="mt-2 text-2xl font-black leading-8 text-[#174B32]">₹0</p>
                     </div>
                   ) : <>
                     <div className="space-y-2 text-xs">
