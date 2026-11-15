@@ -1946,3 +1946,24 @@ html.pb-dark .pb-storefront-root .pb-availability-badge {
   color:#DCEBDD !important; -webkit-text-fill-color:#DCEBDD !important;
   border-color:#4C654F !important;
 }
+
+
+/* Final high-specificity override for the catalogue controls shown in the product toolbar/cards. */
+.pb-storefront-root.pb-theme-light button.pb-stock-filter,
+.pb-storefront-root.pb-theme-dark button.pb-stock-filter {
+  background:#F0F2EA !important; background-color:#F0F2EA !important;
+  color:#52664D !important; -webkit-text-fill-color:#52664D !important;
+  border:1px solid #D6DDCF !important;
+}
+.pb-storefront-root.pb-theme-light button.pb-stock-filter.is-active,
+.pb-storefront-root.pb-theme-dark button.pb-stock-filter.is-active {
+  background:#64765F !important; background-color:#64765F !important;
+  color:#FFFFFF !important; -webkit-text-fill-color:#FFFFFF !important;
+  border-color:#64765F !important;
+}
+.pb-storefront-root.pb-theme-light .pb-availability-badge,
+.pb-storefront-root.pb-theme-dark .pb-availability-badge {
+  background:#E8EFE4 !important; background-color:#E8EFE4 !important;
+  color:#496447 !important; -webkit-text-fill-color:#496447 !important;
+  border:1px solid #D1DDC9 !important;
+}
