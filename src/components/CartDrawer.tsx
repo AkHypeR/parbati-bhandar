@@ -39,6 +39,7 @@ function LowStockNotice({ productId, startedAt }: LowStockNoticeProps) {
 
 interface CartDrawerProps {
   isOpen: boolean;
+  darkMode?: boolean;
   customerAuthenticated: boolean;
   onRequireLogin: () => void;
   liveIsOpen: boolean;
@@ -62,6 +63,7 @@ interface CartDrawerProps {
 
 export function CartDrawer({
   isOpen,
+  darkMode = false,
   customerAuthenticated,
   onRequireLogin,
   liveIsOpen,
@@ -164,7 +166,7 @@ export function CartDrawer({
       role="dialog"
       aria-modal="true"
       aria-label="Parbati Bhandar Final Cart"
-      className="pb-cart-overlay fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end"
+      className={`pb-cart-overlay ${darkMode ? "pb-cart-dark" : ""} fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end`}
     >
       <div className="pb-cart-panel bg-white w-full max-w-3xl h-full flex flex-col shadow-2xl">
         <div className="pb-cart-header p-3.5 sm:p-5 bg-emerald-800 text-white">
