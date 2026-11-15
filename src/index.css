@@ -624,3 +624,13 @@ button[class*="bg-emerald-600"]:hover,
     transition-duration: .01ms !important;
   }
 }
+
+/* Owner portal: keep the Unavailable inventory metric as a pale status tile.
+   The storefront tomato-red utility mapping must not create a solid red block. */
+.pb-owner-portal [class*="bg-rose-50"] { background-color: #FDECE9 !important; }
+.pb-owner-portal [class*="bg-rose-100"] { background-color: #F9DAD4 !important; }
+.pb-owner-portal [class*="text-rose-900"],
+.pb-owner-portal [class*="text-rose-800"],
+.pb-owner-portal [class*="text-rose-700"],
+.pb-owner-portal [class*="text-rose-600"] { color: #A83225 !important; }
+.pb-owner-portal [class*="border-rose-"] { border-color: #F1C5BD !important; }
