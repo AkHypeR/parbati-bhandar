@@ -715,9 +715,9 @@ export function CustomerStorefront({
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-sky-100 text-sky-700"><ClipboardList className="h-5 w-5" /></span>
               <span className="truncate text-[11px] font-extrabold sm:text-xs">Track Order</span>
             </button>
-            <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-2xl border border-violet-100 bg-gradient-to-b from-violet-50 to-white px-1.5 py-2.5 text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md active:scale-[.98]">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-violet-100 text-violet-700"><Store className="h-5 w-5" /></span>
-              <span className="truncate text-[11px] font-extrabold sm:text-xs">Shop All</span>
+            <button type="button" onClick={() => onNavigate('/cart')} className="group flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-2xl border border-violet-100 bg-gradient-to-b from-violet-50 to-white px-1.5 py-2.5 text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md active:scale-[.98]">
+              <span className="relative grid h-9 w-9 place-items-center rounded-xl bg-violet-100 text-violet-700"><ShoppingCart className="h-5 w-5" />{cartTotalItems > 0 && <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-rose-500 px-1 text-[9px] font-black text-white">{cartTotalItems}</span>}</span>
+              <span className="truncate text-[11px] font-extrabold sm:text-xs">My Cart</span>
             </button>
           </nav>
           <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[11px] font-semibold text-slate-600">
