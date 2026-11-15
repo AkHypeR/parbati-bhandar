@@ -444,3 +444,86 @@ button[class*="bg-emerald-600"]:hover,
   .pb-editorial-hero-card h1 { font-size: clamp(2.55rem, 11vw, 3.45rem); }
   .pb-editorial-hero-image { min-height: 280px; }
 }
+
+
+/* Premium editorial catalogue — consistent with the Parbati Vandar hero. */
+.pb-category-section { padding: 4px 0 2px; }
+.pb-category-chip {
+  border-color: #D8DAD2;
+  background: #FFFEFA;
+  color: #30352F;
+  box-shadow: 0 2px 8px rgba(48,53,47,.035);
+}
+.pb-category-chip:hover { border-color: #9BAA94; background: #F1F3EC; transform: translateY(-1px); }
+.pb-category-chip.is-active {
+  border-color: #64765F;
+  background: #64765F;
+  color: #fffefa;
+  box-shadow: 0 5px 14px rgba(100,118,95,.17);
+}
+.pb-category-chip.is-active > span:first-child { background: rgba(255,255,255,.17); }
+.pb-category-count { color: #73786F; }
+.pb-product-grid { align-items: stretch; }
+.pb-product-card {
+  border: 1px solid #D8DAD2 !important;
+  border-radius: 19px !important;
+  background: #FFFEFA !important;
+  box-shadow: 0 3px 14px rgba(48,53,47,.045) !important;
+}
+.pb-product-card:hover {
+  border-color: #AAB6A3 !important;
+  box-shadow: 0 12px 28px rgba(48,53,47,.09) !important;
+  transform: translateY(-2px);
+}
+.pb-product-card > div:first-child { min-width: 0; }
+.pb-product-image {
+  background: linear-gradient(145deg,#F4F5EF 0%,#ECEFE7 100%) !important;
+  border-bottom: 1px solid #E4E6DE !important;
+  padding: 14px !important;
+}
+.pb-product-image img { mix-blend-mode: multiply; }
+.pb-product-info { padding: 13px 13px 14px !important; }
+.pb-product-name { color: #30352F !important; letter-spacing: -.015em; }
+.pb-product-info [class*="text-[#087a55]"],
+.pb-product-info [class*="text-emerald-"] { color: #64765F !important; }
+.pb-product-info button[class*="bg-[#087a55]"],
+.pb-product-info button[class*="bg-emerald-"] {
+  background: #64765F !important;
+  color: #fffefa !important;
+}
+.pb-product-info button[class*="bg-emerald-50"] {
+  background: #EEF1E9 !important;
+  color: #52684D !important;
+}
+.pb-product-card > div:last-child {
+  border-top: 1px solid #E5E6DF !important;
+  background: #F8F7F2 !important;
+}
+.pb-product-card > div:last-child [class*="text-slate-900"],
+.pb-product-card > div:last-child [class*="text-slate-800"] { color: #30352F !important; }
+.pb-product-card button[class*="bg-[#087a55]"],
+.pb-product-card button[class*="bg-emerald-700"] {
+  background: #E8412C !important;
+  color: #fff !important;
+}
+.pb-product-card button[class*="bg-[#087a55]"]:hover,
+.pb-product-card button[class*="bg-emerald-700"]:hover { background: #CF3826 !important; }
+.pb-product-card button[class*="bg-amber-"] {
+  background: #E8412C !important;
+  color: #fff !important;
+}
+.pb-product-card button[class*="bg-amber-"]:hover { background: #CF3826 !important; }
+.pb-product-card input, .pb-product-card select {
+  border-color: #D8DAD2 !important;
+  color: #30352F !important;
+}
+.pb-product-card .bg-sky-50\/70 { background: #EEF1E9 !important; border-color: #D8DAD2 !important; }
+.pb-product-card .text-orange-900 { color: #A9432F !important; }
+@media (max-width: 640px) {
+  .pb-category-section { margin-bottom: 18px; }
+  .pb-category-chip { padding: 8px 11px; gap: 7px; }
+  .pb-category-chip > span:first-child { width: 30px; height: 30px; }
+  .pb-product-card { border-radius: 16px !important; }
+  .pb-product-info { padding: 10px !important; }
+  .pb-product-image { padding: 10px !important; }
+}
