@@ -13,6 +13,7 @@ import {
   ClipboardList,
   CalendarDays,
   ArrowRight,
+  ArrowLeft,
   ShieldCheck,
   AlertCircle,
   ShoppingCart,
@@ -759,49 +760,7 @@ export function CustomerStorefront({
         </div>;
       })()}
 
-      {!searchQuery.trim() && !isSearchSubmitted && currentPage === 'home' && (
-        <section className="pb-editorial-hero mx-auto w-full max-w-6xl px-3.5 pt-5 sm:px-6 sm:pt-7">
-          <div className="pb-editorial-hero-card relative isolate grid min-h-[390px] overflow-hidden rounded-[26px] sm:min-h-[430px] lg:grid-cols-[.92fr_1.08fr]" style={{background:"#172554"}}>
-            <div className="relative z-10 flex flex-col items-start justify-center px-6 py-9 sm:px-10 sm:py-12 lg:px-14">
-              <span className="mb-5 inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.22em] text-[#596d55]">
-                <span className="h-px w-7 bg-[#788B72]"/> Your neighbourhood grocery store
-              </span>
-              <h1 className="max-w-xl font-serif text-[clamp(2.65rem,6vw,4.6rem)] leading-[.98] tracking-[-.055em] text-[#30352F]">
-                Everyday essentials,<br/><em className="font-normal text-[#64765F]">made simple.</em>
-              </h1>
-              <p className="mt-5 max-w-md text-sm leading-7 text-[#62685f] sm:text-base">
-                Fresh picks, trusted brands and all your daily needs — thoughtfully brought together at Parbati Vandar.
-              </p>
-              <div className="mt-7 flex flex-wrap items-center gap-3">
-                <button type="button" onClick={() => catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'})} className="inline-flex min-h-12 items-center gap-2 rounded-full bg-[#E8412C] px-6 py-3 text-sm font-bold text-white shadow-[0_8px_20px_rgba(232,65,44,.2)] transition hover:-translate-y-0.5 hover:bg-[#cf3826]">
-                  Shop groceries <ArrowRight className="h-4 w-4"/>
-                </button>
-                <button type="button" onClick={() => bestItemsSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'})} className="inline-flex min-h-12 items-center rounded-full border border-[#aeb8a8] px-6 py-3 text-sm font-semibold text-[#4e6049] transition hover:bg-white/60">
-                  Explore best picks
-                </button>
-              </div>
-              <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] font-semibold text-[#687064]">
-                <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-[#788B72]"/> Carefully selected essentials</span>
-                <span className="inline-flex items-center gap-1.5"><MapPin className="h-4 w-4 text-[#788B72]"/> Gangpur, Burdwan</span>
-              </div>
-            </div>
-            <div className="pb-editorial-hero-image relative min-h-[240px] overflow-hidden lg:min-h-full">
-              <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1500&q=88" alt="Fresh produce and grocery essentials at a market" className="absolute inset-0 h-full w-full object-cover"/>
-              <div className="absolute inset-0 bg-gradient-to-t from-[#263626]/45 via-transparent to-[#263626]/10 lg:bg-gradient-to-r lg:from-[#788B72]/15 lg:via-transparent lg:to-[#263626]/20"/>
-              <div className="absolute bottom-5 left-5 right-5 rounded-2xl border border-[#D9E0EC] bg-white p-4 shadow-xl sm:bottom-7 sm:left-7 sm:right-7 sm:max-w-[330px]">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-[10px] font-extrabold uppercase tracking-[.16em] text-[#64765F]">Parbati Vandar</span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#eaf0e6] px-2.5 py-1 text-[10px] font-bold text-[#52684d]"><span className={`h-1.5 w-1.5 rounded-full ${liveIsOpen ? 'bg-[#788B72]' : 'bg-[#E8412C]'}`}/>{liveIsOpen ? 'Open today' : 'Currently closed'}</span>
-                </div>
-                <p className="mt-2 text-lg font-semibold tracking-tight" style={{color:"#172554"}}>Your daily basket, all in one place.</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {['Rice & pulses','Fresh snacks','Kitchen essentials'].map((label)=><span key={label} className="rounded-full border border-[#D9E0EC] bg-[#F5F7FB] px-2.5 py-1 text-[10px] font-semibold text-[#334155]">{label}</span>)}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+      {/* Editorial hero removed: keep the storefront focused on search, offers and products. */}
 
       {/* ===================================================================== */}
       {/* SPECIAL OCCASION BANNER + ADMIN "BEST ITEMS" HOVER / PEEK SHOWCASE    */}
@@ -809,7 +768,7 @@ export function CustomerStorefront({
       {!searchQuery.trim() && !isSearchSubmitted && <section
         ref={bestItemsSectionRef}
         aria-label="Special Occasion and Best Items Showcase"
-        className="max-w-5xl mx-auto w-full px-3.5 sm:px-6 pt-3 pb-4 space-y-3"
+        className="pb-best-five-section max-w-5xl mx-auto w-full px-3.5 sm:px-6 pt-3 pb-4 space-y-3"
       >
         {/* =================================================================== */}
         {/* MERGED HERO SLIDER BAR: FESTIVE BANNER + BEST 5 RANKED SPOTLIGHT    */}
@@ -829,7 +788,7 @@ export function CustomerStorefront({
                 </span>
                 <div className="min-w-0">
                   <h2 className="text-xs sm:text-sm font-extrabold text-slate-900 truncate">
-                    {storeSettings.showOccasionBanner === true ? 'Festival Greeting + Best 5 Products • উৎসবের শুভেচ্ছা' : 'Best 5 Products Spotlight Slider • সেরা ৫ পছন্দের পণ্য'}
+                    {'Best 5 Products • সেরা ৫ পছন্দের পণ্য'}
                   </h2>
                 </div>
               </div>
@@ -1167,7 +1126,7 @@ export function CustomerStorefront({
             <div className="p-2.5"><h3 className="line-clamp-2 min-h-9 text-[11px] font-extrabold leading-4 text-slate-800">{product.name}</h3><p className="mt-1 text-[10px] text-slate-500">{product.unit}</p><div className="mt-1 flex items-baseline gap-1.5"><b className="text-sm text-slate-900">₹{product.price}</b>{discount.hasDiscount && <span className="text-[10px] text-slate-400 line-through">₹{product.mrp}</span>}</div>{qty > 0 ? <div className="mt-2 flex min-h-9 items-center justify-between overflow-hidden rounded-xl bg-[#0b8f63] text-white"><button type="button" aria-label={`Remove one ${product.name}`} onClick={() => updateCartQty(product,-1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp ?? null})} className="grid h-9 w-11 place-items-center hover:bg-[#087a55]"><Minus className="h-4 w-4"/></button><span className="text-xs font-black tabular-nums">{qty}</span><button type="button" aria-label={`Add one ${product.name}`} disabled={!product.inStock || getRemainingStock(product) <= 0} onClick={() => updateCartQty(product,1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp ?? null})} className="grid h-9 w-11 place-items-center hover:bg-[#087a55] disabled:opacity-40"><Plus className="h-4 w-4"/></button></div> : <button type="button" disabled={!product.inStock || getRemainingStock(product) <= 0} onClick={() => updateCartQty(product,1,{selectedUnit:product.unit,unitPrice:product.price,unitMrp:product.mrp ?? null})} className="mt-2 flex min-h-9 w-full items-center justify-center gap-1 rounded-xl bg-[#0b8f63] px-2 py-2 text-[11px] font-black text-white transition hover:bg-[#087a55] active:scale-[.97] disabled:opacity-50"><Plus className="h-3.5 w-3.5"/>Quick add</button>}</div>
           </article>;
         };
-        return <section aria-label="Deal Zone and featured products" className="mx-auto mb-5 w-full max-w-6xl overflow-hidden px-3.5 sm:px-6">
+        return <section aria-label="Deal Zone and featured products" className="pb-deal-zone mx-auto mb-5 w-full max-w-6xl overflow-hidden px-3.5 sm:px-6">
           <div className="overflow-hidden rounded-[24px] bg-gradient-to-br from-[#fff0f4] via-[#fff8f0] to-[#eef6ff] px-3.5 pb-4 pt-4 shadow-sm sm:px-5 sm:pt-6">
             <div className="relative overflow-hidden rounded-[20px] bg-gradient-to-r from-[#ffe2e9] via-[#fff1e8] to-[#e8f4ff] px-4 py-4 sm:px-7 sm:py-5">
               <div aria-hidden="true" className="absolute -right-8 -top-12 h-44 w-44 rounded-full border-[22px] border-white/35"/>
@@ -1227,10 +1186,18 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       <main
         ref={catalogSectionRef}
+        id="pb-product-catalog"
         className="max-w-6xl mx-auto px-3.5 sm:px-6 py-5 flex-1 w-full"
       >
+        {(selectedCategory !== 'all' || searchQuery.trim() || isSearchSubmitted) && (
+          <div className="mb-4">
+            <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); setTimeout(() => document.getElementById('pb-category-section')?.scrollIntoView({behavior:'smooth',block:'start'}), 40); }} className="inline-flex min-h-10 items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-slate-50">
+              <ArrowLeft className="h-4 w-4"/> Back to all products
+            </button>
+          </div>
+        )}
 
-        {!searchQuery.trim() && <section aria-label="Shop by category" className="pb-category-section mb-6">
+        {!searchQuery.trim() && <section id="pb-category-section" aria-label="Shop by category" className="pb-category-section mb-6">
           <div className="mb-3 flex items-end justify-between gap-3">
             <div><p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-[#788B72]">Find your essentials</p><h2 className="mt-1 font-serif text-2xl tracking-tight text-[#30352F] sm:text-3xl">Shop by category</h2></div>
             <span className="pb-category-count text-[11px] font-semibold text-[#73786F]">{products.length} products</span>
@@ -1733,17 +1700,6 @@ export function CustomerStorefront({
       </footer>}
 
       {/* ===================================================================== */}
-      {/* STICKY BOTTOM CART BAR (Product Thumbnails + Total + Yellow Proceed)  */}
-      {/* ===================================================================== */}
-      <nav aria-label="Main navigation" className="fixed bottom-3 left-1/2 z-50 w-[calc(100%-24px)] max-w-[620px] -translate-x-1/2 rounded-full border border-slate-200/90 bg-white/95 p-1.5 shadow-[0_8px_30px_rgba(15,23,42,.18)] backdrop-blur-xl">
-        <div className="grid grid-cols-5 items-center">
-          <button type="button" onClick={() => { onNavigate('/'); setSearchQuery(''); setIsSearchSubmitted(false); setSelectedCategory('all'); }} className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full bg-emerald-50 px-1 py-2 text-emerald-700"><Store className="h-5 w-5" /><span className="text-[10px] font-extrabold">Home</span></button>
-          <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); bestItemsSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-slate-600 transition hover:bg-slate-50 hover:text-emerald-700"><Sparkles className="h-5 w-5" /><span className="text-[10px] font-semibold">Offers</span></button>
-          <button type="button" onClick={() => { setSelectedCategory('all'); setSearchQuery(''); setIsSearchSubmitted(false); catalogSectionRef.current?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-slate-600 transition hover:bg-slate-50 hover:text-emerald-700"><Package className="h-5 w-5" /><span className="text-[10px] font-semibold">Categories</span></button>
-          <button type="button" onClick={() => onNavigate('/account')} className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-slate-600 transition hover:bg-slate-50 hover:text-emerald-700"><User className="h-5 w-5" /><span className="text-[10px] font-semibold">Account</span></button>
-          <button type="button" onClick={() => onNavigate('/cart')} className="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-2 text-slate-700 transition hover:bg-slate-50 hover:text-emerald-700"><span className="relative"><ShoppingCart className="h-5 w-5" />{cartTotalItems > 0 && <span className="absolute -right-2 -top-2 grid h-4 min-w-4 place-items-center rounded-full bg-rose-500 px-1 text-[9px] font-black text-white">{cartTotalItems}</span>}</span><span className="text-[10px] font-semibold">Cart</span></button>
-        </div>
-      </nav>
       </>)}
     </div>
   );
