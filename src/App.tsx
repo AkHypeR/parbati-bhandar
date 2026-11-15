@@ -160,7 +160,7 @@ export default function App() {
 
   // Mode Switcher: 'customer' | 'admin'
   const getAppPath = () => window.location.pathname.replace(/\/+$/, '') || '/';
-  const adminRouteTabs = { '/owner': 'dashboard', '/owner/dashboard': 'dashboard', '/owner/inventory': 'inventory', '/owner/add-product': 'add', '/owner/orders': 'orders', '/owner/settings': 'settings', '/owner/whatsapp-replies': 'quickReplies', '/owner/christmas-specials': 'christmasSpecials', '/owner/notifications': 'notifications' } as const;
+  const adminRouteTabs = { '/owner': 'dashboard', '/owner/dashboard': 'dashboard', '/owner/inventory': 'inventory', '/owner/add-product': 'add', '/owner/orders': 'orders', '/owner/settings': 'settings', '/owner/whatsapp-replies': 'quickReplies', '/owner/christmas-specials': 'christmasSpecials', '/owner/notifications': 'notifications', '/owner/customers': 'customers' } as const;
   const getAdminTabFromPath = () => adminRouteTabs[getAppPath() as keyof typeof adminRouteTabs] || 'inventory';
   const [currentPath, setCurrentPath] = useState(() => getAppPath());
   // Welcome promotion is eligible once per full browser load, not on SPA navigation.
@@ -275,9 +275,9 @@ export default function App() {
   const [copiedNotice, setCopiedNotice] = useState(false);
 
   // Admin View States
-  const [adminTab, setAdminTabState] = useState<'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders' | 'christmasSpecials' | 'notifications'>(() => getAdminTabFromPath());
-  const adminTabRoutes = { dashboard: '/owner/dashboard', inventory: '/owner/inventory', add: '/owner/add-product', orders: '/owner/orders', settings: '/owner/settings', quickReplies: '/owner/whatsapp-replies', christmasSpecials: '/owner/christmas-specials', notifications: '/owner/notifications' } as const;
-  const setAdminTab = (tab: 'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders' | 'christmasSpecials' | 'notifications') => {
+  const [adminTab, setAdminTabState] = useState<'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders' | 'christmasSpecials' | 'notifications' | 'customers'>(() => getAdminTabFromPath());
+  const adminTabRoutes = { dashboard: '/owner/dashboard', inventory: '/owner/inventory', add: '/owner/add-product', orders: '/owner/orders', settings: '/owner/settings', quickReplies: '/owner/whatsapp-replies', christmasSpecials: '/owner/christmas-specials', notifications: '/owner/notifications', customers: '/owner/customers' } as const;
+  const setAdminTab = (tab: 'dashboard' | 'inventory' | 'add' | 'settings' | 'quickReplies' | 'orders' | 'christmasSpecials' | 'notifications' | 'customers') => {
     navigateToPath(adminTabRoutes[tab]);
   };
   const [adminSearch, setAdminSearch] = useState('');
