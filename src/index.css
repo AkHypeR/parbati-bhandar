@@ -2413,3 +2413,62 @@ html.pb-dark .pb-owner-portal :where(h1,h2,h3,h4,[class*="text-slate-900"],[clas
   .pb-owner-notifications > div[role="tablist"] { gap:6px !important; }
   .pb-owner-notifications > div[role="tablist"] button { padding-inline:8px !important; font-size:11px !important; }
 }
+
+
+/* Customer order progress — high-contrast, responsive milestone tracker */
+.pb-customer-orders .pb-order-progress {
+  background:#FFFFFF !important;
+  border:1px solid #DCE5DA !important;
+  color:#26352B !important;
+  box-shadow:0 8px 24px rgba(38,53,43,.055);
+}
+.pb-customer-orders .pb-order-progress h2 { color:#26352B !important; }
+.pb-customer-orders .pb-order-progress-status {
+  color:#294735 !important;
+  background:#E8F1E5 !important;
+  border:1px solid #C8D9C2 !important;
+  white-space:nowrap;
+}
+.pb-customer-orders .pb-order-progress-steps {
+  list-style:none;
+  margin:0;
+  padding:0;
+}
+.pb-customer-orders .pb-order-progress-step { min-width:0; }
+.pb-customer-orders .pb-order-progress-node {
+  width:42px;
+  height:42px;
+  border:2px solid #D6DED4;
+  background:#F0F2EE;
+  color:#697568;
+  box-shadow:0 0 0 4px #FFFFFF;
+}
+.pb-customer-orders .pb-order-progress-step.is-complete .pb-order-progress-node {
+  background:#426348 !important;
+  border-color:#426348 !important;
+  color:#FFFFFF !important;
+}
+.pb-customer-orders .pb-order-progress-step.is-upcoming .pb-order-progress-node {
+  background:#F0F2EE !important;
+  border-color:#D6DED4 !important;
+  color:#667365 !important;
+}
+.pb-customer-orders .pb-order-progress-label {
+  color:#657164 !important;
+  overflow-wrap:anywhere;
+  min-height:2rem;
+}
+.pb-customer-orders .pb-order-progress-step.is-complete .pb-order-progress-label {
+  color:#31533A !important;
+}
+.pb-customer-orders .pb-order-progress-track { background:#E8EDE6 !important; }
+.pb-customer-orders .pb-order-progress-fill { background:#66866A !important; }
+@media (max-width:480px) {
+  .pb-customer-orders .pb-order-progress { padding:14px !important; }
+  .pb-customer-orders .pb-order-progress-steps { gap:3px !important; }
+  .pb-customer-orders .pb-order-progress-node { width:34px; height:34px; }
+  .pb-customer-orders .pb-order-progress-label { font-size:10px !important; line-height:1.25rem !important; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .pb-customer-orders .pb-order-progress-fill { transition:none !important; }
+}
