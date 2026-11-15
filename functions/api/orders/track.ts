@@ -16,7 +16,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
 
   if (url.searchParams.get("history") === "1") {
     const rows = await env.DB.prepare(
-      "SELECT id,order_number,customer_phone,items_json,status,total,created_at,updated_at,confirmed_at,ready_at,estimated_ready_at FROM customer_orders WHERE archived_at IS NULL AND (customer_id=? OR (customer_id IS NULL AND customer_phone=?)) ORDER BY created_at DESC LIMIT 100"
+      "SELECT id,order_number,customer_phone,items_json,status,total,created_at,updated_at,confirmed_at,ready_at,estimated_ready_at FROM customer_orders WHERE archived_at IS NULL AND (customer_id=? OR (customer_id IS NULL AND customer_phone=?)) ORDER BY created_at DESC"
     ).bind(customer.id, phone).all<any>();
     const orders = (rows.results || []).map((row: any) => ({
       id: row.id,
@@ -33,7 +33,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       createdAt: row.created_at,
       updatedAt: row.updated_at
     }));
-    return json({orders,retentionDays:365},200,{"cache-control":"no-store"});
+    return json({orders,retentionDays:60},200,{"cache-control":"no-store"});
   }
 
   const orderNumber = Number(url.searchParams.get("orderNumber"));
