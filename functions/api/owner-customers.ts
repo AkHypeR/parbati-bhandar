@@ -15,6 +15,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     const orderColumns = await env.DB.prepare("PRAGMA table_info(customer_orders)").all<any>();
     const names = new Set((orderColumns.results || []).map((column: any) => String(column.name)));
     if (!names.has("customer_id")) await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN customer_id TEXT").run();
+    if (!names.has("archived_at")) await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN archived_at INTEGER").run();
     const result = await env.DB.prepare(`
       SELECT a.id, a.name, a.phone, a.created_at AS createdAt, a.updated_at AS lastLoginAt,
         COUNT(o.id) AS orderCount,
