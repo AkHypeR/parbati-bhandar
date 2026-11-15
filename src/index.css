@@ -1908,3 +1908,41 @@ html.pb-dark .pb-customer-storefront [aria-label="Popular groceries"] img {
   filter:grayscale(1) brightness(.82) contrast(.88) !important;
   mix-blend-mode:normal !important;
 }
+
+
+/* Storefront stock controls and availability labels use the sage status palette, not blue. */
+.pb-storefront-root button.pb-stock-filter {
+  background:#F0F2EA !important; background-color:#F0F2EA !important;
+  color:#52664D !important; -webkit-text-fill-color:#52664D !important;
+  border:1px solid #D6DDCF !important; box-shadow:none !important;
+}
+.pb-storefront-root button.pb-stock-filter:hover {
+  background:#E6EBDD !important; background-color:#E6EBDD !important;
+  color:#40563C !important; -webkit-text-fill-color:#40563C !important;
+}
+.pb-storefront-root button.pb-stock-filter.is-active {
+  background:#64765F !important; background-color:#64765F !important;
+  color:#FFFFFF !important; -webkit-text-fill-color:#FFFFFF !important;
+  border-color:#64765F !important;
+}
+.pb-storefront-root button.pb-stock-filter svg { color:inherit !important; }
+.pb-storefront-root .pb-availability-badge {
+  background:#E8EFE4 !important; background-color:#E8EFE4 !important;
+  color:#496447 !important; -webkit-text-fill-color:#496447 !important;
+  border:1px solid #D1DDC9 !important;
+}
+html.pb-dark .pb-storefront-root button.pb-stock-filter {
+  background:#26352D !important; background-color:#26352D !important;
+  color:#DCEBDD !important; -webkit-text-fill-color:#DCEBDD !important;
+  border-color:#465B49 !important;
+}
+html.pb-dark .pb-storefront-root button.pb-stock-filter.is-active {
+  background:#64765F !important; background-color:#64765F !important;
+  color:#FFFFFF !important; -webkit-text-fill-color:#FFFFFF !important;
+  border-color:#84977D !important;
+}
+html.pb-dark .pb-storefront-root .pb-availability-badge {
+  background:#293A30 !important; background-color:#293A30 !important;
+  color:#DCEBDD !important; -webkit-text-fill-color:#DCEBDD !important;
+  border-color:#4C654F !important;
+}
