@@ -2042,3 +2042,37 @@ html.pb-dark .pb-storefront-root .pb-best-five-section .pb-best-five-product-bad
   color:rgba(255,255,255,.94) !important;
   text-shadow:0 0 8px rgba(255,255,255,.75);
 }
+
+
+/* Glass location strip: translucent deep teal keeps the address readable over snow. */
+.pb-storefront-root .pb-editorial-header.pb-christmas-header .pb-header-location {
+  position:relative !important;
+  z-index:12 !important;
+  background:rgba(8,48,43,.76) !important;
+  background-color:rgba(8,48,43,.76) !important;
+  border:1px solid rgba(255,255,255,.42) !important;
+  box-shadow:0 5px 18px rgba(0,35,30,.16), inset 0 1px 0 rgba(255,255,255,.14) !important;
+  -webkit-backdrop-filter:blur(12px) saturate(135%) !important;
+  backdrop-filter:blur(12px) saturate(135%) !important;
+}
+.pb-storefront-root .pb-editorial-header.pb-christmas-header .pb-header-location-name {
+  background:rgba(255,255,255,.16) !important;
+  border:1px solid rgba(255,255,255,.24) !important;
+  color:#FFFFFF !important;
+  -webkit-text-fill-color:#FFFFFF !important;
+}
+.pb-storefront-root .pb-editorial-header.pb-christmas-header .pb-header-location-address {
+  color:#FFFFFF !important;
+  -webkit-text-fill-color:#FFFFFF !important;
+  text-shadow:0 1px 3px rgba(0,0,0,.38) !important;
+}
+.pb-storefront-root .pb-editorial-header.pb-christmas-header .pb-header-location-chevron {
+  color:#FFFFFF !important;
+  stroke:#FFFFFF !important;
+}
+.pb-storefront-root .pb-editorial-header.pb-christmas-header .pb-header-location .bg-sky-100 {
+  background:rgba(210,245,229,.18) !important;
+  color:#E6FFF2 !important;
+  -webkit-text-fill-color:#E6FFF2 !important;
+  border:1px solid rgba(230,255,242,.25) !important;
+}
