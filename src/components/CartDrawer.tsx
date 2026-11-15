@@ -362,7 +362,7 @@ export function CartDrawer({
               <>
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-extrabold text-slate-900">Final step · Place your order</p>
-                  <button type="button" onClick={() => setCheckoutStep('review')} className="text-xs font-bold text-emerald-700">← Edit order</button>
+                  <button type="button" onClick={() => setCheckoutStep('review')} className="pb-cart-edit-order text-xs font-bold">← Edit order</button>
                 </div>
                 {!liveIsOpen && <div role="status" className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-semibold text-red-800">The store is currently closed. Online orders are paused and will be available when the store opens.</div>}
                 <button type="button" disabled={savingOrder || !liveIsOpen} onClick={async () => {
