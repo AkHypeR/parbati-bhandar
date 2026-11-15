@@ -1,11 +1,13 @@
 import { json, ownerRequired, type Env } from "../_lib/env";
 import { ensureCustomerTables } from "../_lib/customer-auth";
+import { purgeExpiredCustomerOrders } from "../_lib/order-retention";
 
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const denied = await ownerRequired(request, env);
   if (denied) return denied;
   try {
     await ensureCustomerTables(env);
+    await purgeExpiredCustomerOrders(env);
     await env.DB.prepare(`CREATE TABLE IF NOT EXISTS customer_orders (
       id TEXT PRIMARY KEY, customer_name TEXT NOT NULL, customer_phone TEXT NOT NULL,
       note TEXT, items_json TEXT NOT NULL, total REAL NOT NULL,
