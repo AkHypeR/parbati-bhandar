@@ -1984,3 +1984,61 @@ html.pb-dark .pb-storefront-root .pb-best-five-section .pb-best-five-product-bad
   filter:none !important;
   mix-blend-mode:normal !important;
 }
+
+
+/* Winter header scene inspired by the supplied snowy Christmas reference.
+   Keep the store controls and wordmark above the decorative landscape. */
+.pb-storefront-root .pb-editorial-header.pb-christmas-header {
+  position:relative !important;
+  isolation:isolate !important;
+  overflow:hidden !important;
+  background:linear-gradient(180deg,#159B83 0%,#28B99B 60%,#69D8C0 100%) !important;
+  border-color:rgba(226,248,241,.65) !important;
+  color:#FFFFFF !important;
+}
+.pb-storefront-root .pb-editorial-header.pb-christmas-header::before {
+  content:"";
+  position:absolute; z-index:1; left:-8%; right:-8%; bottom:-43px; height:94px;
+  background:linear-gradient(180deg,#FFFFFF 0%,#F5FCFA 100%);
+  border-radius:50% 50% 0 0 / 44% 48% 0 0;
+  transform:rotate(-1.5deg);
+  box-shadow:0 -8px 22px rgba(255,255,255,.35);
+  pointer-events:none;
+}
+.pb-storefront-root .pb-christmas-landscape { z-index:2 !important; }
+.pb-storefront-root .pb-christmas-landscape .pb-winter-tree {
+  position:absolute; bottom:10px; font-size:clamp(25px,4vw,42px);
+  line-height:1; filter:drop-shadow(0 2px 3px rgba(5,65,54,.22));
+  opacity:.96;
+}
+.pb-storefront-root .pb-christmas-landscape .pb-winter-tree-left { left:2%; bottom:7px; }
+.pb-storefront-root .pb-christmas-landscape .pb-winter-tree-mid { left:15%; bottom:3px; font-size:clamp(18px,3vw,30px); }
+.pb-storefront-root .pb-christmas-landscape .pb-winter-tree-right { right:3%; bottom:5px; }
+.pb-storefront-root .pb-christmas-landscape .pb-winter-snowman {
+  position:absolute; right:14%; bottom:4px; font-size:clamp(25px,4vw,40px);
+  filter:drop-shadow(0 2px 4px rgba(5,65,54,.18));
+}
+.pb-storefront-root .pb-christmas-landscape .pb-winter-sparkle {
+  position:absolute; right:29%; top:20px; color:#FFFFFF; font-size:20px;
+  text-shadow:0 0 12px #FFFFFF; animation:pbTwinkle 2.2s ease-in-out infinite;
+}
+.pb-storefront-root .pb-editorial-header.pb-christmas-header > .relative.z-10 {
+  z-index:10 !important;
+}
+.pb-storefront-root .pb-editorial-header.pb-christmas-header :where(h1,h2,h3,p,span,button,a) {
+  color:#FFFFFF !important;
+  -webkit-text-fill-color:#FFFFFF !important;
+}
+.pb-storefront-root .pb-editorial-header.pb-christmas-header .bg-white\/15,
+.pb-storefront-root .pb-editorial-header.pb-christmas-header .bg-white\/10 {
+  background:rgba(255,255,255,.18) !important;
+  border-color:rgba(255,255,255,.38) !important;
+}
+.pb-storefront-root .pb-editorial-header.pb-christmas-header .text-sky-300 {
+  color:#FFF4C7 !important;
+  -webkit-text-fill-color:#FFF4C7 !important;
+}
+.pb-storefront-root .pb-editorial-header.pb-christmas-header .pb-christmas-snow span {
+  color:rgba(255,255,255,.94) !important;
+  text-shadow:0 0 8px rgba(255,255,255,.75);
+}
