@@ -1407,3 +1407,18 @@ html.pb-dark .pb-customer-account .pb-recent-orders-card .pb-order-status--atten
 html.pb-dark .pb-customer-account .pb-recent-orders-card .pb-order-status--received {
   background:#1E3045 !important; color:#B7D4F2 !important; border-color:#385675 !important;
 }
+
+
+/* Recent-order list rows are navigation surfaces, never primary action buttons. */
+.pb-customer-account .pb-recent-orders-card .pb-recent-order-row {
+  background:#FFFEFA !important; color:#30352F !important;
+}
+.pb-customer-account .pb-recent-orders-card .pb-recent-order-row:hover {
+  background:#F3F6F0 !important; color:#30352F !important;
+}
+html.pb-dark .pb-customer-account .pb-recent-orders-card .pb-recent-order-row {
+  background:#18232E !important; color:#F1F5F4 !important;
+}
+html.pb-dark .pb-customer-account .pb-recent-orders-card .pb-recent-order-row:hover {
+  background:#293A35 !important; color:#FFFFFF !important;
+}
