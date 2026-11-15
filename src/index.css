@@ -634,3 +634,229 @@ button[class*="bg-emerald-600"]:hover,
 .pb-owner-portal [class*="text-rose-700"],
 .pb-owner-portal [class*="text-rose-600"] { color: #A83225 !important; }
 .pb-owner-portal [class*="border-rose-"] { border-color: #F1C5BD !important; }
+
+
+/* ============================================================
+   PARBATI VANDAR — RESTORED BRAND SYSTEM
+   Midnight Navy / Royal Blue / Warm Saffron / Cool Porcelain
+   This replaces the recent Sage/Tomato experiments.
+   ============================================================ */
+:root {
+  --pb-brand: #172554;
+  --pb-primary: #2563EB;
+  --pb-primary-hover: #1D4ED8;
+  --pb-accent: #F6C744;
+  --pb-canvas: #F5F7FB;
+  --pb-surface: #FFFFFF;
+  --pb-text: #172554;
+  --pb-muted: #64748B;
+  --pb-border: #DCE3EE;
+  --pb-navy: #172554;
+  --pb-blue: #2563EB;
+  --pb-saffron: #F6C744;
+  --pb-porcelain: #F5F7FB;
+}
+
+/* Customer storefront: bright, clear, familiar shopping experience. */
+.pb-storefront-root {
+  background: #F5F7FB !important;
+  color: #172554 !important;
+  --store-navy: #172554;
+  --store-blue: #2563EB;
+  --store-blue-hover: #1D4ED8;
+  --store-saffron: #F6C744;
+  --store-porcelain: #F5F7FB;
+  --store-border: #DCE3EE;
+  --store-muted: #64748B;
+}
+.pb-storefront-root [class*="bg-emerald-"],
+.pb-storefront-root [class*="bg-green-"] { background-color: #2563EB !important; }
+.pb-storefront-root [class*="text-emerald-"],
+.pb-storefront-root [class*="text-green-"] { color: #1D4ED8 !important; }
+.pb-storefront-root [class*="border-emerald-"],
+.pb-storefront-root [class*="border-green-"] { border-color: #C8D8F7 !important; }
+.pb-storefront-root [class*="bg-slate-50"],
+.pb-storefront-root [class*="bg-gray-50"] { background-color: #F5F7FB !important; }
+.pb-storefront-root [class*="border-slate-"],
+.pb-storefront-root [class*="border-gray-"] { border-color: #DCE3EE !important; }
+.pb-storefront-root [class*="text-slate-900"],
+.pb-storefront-root [class*="text-slate-800"],
+.pb-storefront-root [class*="text-gray-900"],
+.pb-storefront-root [class*="text-gray-800"] { color: #172554 !important; }
+.pb-storefront-root [class*="text-slate-600"],
+.pb-storefront-root [class*="text-slate-500"],
+.pb-storefront-root [class*="text-gray-600"],
+.pb-storefront-root [class*="text-gray-500"] { color: #64748B !important; }
+.pb-storefront-root [class*="bg-amber-"],
+.pb-storefront-root [class*="bg-yellow-"] { background-color: #FFF6D8 !important; }
+.pb-storefront-root [class*="text-amber-"],
+.pb-storefront-root [class*="text-yellow-"] { color: #8A5A00 !important; }
+.pb-storefront-root [class*="border-amber-"],
+.pb-storefront-root [class*="border-yellow-"] { border-color: #F0D98A !important; }
+.pb-storefront-root [class*="bg-rose-"],
+.pb-storefront-root [class*="bg-red-"] { background-color: #FDECEC !important; }
+.pb-storefront-root [class*="text-rose-"],
+.pb-storefront-root [class*="text-red-"] { color: #B42318 !important; }
+.pb-storefront-root [class*="border-rose-"],
+.pb-storefront-root [class*="border-red-"] { border-color: #F4C7C3 !important; }
+
+/* Hero: navy editorial panel, crisp white typography, warm saffron detail. */
+.pb-storefront-root .pb-editorial-hero-card {
+  background: #172554 !important;
+  box-shadow: 0 18px 48px rgba(23,37,84,.14);
+}
+.pb-storefront-root .pb-editorial-hero-card h1 { color: #FFFFFF !important; }
+.pb-storefront-root .pb-editorial-hero-card h1 em { color: #F6C744 !important; }
+.pb-storefront-root .pb-editorial-hero-card p { color: #E7ECF5 !important; }
+.pb-storefront-root .pb-editorial-hero-card > div:first-child > span { color: #F6D978 !important; }
+.pb-storefront-root .pb-editorial-hero-card > div:first-child > span span { background: #F6C744 !important; }
+.pb-storefront-root .pb-editorial-hero-card > div:first-child > div:last-child { color: #E7ECF5 !important; }
+.pb-storefront-root .pb-editorial-hero-card > div:first-child > div:last-child svg { color: #F6C744 !important; }
+.pb-storefront-root .pb-editorial-hero-card button:first-child {
+  background: #F6C744 !important;
+  color: #172554 !important;
+  box-shadow: 0 8px 20px rgba(0,0,0,.16) !important;
+}
+.pb-storefront-root .pb-editorial-hero-card button:first-child:hover { background: #FFDA69 !important; }
+.pb-storefront-root .pb-editorial-hero-card button:nth-child(2) {
+  border-color: rgba(255,255,255,.45) !important;
+  color: #FFFFFF !important;
+}
+.pb-storefront-root .pb-editorial-hero-card button:nth-child(2):hover { background: rgba(255,255,255,.12) !important; }
+.pb-storefront-root .pb-editorial-hero-image img { filter: saturate(.9) contrast(1.02); }
+.pb-storefront-root .pb-editorial-hero-image > div:last-child {
+  background: #FFFFFF !important;
+  border-color: #DCE3EE !important;
+}
+.pb-storefront-root .pb-editorial-hero-image > div:last-child p { color: #172554 !important; }
+.pb-storefront-root .pb-editorial-hero-image > div:last-child span { color: #334155; }
+.pb-storefront-root .pb-editorial-header:not(.pb-chhath-header):not(.pb-festival-header) {
+  background: #FFFFFF !important;
+  border-color: #DCE3EE !important;
+  color: #172554 !important;
+}
+.pb-storefront-root .pb-editorial-header:not(.pb-chhath-header):not(.pb-festival-header) [class*="text-white"] { color: #172554 !important; }
+.pb-storefront-root .pb-editorial-header:not(.pb-chhath-header):not(.pb-festival-header) [class*="bg-white/"] {
+  background-color: #F5F7FB !important;
+  border-color: #DCE3EE !important;
+}
+.pb-storefront-root .pb-editorial-header:not(.pb-chhath-header):not(.pb-festival-header) [class*="text-sky-"] { color: #2563EB !important; }
+
+/* Catalogue: white cards on porcelain, navy hierarchy, blue actions, saffron deals. */
+.pb-storefront-root .pb-category-chip {
+  border-color: #DCE3EE !important;
+  background: #FFFFFF !important;
+  color: #172554 !important;
+}
+.pb-storefront-root .pb-category-chip.is-active {
+  border-color: #2563EB !important;
+  background: #2563EB !important;
+  color: #FFFFFF !important;
+}
+.pb-storefront-root .pb-category-chip:hover { border-color: #2563EB !important; background: #EEF4FF !important; }
+.pb-storefront-root .pb-category-count { color: #64748B !important; }
+.pb-storefront-root .pb-product-card {
+  border-color: #DCE3EE !important;
+  background: #FFFFFF !important;
+  box-shadow: 0 3px 14px rgba(23,37,84,.045) !important;
+}
+.pb-storefront-root .pb-product-card:hover {
+  border-color: #B7C9EE !important;
+  box-shadow: 0 12px 28px rgba(23,37,84,.10) !important;
+}
+.pb-storefront-root .pb-product-image {
+  background: #F5F7FB !important;
+  border-color: #E7ECF4 !important;
+}
+.pb-storefront-root .pb-product-name { color: #172554 !important; }
+.pb-storefront-root .pb-product-card > div:last-child {
+  background: #F8FAFD !important;
+  border-color: #E7ECF4 !important;
+}
+.pb-storefront-root .pb-product-card button[class*="bg-emerald-"],
+.pb-storefront-root .pb-product-card button[class*="bg-[#087a55]"] {
+  background: #2563EB !important;
+  color: #FFFFFF !important;
+}
+.pb-storefront-root .pb-product-card button[class*="bg-amber-"] {
+  background: #F6C744 !important;
+  color: #172554 !important;
+}
+.pb-storefront-root .pb-sticky-search { background: rgba(245,247,251,.96) !important; border-color: #DCE3EE !important; }
+.pb-storefront-root .pb-sticky-search input { background: #FFFFFF !important; border-color: #DCE3EE !important; color: #172554 !important; }
+.pb-storefront-root .pb-sticky-search button[type="submit"] { background: #2563EB !important; color: #FFFFFF !important; }
+
+/* Owner portal: same brand DNA, calmer contrast for long admin sessions. */
+.pb-owner-portal {
+  --owner-canvas: #F5F7FB;
+  --owner-surface: #FFFFFF;
+  --owner-surface-muted: #F8FAFD;
+  --owner-text: #172554;
+  --owner-muted: #64748B;
+  --owner-border: #DCE3EE;
+  --owner-primary: #2563EB;
+  --owner-primary-hover: #1D4ED8;
+  --owner-primary-soft: #EEF4FF;
+  background: #F5F7FB !important;
+  color: #172554 !important;
+}
+.pb-owner-portal :where(h1,h2,h3,h4) { color: #172554 !important; }
+.pb-owner-portal [class*="bg-slate-50"],
+.pb-owner-portal [class*="bg-gray-50"] { background-color: #F5F7FB !important; }
+.pb-owner-portal [class*="bg-slate-100"],
+.pb-owner-portal [class*="bg-gray-100"] { background-color: #EEF2F8 !important; }
+.pb-owner-portal [class*="text-slate-900"],
+.pb-owner-portal [class*="text-slate-800"],
+.pb-owner-portal [class*="text-gray-900"],
+.pb-owner-portal [class*="text-gray-800"] { color: #172554 !important; }
+.pb-owner-portal [class*="text-slate-600"],
+.pb-owner-portal [class*="text-slate-700"],
+.pb-owner-portal [class*="text-gray-600"],
+.pb-owner-portal [class*="text-gray-700"] { color: #40516D !important; }
+.pb-owner-portal [class*="text-slate-500"],
+.pb-owner-portal [class*="text-gray-500"] { color: #64748B !important; }
+.pb-owner-portal [class*="border-slate-"],
+.pb-owner-portal [class*="border-gray-"] { border-color: #DCE3EE !important; }
+.pb-owner-portal [class*="bg-blue-50"],
+.pb-owner-portal [class*="bg-sky-50"],
+.pb-owner-portal [class*="bg-indigo-50"] { background-color: #EEF4FF !important; }
+.pb-owner-portal [class*="bg-blue-100"],
+.pb-owner-portal [class*="bg-sky-100"],
+.pb-owner-portal [class*="bg-indigo-100"] { background-color: #DFEAFE !important; }
+.pb-owner-portal [class*="text-blue-"],
+.pb-owner-portal [class*="text-sky-"],
+.pb-owner-portal [class*="text-indigo-"] { color: #1D4ED8 !important; }
+.pb-owner-portal [class*="border-blue-"],
+.pb-owner-portal [class*="border-sky-"],
+.pb-owner-portal [class*="border-indigo-"] { border-color: #C7D7F5 !important; }
+.pb-owner-portal [class*="bg-blue-600"],
+.pb-owner-portal [class*="bg-blue-700"],
+.pb-owner-portal [class*="bg-blue-800"],
+.pb-owner-portal [class*="bg-indigo-600"],
+.pb-owner-portal [class*="bg-indigo-700"] { background-color: #2563EB !important; color: #FFFFFF !important; }
+.pb-owner-portal [class*="bg-blue-600"]:hover,
+.pb-owner-portal [class*="bg-blue-700"]:hover,
+.pb-owner-portal [class*="bg-indigo-600"]:hover,
+.pb-owner-portal [class*="bg-indigo-700"]:hover { background-color: #1D4ED8 !important; }
+.pb-owner-portal [class*="bg-amber-50"],
+.pb-owner-portal [class*="bg-yellow-50"] { background-color: #FFF6D8 !important; }
+.pb-owner-portal [class*="text-amber-"],
+.pb-owner-portal [class*="text-yellow-"] { color: #8A5A00 !important; }
+.pb-owner-portal [class*="border-amber-"],
+.pb-owner-portal [class*="border-yellow-"] { border-color: #F0D98A !important; }
+.pb-owner-portal [class*="bg-rose-50"] { background-color: #FDECEC !important; }
+.pb-owner-portal [class*="text-rose-"] { color: #B42318 !important; }
+.pb-owner-portal [class*="border-rose-"] { border-color: #F4C7C3 !important; }
+.pb-owner-portal input:not([type="checkbox"]):not([type="radio"]),
+.pb-owner-portal select,
+.pb-owner-portal textarea { background: #FFFFFF !important; color: #172554 !important; border-color: #C9D4E3 !important; }
+.pb-owner-portal input:focus,
+.pb-owner-portal select:focus,
+.pb-owner-portal textarea:focus { border-color: #2563EB !important; outline: 3px solid rgba(37,99,235,.13) !important; }
+.pb-owner-portal table thead { background: #EEF2F8 !important; color: #24365B !important; }
+.pb-owner-portal table th { color: #24365B !important; }
+.pb-owner-portal [class*="shadow-"] { --tw-shadow-color: rgba(23,37,84,.06); }
+
+/* Warm saffron is reserved for offers and attention, never long text surfaces. */
+.pb-storefront-root .pb-deal,
+.pb-storefront-root [data-highlight="deal"] { background: #FFF6D8; border-color: #F0D98A; color: #684B08; }
