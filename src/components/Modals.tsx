@@ -34,7 +34,7 @@ export function QrPosterModal({ isOpen, onClose, storeSettings }: QrPosterModalP
       role="dialog"
       aria-modal="true"
       aria-label="Parbati Vandar Counter QR Scanner"
-      className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto"
+      className="pb-modal-overlay fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto"
     >
       <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4 my-8">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
