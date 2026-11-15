@@ -1897,3 +1897,14 @@ html.pb-dark .pb-popular-grocery-image {
   filter: grayscale(1) sepia(.12) brightness(.88) contrast(.94) !important;
   mix-blend-mode:normal;
 }
+
+
+/* Keep the Popular groceries image tile neutral even when source images contain a blue backdrop. */
+.pb-customer-storefront [aria-label="Popular groceries"] img {
+  filter:grayscale(1) brightness(1.28) contrast(.78) !important;
+  mix-blend-mode:multiply !important;
+}
+html.pb-dark .pb-customer-storefront [aria-label="Popular groceries"] img {
+  filter:grayscale(1) brightness(.82) contrast(.88) !important;
+  mix-blend-mode:normal !important;
+}
