@@ -113,14 +113,14 @@ function InitialLoadingScreen() {
 
       <div className="relative flex w-full max-w-sm flex-col items-center">
         <div className="pb-loader-mark relative grid h-24 w-24 place-items-center rounded-[30px] bg-white shadow-[0_12px_36px_rgba(6,78,59,0.12)] ring-1 ring-emerald-100">
-          <svg viewBox="0 0 100 100" className="h-[66px] w-[66px]" role="img" aria-label="Parbati Bhandar P leaf logo">
+          <svg viewBox="0 0 100 100" className="h-[66px] w-[66px]" role="img" aria-label="Parbati Vandar P leaf logo">
             <path d="M27 79V21h29c17 0 27 9 27 24S73 69 56 69H43v10H27Zm16-24h12c8 0 12-3 12-10s-4-10-12-10H43v20Z" fill="#087a55" />
             <path d="M59 24C62 11 74 7 88 9c-2 14-10 23-25 22" fill="#65a30d" />
             <path d="M62 29c7-7 14-11 23-17" fill="none" stroke="#f7fdf8" strokeWidth="2.5" strokeLinecap="round" />
           </svg>
         </div>
 
-        <h1 className="mt-7 text-[28px] font-extrabold tracking-tight text-[#07543b]">Parbati Bhandar</h1>
+        <h1 className="mt-7 text-[28px] font-extrabold tracking-tight text-[#07543b]">Parbati Vandar</h1>
         <p className="mt-1 font-['Noto_Sans_Bengali'] text-lg font-semibold text-[#087a55]">পার্বতী ভান্ডার</p>
         <p className="mt-3 text-sm font-medium tracking-wide text-slate-500">Fresh essentials, closer to home</p>
 
@@ -251,7 +251,7 @@ export default function App() {
     // Both registration and sign-in should return customers to the main shopping page.
     navigateToPath('/');
     setAccountReturnPath('/account');
-    showToast(created ? 'Your account is ready. Welcome to Parbati Bhandar!' : 'Signed in successfully. Welcome back!');
+    showToast(created ? 'Your account is ready. Welcome to Parbati Vandar!' : 'Signed in successfully. Welcome back!');
   };
   const handleCustomerLogout = () => {
     setCustomerAccount(null);
@@ -742,7 +742,7 @@ export default function App() {
       setLastOrderCreatedAt(placedAt);
       try { localStorage.setItem('parbati_bhandar_last_order_created_at_v1', String(placedAt)); } catch { /* Timestamp is optional UI convenience. */ }
       try { localStorage.setItem('parbati_bhandar_last_order_number_v1', String(orderNumber)); } catch { /* Tracking number is available in My Account. */ }
-      showToast('Your order has been received by Parbati Bhandar. You can check its progress in My Account.');
+      showToast('Your order has been received by Parbati Vandar. You can check its progress in My Account.');
       return orderNumber;
     } catch (error) { showToast((error as Error).message, 'error'); return null; }
   };
@@ -876,7 +876,7 @@ export default function App() {
       return next;
     });
     setDeleteConfirmId(null);
-    showToast('Product removed from Parbati Bhandar catalog');
+    showToast('Product removed from Parbati Vandar catalog');
   };
 
   const handleSaveProduct = (
@@ -898,7 +898,7 @@ export default function App() {
         }
         return updated;
       });
-      showToast(`Updated "${payload.name}" in Parbati Bhandar!`);
+      showToast(`Updated "${payload.name}" in Parbati Vandar!`);
     } else {
       const newId = `pb-item-${Date.now()}`;
       const newProduct: Product = {
@@ -913,7 +913,7 @@ export default function App() {
         }
         return nextList;
       });
-      showToast(`Added "${payload.name}" to Parbati Bhandar!`);
+      showToast(`Added "${payload.name}" to Parbati Vandar!`);
     }
   };
 
@@ -928,7 +928,7 @@ export default function App() {
       } catch {
         // Cloudflare remains the source of truth if local storage is unavailable.
       }
-      showToast('Parbati Bhandar settings saved successfully.');
+      showToast('Parbati Vandar settings saved successfully.');
     } catch (error) {
       showToast(`Could not save store settings: ${(error as Error).message}`, 'error');
     }
@@ -936,7 +936,7 @@ export default function App() {
 
   const handleResetSampleProducts = () => {
     setProducts(INITIAL_SAMPLE_PRODUCTS);
-    showToast('Restored default 16 Parbati Bhandar products!');
+    showToast('Restored default 16 Parbati Vandar products!');
   };
 
   const handleOwnerPinLogin = async (e: React.FormEvent) => {
@@ -956,7 +956,7 @@ export default function App() {
       }
       setIsOwnerUnlocked(true);
       setOwnerPassword('');
-      showToast('Welcome to Parbati Bhandar Owner Portal!');
+      showToast('Welcome to Parbati Vandar Owner Portal!');
     } catch (error) {
       setPinError((error as Error).message || 'Owner sign-in failed. Please try again.');
     } finally {
@@ -1014,7 +1014,7 @@ export default function App() {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs sm:text-sm font-bold tracking-wide text-amber-400 whitespace-nowrap">
-                    PARBATI BHANDAR • OWNER PORTAL
+                    PARBATI VANDAR • OWNER PORTAL
                   </span>
                   <span className="hidden md:inline text-[11px] text-emerald-300 font-medium">
                     · Secret Owner Mode
@@ -1149,7 +1149,7 @@ export default function App() {
                   </g>
                 </svg>
               </div>
-              <button type="button" aria-label="Parbati Bhandar" onClick={() => setMaintenanceLogoTaps(count => { if (count + 1 >= 5) { setActiveMode('admin'); showToast('Owner portal access'); return 0; } return count + 1; })} className="text-xs font-black uppercase tracking-[0.32em] text-amber-300 cursor-default select-none focus:outline-none">{'Parbati Bhandar'}</button>
+              <button type="button" aria-label="Parbati Vandar" onClick={() => setMaintenanceLogoTaps(count => { if (count + 1 >= 5) { setActiveMode('admin'); showToast('Owner portal access'); return 0; } return count + 1; })} className="text-xs font-black uppercase tracking-[0.32em] text-amber-300 cursor-default select-none focus:outline-none">{'Parbati Vandar'}</button>
               <h1 className="mt-4 bg-gradient-to-r from-white via-emerald-100 to-amber-200 bg-clip-text text-3xl font-black tracking-tight text-transparent sm:text-4xl">We’ll be back soon!</h1>
               <p className="mx-auto mt-4 max-w-md text-sm leading-7 text-slate-200 sm:text-base">We’re making a few improvements to serve you better. Online shopping is temporarily paused while we work behind the scenes.</p>
               <div className="mx-auto mt-8 flex w-fit items-center gap-3 rounded-full border border-amber-300/30 bg-amber-300/10 px-5 py-3 text-sm font-bold text-amber-100 shadow-[0_0_28px_rgba(251,191,36,0.08)]">
