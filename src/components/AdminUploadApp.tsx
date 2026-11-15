@@ -1075,7 +1075,6 @@ export function AdminUploadApp({
             <p className="border-t border-slate-100 px-5 py-3 text-[11px] text-slate-400">Deleting here removes the saved notification from every customer's account inbox, including all devices using that account. Already delivered device push alerts cannot be remotely recalled.</p>
           </section>
             )}
-          </>
           </div>
         )}
         {adminTab === 'quickReplies' && (
