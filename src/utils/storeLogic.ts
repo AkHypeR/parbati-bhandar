@@ -836,8 +836,7 @@ export function getAutomaticFestivalTheme(date = new Date()): AutomaticFestivalT
   if (inRange(4,14,15)) return { id:'poila-boishakh', title:'শুভ নববর্ষ', subtitle:'নতুন বছর শুরু হোক আনন্দ আর সমৃদ্ধিতে', tag:'Poila Boishakh • Bengali New Year', emoji:'🌼' };
   if (inRange(8,13,15)) return { id:'independence-day', title:'Happy Independence Day', subtitle:'স্বাধীনতার আনন্দে সবাইকে শুভেচ্ছা', tag:'Independence Day', emoji:'🇮🇳' };
   if (inRange(10,1,2)) return { id:'gandhi-jayanti', title:'Gandhi Jayanti', subtitle:'Remembering peace and kindness', tag:'Gandhi Jayanti', emoji:'🕊️' };
-  if (inRange(11,13,16) && date.getFullYear() === 2026) return { id:'christmas', title:'Merry Christmas', subtitle:'শুভ বড়দিন • Wishing you joy and happiness', tag:'Christmas Celebration', emoji:'🎄' };
-  if (inRange(12,20,26)) return { id:'christmas', title:'Merry Christmas', subtitle:'শুভ বড়দিন • Wishing you joy and happiness', tag:'Christmas Celebration', emoji:'🎄' };
+  if ((month === 11 && day >= 15) || (month === 12 && day <= 26)) return { id:'christmas', title:'Merry Christmas', subtitle:'শুভ বড়দিন • Wishing you joy and happiness', tag:'Christmas Celebration', emoji:'🎄' };
   if ((month === 12 && day >= 27) || (month === 1 && day <= 2)) return { id:'new-year', title:'শুভ নববর্ষ • Happy New Year', subtitle:'Fresh essentials and fresh hopes', tag:'New Year Celebration', emoji:'🎉' };
   return null;
 }
@@ -872,9 +871,18 @@ export function buildHeroSlides(
   date = new Date()
 ): HeroSlide[] {
   const slides: HeroSlide[] = [];
-  // Seasonal greetings are presented in the welcome popup, not as a carousel banner.
-  void settings;
-  void date;
+  const seasonal = getAutomaticFestivalTheme(date);
+  const festiveTitle = seasonal?.title || settings.occasionTitle;
+  if (settings.showOccasionBanner !== false && festiveTitle) {
+    slides.push({
+      type: 'festive',
+      id: 'festive-banner',
+      title: festiveTitle,
+      subtitle: seasonal?.subtitle || settings.occasionSubtitle || 'Celebrate the season with Parbati Vandar',
+      tag: seasonal?.tag || settings.occasionTag || 'Special occasion',
+      imageUrl: settings.occasionImageUrl || 'https://images.unsplash.com/photo-1512389142860-9c449e58a543?auto=format&fit=crop&w=1600&q=85',
+    });
+  }
   const orderedBest = getBestItems(products, 5);
   orderedBest.forEach((product, idx) => {
     slides.push({
