@@ -860,3 +860,207 @@ button[class*="bg-emerald-600"]:hover,
 /* Warm saffron is reserved for offers and attention, never long text surfaces. */
 .pb-storefront-root .pb-deal,
 .pb-storefront-root [data-highlight="deal"] { background: #FFF6D8; border-color: #F0D98A; color: #684B08; }
+
+
+/* ==========================================================
+   PARBATI VANDAR — AMAZON-INSPIRED COMMERCE COLOUR SYSTEM
+   Functional hierarchy, not a copy of Amazon branding.
+   60% neutral canvas / 30% surfaces & navigation / 10% actions.
+   ========================================================== */
+:root {
+  --pb-ink: #0F1111;
+  --pb-navy: #131921;
+  --pb-nav-secondary: #232F3E;
+  --pb-page: #EAEDED;
+  --pb-surface: #FFFFFF;
+  --pb-surface-soft: #F0F2F2;
+  --pb-border: #D5D9D9;
+  --pb-muted: #565959;
+  --pb-link: #007185;
+  --pb-link-hover: #C7511F;
+  --pb-action: #FFD814;
+  --pb-action-hover: #F7CA00;
+  --pb-action-soft: #FEBD69;
+  --pb-action-focus: #FF9900;
+  --pb-success: #067D62;
+  --pb-warning: #B12704;
+  --pb-danger: #CC0C39;
+}
+
+/* CUSTOMER STOREFRONT — global canvas and type */
+.pb-storefront-root {
+  background: var(--pb-page) !important;
+  color: var(--pb-ink) !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+.pb-storefront-root :where(h1,h2,h3,h4) { color: var(--pb-ink); letter-spacing: -.015em; }
+.pb-storefront-root :where(p,span,label,small) { text-rendering: optimizeLegibility; }
+.pb-storefront-root a:not([class*="bg-"]) { color: var(--pb-link); }
+.pb-storefront-root a:not([class*="bg-"]):hover { color: var(--pb-link-hover); }
+.pb-storefront-root [class*="text-slate-900"],
+.pb-storefront-root [class*="text-gray-900"],
+.pb-storefront-root [class*="text-slate-800"] { color: var(--pb-ink) !important; }
+.pb-storefront-root [class*="text-slate-600"],
+.pb-storefront-root [class*="text-slate-500"],
+.pb-storefront-root [class*="text-gray-600"],
+.pb-storefront-root [class*="text-gray-500"] { color: var(--pb-muted) !important; }
+.pb-storefront-root [class*="border-slate-"],
+.pb-storefront-root [class*="border-gray-"] { border-color: var(--pb-border) !important; }
+
+/* 1. Store masthead — dark navy, high-contrast white, secondary navy strip */
+.pb-storefront-root .pb-editorial-header:not(.pb-chhath-header):not(.pb-festival-header) {
+  background: var(--pb-navy) !important;
+  border-color: #303A46 !important;
+  color: #FFFFFF !important;
+}
+.pb-storefront-root .pb-editorial-header:not(.pb-chhath-header):not(.pb-festival-header) :where(h1,h2,h3,p,span,button,a) { color: inherit; }
+.pb-storefront-root .pb-editorial-header:not(.pb-chhath-header):not(.pb-festival-header) [class*="text-slate-"],
+.pb-storefront-root .pb-editorial-header:not(.pb-chhath-header):not(.pb-festival-header) [class*="text-gray-"] { color: #E6E6E6 !important; }
+.pb-storefront-root .pb-editorial-header [class*="bg-white/"] { background: rgba(255,255,255,.10) !important; border-color: rgba(255,255,255,.2) !important; }
+.pb-storefront-root .pb-editorial-header button:hover { filter: brightness(1.06); }
+
+/* 2. Hero — navy editorial panel, bright readable copy, one warm CTA */
+.pb-storefront-root .pb-editorial-hero-card { background: var(--pb-nav-secondary) !important; box-shadow: 0 10px 28px rgba(15,17,17,.15) !important; }
+.pb-storefront-root .pb-editorial-hero-card :where(h1,p,span) { color: #FFFFFF !important; }
+.pb-storefront-root .pb-editorial-hero-card h1 em { color: var(--pb-action-soft) !important; }
+.pb-storefront-root .pb-editorial-hero-card button:first-child { background: var(--pb-action) !important; color: var(--pb-ink) !important; border-color: #FCD200 !important; }
+.pb-storefront-root .pb-editorial-hero-card button:first-child:hover { background: var(--pb-action-hover) !important; }
+.pb-storefront-root .pb-editorial-hero-card button:nth-child(2) { color: #FFFFFF !important; border-color: rgba(255,255,255,.55) !important; background: transparent !important; }
+.pb-storefront-root .pb-editorial-hero-image > div:last-child { background: #FFFFFF !important; color: var(--pb-ink) !important; border-color: var(--pb-border) !important; }
+.pb-storefront-root .pb-editorial-hero-image > div:last-child :where(p,span) { color: var(--pb-ink) !important; }
+
+/* 3. Sticky search — white input, warm search action and orange focus ring */
+.pb-storefront-root .pb-sticky-search { background: rgba(234,237,237,.97) !important; border-color: var(--pb-border) !important; box-shadow: 0 2px 6px rgba(15,17,17,.10) !important; }
+.pb-storefront-root .pb-sticky-search input { background: #FFFFFF !important; color: var(--pb-ink) !important; border-color: #A6A6A6 !important; }
+.pb-storefront-root .pb-sticky-search input:focus { border-color: var(--pb-action-focus) !important; box-shadow: 0 0 0 3px rgba(255,153,0,.20) !important; }
+.pb-storefront-root .pb-sticky-search button[type="submit"] { background: var(--pb-action-soft) !important; color: var(--pb-ink) !important; }
+.pb-storefront-root .pb-sticky-search button[type="submit"]:hover { background: #F3A847 !important; }
+.pb-storefront-root .pb-sticky-search [role="listbox"] { background: #FFFFFF !important; border-color: var(--pb-border) !important; }
+
+/* 4. Category ribbon — neutral pills, dark selected state */
+.pb-storefront-root .pb-category-section { color: var(--pb-ink) !important; }
+.pb-storefront-root .pb-category-section h2 { color: var(--pb-ink) !important; }
+.pb-storefront-root .pb-category-chip { background: #FFFFFF !important; color: var(--pb-ink) !important; border-color: var(--pb-border) !important; }
+.pb-storefront-root .pb-category-chip:hover { background: #F7FAFA !important; border-color: #A6A6A6 !important; }
+.pb-storefront-root .pb-category-chip.is-active { background: var(--pb-nav-secondary) !important; color: #FFFFFF !important; border-color: var(--pb-nav-secondary) !important; }
+.pb-storefront-root .pb-category-chip.is-active > span:first-child { background: rgba(255,255,255,.15) !important; }
+.pb-storefront-root .pb-category-count { color: var(--pb-muted) !important; }
+
+/* 5. Deals and promotions — yellow/orange reserved for value cues */
+.pb-storefront-root [data-highlight="deal"],
+.pb-storefront-root .pb-deal { background: #FFF8E7 !important; border-color: #F0D58A !important; color: #5F4400 !important; }
+.pb-storefront-root [class*="deal"] [class*="bg-amber-"],
+.pb-storefront-root [class*="deal"] [class*="bg-yellow-"] { background: var(--pb-action) !important; color: var(--pb-ink) !important; }
+.pb-storefront-root [class*="discount"],
+.pb-storefront-root [class*="offer-badge"] { color: var(--pb-warning); }
+
+/* 6. Product catalogue — neutral cards, ink typography, yellow add-to-cart */
+.pb-storefront-root .pb-product-grid { align-items: stretch; }
+.pb-storefront-root .pb-product-card { background: #FFFFFF !important; border: 1px solid var(--pb-border) !important; border-radius: 4px !important; box-shadow: 0 1px 2px rgba(15,17,17,.08) !important; }
+.pb-storefront-root .pb-product-card:hover { border-color: #A6A6A6 !important; box-shadow: 0 3px 10px rgba(15,17,17,.13) !important; transform: translateY(-1px); }
+.pb-storefront-root .pb-product-image { background: #FFFFFF !important; border-color: #E7EAEA !important; }
+.pb-storefront-root .pb-product-name { color: var(--pb-ink) !important; }
+.pb-storefront-root .pb-product-card > div:last-child { background: #FFFFFF !important; border-color: #E7EAEA !important; }
+.pb-storefront-root .pb-product-card button[class*="bg-emerald-"],
+.pb-storefront-root .pb-product-card button[class*="bg-green-"],
+.pb-storefront-root .pb-product-card button[class*="bg-[#087a55]"] { background: var(--pb-action) !important; color: var(--pb-ink) !important; border: 1px solid #FCD200 !important; }
+.pb-storefront-root .pb-product-card button[class*="bg-emerald-"]:hover,
+.pb-storefront-root .pb-product-card button[class*="bg-green-"]:hover { background: var(--pb-action-hover) !important; }
+.pb-storefront-root .pb-product-card button[class*="bg-amber-"] { background: var(--pb-action) !important; color: var(--pb-ink) !important; }
+.pb-storefront-root .pb-product-card [class*="text-emerald-"],
+.pb-storefront-root .pb-product-card [class*="text-green-"] { color: var(--pb-success) !important; }
+.pb-storefront-root .pb-product-card [class*="text-rose-"],
+.pb-storefront-root .pb-product-card [class*="text-red-"] { color: var(--pb-danger) !important; }
+
+/* 7. Cart and checkout — dark header, yellow completion action, clear totals */
+.pb-cart-overlay { background: rgba(15,17,17,.62) !important; }
+.pb-cart-panel { background: #FFFFFF !important; color: var(--pb-ink) !important; }
+.pb-cart-header { background: var(--pb-navy) !important; color: #FFFFFF !important; }
+.pb-cart-header :where(h1,h2,h3,p,span) { color: inherit; }
+.pb-cart-header button { background: var(--pb-nav-secondary) !important; border-color: #52606D !important; color: #FFFFFF !important; }
+.pb-cart-header button:hover { background: #37475A !important; }
+.pb-cart-panel button[class*="bg-emerald-700"],
+.pb-cart-panel button[class*="bg-emerald-800"],
+.pb-cart-panel button[class*="bg-green-700"] { background: var(--pb-action) !important; color: var(--pb-ink) !important; border-color: #FCD200 !important; }
+.pb-cart-panel button[class*="bg-emerald-700"]:hover,
+.pb-cart-panel button[class*="bg-emerald-800"]:hover { background: var(--pb-action-hover) !important; }
+.pb-cart-panel [class*="text-emerald-"] { color: var(--pb-success) !important; }
+.pb-cart-panel [class*="text-amber-"] { color: #8A5A00 !important; }
+
+/* 8. Customer account, order tracking and notifications — white panels */
+.pb-customer-account, .pb-customer-orders, .pb-customer-notifications { background: var(--pb-page) !important; color: var(--pb-ink) !important; }
+.pb-customer-account section, .pb-customer-orders section, .pb-customer-notifications section { border-color: var(--pb-border) !important; }
+.pb-customer-account [class*="bg-gradient-to-br"],
+.pb-customer-orders [class*="bg-gradient-to-br"] { background: var(--pb-nav-secondary) !important; }
+.pb-customer-account [class*="text-emerald-100"],
+.pb-customer-account [class*="text-emerald-50"],
+.pb-customer-orders [class*="text-emerald-100"],
+.pb-customer-orders [class*="text-emerald-50"] { color: #E6E6E6 !important; }
+.pb-customer-account [class*="bg-emerald-"],
+.pb-customer-orders [class*="bg-emerald-"] { background-color: var(--pb-nav-secondary) !important; }
+.pb-customer-account [class*="text-emerald-"],
+.pb-customer-orders [class*="text-emerald-"] { color: var(--pb-link) !important; }
+.pb-customer-account button[class*="bg-emerald-"],
+.pb-customer-orders button[class*="bg-emerald-"],
+.pb-customer-notifications button[class*="bg-emerald-"] { background: var(--pb-action) !important; color: var(--pb-ink) !important; }
+.pb-customer-notifications section > div:first-child { background: #F0F2F2 !important; border-color: var(--pb-border) !important; }
+.pb-customer-notifications [class*="text-blue-"] { color: var(--pb-link) !important; }
+
+/* 9. Footer — quiet dark utility area */
+.pb-storefront-root footer { background: var(--pb-navy) !important; color: #FFFFFF !important; border-color: #303A46 !important; }
+.pb-storefront-root footer :where(h2,h3,p,span,a) { color: inherit; }
+.pb-storefront-root footer a:hover { color: var(--pb-action-soft) !important; }
+
+/* 10. Dialogs and overlays — consistent neutral surfaces */
+.pb-modal-overlay { background: rgba(15,17,17,.68) !important; }
+.pb-modal-overlay > div { background: #FFFFFF !important; border-color: var(--pb-border) !important; color: var(--pb-ink) !important; }
+.pb-modal-overlay h3 { color: var(--pb-ink) !important; }
+
+/* OWNER PORTAL — calmer admin interpretation of the same tokens */
+.pb-owner-portal, .pb-owner-pin-gate { background: #F0F2F2 !important; color: var(--pb-ink) !important; font-family: Arial, Helvetica, sans-serif !important; }
+.pb-owner-portal :where(h1,h2,h3,h4), .pb-owner-pin-gate :where(h1,h2,h3,h4) { color: var(--pb-ink) !important; }
+.pb-owner-portal [class*="bg-white"], .pb-owner-pin-gate [class*="bg-white"] { background: #FFFFFF !important; }
+.pb-owner-portal [class*="bg-slate-50"], .pb-owner-portal [class*="bg-gray-50"],
+.pb-owner-pin-gate [class*="bg-slate-50"] { background: #F7F8F8 !important; }
+.pb-owner-portal [class*="text-slate-900"], .pb-owner-portal [class*="text-slate-800"],
+.pb-owner-pin-gate [class*="text-slate-900"], .pb-owner-pin-gate [class*="text-slate-800"] { color: #0F1111 !important; }
+.pb-owner-portal [class*="text-slate-600"], .pb-owner-portal [class*="text-slate-500"],
+.pb-owner-pin-gate [class*="text-slate-600"], .pb-owner-pin-gate [class*="text-slate-500"] { color: #565959 !important; }
+.pb-owner-portal [class*="border-slate-"], .pb-owner-portal [class*="border-gray-"],
+.pb-owner-pin-gate [class*="border-slate-"] { border-color: #D5D9D9 !important; }
+.pb-owner-portal [class*="bg-emerald-950"], .pb-owner-portal [class*="bg-emerald-900"],
+.pb-owner-pin-gate [class*="bg-gradient-to-br"] { background: var(--pb-nav-secondary) !important; }
+.pb-owner-portal [class*="text-emerald-100"], .pb-owner-portal [class*="text-emerald-200"],
+.pb-owner-pin-gate [class*="text-emerald-100"], .pb-owner-pin-gate [class*="text-emerald-200"] { color: #E6E6E6 !important; }
+.pb-owner-portal button[class*="bg-blue-"],
+.pb-owner-portal button[class*="bg-indigo-"],
+.pb-owner-portal button[class*="bg-emerald-700"],
+.pb-owner-portal button[class*="bg-emerald-800"] { background: #2162A1 !important; color: #FFFFFF !important; }
+.pb-owner-portal button[class*="bg-blue-"]:hover,
+.pb-owner-portal button[class*="bg-indigo-"]:hover { background: #174D80 !important; }
+.pb-owner-portal input:not([type="checkbox"]):not([type="radio"]),
+.pb-owner-portal select, .pb-owner-portal textarea,
+.pb-owner-pin-gate input:not([type="checkbox"]):not([type="radio"]) { background: #FFFFFF !important; color: #0F1111 !important; border-color: #A6A6A6 !important; }
+.pb-owner-portal input:focus, .pb-owner-portal select:focus, .pb-owner-portal textarea:focus,
+.pb-owner-pin-gate input:focus { outline: 2px solid var(--pb-action-focus) !important; outline-offset: 1px; }
+.pb-owner-portal table thead { background: #F0F2F2 !important; color: #0F1111 !important; }
+.pb-owner-portal [class*="bg-rose-50"] { background: #FCE8ED !important; }
+.pb-owner-portal [class*="text-rose-"] { color: #CC0C39 !important; }
+.pb-owner-portal [class*="bg-amber-50"] { background: #FFF8E7 !important; }
+.pb-owner-portal [class*="text-amber-"] { color: #8A5A00 !important; }
+
+/* Accessible focus rings and reduced motion */
+.pb-storefront-root :focus-visible, .pb-owner-portal :focus-visible, .pb-owner-pin-gate :focus-visible,
+.pb-customer-account :focus-visible, .pb-customer-orders :focus-visible, .pb-customer-notifications :focus-visible,
+.pb-cart-panel :focus-visible, .pb-modal-overlay :focus-visible {
+  outline: 3px solid var(--pb-action-focus) !important;
+  outline-offset: 2px !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pb-storefront-root *, .pb-owner-portal *, .pb-owner-pin-gate *, .pb-customer-account *,
+  .pb-customer-orders *, .pb-customer-notifications *, .pb-cart-panel *, .pb-modal-overlay * {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
