@@ -476,17 +476,12 @@ export function CustomerStorefront({
               <span className="pb-sign-pin" aria-hidden="true" />
               <span className="pb-sign-cords" aria-hidden="true" />
               <span className="pb-hanging-plaque">
-                <span className="pb-plaque-leaf" aria-hidden="true">✦</span>
                 <span className="pb-plaque-title">
-                  {(storeSettings.storeName || 'Parbati Vandar (পার্বতী ভান্ডার)')
-                    .replace(/\s*\(.*\)\s*$/, '')}
+                  {(storeSettings.storeName || 'Parbati Vandar (পার্বতী ভান্ডার)').replace(/\s*\(.*\)\s*$/, '')}
                 </span>
                 <span className="pb-plaque-bengali">
-                  {(storeSettings.storeName || 'Parbati Vandar (পার্বতী ভান্ডার)').match(
-                    /\((.*)\)/
-                  )?.[1] || 'পার্বতী ভান্ডার'}
+                  {(storeSettings.storeName || 'Parbati Vandar (পার্বতী ভান্ডার)').match(/\((.*)\)/)?.[1] || 'পার্বতী ভান্ডার'}
                 </span>
-                <span className="pb-plaque-underline" aria-hidden="true" />
               </span>
               {!liveIsOpen && (
                 <span role="status" aria-live="polite" className="mt-1.5 inline-flex items-center gap-2 rounded-full border border-rose-200/70 bg-gradient-to-r from-[#7f1d1d] via-[#be123c] to-[#9f1239] px-3 py-1.5 text-[9px] sm:text-[10px] font-black tracking-[.12em] text-white shadow-[0_4px_16px_rgba(190,18,60,.35)] animate-[closedGlow_2.4s_ease-in-out_infinite]"><span className="relative flex h-2.5 w-2.5 shrink-0"><span className="absolute inset-0 rounded-full bg-white/80 animate-ping motion-reduce:animate-none"/><span className="relative m-auto h-2 w-2 rounded-full bg-amber-300 ring-2 ring-white/40"/></span><span>🌙 STORE CLOSED</span><span aria-hidden="true" className="text-amber-200 text-xs">✦</span><span className="font-semibold tracking-normal text-rose-100">We’ll welcome you soon</span></span>
