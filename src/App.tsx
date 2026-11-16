@@ -1229,9 +1229,6 @@ export default function App() {
                 <button type="button" aria-current={currentPath === '/' ? 'page' : undefined} onClick={() => navigateToPath('/')} className={`pb-customer-nav-item ${currentPath === '/' ? 'is-active' : ''}`}>
                   <Home/><span>Home</span>
                 </button>
-                <button type="button" onClick={() => { if (currentPath !== '/') { navigateToPath('/'); window.setTimeout(() => document.getElementById('pb-best-five-section')?.scrollIntoView({behavior:'smooth',block:'start'}), 180); } else document.getElementById('pb-best-five-section')?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="pb-customer-nav-item">
-                  <Sparkles/><span>Offers</span>
-                </button>
                 <button type="button" onClick={() => { if (currentPath !== '/') { navigateToPath('/'); window.setTimeout(() => document.getElementById('pb-category-section')?.scrollIntoView({behavior:'smooth',block:'start'}), 180); } else document.getElementById('pb-category-section')?.scrollIntoView({behavior:'smooth',block:'start'}); }} className="pb-customer-nav-item">
                   <Package/><span>Categories</span>
                 </button>
