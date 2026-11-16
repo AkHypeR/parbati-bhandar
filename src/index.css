@@ -2840,3 +2840,32 @@ html.pb-dark .pb-owner-portal :where(h1,h2,h3,h4,[class*="text-slate-900"],[clas
 @media (prefers-reduced-motion: reduce) {
   .pb-hanging-brand { animation: none !important; }
 }
+
+
+/* Branded vector emblem: a custom P monogram with a leaf accent and gold medallion. */
+.pb-plaque-topline {
+  height: 36px !important;
+  gap: 8px !important;
+  margin-bottom: 2px !important;
+}
+.pb-store-logo-mark {
+  display: block;
+  width: 35px;
+  height: 35px;
+  flex: 0 0 35px;
+  overflow: visible;
+  filter: drop-shadow(0 2px 2px rgba(35, 5, 8, .55));
+}
+.pb-plaque-ornament {
+  width: 19px !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent, #f7d99e 45%, #d4a15b) !important;
+}
+.pb-plaque-ornament:last-child {
+  transform: scaleX(-1);
+}
+@media (max-width: 390px) {
+  .pb-plaque-topline { height: 32px !important; }
+  .pb-store-logo-mark { width: 31px; height: 31px; flex-basis: 31px; }
+  .pb-plaque-ornament { width: 13px !important; }
+}
