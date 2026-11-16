@@ -281,6 +281,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
 export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   const denied = await ownerRequired(request, env); if (denied) return denied;
   await ensureTable(env);
+  await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN cancelled_by TEXT").run().catch(() => {});
   await purgeExpiredCustomerOrders(env);
   let body: any; try { body = await request.json(); } catch { return json({error:"Invalid update."},400); }
   const status = String(body?.status || "");
@@ -385,8 +386,8 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
     }
     const revisedTotal = status === "cancelled" ? 0 : items.reduce((sum, item) => sum + (item.unavailable ? 0 : item.price * item.quantity), 0);
     refundStatements.push(
-      env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,total=?,updated_at=?,estimated_ready_at=CASE WHEN ? IN ('cancelled','unavailable') THEN NULL ELSE estimated_ready_at END,stock_deducted=1 WHERE id=? AND stock_deducted=3")
-        .bind(status,JSON.stringify(items),revisedTotal,now,status,id),
+      env.DB.prepare("UPDATE customer_orders SET status=?,cancelled_by=CASE WHEN ?='cancelled' THEN 'owner' ELSE cancelled_by END,items_json=?,total=?,updated_at=?,estimated_ready_at=CASE WHEN ? IN ('cancelled','unavailable') THEN NULL ELSE estimated_ready_at END,stock_deducted=1 WHERE id=? AND stock_deducted=3")
+        .bind(status,status,JSON.stringify(items),revisedTotal,now,status,id),
       env.DB.prepare("DELETE FROM order_stock_reservations WHERE order_id=?").bind(id)
     );
     try {
@@ -481,8 +482,8 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
       return json({error:"Stock changed while this order was being confirmed. Refresh the order, review availability, and try again."},409);
     }
   } else {
-    const updateStatement = env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,updated_at=?,confirmed_at=CASE WHEN ? IN ('processing','ready') THEN COALESCE(confirmed_at,?) ELSE confirmed_at END,ready_at=CASE WHEN ?='ready' THEN COALESCE(ready_at,?) ELSE ready_at END,estimated_ready_at=CASE WHEN ?=1 THEN ? WHEN ?='ready' THEN NULL ELSE estimated_ready_at END WHERE id=?")
-      .bind(status,JSON.stringify(items),Date.now(),status,Date.now(),status,Date.now(),hasEstimateUpdate ? 1 : 0,estimatedReadyAt,status,id);
+    const updateStatement = env.DB.prepare("UPDATE customer_orders SET status=?,cancelled_by=CASE WHEN ?='cancelled' THEN 'owner' ELSE cancelled_by END,items_json=?,updated_at=?,confirmed_at=CASE WHEN ? IN ('processing','ready') THEN COALESCE(confirmed_at,?) ELSE confirmed_at END,ready_at=CASE WHEN ?='ready' THEN COALESCE(ready_at,?) ELSE ready_at END,estimated_ready_at=CASE WHEN ?=1 THEN ? WHEN ?='ready' THEN NULL ELSE estimated_ready_at END WHERE id=?")
+      .bind(status,status,JSON.stringify(items),Date.now(),status,Date.now(),status,Date.now(),hasEstimateUpdate ? 1 : 0,estimatedReadyAt,status,id);
     if (["cancelled","unavailable"].includes(status)) {
       const results = await env.DB.batch([updateStatement,env.DB.prepare("DELETE FROM order_stock_reservations WHERE order_id=?").bind(id)]);
       changes = Number(results[0]?.meta.changes || 0);
