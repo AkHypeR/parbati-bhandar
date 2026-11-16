@@ -2869,3 +2869,41 @@ html.pb-dark .pb-owner-portal :where(h1,h2,h3,h4,[class*="text-slate-900"],[clas
   .pb-store-logo-mark { width: 31px; height: 31px; flex-basis: 31px; }
   .pb-plaque-ornament { width: 13px !important; }
 }
+
+
+/* Keep the brand emblem secondary so the shop name remains the hero. */
+.pb-plaque-topline {
+  height: 20px !important;
+  margin-bottom: 0 !important;
+  gap: 5px !important;
+}
+.pb-store-logo-mark {
+  width: 19px !important;
+  height: 19px !important;
+  flex-basis: 19px !important;
+}
+.pb-plaque-ornament {
+  width: 13px !important;
+}
+.pb-plaque-title {
+  font-size: clamp(11px, 2.9vw, 14px) !important;
+  line-height: 1.12 !important;
+  letter-spacing: -.025em !important;
+  white-space: nowrap !important;
+}
+.pb-plaque-bengali {
+  font-size: clamp(9px, 2.3vw, 11px) !important;
+  line-height: 1.25 !important;
+  white-space: nowrap !important;
+}
+.pb-hanging-plaque {
+  min-height: 58px !important;
+  padding: 4px 6px 5px !important;
+}
+@media (max-width: 390px) {
+  .pb-plaque-topline { height: 18px !important; }
+  .pb-store-logo-mark { width: 17px !important; height: 17px !important; flex-basis: 17px !important; }
+  .pb-plaque-title { font-size: 10px !important; }
+  .pb-plaque-bengali { font-size: 8.5px !important; }
+  .pb-hanging-plaque { min-height: 55px !important; }
+}
