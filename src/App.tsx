@@ -1156,26 +1156,16 @@ export default function App() {
             <CustomerNotifications customer={customerAccount} onBack={() => navigateToPath('/')} onSignIn={() => navigateToPath('/account')} />
           ) : currentPath === '/terms-and-conditions' ? (
             <TermsAndConditions onBack={() => navigateToPath('/')} />
-          ) : currentPath === '/orders' || (currentPath.startsWith('/orders/') && Number.isInteger(Number(currentPath.split('/')[2]))) ? (
-            customerAccount ? (
-              <CustomerOrders
-                orderNumber={currentPath.startsWith('/orders/') ? Number(currentPath.split('/')[2]) : undefined}
-                phone={customerAccount.phone}
-                whatsappNumber={storeSettings.whatsappNumber || storeSettings.phone || '919734765207'}
-                products={products}
-                onNavigate={navigateToPath}
-                onBack={() => navigateToPath('/')}
-              />
-            ) : (
-              <CustomerAccount
-                customer={customerAccount}
-                onAuthenticated={handleCustomerAuthenticated}
-                onLogout={handleCustomerLogout}
-                onBack={() => navigateToPath('/')}
-                onViewOrders={() => navigateToPath('/orders')}
-              />
-            )
-          ) : ['/account', '/previous-orders', '/track-order'].includes(currentPath) ? (
+          ) : currentPath.startsWith('/orders/') && Number.isInteger(Number(currentPath.split('/')[2])) && customerAccount ? (
+            <CustomerOrders
+              orderNumber={Number(currentPath.split('/')[2])}
+              phone={customerAccount.phone}
+              whatsappNumber={storeSettings.whatsappNumber || storeSettings.phone || '919734765207'}
+              products={products}
+              onNavigate={navigateToPath}
+              onBack={() => navigateToPath('/account')}
+            />
+          ) : ['/account', '/previous-orders', '/track-order', '/orders'].includes(currentPath) ? (
             <CustomerAccount
               customer={customerAccount}
               onAuthenticated={handleCustomerAuthenticated}
