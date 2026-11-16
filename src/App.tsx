@@ -1162,7 +1162,6 @@ export default function App() {
               onAuthenticated={handleCustomerAuthenticated}
               onLogout={handleCustomerLogout}
               onBack={() => navigateToPath('/')}
-              onViewOrders={(orderNumber) => navigateToPath(orderNumber ? '/account/orders/' + orderNumber : '/account/orders')}
               orderNumber={currentPath.startsWith('/account/orders/') ? Number(currentPath.split('/')[3]) : currentPath.startsWith('/orders/') ? Number(currentPath.split('/')[2]) : undefined}
               orderPhone={customerAccount?.phone || ''}
               whatsappNumber={storeSettings.whatsappNumber || storeSettings.phone || '919734765207'}
