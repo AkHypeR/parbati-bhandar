@@ -2510,3 +2510,119 @@ html.pb-dark .pb-owner-portal :where(h1,h2,h3,h4,[class*="text-slate-900"],[clas
 .pb-storefront-root .pb-header-location .pb-store-status.is-open > span {
   background: #15803D !important;
 }
+
+
+/* Parbati Vandar suspended shop sign — a real, responsive header element. */
+.pb-editorial-header:not(.pb-chhath-header):not(.pb-christmas-header):not(.pb-festival-header) {
+  background: linear-gradient(112deg, #101923 0%, #172330 58%, #101923 100%) !important;
+  border-color: #2b3b49 !important;
+}
+.pb-hanging-brand {
+  isolation: isolate;
+  flex: 0 1 auto;
+  width: clamp(148px, 38vw, 286px);
+  min-height: 78px;
+  padding: 17px 3px 3px;
+  transform-origin: 50% 12px;
+  animation: pbSignSettle 5.8s ease-in-out infinite;
+  -webkit-tap-highlight-color: transparent;
+}
+.pb-sign-pin {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translateX(-50%);
+  border: 1px solid #dbe4ec;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, #fff 0 12%, #cbd5e1 38%, #64748b 76%, #334155 100%);
+  box-shadow: 0 1px 4px #0009, 0 0 0 2px #ffffff18;
+}
+.pb-sign-cords {
+  position: absolute;
+  z-index: 1;
+  top: 5px;
+  left: 50%;
+  width: 76%;
+  height: 29px;
+  transform: translateX(-50%);
+  background:
+    linear-gradient(151deg, transparent 48.2%, #b9854f 49%, #f1d0a0 50%, #8a5a32 51%, transparent 52%) left top / 50% 100% no-repeat,
+    linear-gradient(29deg, transparent 48.2%, #b9854f 49%, #f1d0a0 50%, #8a5a32 51%, transparent 52%) right top / 50% 100% no-repeat;
+  filter: drop-shadow(0 1px 1px #0009);
+}
+.pb-hanging-plaque {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: 100%;
+  min-height: 53px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 7px 9px 6px;
+  border: 2px solid #b97842;
+  border-radius: 12px;
+  color: #8f211d;
+  background:
+    linear-gradient(90deg, #d8b17d 0%, #fff0d4 8%, #fff9ec 48%, #f4dfbd 92%, #c18a52 100%);
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,.7),
+    inset 0 -3px 7px rgba(126,72,34,.16),
+    0 7px 0 -3px #754729,
+    0 11px 18px rgba(0,0,0,.42);
+}
+.pb-plaque-title {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  color: #9e241e;
+  font-size: clamp(12px, 3.25vw, 21px);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -.045em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 1px 0 #fff;
+}
+.pb-plaque-bengali {
+  display: block;
+  margin-top: 3px;
+  color: #84221e;
+  font-family: "Noto Sans Bengali", sans-serif;
+  font-size: clamp(10px, 2.55vw, 15px);
+  font-weight: 800;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+.pb-plaque-leaf {
+  position: absolute;
+  top: 2px;
+  right: 8px;
+  color: #668a43;
+  font-size: 10px;
+  opacity: .9;
+}
+.pb-plaque-underline {
+  width: 48%;
+  height: 2px;
+  margin-top: 4px;
+  border-radius: 50%;
+  background: #b43a2b;
+  box-shadow: 0 1px 0 #fff8;
+}
+@keyframes pbSignSettle {
+  0%, 100% { transform: rotate(-.65deg) translateY(0); }
+  50% { transform: rotate(.65deg) translateY(1px); }
+}
+@media (max-width: 390px) {
+  .pb-hanging-brand { width: clamp(142px, 37vw, 160px); min-height: 74px; }
+  .pb-hanging-plaque { min-height: 49px; padding-inline: 6px; border-radius: 10px; }
+  .pb-sign-cords { width: 72%; height: 27px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pb-hanging-brand { animation: none !important; }
+}
