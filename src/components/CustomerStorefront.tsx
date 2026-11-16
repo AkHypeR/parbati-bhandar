@@ -437,8 +437,16 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       {/* TOP MOBILE-FIRST APP BAR WITH SHOP NAME                               */}
       {/* ===================================================================== */}
-      <header className={`pb-editorial-header relative isolate overflow-hidden border-b shadow-sm ${isChhathSeason ? "pb-chhath-header" : isChristmasSeason ? "pb-christmas-header" : isAutomaticFestivalSeason ? "pb-festival-header" : "bg-[#111923] border-[#263746] text-white"}`}>
-        {isChristmasSeason && <><div className="pb-christmas-snow absolute inset-0 z-[1] overflow-hidden pointer-events-none" aria-hidden="true">{Array.from({length:34},(_,i)=><span key={i} style={{left:`${(i*29+7)%99}%`,animationDelay:`${(i%9)*-.8}s`,animationDuration:`${6+(i%6)*1.3}s`,fontSize:`${10+(i%4)*5}px`}}>❄</span>)}</div><div className="pb-christmas-landscape absolute inset-0 z-[2] pointer-events-none overflow-hidden" aria-hidden="true"><span className="pb-winter-tree pb-winter-tree-left">🎄</span><span className="pb-winter-tree pb-winter-tree-mid">🌲</span><span className="pb-winter-tree pb-winter-tree-right">🎄</span><span className="pb-winter-snowman">⛄</span><span className="pb-winter-sparkle">✦</span></div></>}
+      <header className={`pb-editorial-header relative isolate overflow-hidden border-b shadow-sm ${isChhathSeason ? "pb-chhath-header" : "pb-bengali-header"}`}>
+        <div className="pb-bengali-ambience absolute inset-0 z-[1] overflow-hidden pointer-events-none" aria-hidden="true">
+          <span className="pb-alpona pb-alpona-left">✺</span>
+          <span className="pb-alpona pb-alpona-right">✺</span>
+          <span className="pb-bengali-motif pb-motif-one">❀</span>
+          <span className="pb-bengali-motif pb-motif-two">🪔</span>
+          <span className="pb-bengali-motif pb-motif-three">🌾</span>
+          <span className="pb-bengali-motif pb-motif-four">✧</span>
+          <span className="pb-bengali-motif pb-motif-five">🪷</span>
+        </div>
         {isChhathSeason && <div className="pb-chhath-sky absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
           {Array.from({length:9},(_,i)=><span key={i} className="pb-chhath-diya" style={{left:`${(i*29+7)%96}%`,animationDelay:`${(i%5)*-1.7}s`,animationDuration:`${7+(i%4)*1.5}s`}}>🪔</span>)}
           <span className="pb-chhath-petal absolute left-[12%] top-[28%]">🌼</span><span className="pb-chhath-petal absolute right-[10%] top-[58%]">✨</span>
