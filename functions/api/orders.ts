@@ -287,6 +287,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   if (!["new","processing","review","ready","unavailable","completed","cancelled"].includes(status) || !body?.id) return json({error:"Invalid order status."},400);
   const hasEstimateUpdate = Object.prototype.hasOwnProperty.call(body, "estimatedReadyAt");
   const estimatedReadyAt = !hasEstimateUpdate || body.estimatedReadyAt === null ? null : Number(body.estimatedReadyAt);
+  if (hasEstimateUpdate && status !== "processing") return json({error:"Set the ready-time estimate after starting order processing."},409);
   if (hasEstimateUpdate && estimatedReadyAt !== null && (!Number.isFinite(estimatedReadyAt) || estimatedReadyAt <= Date.now() || estimatedReadyAt > Date.now() + 48 * 60 * 60 * 1000)) return json({error:"Choose an estimated ready time within the next 48 hours."},400);
   const id = String(body.id);
   const order = await env.DB.prepare("SELECT status,customer_id,customer_name,order_number,items_json,stock_deducted FROM customer_orders WHERE id=?").bind(id).first<any>();
@@ -480,7 +481,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
       return json({error:"Stock changed while this order was being confirmed. Refresh the order, review availability, and try again."},409);
     }
   } else {
-    const updateStatement = env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,updated_at=?,confirmed_at=CASE WHEN ?='ready' THEN COALESCE(confirmed_at,?) ELSE confirmed_at END,ready_at=CASE WHEN ?='ready' THEN COALESCE(ready_at,?) ELSE ready_at END,estimated_ready_at=CASE WHEN ?=1 THEN ? WHEN ?='ready' THEN NULL ELSE estimated_ready_at END WHERE id=?")
+    const updateStatement = env.DB.prepare("UPDATE customer_orders SET status=?,items_json=?,updated_at=?,confirmed_at=CASE WHEN ? IN ('processing','ready') THEN COALESCE(confirmed_at,?) ELSE confirmed_at END,ready_at=CASE WHEN ?='ready' THEN COALESCE(ready_at,?) ELSE ready_at END,estimated_ready_at=CASE WHEN ?=1 THEN ? WHEN ?='ready' THEN NULL ELSE estimated_ready_at END WHERE id=?")
       .bind(status,JSON.stringify(items),Date.now(),status,Date.now(),status,Date.now(),hasEstimateUpdate ? 1 : 0,estimatedReadyAt,status,id);
     if (["cancelled","unavailable"].includes(status)) {
       const results = await env.DB.batch([updateStatement,env.DB.prepare("DELETE FROM order_stock_reservations WHERE order_id=?").bind(id)]);
