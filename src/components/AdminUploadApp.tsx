@@ -323,7 +323,7 @@ export function AdminUploadApp({
   const todaysEstimatedSales = todaysOrders.filter(order => !['cancelled', 'unavailable'].includes(order.status)).reduce((sum, order) => sum + Number(order.total || 0), 0);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
-  const [delayMinutes, setDelayMinutes] = useState('30');
+  const [readyTimeInput, setReadyTimeInput] = useState('');
   const loadCustomerOrders = async (silent = false) => {
     if (!silent) setOrdersLoading(true);
     try {
@@ -409,8 +409,15 @@ export function AdminUploadApp({
     } catch (error) { showToast((error as Error).message, 'error'); }
     finally { setUpdatingOrderId(null); }
   };
+  const toLocalDateTimeInput = (value?: number | null) => {
+    if (!value) return '';
+    const date = new Date(value);
+    date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+    return date.toISOString().slice(0, 16);
+  };
   const openOrderForReview = (order: CustomerOrder) => {
     setSelectedOrderId(order.id);
+    setReadyTimeInput(toLocalDateTimeInput(order.estimatedReadyAt));
     // Opening an order does not change its status.
   };
   const deleteCustomerOrder = async (id: string) => {
@@ -973,12 +980,16 @@ export function AdminUploadApp({
                       <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-bold uppercase text-slate-400">Customer</p><p className="mt-1 text-lg font-extrabold text-slate-900">{order.customerName}</p><a onClick={event => event.stopPropagation()} href={`tel:${order.customerPhone}`} className="mt-1 inline-flex items-center gap-2 text-sm font-semibold text-blue-700"><Phone className="h-4 w-4" />{order.customerPhone}</a></div>
                       <div className="rounded-xl bg-slate-50 p-4"><p className="text-xs font-bold uppercase text-slate-400">Order value</p><p className="mt-1 text-2xl font-black text-slate-900">₹{Number(order.total || 0).toFixed(2)}</p><p className="text-xs text-slate-500">Estimated total; confirm at pickup</p></div>
                     </div>
-                    {order.estimatedReadyAt && <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4"><p className="text-xs font-black uppercase tracking-wide text-amber-800">Customer has been told</p><p className="mt-1 text-sm font-extrabold text-amber-950">Estimated ready by {new Date(order.estimatedReadyAt).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Kolkata' })}</p></div>}
+                    {order.estimatedReadyAt && <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4"><p className="text-xs font-black uppercase tracking-wide text-amber-800">Customer has been told</p><p className="mt-1 text-sm font-extrabold text-amber-950">Estimated ready by {new Date(order.estimatedReadyAt).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" })}</p></div>}
                     <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50/60 p-4">
-                      <div className="flex flex-wrap items-center justify-between gap-3"><div><h3 className="text-sm font-extrabold text-amber-950">Delay / preparation estimate</h3><p className="mt-1 text-xs text-amber-800">Send the customer an updated ready-time estimate.</p></div><span className="rounded-full bg-white px-3 py-1 text-[11px] font-bold text-amber-800">Customer update</span></div>
-                      <div className="mt-3 flex flex-wrap gap-2"><select aria-label="Estimated preparation time" value={delayMinutes} onChange={event => setDelayMinutes(event.target.value)} className="min-h-11 flex-1 rounded-lg border border-amber-200 bg-white px-3 text-sm font-semibold text-slate-800"><option value="15">About 15 minutes</option><option value="30">About 30 minutes</option><option value="45">About 45 minutes</option><option value="60">About 1 hour</option><option value="90">About 1 hour 30 minutes</option><option value="120">About 2 hours</option></select><button type="button" disabled={updatingOrderId === order.id || !['new','processing'].includes(order.status)} onClick={() => void updateCustomerOrder(order.id, order.status, undefined, Date.now() + Number(delayMinutes) * 60000)} className="min-h-11 rounded-lg bg-amber-600 px-4 py-2 text-sm font-extrabold text-white disabled:opacity-50">Send estimate</button></div>
-                      {order.estimatedReadyAt && <button type="button" disabled={updatingOrderId === order.id} onClick={() => void updateCustomerOrder(order.id, order.status, undefined, null)} className="mt-2 text-xs font-bold text-amber-900 underline disabled:opacity-50">Clear estimate</button>}
-                      {!['new','processing'].includes(order.status) && <p className="mt-2 text-[11px] text-slate-500">Estimates can be changed while an order is received or being prepared.</p>}
+                      <div className="flex flex-wrap items-center justify-between gap-3"><div><h3 className="text-sm font-extrabold text-amber-950">Customer ready-time estimate</h3><p className="mt-1 text-xs text-amber-800">Start processing first, then choose the exact date and time you expect this order to be ready. Set each order separately when several orders are in progress.</p></div><span className="rounded-full bg-white px-3 py-1 text-[11px] font-bold text-amber-800">Manual customer update</span></div>
+                      <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_auto]">
+                        <input aria-label="Estimated ready date and time" type="datetime-local" value={readyTimeInput} min={toLocalDateTimeInput(Date.now() + 60000)} onChange={event => setReadyTimeInput(event.target.value)} disabled={order.status !== "processing"} className="min-h-11 min-w-0 rounded-lg border border-amber-200 bg-white px-3 text-sm font-semibold text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"/>
+                        <button type="button" disabled={updatingOrderId === order.id || order.status !== "processing" || !readyTimeInput || !Number.isFinite(Date.parse(readyTimeInput)) || Date.parse(readyTimeInput) <= Date.now()} onClick={() => void updateCustomerOrder(order.id, "processing", undefined, new Date(readyTimeInput).getTime())} className="min-h-11 rounded-lg bg-amber-600 px-4 py-2 text-sm font-extrabold text-white disabled:opacity-50">Send estimate</button>
+                      </div>
+                      {order.estimatedReadyAt && <button type="button" disabled={updatingOrderId === order.id || order.status !== "processing"} onClick={() => void updateCustomerOrder(order.id, "processing", undefined, null)} className="mt-2 text-xs font-bold text-amber-900 underline disabled:opacity-50">Clear estimate</button>}
+                      {order.status === "new" && <p className="mt-2 text-[11px] font-semibold text-slate-600">This order has not started processing. The ready-time option will unlock after you tap "Start processing".</p>}
+                      {order.status !== "new" && order.status !== "processing" && <p className="mt-2 text-[11px] text-slate-500">The ready-time estimate can only be changed while the order is being processed.</p>}
                     </div>
                     <div className="rounded-xl border border-slate-200 p-4">
                       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
