@@ -446,7 +446,12 @@ export function CustomerStorefront({
         <div className="relative z-10 max-w-5xl mx-auto px-3.5 sm:px-6 pt-3 pb-2">
           {/* Row 1: Profile | Shop Name (5-tap secret owner access) | Quick Actions */}
           <div className="flex items-center justify-between gap-2">
-            <div className="w-10 shrink-0" aria-hidden="true" />
+            {/* Left: three-dot customer menu */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              <button type="button" onClick={() => setIsQuickMenuOpen(true)} aria-label="Open customer menu" aria-expanded={isQuickMenuOpen} className="pb-header-action" title="Account, notifications and more">
+                <MoreVertical className="w-5 h-5" />
+              </button>
+            </div>
 
             {/* Center: Shop Name Header (Secret 5-Tap for Owner Portal) */}
             <button
@@ -490,13 +495,10 @@ export function CustomerStorefront({
               )}
             </button>
 
-            {/* Right: theme and three-dot customer menu */}
+            {/* Right: appearance control */}
             <div className="flex items-center gap-1.5 shrink-0">
               <button type="button" onClick={onToggleDarkMode} aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"} aria-pressed={darkMode} className="pb-header-action" title={darkMode ? "Light theme" : "Dark theme"}>
                 {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-              </button>
-              <button type="button" onClick={() => setIsQuickMenuOpen(true)} aria-label="Open customer menu" aria-expanded={isQuickMenuOpen} className="pb-header-action" title="Account, notifications and more">
-                <MoreVertical className="w-5 h-5" />
               </button>
             </div>
           </div>
