@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowRight, PackageCheck, ShoppingBag, Clock3, CheckCircle2,
 import type { Product } from '../utils/storeLogic';
 
 type OrderItem = { name: string; quantity: number; unit: string; price?: number; lineTotal?: number; unavailable?: boolean };
-type Order = { id?: string; orderNumber: number; status: string; total: number; originalTotal?: number; unavailableDeduction?: number; createdAt: number; updatedAt?: number; readyAt?: number | null; estimatedReadyAt?: number | null; items: OrderItem[] };
+type Order = { id?: string; orderNumber: number; status: string; cancelledBy?: 'customer' | 'owner' | null; total: number; originalTotal?: number; unavailableDeduction?: number; createdAt: number; updatedAt?: number; readyAt?: number | null; estimatedReadyAt?: number | null; items: OrderItem[] };
 
 const statusLabel = (status: string) => {
   const labels: Record<string, string> = { new: 'Received', review: 'Received', processing: 'Being prepared', ready: 'Ready for pickup', completed: 'Completed', cancelled: 'Cancelled', unavailable: 'Availability update' };
@@ -161,7 +161,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
                     </span>
                     <span className="flex items-center justify-between gap-3 sm:justify-end">
                       <strong className="text-lg font-black text-slate-900">₹{order.total}</strong>
-                      <span className="pb-orders-track inline-flex items-center gap-1 rounded-xl bg-emerald-700 px-3 py-2 text-xs font-extrabold text-white">{order.status === 'completed' ? 'View' : 'Track'} <ArrowRight className="h-3.5 w-3.5"/></span>
+                      <span className="pb-orders-track inline-flex items-center gap-1 rounded-xl bg-emerald-700 px-3 py-2 text-xs font-extrabold text-white">{['completed', 'cancelled'].includes(order.status) ? 'View' : 'Track'} <ArrowRight className="h-3.5 w-3.5"/></span>
                     </span>
                   </button>
                 ))}
@@ -173,7 +173,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
                 <section className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3">
                   <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-blue-50 text-blue-700"><Truck className="h-5 w-5"/></span>
                   <div className="min-w-0 flex-1">
-                    <p className={`text-sm font-extrabold ${selected.status === 'cancelled' ? 'pb-orders-cancelled-title' : ''}`}>{selected.status === 'completed' ? 'Your order was delivered!' : selected.status === 'cancelled' ? 'Order cancelled by you' : selected.status === 'ready' ? 'Your order is ready!' : selected.status === 'processing' && selected.estimatedReadyAt ? 'Estimated ready in ' + Math.max(0, Math.ceil((selected.estimatedReadyAt - Date.now()) / 60000)) + ' minutes' : statusLabel(selected.status)}</p>
+                    <p className={`text-sm font-extrabold ${selected.status === 'cancelled' ? 'pb-orders-cancelled-title' : ''}`}>{selected.status === 'completed' ? 'Your order was delivered!' : selected.status === 'cancelled' ? (selected.cancelledBy === 'customer' ? 'You cancelled this order' : selected.cancelledBy === 'owner' ? 'This order was cancelled by the store' : 'This order was cancelled') : selected.status === 'ready' ? 'Your order is ready!' : selected.status === 'processing' && selected.estimatedReadyAt ? 'Estimated ready in ' + Math.max(0, Math.ceil((selected.estimatedReadyAt - Date.now()) / 60000)) + ' minutes' : statusLabel(selected.status)}</p>
                     <p className="mt-0.5 text-[11px] text-slate-500">{selected.readyAt ? 'Ready at ' + formatTime(selected.readyAt) : selected.status === 'processing' && selected.estimatedReadyAt ? 'Expected by ' + formatTime(selected.estimatedReadyAt) : selected.status === 'new' ? 'Your order is waiting for the store to start processing.' : 'We’ll update your order status here'}</p>
                   </div>
                   <span className="shrink-0 rounded-md bg-blue-600 px-2.5 py-1.5 text-xs font-black text-white">#{selected.orderNumber}</span>
@@ -189,7 +189,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
                   </ol>
                   <div className="pb-order-progress-track mt-4 h-2 overflow-hidden rounded-full"><div className="pb-order-progress-fill h-full rounded-full transition-all" style={{width:((Math.max(0,currentIndex)/3)*100)+'%'}}/></div>
                 </section>}
-                {selected.status === 'cancelled' && <div role="status" className="pb-orders-cancelled-notice rounded-xl p-4 text-sm font-bold">Order cancelled by you. Any inventory deducted for this order has been restored.</div>}
+                {selected.status === 'cancelled' && <div role="status" className="pb-orders-cancelled-notice rounded-xl p-4 text-sm font-bold">{selected.cancelledBy === 'customer' ? 'You cancelled this order.' : selected.cancelledBy === 'owner' ? 'This order was cancelled by the store.' : 'This order was cancelled.'} Any inventory deducted for this order has been restored.</div>}
                 {actionMessage && <p role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs font-bold text-emerald-800">{actionMessage}</p>}
                 {['new','review','processing'].includes(selected.status) && <section className="rounded-2xl border border-blue-200 bg-blue-50 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-sm font-black text-slate-900">Change your order</h2><p className="mt-1 text-xs text-slate-600">You can edit until the order is ready. Cancellation is available before processing starts.</p></div>
