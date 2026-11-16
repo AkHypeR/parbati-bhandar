@@ -434,7 +434,7 @@ export function CustomerStorefront({
       {/* ===================================================================== */}
       {/* TOP MOBILE-FIRST APP BAR WITH SHOP NAME                               */}
       {/* ===================================================================== */}
-      <header className={`pb-editorial-header relative isolate overflow-hidden border-b shadow-sm ${isChhathSeason ? "pb-chhath-header" : isChristmasSeason ? "pb-christmas-header" : isAutomaticFestivalSeason ? "pb-festival-header" : "bg-[#F8F7F2] border-[#D8DAD2] text-[#30352F]"}`}>
+      <header className={`pb-editorial-header relative isolate overflow-hidden border-b shadow-sm ${isChhathSeason ? "pb-chhath-header" : isChristmasSeason ? "pb-christmas-header" : isAutomaticFestivalSeason ? "pb-festival-header" : "bg-[#111923] border-[#263746] text-white"}`}>
         {isChristmasSeason && <><div className="pb-christmas-snow absolute inset-0 z-[1] overflow-hidden pointer-events-none" aria-hidden="true">{Array.from({length:34},(_,i)=><span key={i} style={{left:`${(i*29+7)%99}%`,animationDelay:`${(i%9)*-.8}s`,animationDuration:`${6+(i%6)*1.3}s`,fontSize:`${10+(i%4)*5}px`}}>❄</span>)}</div><div className="pb-christmas-landscape absolute inset-0 z-[2] pointer-events-none overflow-hidden" aria-hidden="true"><span className="pb-winter-tree pb-winter-tree-left">🎄</span><span className="pb-winter-tree pb-winter-tree-mid">🌲</span><span className="pb-winter-tree pb-winter-tree-right">🎄</span><span className="pb-winter-snowman">⛄</span><span className="pb-winter-sparkle">✦</span></div></>}
         {isChhathSeason && <div className="pb-chhath-sky absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
           {Array.from({length:9},(_,i)=><span key={i} className="pb-chhath-diya" style={{left:`${(i*29+7)%96}%`,animationDelay:`${(i%5)*-1.7}s`,animationDuration:`${7+(i%4)*1.5}s`}}>🪔</span>)}
@@ -470,22 +470,24 @@ export function CustomerStorefront({
               type="button"
               onClick={handleSecretLogoTap}
               aria-label="Parbati Vandar Shop Name"
-              className="flex flex-col items-center justify-center select-none cursor-pointer group focus:outline-none min-w-0 px-1 text-center"
+              className="pb-hanging-brand relative flex min-w-0 flex-col items-center justify-center select-none cursor-pointer group focus:outline-none text-center"
               title={storeSettings.storeName || 'Parbati Vandar (পার্বতী ভান্ডার)'}
             >
-              <div className="flex items-center justify-center gap-1.5 min-w-0">
-                <svg viewBox="0 0 100 100" className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-lg bg-white p-1" role="img" aria-label="Parbati Vandar P leaf logo"><path d="M24 82V18h34c18 0 29 10 29 26S76 70 58 70H42v12H24Zm18-28h15c8 0 12-3 12-10s-4-10-12-10H42v20Z" fill="#087a55"/><path d="M59 22C64 9 77 6 91 9c-2 14-11 23-26 23" fill="#65a30d"/></svg>
-                <span className="text-base sm:text-xl font-black tracking-tight text-white leading-tight">
+              <span className="pb-sign-pin" aria-hidden="true" />
+              <span className="pb-sign-cords" aria-hidden="true" />
+              <span className="pb-hanging-plaque">
+                <span className="pb-plaque-leaf" aria-hidden="true">✦</span>
+                <span className="pb-plaque-title">
                   {(storeSettings.storeName || 'Parbati Vandar (পার্বতী ভান্ডার)')
                     .replace(/\s*\(.*\)\s*$/, '')}
                 </span>
-              </div>
-              <span className="text-[11px] sm:text-xs font-extrabold text-emerald-100 leading-tight">
-                {(storeSettings.storeName || 'Parbati Vandar (পার্বতী ভান্ডার)').match(
-                  /\((.*)\)/
-                )?.[1] || 'পার্বতী ভান্ডার'}
+                <span className="pb-plaque-bengali">
+                  {(storeSettings.storeName || 'Parbati Vandar (পার্বতী ভান্ডার)').match(
+                    /\((.*)\)/
+                  )?.[1] || 'পার্বতী ভান্ডার'}
+                </span>
+                <span className="pb-plaque-underline" aria-hidden="true" />
               </span>
-              <span className="block h-0.5 bg-sky-300 rounded-full w-20 sm:w-28 mt-0.5" />
               {!liveIsOpen && (
                 <span role="status" aria-live="polite" className="mt-1.5 inline-flex items-center gap-2 rounded-full border border-rose-200/70 bg-gradient-to-r from-[#7f1d1d] via-[#be123c] to-[#9f1239] px-3 py-1.5 text-[9px] sm:text-[10px] font-black tracking-[.12em] text-white shadow-[0_4px_16px_rgba(190,18,60,.35)] animate-[closedGlow_2.4s_ease-in-out_infinite]"><span className="relative flex h-2.5 w-2.5 shrink-0"><span className="absolute inset-0 rounded-full bg-white/80 animate-ping motion-reduce:animate-none"/><span className="relative m-auto h-2 w-2 rounded-full bg-amber-300 ring-2 ring-white/40"/></span><span>🌙 STORE CLOSED</span><span aria-hidden="true" className="text-amber-200 text-xs">✦</span><span className="font-semibold tracking-normal text-rose-100">We’ll welcome you soon</span></span>
               )}
