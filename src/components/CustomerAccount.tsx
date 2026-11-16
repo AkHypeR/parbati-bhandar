@@ -5,21 +5,14 @@ import {
   LockKeyhole, ArrowRight, ShieldCheck, Download, Package, Clock3
 } from 'lucide-react';
 import { TurnstileWidget } from './TurnstileWidget';
-import { CustomerOrders } from './CustomerOrders';
 
 type Customer = { id: string; name: string; phone: string };
 
-export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, orderNumber, orderPhone, whatsappNumber, products, onNavigate, accountSection = 'profile' }: {
+export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack }: {
   customer: Customer | null;
   onAuthenticated: (customer: Customer, created?: boolean) => void;
   onLogout: () => void;
   onBack: () => void;
-  orderNumber?: number;
-  orderPhone?: string;
-  whatsappNumber?: string;
-  products?: any[];
-  onNavigate?: (path: string) => void;
-  accountSection?: 'profile' | 'orders';
 }) {
   const [mode,setMode] = useState<'login'|'register'>('login');
   const [name,setName] = useState('');
@@ -105,14 +98,6 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
                   </div>
                   <button onClick={signOut} className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-bold text-slate-600 shadow-sm transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700"><LogOut className="h-4 w-4"/> Sign out</button>
                 </div>
-                <nav className="grid grid-cols-2 gap-2 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-1.5" aria-label="Account sections">
-                  <button type="button" onClick={() => onNavigate?.('/account')} aria-current={accountSection === 'profile' ? 'page' : undefined} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${accountSection === 'profile' ? 'bg-white text-emerald-900 shadow-sm' : 'text-emerald-800/70 hover:bg-white/70'}`}><UserRound className="h-4 w-4"/> My Account</button>
-                  <button type="button" onClick={() => onNavigate?.('/account/orders')} aria-current={accountSection === 'orders' ? 'page' : undefined} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${accountSection === 'orders' ? 'bg-white text-emerald-900 shadow-sm' : 'text-emerald-800/70 hover:bg-white/70'}`}><Package className="h-4 w-4"/> My Orders</button>
-                </nav>
-                {accountSection === 'orders' ? (
-                  orderPhone && products && onNavigate ? <CustomerOrders orderNumber={orderNumber} phone={orderPhone} whatsappNumber={whatsappNumber || '919734765207'} products={products} onNavigate={onNavigate} onBack={() => onNavigate('/account/orders')} /> : <p className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-600">Sign in to view your orders.</p>
-                ) : (
-                  <>
                 <section className="pb-account-hero relative overflow-hidden rounded-3xl p-5 text-white sm:p-7">
                   <div aria-hidden="true" className="absolute -right-12 -top-16 h-52 w-52 rounded-full border-[26px] border-white/10"/>
                   <div className="relative flex items-center gap-4">
@@ -134,7 +119,6 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
                 </section>
                 <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-4"><div className="flex items-start gap-3"><ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-800"/><div><h3 className="text-sm font-extrabold text-slate-900">Your account, kept secure</h3><p className="mt-1 text-xs leading-5 text-slate-600">Your profile is linked to your registered mobile number. Order history and notifications have their own dedicated sections.</p></div></div></div>
                   </>
-                )}
 
               </div>
             ) : (
