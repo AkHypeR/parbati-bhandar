@@ -289,7 +289,7 @@ export function AdminUploadApp({
     } catch (error) { showToast((error as Error).message || 'Could not send the notification.', 'error'); }
     finally { setBroadcastSending(false); }
   };
-  type CustomerOrder = { id: string; orderNumber: number; customerName: string; customerPhone: string; note?: string; items: { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean }[]; total: number; status: 'new' | 'processing' | 'review' | 'ready' | 'unavailable' | 'completed' | 'cancelled'; createdAt: number; estimatedReadyAt?: number | null };
+  type CustomerOrder = { id: string; orderNumber: number; customerName: string; customerPhone: string; note?: string; items: { productId?: string; name: string; quantity: number; unit: string; price: number; unavailable?: boolean }[]; total: number; status: 'new' | 'processing' | 'review' | 'ready' | 'unavailable' | 'completed' | 'cancelled'; cancelledBy?: 'customer' | 'owner' | null; createdAt: number; estimatedReadyAt?: number | null };
   const [customerOrders, setCustomerOrders] = useState<CustomerOrder[]>([]);
   const knownOrderIdsRef = useRef<Set<string>>(new Set());
   const knownOrderStatusesRef = useRef<Map<string, string>>(new Map());
@@ -332,7 +332,7 @@ export function AdminUploadApp({
       if (!response.ok) throw new Error(data.error || 'Could not load orders.');
       const incoming: CustomerOrder[] = Array.isArray(data.orders) ? data.orders : [];
       if (hasOrderSnapshotRef.current) {
-        const cancelledOrders = incoming.filter(order => order.status === 'cancelled' && knownOrderStatusesRef.current.get(order.id) !== 'cancelled');
+        const cancelledOrders = incoming.filter(order => order.status === 'cancelled' && order.cancelledBy === 'customer' && knownOrderStatusesRef.current.get(order.id) !== 'cancelled');
         if (cancelledOrders.length) {
           const latestCancelled = cancelledOrders.sort((a, b) => b.createdAt - a.createdAt)[0];
           showToast(`Customer cancelled order #${latestCancelled.orderNumber} · ${latestCancelled.customerName}`);
@@ -1033,7 +1033,7 @@ export function AdminUploadApp({
               </label>
               <label className="text-xs font-bold text-slate-700">Filter by status
                 <select value={orderStatusFilter} onChange={e => setOrderStatusFilter(e.target.value)} className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-medium">
-                  <option value="all">All statuses</option><option value="new">Order received</option><option value="processing">Processing</option><option value="ready">Ready for pickup</option><option value="unavailable">Unavailable (legacy)</option><option value="completed">Completed</option><option value="cancelled">Cancelled by customer</option><option value="cancelled">Cancelled</option>
+                  <option value="all">All statuses</option><option value="new">Order received</option><option value="processing">Processing</option><option value="ready">Ready for pickup</option><option value="unavailable">Unavailable (legacy)</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option>
                 </select>
               </label>
             </div>
