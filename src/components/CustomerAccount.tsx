@@ -9,12 +9,11 @@ import { CustomerOrders } from './CustomerOrders';
 
 type Customer = { id: string; name: string; phone: string };
 
-export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, onViewOrders, orderNumber, orderPhone, whatsappNumber, products, onNavigate, accountSection = 'profile' }: {
+export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, orderNumber, orderPhone, whatsappNumber, products, onNavigate, accountSection = 'profile' }: {
   customer: Customer | null;
   onAuthenticated: (customer: Customer, created?: boolean) => void;
   onLogout: () => void;
   onBack: () => void;
-  onViewOrders: (orderNumber?: number) => void;
   orderNumber?: number;
   orderPhone?: string;
   whatsappNumber?: string;
