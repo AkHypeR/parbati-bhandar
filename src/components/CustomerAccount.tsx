@@ -8,9 +8,8 @@ import { TurnstileWidget } from './TurnstileWidget';
 import { CustomerOrders } from './CustomerOrders';
 
 type Customer = { id: string; name: string; phone: string };
-type AccountOrder = { orderNumber:number; status:string; total:number; createdAt:number; items:{name:string;quantity:number;unit:string}[] };
 
-export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, onViewOrders, orderNumber, orderPhone, whatsappNumber, products, onNavigate }: {
+export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, onViewOrders, orderNumber, orderPhone, whatsappNumber, products, onNavigate, accountSection = 'profile' }: {
   customer: Customer | null;
   onAuthenticated: (customer: Customer, created?: boolean) => void;
   onLogout: () => void;
@@ -21,6 +20,7 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
   whatsappNumber?: string;
   products?: any[];
   onNavigate?: (path: string) => void;
+  accountSection?: 'profile' | 'orders';
 }) {
   const [mode,setMode] = useState<'login'|'register'>('login');
   const [name,setName] = useState('');
@@ -30,20 +30,6 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
   const [turnstileToken,setTurnstileToken] = useState('');
   const [busy,setBusy] = useState(false);
   const [error,setError] = useState('');
-  const [orders,setOrders] = useState<AccountOrder[]>([]);
-  const [ordersLoading,setOrdersLoading] = useState(false);
-  const [ordersError,setOrdersError] = useState('');
-  useEffect(() => {
-    if (!customer) { setOrders([]); return; }
-    let active = true; setOrdersLoading(true); setOrdersError('');
-    const params = new URLSearchParams({history:'1',phone:String(customer.phone||'').replace(/\\D/g,'')});
-    fetch('/api/orders/track?'+params.toString(),{credentials:'same-origin',cache:'no-store'})
-      .then(async response => { const data=await response.json().catch(()=>({})); if(!response.ok) throw new Error(data.error||'Could not load your orders.'); return data; })
-      .then(data => { if(active) setOrders(Array.isArray(data.orders)?data.orders:[]); })
-      .catch(e => { if(active) setOrdersError((e as Error).message||'Could not load your orders.'); })
-      .finally(() => { if(active) setOrdersLoading(false); });
-    return () => { active=false; };
-  },[customer?.id,customer?.phone]);
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (busy) return;
@@ -120,7 +106,14 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
                   </div>
                   <button onClick={signOut} className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-bold text-slate-600 shadow-sm transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700"><LogOut className="h-4 w-4"/> Sign out</button>
                 </div>
-                {orderNumber && orderPhone && products && onNavigate && <CustomerOrders orderNumber={orderNumber} phone={orderPhone} whatsappNumber={whatsappNumber || '919734765207'} products={products} onNavigate={onNavigate} onBack={() => onNavigate('/account')} />}
+                <nav className="grid grid-cols-2 gap-2 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-1.5" aria-label="Account sections">
+                  <button type="button" onClick={() => onNavigate?.('/account')} aria-current={accountSection === 'profile' ? 'page' : undefined} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${accountSection === 'profile' ? 'bg-white text-emerald-900 shadow-sm' : 'text-emerald-800/70 hover:bg-white/70'}`}><UserRound className="h-4 w-4"/> My Account</button>
+                  <button type="button" onClick={() => onNavigate?.('/account/orders')} aria-current={accountSection === 'orders' ? 'page' : undefined} className={`flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-extrabold transition ${accountSection === 'orders' ? 'bg-white text-emerald-900 shadow-sm' : 'text-emerald-800/70 hover:bg-white/70'}`}><Package className="h-4 w-4"/> My Orders</button>
+                </nav>
+                {accountSection === 'orders' ? (
+                  orderPhone && products && onNavigate ? <CustomerOrders orderNumber={orderNumber} phone={orderPhone} whatsappNumber={whatsappNumber || '919734765207'} products={products} onNavigate={onNavigate} onBack={() => onNavigate('/account/orders')} /> : <p className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-600">Sign in to view your orders.</p>
+                ) : (
+                  <>
                 <section className="pb-account-hero relative overflow-hidden rounded-3xl p-5 text-white sm:p-7">
                   <div aria-hidden="true" className="absolute -right-12 -top-16 h-52 w-52 rounded-full border-[26px] border-white/10"/>
                   <div className="relative flex items-center gap-4">
@@ -140,15 +133,10 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, o
                     <div className="rounded-xl bg-slate-50 p-4"><dt className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Mobile number</dt><dd className="mt-1 text-sm font-bold text-slate-900">+91 {customer.phone}</dd></div>
                   </dl>
                 </section>
-                <section className="overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-sm">
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 bg-emerald-50/60 px-5 py-4"><div><h3 className="font-extrabold text-slate-900">Your orders</h3><p className="mt-0.5 text-xs text-slate-500">Track active orders and view completed orders here.</p></div><span className="rounded-full bg-white px-3 py-1 text-xs font-extrabold text-emerald-800">{orders.length} {orders.length===1?'order':'orders'}</span></div>
-                  {ordersLoading ? <p className="px-5 py-8 text-center text-sm text-slate-500">Loading your orders…</p> : ordersError ? <p role="alert" className="px-5 py-5 text-sm font-semibold text-rose-700">{ordersError}</p> : orders.length===0 ? <div className="px-5 py-9 text-center"><ShoppingBasket className="mx-auto h-8 w-8 text-slate-300"/><p className="mt-2 text-sm font-bold text-slate-800">No orders yet</p><p className="mt-1 text-xs text-slate-500">Your grocery orders will appear here after checkout.</p></div> :
-                    <div className="divide-y divide-slate-100">{orders.map(order => <button key={order.orderNumber} type="button" onClick={()=>onViewOrders(order.orderNumber)} className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left transition hover:bg-emerald-50/50">
-                      <span className="min-w-0 flex-1"><span className="flex flex-wrap items-center gap-2"><strong className="text-sm text-slate-900">Order #{order.orderNumber}</strong><span className={'rounded-full px-2.5 py-1 text-[10px] font-extrabold '+(order.status==='completed'?'bg-emerald-100 text-emerald-800':order.status==='cancelled'?'bg-rose-100 text-rose-700':'bg-amber-100 text-amber-800')}>{order.status==='new'||order.status==='review'?'Received':order.status==='processing'?'Being prepared':order.status==='ready'?'Ready for pickup':order.status==='completed'?'Completed':order.status==='cancelled'?'Cancelled':order.status}</span></span><span className="mt-1 block truncate text-xs text-slate-500">{order.items?.slice(0,2).map(item=>item.name+' × '+item.quantity).join(' · ')}{order.items?.length>2?' · + more':''}</span><span className="mt-1 block text-[11px] text-slate-400">{new Date(order.createdAt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Kolkata'})}</span></span>
-                      <span className="shrink-0 text-right"><strong className="block text-sm text-slate-900">₹{order.total}</strong><span className="mt-1 inline-flex items-center gap-1 rounded-lg bg-emerald-800 px-3 py-2 text-xs font-extrabold text-white">{order.status==='completed'?'View':'Track'} <ArrowRight className="h-3.5 w-3.5"/></span></span>
-                    </button>)}</div>}
-                </section>
                 <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-4"><div className="flex items-start gap-3"><ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-800"/><div><h3 className="text-sm font-extrabold text-slate-900">Your account, kept secure</h3><p className="mt-1 text-xs leading-5 text-slate-600">Your profile is linked to your registered mobile number. Order history and notifications have their own dedicated sections.</p></div></div></div>
+                  </>
+                )}
+
               </div>
             ) : (
               <>
