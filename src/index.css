@@ -3091,3 +3091,19 @@ html.pb-dark .pb-owner-portal :where(h1,h2,h3,h4,[class*="text-slate-900"],[clas
 @media(prefers-reduced-motion:reduce) {
   .pb-alpona,.pb-bengali-motif { animation:none !important; }
 }
+
+
+/* Premium Amazon-inspired customer account dashboard and unified notification centre. */
+.pb-customer-account { background:linear-gradient(145deg,#f5f7f2 0%,#fbfaf5 52%,#f2f5ee 100%) !important; }
+.pb-account-dashboard { color:#26352b; }
+.pb-account-hero { background:linear-gradient(120deg,#174b37 0%,#236447 58%,#8a4a2d 140%); box-shadow:0 16px 36px rgba(23,75,55,.16); }
+.pb-account-dashboard section { border-color:#e1e8df !important; }
+.pb-account-dashboard .bg-slate-50 { background:#f6f8f4 !important; }
+.pb-customer-notifications { background:linear-gradient(145deg,#f5f7f2 0%,#fbfaf5 55%,#f2f5ee 100%) !important; }
+.pb-notification-preferences { border-color:#dce9dc !important; box-shadow:0 8px 24px rgba(27,72,48,.055); }
+.pb-customer-notifications article { transition:background .18s ease; }
+@media (max-width:640px) {
+ .pb-account-hero { border-radius:22px !important; }
+ .pb-account-dashboard { gap:16px; }
+}
+@media (prefers-reduced-motion:reduce) { .pb-customer-notifications article { transition:none; } }
