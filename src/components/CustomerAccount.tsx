@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   ArrowLeft, Eye, EyeOff, UserRound, Phone, LogOut,
   UserPlus, LogIn, ShoppingBasket, Sparkles, CheckCircle2,
