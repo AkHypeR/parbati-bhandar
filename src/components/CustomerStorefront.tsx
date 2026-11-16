@@ -35,6 +35,9 @@ import {
   Play,
   Moon,
   Sun,
+  MoreVertical,
+  ChevronLeft,
+  ClipboardCheck,
 } from 'lucide-react';
 import {
   CATEGORIES,
@@ -232,6 +235,7 @@ export function CustomerStorefront({
 
   // Location / Store Info Expandable Pill
   const [isAddressExpanded, setIsAddressExpanded] = useState(false);
+  const [isQuickMenuOpen, setIsQuickMenuOpen] = useState(false);
   const [isSearchSubmitted, setIsSearchSubmitted] = useState(false);
 
   // Active slide index and auto-play state for the Merged Festive + Best 5 Hero Slider
@@ -443,27 +447,7 @@ export function CustomerStorefront({
         <div className="relative z-10 max-w-5xl mx-auto px-3.5 sm:px-6 pt-3 pb-2">
           {/* Row 1: Profile | Shop Name (5-tap secret owner access) | Quick Actions */}
           <div className="flex items-center justify-between gap-2">
-            {/* Left: User / Store Info Button */}
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                type="button"
-                onClick={() => onNavigate('/account')}
-                aria-label="My profile and orders"
-                aria-expanded={currentPage === 'history'}
-                className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 border border-white/20 flex items-center justify-center text-white cursor-pointer shrink-0 transition-colors"
-              >
-                <User className="w-4 h-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => onNavigate('/notifications')}
-                aria-label="Store notifications"
-                aria-current={currentPage === 'notifications' ? 'page' : undefined}
-                className={'relative w-9 h-9 rounded-full border flex items-center justify-center text-white cursor-pointer shrink-0 transition-colors ' + (currentPage === 'notifications' ? 'bg-white/30 border-white/50' : 'bg-white/15 hover:bg-white/25 border-white/20')}
-              >
-                <Bell className="w-4 h-4" />
-              </button>
-            </div>
+            <div className="w-10 shrink-0" aria-hidden="true" />
 
             {/* Center: Shop Name Header (Secret 5-Tap for Owner Portal) */}
             <button
@@ -507,34 +491,13 @@ export function CustomerStorefront({
               )}
             </button>
 
-            {/* Right: Call, WhatsApp & QR Code Quick Buttons */}
-            <div className="flex items-center gap-1.5">
-              <a
-                href={`tel:${(storeSettings.phone || '+919734765207').replace(/\s+/g, '')}`}
-                aria-label="Call Store"
-                className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 text-white border border-white/20 flex items-center justify-center transition-colors"
-                title="Call Parbati Vandar: 097347 65207"
-              >
-                <Phone className="w-4 h-4" />
-              </a>
-              <button
-                type="button"
-                onClick={onToggleDarkMode}
-                aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-                aria-pressed={darkMode}
-                className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 text-white border border-white/20 flex items-center justify-center cursor-pointer transition-colors"
-                title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-              >
+            {/* Right: theme and three-dot customer menu */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              <button type="button" onClick={onToggleDarkMode} aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"} aria-pressed={darkMode} className="pb-header-action" title={darkMode ? "Light theme" : "Dark theme"}>
                 {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </button>
-              <button
-                type="button"
-                onClick={() => setIsQrModalOpen(true)}
-                aria-label="Shop QR Poster"
-                className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 text-white border border-white/20 flex items-center justify-center cursor-pointer transition-colors"
-                title="Show Store QR Code"
-              >
-                <QrCode className="w-4 h-4" />
+              <button type="button" onClick={() => setIsQuickMenuOpen(true)} aria-label="Open customer menu" aria-expanded={isQuickMenuOpen} className="pb-header-action" title="Account, notifications and more">
+                <MoreVertical className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -607,6 +570,33 @@ export function CustomerStorefront({
           )}
         </div>
       </header>
+
+      {isQuickMenuOpen && (
+        <div className="pb-quick-menu-layer" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setIsQuickMenuOpen(false); }}>
+          <aside className="pb-quick-menu" role="dialog" aria-modal="true" aria-label="Parbati Vandar menu">
+            <div className="pb-quick-menu-head">
+              <button type="button" onClick={() => setIsQuickMenuOpen(false)} className="pb-quick-menu-back"><ChevronLeft className="h-4 w-4" /> Back</button>
+              <span className="pb-quick-menu-kicker">PARBATI VANDAR</span>
+              <h2>আপনার মেনু</h2>
+              <p>Your store, orders and updates in one place.</p>
+            </div>
+            <div className="pb-quick-menu-section">
+              <span className="pb-quick-menu-label">YOUR ACCOUNT</span>
+              <button type="button" onClick={() => { setIsQuickMenuOpen(false); onNavigate('/account'); }}><User/><span><b>My Account</b><small>Profile and saved details</small></span><ChevronRight/></button>
+              <button type="button" onClick={() => { setIsQuickMenuOpen(false); onNavigate('/notifications'); }}><Bell/><span><b>Notifications</b><small>Store updates and order alerts</small></span><ChevronRight/></button>
+              <button type="button" onClick={() => { setIsQuickMenuOpen(false); onNavigate('/orders'); }}><ClipboardCheck/><span><b>My Orders</b><small>View your order history</small></span><ChevronRight/></button>
+              <button type="button" onClick={() => { setIsQuickMenuOpen(false); onNavigate('/track-order'); }}><Package/><span><b>Track an Order</b><small>Check your order status</small></span><ChevronRight/></button>
+            </div>
+            <div className="pb-quick-menu-section">
+              <span className="pb-quick-menu-label">STORE SERVICES</span>
+              <button type="button" onClick={() => { setIsQuickMenuOpen(false); setIsQrModalOpen(true); }}><QrCode/><span><b>Scan / Shop QR</b><small>Open the store QR code</small></span><ChevronRight/></button>
+              <button type="button" onClick={() => { setIsQuickMenuOpen(false); setIsAddressExpanded(true); window.setTimeout(() => document.querySelector('.pb-header-location')?.scrollIntoView({behavior:'smooth',block:'nearest'}), 80); }}><MapPin/><span><b>Store Information</b><small>Address, timings and directions</small></span><ChevronRight/></button>
+              <button type="button" onClick={() => { onToggleDarkMode(); }}><Moon/><span><b>Appearance</b><small>{darkMode ? 'Switch to light mode' : 'Switch to dark mode'}</small></span><ChevronRight/></button>
+            </div>
+            <div className="pb-quick-menu-foot"><span>ঘরের বাজার, আপনার কাছেই</span><small>Local care • Everyday essentials</small></div>
+          </aside>
+        </div>
+      )}
 
       {/* Customer order centre */}
       {(currentPage === 'track' || currentPage === 'history') && (
