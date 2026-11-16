@@ -118,7 +118,6 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack }:
                   </dl>
                 </section>
                 <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-4"><div className="flex items-start gap-3"><ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-800"/><div><h3 className="text-sm font-extrabold text-slate-900">Your account, kept secure</h3><p className="mt-1 text-xs leading-5 text-slate-600">Your profile is linked to your registered mobile number. Order history and notifications have their own dedicated sections.</p></div></div></div>
-                  </>
 
               </div>
             ) : (
