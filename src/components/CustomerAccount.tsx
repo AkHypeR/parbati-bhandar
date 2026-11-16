@@ -13,6 +13,7 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack }:
   onAuthenticated: (customer: Customer, created?: boolean) => void;
   onLogout: () => void;
   onBack: () => void;
+  onViewOrders: () => void;
 }) {
   const [mode,setMode] = useState<'login'|'register'>('login');
   const [name,setName] = useState('');
