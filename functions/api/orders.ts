@@ -274,8 +274,9 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   await ensureTable(env);
   // Retain customer order history for seven days from order creation, regardless of status.
   await purgeExpiredCustomerOrders(env);
-  const rows = await env.DB.prepare("SELECT id,order_number,customer_name,customer_phone,note,items_json,total,status,created_at,updated_at,estimated_ready_at FROM customer_orders WHERE archived_at IS NULL ORDER BY order_number DESC LIMIT 100").all<any>();
-  return json({ orders: (rows.results || []).map((r: any) => ({ id:r.id, orderNumber:r.order_number, customerName:r.customer_name, customerPhone:r.customer_phone, note:r.note, items:JSON.parse(r.items_json), total:r.total, status:r.status, createdAt:r.created_at, updatedAt:r.updated_at, estimatedReadyAt:r.estimated_ready_at || null })) }, 200, { "cache-control": "no-store" });
+  await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN cancelled_by TEXT").run().catch(() => {});
+  const rows = await env.DB.prepare("SELECT id,order_number,customer_name,customer_phone,note,items_json,total,status,cancelled_by,created_at,updated_at,estimated_ready_at FROM customer_orders WHERE archived_at IS NULL ORDER BY order_number DESC LIMIT 100").all<any>();
+  return json({ orders: (rows.results || []).map((r: any) => ({ id:r.id, orderNumber:r.order_number, customerName:r.customer_name, customerPhone:r.customer_phone, note:r.note, items:JSON.parse(r.items_json), total:r.total, status:r.status, cancelledBy:r.cancelled_by === "customer" || r.cancelled_by === "owner" ? r.cancelled_by : null, createdAt:r.created_at, updatedAt:r.updated_at, estimatedReadyAt:r.estimated_ready_at || null })) }, 200, { "cache-control": "no-store" });
 };
 
 export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
