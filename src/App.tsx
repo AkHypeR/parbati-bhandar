@@ -1156,18 +1156,19 @@ export default function App() {
             <CustomerNotifications customer={customerAccount} onBack={() => navigateToPath('/')} onSignIn={() => navigateToPath('/account')} />
           ) : currentPath === '/terms-and-conditions' ? (
             <TermsAndConditions onBack={() => navigateToPath('/')} />
-          ) : (['/account', '/previous-orders', '/track-order', '/orders'].includes(currentPath) || (currentPath.startsWith('/orders/') && Number.isInteger(Number(currentPath.split('/')[2])))) ? (
+          ) : (['/account', '/account/orders', '/previous-orders', '/track-order', '/orders'].includes(currentPath) || (currentPath.startsWith('/account/orders/') && Number.isInteger(Number(currentPath.split('/')[3]))) || (currentPath.startsWith('/orders/') && Number.isInteger(Number(currentPath.split('/')[2])))) ? (
             <CustomerAccount
               customer={customerAccount}
               onAuthenticated={handleCustomerAuthenticated}
               onLogout={handleCustomerLogout}
               onBack={() => navigateToPath('/')}
-              onViewOrders={(orderNumber) => navigateToPath(orderNumber ? '/orders/' + orderNumber : '/orders')}
-              orderNumber={currentPath.startsWith('/orders/') ? Number(currentPath.split('/')[2]) : undefined}
+              onViewOrders={(orderNumber) => navigateToPath(orderNumber ? '/account/orders/' + orderNumber : '/account/orders')}
+              orderNumber={currentPath.startsWith('/account/orders/') ? Number(currentPath.split('/')[3]) : currentPath.startsWith('/orders/') ? Number(currentPath.split('/')[2]) : undefined}
               orderPhone={customerAccount?.phone || ''}
               whatsappNumber={storeSettings.whatsappNumber || storeSettings.phone || '919734765207'}
               products={products}
               onNavigate={navigateToPath}
+              accountSection={currentPath === '/account' ? 'profile' : 'orders'}
             />
           ) : <CustomerStorefront
             welcomePromoPending={welcomePromoPending}
