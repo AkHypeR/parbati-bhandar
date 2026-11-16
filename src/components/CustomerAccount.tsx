@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 import {
   ArrowLeft, Eye, EyeOff, UserRound, Phone, LogOut,
   UserPlus, LogIn, ShoppingBasket, Sparkles, CheckCircle2,
-  LockKeyhole, ArrowRight, ShieldCheck, Download, ShieldCheck as SecureIcon
+  LockKeyhole, ArrowRight, ShieldCheck, Download
 } from 'lucide-react';
 import { TurnstileWidget } from './TurnstileWidget';
 
 type Customer = { id: string; name: string; phone: string };
 
-export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, onViewOrders }: {
+export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack }: {
   customer: Customer | null;
   onAuthenticated: (customer: Customer, created?: boolean) => void;
   onLogout: () => void;
   onBack: () => void;
-  onViewOrders: () => void;
 }) {
   const [mode,setMode] = useState<'login'|'register'>('login');
   const [name,setName] = useState('');
