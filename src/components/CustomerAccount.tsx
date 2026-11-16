@@ -14,7 +14,7 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack }:
   onAuthenticated: (customer: Customer, created?: boolean) => void;
   onLogout: () => void;
   onBack: () => void;
-  onViewOrders: () => void;
+  onViewOrders: (orderNumber?: number) => void;
 }) {
   const [mode,setMode] = useState<'login'|'register'>('login');
   const [name,setName] = useState('');
@@ -136,7 +136,7 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack }:
                 <section className="overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-sm">
                   <div className="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 bg-emerald-50/60 px-5 py-4"><div><h3 className="font-extrabold text-slate-900">Your orders</h3><p className="mt-0.5 text-xs text-slate-500">Track active orders and view completed orders here.</p></div><span className="rounded-full bg-white px-3 py-1 text-xs font-extrabold text-emerald-800">{orders.length} {orders.length===1?'order':'orders'}</span></div>
                   {ordersLoading ? <p className="px-5 py-8 text-center text-sm text-slate-500">Loading your orders…</p> : ordersError ? <p role="alert" className="px-5 py-5 text-sm font-semibold text-rose-700">{ordersError}</p> : orders.length===0 ? <div className="px-5 py-9 text-center"><ShoppingBasket className="mx-auto h-8 w-8 text-slate-300"/><p className="mt-2 text-sm font-bold text-slate-800">No orders yet</p><p className="mt-1 text-xs text-slate-500">Your grocery orders will appear here after checkout.</p></div> :
-                    <div className="divide-y divide-slate-100">{orders.map(order => <button key={order.orderNumber} type="button" onClick={()=>onViewOrders()} className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left transition hover:bg-emerald-50/50">
+                    <div className="divide-y divide-slate-100">{orders.map(order => <button key={order.orderNumber} type="button" onClick={()=>onViewOrders(order.orderNumber)} className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left transition hover:bg-emerald-50/50">
                       <span className="min-w-0 flex-1"><span className="flex flex-wrap items-center gap-2"><strong className="text-sm text-slate-900">Order #{order.orderNumber}</strong><span className={'rounded-full px-2.5 py-1 text-[10px] font-extrabold '+(order.status==='completed'?'bg-emerald-100 text-emerald-800':order.status==='cancelled'?'bg-rose-100 text-rose-700':'bg-amber-100 text-amber-800')}>{order.status==='new'||order.status==='review'?'Received':order.status==='processing'?'Being prepared':order.status==='ready'?'Ready for pickup':order.status==='completed'?'Completed':order.status==='cancelled'?'Cancelled':order.status}</span></span><span className="mt-1 block truncate text-xs text-slate-500">{order.items?.slice(0,2).map(item=>item.name+' × '+item.quantity).join(' · ')}{order.items?.length>2?' · + more':''}</span><span className="mt-1 block text-[11px] text-slate-400">{new Date(order.createdAt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Kolkata'})}</span></span>
                       <span className="shrink-0 text-right"><strong className="block text-sm text-slate-900">₹{order.total}</strong><span className="mt-1 inline-flex items-center gap-1 rounded-lg bg-emerald-800 px-3 py-2 text-xs font-extrabold text-white">{order.status==='completed'?'View':'Track'} <ArrowRight className="h-3.5 w-3.5"/></span></span>
                     </button>)}</div>}
