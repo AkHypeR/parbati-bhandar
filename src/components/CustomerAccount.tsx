@@ -96,7 +96,7 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack }:
                     <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-900">Hello, {customer.name.split(' ')[0]}</h2>
                     <p className="mt-1 text-sm text-slate-500">Manage your personal details and account access.</p>
                   </div>
-                  <button onClick={signOut} className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-bold text-slate-600 shadow-sm transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700"><LogOut className="h-4 w-4"/> Sign out</button>
+                  <button type="button" onClick={signOut} style={{ color: "#334155", backgroundColor: "#FFFFFF", borderColor: "#D8DED3" }} className="inline-flex shrink-0 items-center gap-2 rounded-xl border px-3.5 py-2.5 text-xs font-bold shadow-sm transition hover:!border-[#E8B7AE] hover:!bg-[#FFF1EE] hover:!text-[#A63227]"><LogOut className="h-4 w-4" style={{ color: "inherit" }}/> Sign out</button>
                 </div>
                 <section className="pb-account-hero relative overflow-hidden rounded-3xl p-5 text-white sm:p-7">
                   <div aria-hidden="true" className="absolute -right-12 -top-16 h-52 w-52 rounded-full border-[26px] border-white/10"/>
