@@ -2991,3 +2991,103 @@ html.pb-dark .pb-owner-portal :where(h1,h2,h3,h4,[class*="text-slate-900"],[clas
 @keyframes pbMenuFade { from {opacity:0} to {opacity:1} }
 @keyframes pbMenuSlide { from {transform:translateX(28px);opacity:.7} to {transform:translateX(0);opacity:1} }
 @media (prefers-reduced-motion:reduce) { .pb-quick-menu-layer,.pb-quick-menu {animation:none!important;} }
+
+
+/* Bengali household storefront header — balanced sign, controls and address panel. */
+.pb-editorial-header.pb-bengali-header {
+  position:relative !important;
+  overflow:hidden !important;
+  min-height:0 !important;
+  padding-bottom:2px !important;
+  background:
+    radial-gradient(ellipse at 50% 8%,rgba(207,163,91,.2),transparent 42%),
+    radial-gradient(ellipse at 12% 100%,rgba(167,70,48,.16),transparent 34%),
+    linear-gradient(135deg,#102D27 0%,#174538 48%,#102D27 100%) !important;
+  border-bottom:1px solid rgba(224,190,126,.48) !important;
+}
+.pb-editorial-header.pb-bengali-header > .relative.z-10 {
+  padding-top:12px !important;
+  padding-bottom:10px !important;
+}
+.pb-bengali-ambience { opacity:.9; }
+.pb-alpona {
+  position:absolute; top:23%; color:#E8C991; opacity:.18;
+  font-family:Georgia,serif; font-size:clamp(64px,13vw,112px);
+  line-height:1; animation:pbAlponaTurn 34s linear infinite;
+  text-shadow:0 0 18px rgba(238,201,139,.24);
+}
+.pb-alpona-left { left:-26px; }
+.pb-alpona-right { right:-26px; animation-direction:reverse; }
+.pb-bengali-motif {
+  position:absolute; display:block; color:#F1D39B;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.28));
+  animation:pbBengaliFloat 5.5s ease-in-out infinite;
+  user-select:none;
+}
+.pb-motif-one { left:18%; top:20%; font-size:23px; opacity:.68; }
+.pb-motif-two { right:17%; top:15%; font-size:24px; animation-delay:-1.7s; }
+.pb-motif-three { left:8%; bottom:12%; font-size:19px; opacity:.6; animation-delay:-2.5s; }
+.pb-motif-four { right:9%; bottom:20%; font-size:27px; animation-delay:-3.2s; }
+.pb-motif-five { right:29%; top:7%; font-size:18px; opacity:.62; animation-delay:-.9s; }
+.pb-editorial-header.pb-bengali-header .pb-hanging-brand {
+  width:clamp(174px,28vw,224px) !important;
+  min-height:126px !important;
+  padding:24px 3px 5px !important;
+  filter:drop-shadow(0 8px 12px rgba(0,0,0,.3));
+}
+.pb-editorial-header.pb-bengali-header .pb-sign-cords {
+  width:65% !important; height:29px !important; top:5px !important;
+}
+.pb-editorial-header.pb-bengali-header .pb-hanging-plaque {
+  min-height:82px !important; padding:7px 10px 6px !important;
+  border-radius:14px !important;
+  background:linear-gradient(145deg,#8F2426 0%,#B83232 42%,#741D27 100%) !important;
+  border:2px solid #E8C27E !important;
+  box-shadow:inset 0 0 0 2px rgba(255,236,195,.22),inset 0 -8px 14px rgba(42,4,9,.3),0 4px 0 #6B3A26,0 9px 18px rgba(0,0,0,.34) !important;
+}
+.pb-editorial-header.pb-bengali-header .pb-plaque-topline { height:27px !important; }
+.pb-editorial-header.pb-bengali-header .pb-store-logo-mark { width:25px !important;height:25px !important;flex-basis:25px !important; }
+.pb-editorial-header.pb-bengali-header .pb-plaque-title { font-size:clamp(15px,3.2vw,20px) !important; letter-spacing:-.025em !important; }
+.pb-editorial-header.pb-bengali-header .pb-plaque-bengali { font-size:clamp(11px,2.5vw,14px) !important; }
+.pb-editorial-header.pb-bengali-header .pb-plaque-bottomline { margin-top:5px !important; }
+.pb-editorial-header.pb-bengali-header .pb-header-action {
+  width:48px !important; height:48px !important; flex-basis:48px !important;
+  border-radius:15px !important; background:rgba(255,248,229,.13) !important;
+  border:1px solid rgba(239,211,160,.55) !important;
+  color:#FFF7E8 !important; box-shadow:0 5px 14px rgba(0,0,0,.15),inset 0 1px rgba(255,255,255,.15) !important;
+}
+.pb-editorial-header.pb-bengali-header .pb-header-location {
+  margin-top:8px !important; padding:12px 15px !important;
+  border-radius:18px !important; border:1px solid rgba(229,201,151,.58) !important;
+  background:linear-gradient(110deg,rgba(255,250,233,.16),rgba(255,250,233,.08)) !important;
+  box-shadow:0 10px 25px rgba(4,25,18,.2),inset 0 1px rgba(255,255,255,.17) !important;
+}
+.pb-editorial-header.pb-bengali-header .pb-header-location-name {
+  padding:5px 10px !important; border-radius:8px !important;
+  color:#FFF8E9 !important; background:rgba(255,248,229,.14) !important;
+  border:1px solid rgba(255,242,215,.35) !important; font-size:12px !important;
+}
+.pb-editorial-header.pb-bengali-header .pb-header-location-address {
+  color:#FFF9ED !important; font-size:clamp(12px,2.4vw,15px) !important;
+  line-height:1.4 !important; font-weight:700 !important;
+}
+.pb-editorial-header.pb-bengali-header .pb-store-status { font-size:11px !important; padding:5px 12px !important; }
+@keyframes pbAlponaTurn { to { transform:rotate(360deg); } }
+@keyframes pbBengaliFloat {
+  0%,100% { transform:translateY(0) rotate(-4deg); }
+  50% { transform:translateY(-8px) rotate(5deg); }
+}
+@media(max-width:520px) {
+  .pb-editorial-header.pb-bengali-header > .relative.z-10 { padding-top:9px !important; }
+  .pb-editorial-header.pb-bengali-header .pb-hanging-brand {
+    width:clamp(160px,43vw,190px) !important; min-height:112px !important; padding-top:22px !important;
+  }
+  .pb-editorial-header.pb-bengali-header .pb-hanging-plaque { min-height:73px !important; padding-inline:8px !important; }
+  .pb-editorial-header.pb-bengali-header .pb-header-action { width:43px !important;height:43px !important;flex-basis:43px !important; }
+  .pb-editorial-header.pb-bengali-header .pb-header-location { padding:10px 11px !important; }
+  .pb-editorial-header.pb-bengali-header .pb-header-location-address { font-size:12px !important; }
+  .pb-alpona { opacity:.12; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .pb-alpona,.pb-bengali-motif { animation:none !important; }
+}
