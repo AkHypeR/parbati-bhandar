@@ -1156,22 +1156,18 @@ export default function App() {
             <CustomerNotifications customer={customerAccount} onBack={() => navigateToPath('/')} onSignIn={() => navigateToPath('/account')} />
           ) : currentPath === '/terms-and-conditions' ? (
             <TermsAndConditions onBack={() => navigateToPath('/')} />
-          ) : currentPath.startsWith('/orders/') && Number.isInteger(Number(currentPath.split('/')[2])) && customerAccount ? (
-            <CustomerOrders
-              orderNumber={Number(currentPath.split('/')[2])}
-              phone={customerAccount.phone}
-              whatsappNumber={storeSettings.whatsappNumber || storeSettings.phone || '919734765207'}
-              products={products}
-              onNavigate={navigateToPath}
-              onBack={() => navigateToPath('/account')}
-            />
-          ) : ['/account', '/previous-orders', '/track-order', '/orders'].includes(currentPath) ? (
+          ) : (['/account', '/previous-orders', '/track-order', '/orders'].includes(currentPath) || (currentPath.startsWith('/orders/') && Number.isInteger(Number(currentPath.split('/')[2])))) ? (
             <CustomerAccount
               customer={customerAccount}
               onAuthenticated={handleCustomerAuthenticated}
               onLogout={handleCustomerLogout}
               onBack={() => navigateToPath('/')}
               onViewOrders={(orderNumber) => navigateToPath(orderNumber ? '/orders/' + orderNumber : '/orders')}
+              orderNumber={currentPath.startsWith('/orders/') ? Number(currentPath.split('/')[2]) : undefined}
+              phone={customerAccount?.phone || ''}
+              whatsappNumber={storeSettings.whatsappNumber || storeSettings.phone || '919734765207'}
+              products={products}
+              onNavigate={navigateToPath}
             />
           ) : <CustomerStorefront
             welcomePromoPending={welcomePromoPending}
