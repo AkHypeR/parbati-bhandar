@@ -1171,7 +1171,7 @@ export default function App() {
               onAuthenticated={handleCustomerAuthenticated}
               onLogout={handleCustomerLogout}
               onBack={() => navigateToPath('/')}
-              onViewOrders={() => navigateToPath('/orders')}
+              onViewOrders={(orderNumber) => navigateToPath(orderNumber ? '/orders/' + orderNumber : '/orders')}
             />
           ) : <CustomerStorefront
             welcomePromoPending={welcomePromoPending}
