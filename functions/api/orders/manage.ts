@@ -34,6 +34,7 @@ async function prepare(env:Env){
 
 export const onRequestPost: PagesFunction<Env> = async ({request,env}) => {
   await ensureCustomerTables(env); await prepare(env);
+  await env.DB.prepare("ALTER TABLE customer_orders ADD COLUMN cancelled_by TEXT").run().catch(() => {});
   const customer=await getCustomer(request,env);
   if(!customer)return json({error:"Please sign in to manage your order."},401,{"cache-control":"no-store"});
   await purgeExpiredCustomerOrders(env);
@@ -56,7 +57,7 @@ export const onRequestPost: PagesFunction<Env> = async ({request,env}) => {
       const now=Date.now();
       try{
         const result=await env.DB.batch([
-          env.DB.prepare("UPDATE customer_orders SET status='cancelled',total=0,updated_at=?,estimated_ready_at=NULL WHERE id=? AND customer_id=? AND status IN ('new','review') AND stock_deducted IN (0,1) AND items_json=?").bind(now,id,customer.id,order.items_json),
+          env.DB.prepare("UPDATE customer_orders SET status='cancelled',cancelled_by='customer',total=0,updated_at=?,estimated_ready_at=NULL WHERE id=? AND customer_id=? AND status IN ('new','review') AND stock_deducted IN (0,1) AND items_json=?").bind(now,id,customer.id,order.items_json),
           env.DB.prepare("DELETE FROM order_stock_reservations WHERE order_id=?").bind(id)
         ]);
         if(!result[0]?.meta?.changes)return json({error:"The order changed while cancellation was being processed. Refresh and try again."},409);
@@ -93,7 +94,7 @@ export const onRequestPost: PagesFunction<Env> = async ({request,env}) => {
     }
     statements.push(
       env.DB.prepare("INSERT INTO order_stock_refund_guard_v2(check_id,expected_count,actual_count) SELECT ?,?,(SELECT COUNT(*) FROM order_stock_refund_checks WHERE check_id=?)").bind(refundCheckId+":count",refundMap.size,refundCheckId),
-      env.DB.prepare("UPDATE customer_orders SET status='cancelled',items_json=?,total=0,updated_at=?,estimated_ready_at=NULL,stock_deducted=1 WHERE id=? AND customer_id=? AND stock_deducted=3").bind(JSON.stringify(marked),now,id,customer.id),
+      env.DB.prepare("UPDATE customer_orders SET status='cancelled',cancelled_by='customer',items_json=?,total=0,updated_at=?,estimated_ready_at=NULL,stock_deducted=1 WHERE id=? AND customer_id=? AND stock_deducted=3").bind(JSON.stringify(marked),now,id,customer.id),
       env.DB.prepare("DELETE FROM order_stock_reservations WHERE order_id=?").bind(id)
     );
     try{const result=await env.DB.batch(statements);if(!result[result.length-2]?.meta?.changes)return json({error:"The order changed while cancellation was being processed. Refresh and try again."},409);}
