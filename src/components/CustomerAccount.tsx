@@ -2,19 +2,25 @@ import React, { useEffect, useState } from 'react';
 import {
   ArrowLeft, Eye, EyeOff, UserRound, Phone, LogOut,
   UserPlus, LogIn, ShoppingBasket, Sparkles, CheckCircle2,
-  LockKeyhole, ArrowRight, ShieldCheck, Download
+  LockKeyhole, ArrowRight, ShieldCheck, Download, Package, Clock3
 } from 'lucide-react';
 import { TurnstileWidget } from './TurnstileWidget';
+import { CustomerOrders } from './CustomerOrders';
 
 type Customer = { id: string; name: string; phone: string };
 type AccountOrder = { orderNumber:number; status:string; total:number; createdAt:number; items:{name:string;quantity:number;unit:string}[] };
 
-export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack }: {
+export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack, onViewOrders, orderNumber, phone, whatsappNumber, products, onNavigate }: {
   customer: Customer | null;
   onAuthenticated: (customer: Customer, created?: boolean) => void;
   onLogout: () => void;
   onBack: () => void;
   onViewOrders: (orderNumber?: number) => void;
+  orderNumber?: number;
+  phone?: string;
+  whatsappNumber?: string;
+  products?: any[];
+  onNavigate?: (path: string) => void;
 }) {
   const [mode,setMode] = useState<'login'|'register'>('login');
   const [name,setName] = useState('');
@@ -114,6 +120,7 @@ export function CustomerAccount({ customer, onAuthenticated, onLogout, onBack }:
                   </div>
                   <button onClick={signOut} className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-bold text-slate-600 shadow-sm transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700"><LogOut className="h-4 w-4"/> Sign out</button>
                 </div>
+                {orderNumber && phone && products && onNavigate && <CustomerOrders orderNumber={orderNumber} phone={phone} whatsappNumber={whatsappNumber || '919734765207'} products={products} onNavigate={onNavigate} onBack={() => onNavigate('/account')} />}
                 <section className="pb-account-hero relative overflow-hidden rounded-3xl p-5 text-white sm:p-7">
                   <div aria-hidden="true" className="absolute -right-12 -top-16 h-52 w-52 rounded-full border-[26px] border-white/10"/>
                   <div className="relative flex items-center gap-4">
