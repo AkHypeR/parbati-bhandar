@@ -593,7 +593,7 @@ export function CustomerStorefront({
               <span className="pb-quick-menu-label">YOUR ACCOUNT</span>
               <button type="button" onClick={() => { setIsQuickMenuOpen(false); onNavigate('/account'); }}><User/><span><b>My Account</b><small>Profile and saved details</small></span><ChevronRight/></button>
               <button type="button" onClick={() => { setIsQuickMenuOpen(false); onNavigate('/notifications'); }}><Bell/><span><b>Notifications</b><small>Store updates and order alerts</small></span><ChevronRight/></button>
-              <button type="button" onClick={() => { setIsQuickMenuOpen(false); onNavigate('/account/orders'); }}><ClipboardCheck/><span><b>My Orders</b><small>View your order history</small></span><ChevronRight/></button>
+              <button type="button" onClick={() => { setIsQuickMenuOpen(false); onNavigate('/orders'); }}><ClipboardCheck/><span><b>My Orders</b><small>View your order history</small></span><ChevronRight/></button>
             </div>
             <div className="pb-quick-menu-section">
               <span className="pb-quick-menu-label">STORE SERVICES</span>
