@@ -478,7 +478,20 @@ export function CustomerStorefront({
               <span className="pb-hanging-plaque">
                 <span className="pb-plaque-topline" aria-hidden="true">
                   <span className="pb-plaque-ornament" />
-                  <span className="pb-plaque-monogram">P</span>
+                  <svg className="pb-store-logo-mark" viewBox="0 0 44 44" role="img" aria-label="Parbati Vandar store logo">
+                    <circle cx="22" cy="22" r="19.5" fill="url(#pbLogoGold)" stroke="#ffe7b5" strokeWidth="1.4" />
+                    <circle cx="22" cy="22" r="16.8" fill="#8f2029" stroke="#f2c77e" strokeWidth=".7" />
+                    <path d="M14.2 32V11.8h9.1c5.5 0 8.8 2.8 8.8 7.4s-3.3 7.5-8.8 7.5h-4.4V32h-4.7Zm4.7-9.2h4.1c2.8 0 4.2-1.2 4.2-3.6s-1.4-3.5-4.2-3.5h-4.1v7.1Z" fill="#fff0d0" />
+                    <path d="M28.6 10.5c1.1-3.1 4-4.4 7.2-4.1-.5 3.2-2.6 5.3-5.9 5.6" fill="#a9c77c" stroke="#e3edbd" strokeWidth=".65" strokeLinecap="round" />
+                    <path d="M10.8 34.3h22.4" stroke="#f3d18d" strokeWidth="1.3" strokeLinecap="round" />
+                    <defs>
+                      <linearGradient id="pbLogoGold" x1="5" y1="4" x2="39" y2="40" gradientUnits="userSpaceOnUse">
+                        <stop stopColor="#fff0c7" />
+                        <stop offset=".48" stopColor="#c9954d" />
+                        <stop offset="1" stopColor="#80512e" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
                   <span className="pb-plaque-ornament" />
                 </span>
                 <span className="pb-plaque-title">
