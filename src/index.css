@@ -2690,3 +2690,153 @@ html.pb-dark .pb-owner-portal :where(h1,h2,h3,h4,[class*="text-slate-900"],[clas
 @media (prefers-reduced-motion: reduce) {
   .pb-hanging-brand { animation: none !important; }
 }
+
+
+/* Premium Parbati Vandar hanging emblem — layered enamel, gold trim and lettering. */
+.pb-hanging-brand {
+  width: clamp(112px, 29vw, 142px) !important;
+  min-height: 88px !important;
+  padding: 25px 2px 5px !important;
+  transform-origin: 50% 8px !important;
+  animation: pbPremiumSway 6.2s cubic-bezier(.42,0,.58,1) infinite !important;
+  filter: drop-shadow(0 5px 5px rgba(0,0,0,.24));
+}
+.pb-sign-pin {
+  width: 9px !important;
+  height: 9px !important;
+  border: 1px solid #f4e5c6 !important;
+  background: radial-gradient(circle at 30% 25%, #fff 0 12%, #f6e7c9 32%, #b78b53 67%, #604326 100%) !important;
+  box-shadow: 0 0 0 2px #f7e7c522, 0 2px 5px #000b !important;
+}
+.pb-sign-cords {
+  top: 5px !important;
+  width: 75% !important;
+  height: 26px !important;
+  background:
+    linear-gradient(151deg, transparent 46%, #704a29 48%, #ffe0a7 50%, #9c6a38 53%, transparent 55%) left top / 50% 100% no-repeat,
+    linear-gradient(29deg, transparent 46%, #704a29 48%, #ffe0a7 50%, #9c6a38 53%, transparent 55%) right top / 50% 100% no-repeat !important;
+  filter: drop-shadow(0 1px 1px #000b) !important;
+}
+.pb-hanging-plaque {
+  position: relative !important;
+  width: 100% !important;
+  min-height: 57px !important;
+  padding: 5px 7px 5px !important;
+  gap: 1px !important;
+  border: 2px solid #e7bd78 !important;
+  border-radius: 9px !important;
+  background:
+    linear-gradient(115deg, #6f151d 0%, #b72b32 22%, #8f1d28 52%, #c33a36 78%, #67131c 100%) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,239,202,.48),
+    inset 0 2px 7px rgba(255,255,255,.2),
+    inset 0 -8px 12px rgba(45,0,8,.34),
+    0 2px 0 #6d321f,
+    0 5px 0 -2px #d4a45f,
+    0 9px 14px rgba(0,0,0,.42) !important;
+  overflow: visible !important;
+}
+.pb-hanging-plaque::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(255,224,170,.45);
+  border-radius: 5px;
+  pointer-events: none;
+}
+.pb-plaque-topline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 15px;
+  width: 100%;
+}
+.pb-plaque-monogram {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border: 1px solid #ffe2a9;
+  border-radius: 50%;
+  color: #fff1cf;
+  background: radial-gradient(circle at 35% 25%, #d99b56, #8a542e 70%, #542b22);
+  font-family: Georgia, serif;
+  font-size: 12px;
+  font-weight: 900;
+  font-style: italic;
+  line-height: 1;
+  text-shadow: 0 1px 2px #4a1710;
+  box-shadow: 0 1px 3px #380b0b99, inset 0 1px 2px #fff8;
+}
+.pb-plaque-ornament {
+  width: 22px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #f2ce91, transparent);
+}
+.pb-plaque-title {
+  position: relative;
+  z-index: 1;
+  max-width: 100%;
+  color: #fff0d1 !important;
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-size: clamp(10px, 2.7vw, 13px) !important;
+  font-weight: 900 !important;
+  letter-spacing: -.035em !important;
+  line-height: 1.05 !important;
+  text-align: center !important;
+  text-shadow: 0 1px 1px #3e090d, 0 0 8px rgba(255,222,166,.18) !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+.pb-plaque-bengali {
+  position: relative;
+  z-index: 1;
+  margin-top: 2px !important;
+  color: #ffe1b0 !important;
+  font-family: "Noto Serif Bengali", "Noto Sans Bengali", serif !important;
+  font-size: clamp(8px, 2.1vw, 10px) !important;
+  font-weight: 900 !important;
+  letter-spacing: .02em;
+  line-height: 1.2 !important;
+  text-shadow: 0 1px 2px #4c1014 !important;
+}
+.pb-plaque-bottomline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 72%;
+  margin: 2px auto 0;
+  color: #f7d18e;
+  font-size: 7px;
+  line-height: 1;
+}
+.pb-plaque-bottomline span {
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, #eac17f);
+}
+.pb-plaque-bottomline span:last-child {
+  transform: scaleX(-1);
+}
+.pb-plaque-bottomline i {
+  font-style: normal;
+  text-shadow: 0 0 5px #ffe4a5;
+}
+@keyframes pbPremiumSway {
+  0%, 100% { transform: rotate(-.8deg) translateY(0); }
+  30% { transform: rotate(.35deg) translateY(.5px); }
+  55% { transform: rotate(1deg) translateY(1px); }
+  80% { transform: rotate(-.25deg) translateY(.5px); }
+}
+@media (max-width: 390px) {
+  .pb-hanging-brand { width: 112px !important; min-height: 84px !important; padding-top: 23px !important; }
+  .pb-hanging-plaque { min-height: 54px !important; padding-inline: 5px !important; }
+  .pb-plaque-title { font-size: 10px !important; }
+  .pb-plaque-bengali { font-size: 8px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pb-hanging-brand { animation: none !important; }
+}
