@@ -161,7 +161,7 @@ export function CustomerOrders({ orderNumber, phone, whatsappNumber, products = 
                     </span>
                     <span className="flex items-center justify-between gap-3 sm:justify-end">
                       <strong className="text-lg font-black text-slate-900">₹{order.total}</strong>
-                      <span className="pb-orders-track inline-flex items-center gap-1 rounded-xl bg-emerald-700 px-3 py-2 text-xs font-extrabold text-white">Track <ArrowRight className="h-3.5 w-3.5"/></span>
+                      <span className="pb-orders-track inline-flex items-center gap-1 rounded-xl bg-emerald-700 px-3 py-2 text-xs font-extrabold text-white">{order.status === 'completed' ? 'View' : 'Track'} <ArrowRight className="h-3.5 w-3.5"/></span>
                     </span>
                   </button>
                 ))}
