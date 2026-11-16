@@ -1164,7 +1164,7 @@ export default function App() {
               onBack={() => navigateToPath('/')}
               onViewOrders={(orderNumber) => navigateToPath(orderNumber ? '/orders/' + orderNumber : '/orders')}
               orderNumber={currentPath.startsWith('/orders/') ? Number(currentPath.split('/')[2]) : undefined}
-              phone={customerAccount?.phone || ''}
+              orderPhone={customerAccount?.phone || ''}
               whatsappNumber={storeSettings.whatsappNumber || storeSettings.phone || '919734765207'}
               products={products}
               onNavigate={navigateToPath}
