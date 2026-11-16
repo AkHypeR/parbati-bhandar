@@ -36,7 +36,6 @@ import {
   Moon,
   Sun,
   MoreVertical,
-  ChevronLeft,
   ClipboardCheck,
 } from 'lucide-react';
 import {
